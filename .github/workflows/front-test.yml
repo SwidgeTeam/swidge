@@ -2,11 +2,13 @@ name: Deploy Frontend - Test
 
 on:
   push:
-    branches: [ 'master' ]
+    branches: [ 'release/**' ]
+  pull_request:
+    branches: [ 'release/**' ]
 
 jobs:
   workflow-front:
-    uses: ./.github/workflows/front-deploy.yml
+    uses: ./.github/workflows/front.yml
     with:
       environment: test
     secrets:
