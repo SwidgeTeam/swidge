@@ -4,9 +4,9 @@ on:
   push:
     branches: [ 'master' ]
     paths:
-      - front
-      - .github/workflows/front.yaml
-      - .github/workflows/front-prod.yaml
+      - 'front/**'
+      - '.github/workflows/front.yml'
+      - '.github/workflows/front-prod.yml'
 
 jobs:
   workflow-front:

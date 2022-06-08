@@ -4,16 +4,16 @@ on:
   push:
     branches: [ 'release/**' ]
     paths:
-      - front
-      - .github/workflows/front.yaml
-      - .github/workflows/front-test.yaml
+      - 'front/**'
+      - '.github/workflows/front.yml'
+      - '.github/workflows/front-test.yml'
 
   pull_request:
     branches: [ 'release/**' ]
     paths:
-      - front
-      - .github/workflows/front.yaml
-      - .github/workflows/front-test.yaml
+      - 'front/**'
+      - '.github/workflows/front.yml'
+      - '.github/workflows/front-test.yml'
 
 
 jobs:
