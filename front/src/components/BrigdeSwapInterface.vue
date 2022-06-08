@@ -479,7 +479,7 @@ const closeModalStatus = () => {
             <div class="flex gap-40">
                 <div class="flex flex-col gap-6">
                     <div class="flex items-center justify-between">
-                        <span class="text-3xl">Bridge & Swap</span>
+                        <span class="text-3xl">Swap & Bridge</span>
                         <ArrowCircleRightIcon
                             v-if="!isFaqOpen"
                             class="w-7 h-7 cursor-pointer"
