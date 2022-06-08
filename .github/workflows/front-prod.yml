@@ -3,6 +3,8 @@ name: Deploy Frontend - Prod
 on:
   push:
     branches: [ 'master' ]
+    paths:
+      - front
 
 jobs:
   workflow-front:

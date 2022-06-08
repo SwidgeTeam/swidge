@@ -3,8 +3,12 @@ name: Deploy Frontend - Test
 on:
   push:
     branches: [ 'release/**' ]
+    paths:
+      - front
   pull_request:
     branches: [ 'release/**' ]
+    paths:
+      - front
 
 jobs:
   workflow-front:
