@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    html {
+        @apply text-white tracking-wide flex min-h-full
+    }
+
+    body {
+        @apply flex flex-grow
+    }
+}
+
+@layer utilities {
+    .swap-bridge-container {
+        @apply bg-background-gray-accent rounded-xl w-full p-5
+    }
+
+    .to-native-active {
+        @apply bg-gray-700 z-10 ring-2 ring-gray-500
+    }
+
+    .to-native-button {
+        @apply py-2 px-6 text-sm rounded-full font-medium border border-gray-600 hover:bg-gray-700
+    }
+
+    .gradient-main {
+        background: linear-gradient(270deg, #3E3085 0%, #7C2F82 27.15%, #B22F7F 51.04%, #543E71 78.86%, #0C4966 100%);
+    }
+
+    .gradient-border-selection-main {
+        background: linear-gradient(#31313E, #31313E) padding-box,
+        linear-gradient(270deg, #3E3085 0%, #7C2F82 27.15%, #B22F7F 51.04%, #543E71 78.86%, #0C4966 100%) border-box;
+        border: 1.5px solid transparent;
+        border-radius: 24px;
+    }
+
+    .gradient-border-header-main {
+        background: linear-gradient(#222129, #222129) padding-box,
+        linear-gradient(270deg, #3E3085 0%, #7C2F82 27.15%, #B22F7F 51.04%, #543E71 78.86%, #0C4966 100%) border-box;
+        border: 1.5px solid transparent;
+        border-radius: 12px;
+    }
+
+    .header-button {
+        @apply px-4 py-2 gradient-border-header-main font-roboto
+    }
+
+    .network-button-styles {
+        display: inline-block;
+        margin: 0 2%;
+        width: 46%;
+    }
+
+    .network-button {
+        @apply px-4 py-2 gradient-border-header-main font-roboto network-button-styles
+    }
+
+    .network-button > img {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    img.chain-icon {
+        width: 24px;
+        border-radius: 50%;
+    }
+}
+
+#app {
+    @apply flex flex-grow
+}

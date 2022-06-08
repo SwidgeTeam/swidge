@@ -1,0 +1,72 @@
+{
+	"name": "@melggit/webapp",
+	"description": "Swidge Webapp",
+	"version": "0.1.0",
+	"main": "src/main.ts",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/zynth17/vitailse.git"
+	},
+	"keywords": [
+		"vitailse",
+		"tailwindcss",
+		"vite",
+		"vitesse",
+		"blockchain",
+		"dapp"
+	],
+	"author": "Mel Grosser",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/zynth17/vitailse/issues"
+	},
+	"homepage": "https://github.com/zynth17/vitailse#readme",
+	"scripts": {
+		"dev": "vite",
+		"build": "vue-tsc --noEmit && vite build",
+		"serve": "vite preview",
+		"https-preview": "serve dist",
+		"lint": "eslint --ext .ts,.vue src",
+		"prettier": "prettier --check 'src/**/*.vue'"
+	},
+	"dependencies": {
+		"@headlessui/vue": "^1.5.0",
+		"@heroicons/vue": "^1.0.6",
+		"@tailwindcss/aspect-ratio": "^0.4.0",
+		"@tailwindcss/forms": "^0.5.0",
+		"@tailwindcss/typography": "^0.5.2",
+		"@types/node": "^17.0.23",
+		"@vueuse/components": "^8.2.5",
+		"@vueuse/core": "^8.2.5",
+		"@vueuse/head": "^0.7.5",
+		"autoprefixer": "^10.4.4",
+		"axios": "^0.26.1",
+		"ethers": "^5.6.2",
+		"pinia": "^2.0.13",
+		"postcss": "^8.4.12",
+		"tailwindcss": "^3.0.23",
+		"vue": "^3.2.31",
+		"vue-router": "^4.0.14",
+		"vue-spinner": "^1.0.4"
+	},
+	"devDependencies": {
+		"@iconify/json": "^2.1.25",
+		"@typescript-eslint/eslint-plugin": "^5.21.0",
+		"@typescript-eslint/parser": "^5.21.0",
+		"@vitejs/plugin-vue": "^2.3.1",
+		"@vue/compiler-sfc": "^3.2.31",
+		"@vue/server-renderer": "^3.2.31",
+		"critters": "^0.0.16",
+		"eslint": "^8.14.0",
+		"eslint-config-prettier": "^8.5.0",
+		"eslint-plugin-vue": "^8.7.1",
+		"https-localhost": "^4.7.1",
+		"prettier": "^2.6.2",
+		"typescript": "^4.6.3",
+		"vite": "^2.9.1",
+		"vite-plugin-pages": "^0.22.0",
+		"vite-plugin-vue-layouts": "^0.6.0",
+		"vue-eslint-parser": "^8.3.0",
+		"vue-tsc": "^0.33.9"
+	}
+}

@@ -1,0 +1,96 @@
+name: Deploy Frontend
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        description: 'Environment from which to load variables'
+        type: string
+    secrets:
+      AWS_S3_BUCKET:
+        description: 'Bucket name where the build will be deployed'
+        required: true
+      AWS_ACCESS_KEY_ID:
+        description: 'Access key ID of the account with rights'
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        description: 'Secret key of the account with rights'
+        required: true
+      DISTRIBUTION:
+        description: 'AWS distribution name that needs to be invalidated'
+        required: true
+
+env:
+  VITE_APP_API_HOST: https://api.swidge.xyz
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [ 16.x ]
+      fail-fast: false
+
+    defaults:
+      run:
+        working-directory: ./front
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2.0.1
+        with:
+          version: latest
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          registry-url: https://registry.npmjs.org/
+          cache: "pnpm"
+          cache-dependency-path: front/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build Project
+        run: pnpm run build
+
+      - name: Archive Build
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: front/dist
+
+  deployment:
+    needs: build
+    environment: ${{inputs.environment}}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download Dist
+        uses: actions/download-artifact@v2
+        with:
+          name: dist
+          path: front/dist
+
+      - uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --follow-symlinks --delete
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: 'us-east-1'
+          SOURCE_DIR: 'front/dist'
+
+      - uses: chetan/invalidate-cloudfront-action@v2
+        env:
+          PATHS: '/*'
+          AWS_REGION: 'us-east-1'
+          DISTRIBUTION: ${{ secrets.DISTRIBUTION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

@@ -1,0 +1,359 @@
+[
+    {
+        "id": "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "symbol": "FTM",
+        "name": "Fantom Token",
+        "decimals": 18,
+        "volumeUSD": 555233046.1376823187
+    },
+    {
+        "id": "0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83",
+        "symbol": "WFTM",
+        "name": "Wrapped Fantom",
+        "decimals": 18,
+        "volumeUSD": 555233046.1376823187
+    },
+    {
+        "id": "0xf16e81dce15b08f326220742020379b855b87df9",
+        "symbol": "ICE",
+        "name": "IceToken",
+        "decimals": 18,
+        "volumeUSD": 298836160.9329547286
+    },
+    {
+        "id": "0x04068da6c83afcfa0e13ba15a6696662335d5b75",
+        "symbol": "USDC",
+        "name": "USD Coin",
+        "decimals": 6,
+        "volumeUSD": 67479032.3146848977
+    },
+    {
+        "id": "0x74b23882a30290451a17c44f4f05243b6b58c76d",
+        "symbol": "ETH",
+        "name": "Ethereum",
+        "decimals": 18,
+        "volumeUSD": 45961930.5319139659
+    },
+    {
+        "id": "0x049d68029688eabf473097a2fc38ef61633a3c7a",
+        "symbol": "fUSDT",
+        "name": "Frapped USDT",
+        "decimals": 6,
+        "volumeUSD": 32578593.2713442743
+    },
+    {
+        "id": "0x8d11ec38a3eb5e956b052f67da8bdc9bef8abf3e",
+        "symbol": "DAI",
+        "name": "Dai Stablecoin",
+        "decimals": 18,
+        "volumeUSD": 30876270.556956239
+    },
+    {
+        "id": "0x09e145a1d53c0045f41aeef25d8ff982ae74dd56",
+        "symbol": "ZOO",
+        "name": "ZOO",
+        "decimals": 0,
+        "volumeUSD": 28278728.6487539448
+    },
+    {
+        "id": "0x10b620b2dbac4faa7d7ffd71da486f5d44cd86f9",
+        "symbol": "LQDR",
+        "name": "Liquid Driver",
+        "decimals": 18,
+        "volumeUSD": 17276879.8558293618
+    },
+    {
+        "id": "0xae75a438b2e0cb8bb01ec1e1e376de11d44477cc",
+        "symbol": "SUSHI",
+        "name": "Sushi",
+        "decimals": 18,
+        "volumeUSD": 10400194.4822408054
+    },
+    {
+        "id": "0x321162cd933e2be498cd2267a90534a804051b11",
+        "symbol": "BTC",
+        "name": "Bitcoin",
+        "decimals": 8,
+        "volumeUSD": 8460909.6958851535
+    },
+    {
+        "id": "0xa92d41ab8efee617d80a829cd9f5683c5f793ada",
+        "symbol": "FROYO",
+        "name": "Frozen Yogurt",
+        "decimals": 18,
+        "volumeUSD": 7419701.5706801647
+    },
+    {
+        "id": "0x82f0b8b456c1a451378467398982d4834b6829c1",
+        "symbol": "MIM",
+        "name": "Magic Internet Money",
+        "decimals": 18,
+        "volumeUSD": 6372611.9710908141
+    },
+    {
+        "id": "0x29b0da86e484e1c0029b56e817912d778ac0ec69",
+        "symbol": "YFI",
+        "name": "yearn.finance",
+        "decimals": 18,
+        "volumeUSD": 6084682.1420905748
+    },
+    {
+        "id": "0xb3654dc3d10ea7645f8319668e8f54d2574fbdc8",
+        "symbol": "LINK",
+        "name": "ChainLink",
+        "decimals": 18,
+        "volumeUSD": 5332342.4186958671
+    },
+    {
+        "id": "0xc2a45fe7d40bcac8369371b08419ddafd3131b4a",
+        "symbol": "LCD",
+        "name": "Lucidao",
+        "decimals": 18,
+        "volumeUSD": 4889254.5776164765
+    },
+    {
+        "id": "0xe64b9fd040d1f9d4715c645e0d567ef69958d3d9",
+        "symbol": "MOD",
+        "name": "Modefi",
+        "decimals": 18,
+        "volumeUSD": 3791232.5476171859
+    },
+    {
+        "id": "0x6a07a792ab2965c72a5b8088d3a069a7ac3a993b",
+        "symbol": "AAVE",
+        "name": "Aave",
+        "decimals": 18,
+        "volumeUSD": 3767677.0542713497
+    },
+    {
+        "id": "0xfbc3c04845162f067a0b6f8934383e63899c3524",
+        "symbol": "FOO",
+        "name": "Fantums of Opera Token",
+        "decimals": 18,
+        "volumeUSD": 3652985.9662953112
+    },
+    {
+        "id": "0xbac5d43a56696e5d0cb631609e85798f564b513b",
+        "symbol": "BITB",
+        "name": "BitBean",
+        "decimals": 0,
+        "volumeUSD": 3563073.3634011233
+    },
+    {
+        "id": "0xc072efe93ffa09d2c0ca9c6faa477e55c5737ce8",
+        "symbol": "OPE",
+        "name": "Opera Token",
+        "decimals": 18,
+        "volumeUSD": 3305419.6472533178
+    },
+    {
+        "id": "0x23654048e2ee5e8414eea67a7d1a1c02505b7e4a",
+        "symbol": "BASED",
+        "name": "Based",
+        "decimals": 18,
+        "volumeUSD": 2835134.4496355564
+    },
+    {
+        "id": "0x657a1861c15a3ded9af0b6799a195a249ebdcbc6",
+        "symbol": "CREAM",
+        "name": "Cream",
+        "decimals": 18,
+        "volumeUSD": 2708868.8689256008
+    },
+    {
+        "id": "0x0f7adb77b6334b9b5a3c4f78aaa073ea1d915bf6",
+        "symbol": "AQU",
+        "name": "AQU",
+        "decimals": 18,
+        "volumeUSD": 2522575.5804685699
+    },
+    {
+        "id": "0x1e4f97b9f9f913c46f1632781732927b9019c68b",
+        "symbol": "CRV",
+        "name": "Curve DAO",
+        "decimals": 18,
+        "volumeUSD": 2495617.5019632149
+    },
+    {
+        "id": "0x56ee926bd8c72b2d5fa1af4d9e4cbb515a1e3adc",
+        "symbol": "SNX",
+        "name": "Synthetix Network",
+        "decimals": 18,
+        "volumeUSD": 1984960.0196525138
+    },
+    {
+        "id": "0x8503eb4a136bdbeb323e37aa6e0fa0c772228378",
+        "symbol": "BOMB",
+        "name": "BOMB",
+        "decimals": 0,
+        "volumeUSD": 1342826.7536660598
+    },
+    {
+        "id": "0xf3a61c7d53442ac00a3a99761c5839f9109f2193",
+        "symbol": "SafeFantom",
+        "name": "SafeFantom",
+        "decimals": 9,
+        "volumeUSD": 1146652.9746565057
+    },
+    {
+        "id": "0xc908ae61b7e798a49a5876bdf0c307f02a3ebce6",
+        "symbol": "UBI",
+        "name": "UBI Plus",
+        "decimals": 18,
+        "volumeUSD": 1019842.9092569223
+    },
+    {
+        "id": "0x58fb8cbab7253d988bad2e7ca9079acc77ed430c",
+        "symbol": "FASTMOON",
+        "name": "FastMoon",
+        "decimals": 9,
+        "volumeUSD": 902003.9060686944
+    },
+    {
+        "id": "0x41e3df7f716ab5af28c1497b354d79342923196a",
+        "symbol": "aUSD",
+        "name": "aUSD",
+        "decimals": 18,
+        "volumeUSD": 855205.771295044
+    },
+    {
+        "id": "0xf43cc235e686d7bc513f53fbffb61f760c3a1882",
+        "symbol": "ELITE",
+        "name": "https:\/\/t.me\/FTM1337",
+        "decimals": 18,
+        "volumeUSD": 846337.7399229873
+    },
+    {
+        "id": "0x2241fabdf45c54ca330c34c783b114e6bcaae7e7",
+        "symbol": "GHOST",
+        "name": "theghost.finance",
+        "decimals": 18,
+        "volumeUSD": 789375.0281214148
+    },
+    {
+        "id": "0x21e7c8150c54df2d370511d11a70676c2ceb76c0",
+        "symbol": "uBASED",
+        "name": "uBASED",
+        "decimals": 18,
+        "volumeUSD": 651419.8421723375
+    },
+    {
+        "id": "0xb01e8419d842beebf1b70a7b5f7142abbaf7159d",
+        "symbol": "COVER",
+        "name": "Cover Protocol Governance",
+        "decimals": 18,
+        "volumeUSD": 570320.7221476703
+    },
+    {
+        "id": "0x31a47b49b4dbdc54d403b8c4880ac9bb1a9ebae8",
+        "symbol": "POOCH",
+        "name": "Pooch",
+        "decimals": 18,
+        "volumeUSD": 490939.0353409724
+    },
+    {
+        "id": "0x3dc57b391262e3aae37a08d91241f9ba9d58b570",
+        "symbol": "YOSHI",
+        "name": "Yoshi.exchange",
+        "decimals": 18,
+        "volumeUSD": 470833.4213908567
+    },
+    {
+        "id": "0x24af804f17d59de93367410c9befa49444150d4c",
+        "symbol": "GOV",
+        "name": "Governance Token",
+        "decimals": 18,
+        "volumeUSD": 399211.6804885427
+    },
+    {
+        "id": "0x8e4a2fa6e651df75f7f4e9e9ac81f8f9347a4add",
+        "symbol": "tCUZ",
+        "name": "Wrapped COUSIN CRYPTO NFT",
+        "decimals": 18,
+        "volumeUSD": 362233.0628137278
+    },
+    {
+        "id": "0x5a33869045db8a6a16c9f351293501cfd92cf7ed",
+        "symbol": "BSGG",
+        "name": "Betswap.gg",
+        "decimals": 18,
+        "volumeUSD": 325978.8823069524
+    },
+    {
+        "id": "0x5cc61a78f164885776aa610fb0fe1257df78e59b",
+        "symbol": "SPIRIT",
+        "name": "SpiritSwap Token",
+        "decimals": 18,
+        "volumeUSD": 273578.0333464021
+    },
+    {
+        "id": "0x6c7efc3af0e0685ee30759ba819cc456c7ad976a",
+        "symbol": "SAKURA",
+        "name": "Sakura",
+        "decimals": 9,
+        "volumeUSD": 257927.345689265
+    },
+    {
+        "id": "0x924828a9fb17d47d0eb64b57271d10706699ff11",
+        "symbol": "SFI",
+        "name": "Spice",
+        "decimals": 18,
+        "volumeUSD": 256452.6040412662
+    },
+    {
+        "id": "0xf8fc059dafdce4ef2edfc72cbbaf410d7531e610",
+        "symbol": "PGUNK",
+        "name": "PlasmaGunk",
+        "decimals": 9,
+        "volumeUSD": 191636.4039976295
+    },
+    {
+        "id": "0x1665b00179113d652427536ebc1ef9ca1d91db7d",
+        "symbol": "rFTM",
+        "name": "rFTM",
+        "decimals": 9,
+        "volumeUSD": 153791.9096953937
+    },
+    {
+        "id": "0x116f31d5a97fd0ccfb0f963e9b48ce4cfb06ed72",
+        "symbol": "LUCKY",
+        "name": "LuckyLuke",
+        "decimals": 9,
+        "volumeUSD": 133293.1049765992
+    },
+    {
+        "id": "0x0bbf5349d884d135a907040187e0f4e04d05129c",
+        "symbol": "yAndre",
+        "name": "yAndre",
+        "decimals": 18,
+        "volumeUSD": 116103.8075650296
+    },
+    {
+        "id": "0xaf319e5789945197e365e7f7fbfc56b130523b33",
+        "symbol": "FRAX",
+        "name": "Frax",
+        "decimals": 18,
+        "volumeUSD": 114014.2615679585
+    },
+    {
+        "id": "0x1323232a93e30825a88c331c046fce5fd35397fd",
+        "symbol": "GHOST",
+        "name": "GhostToken",
+        "decimals": 18,
+        "volumeUSD": 111202.4246067463
+    },
+    {
+        "id": "0xad84341756bf337f5a0164515b1f6f993d194e1f",
+        "symbol": "FUSD",
+        "name": "Fantom USD",
+        "decimals": 18,
+        "volumeUSD": 90651.7473076025
+    },
+    {
+        "id": "0x659d813beb17435acf822cdd80db0c7090755771",
+        "symbol": "RIP",
+        "name": "Fantums Death Token",
+        "decimals": 18,
+        "volumeUSD": 75993.1566918068
+    }
+]
