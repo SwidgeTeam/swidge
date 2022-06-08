@@ -5,10 +5,16 @@ on:
     branches: [ 'release/**' ]
     paths:
       - front
+      - .github/workflows/front.yaml
+      - .github/workflows/front-test.yaml
+
   pull_request:
     branches: [ 'release/**' ]
     paths:
       - front
+      - .github/workflows/front.yaml
+      - .github/workflows/front-test.yaml
+
 
 jobs:
   workflow-front:
