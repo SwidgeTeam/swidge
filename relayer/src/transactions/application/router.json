@@ -1,0 +1,57 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_receiver",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "_originHash",
+        "type": "string"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint8",
+            "name": "providerCode",
+            "type": "uint8"
+          },
+          {
+            "internalType": "address",
+            "name": "tokenIn",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "tokenOut",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "data",
+            "type": "bytes"
+          },
+          {
+            "internalType": "bool",
+            "name": "required",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct Router.SwapStep",
+        "name": "_swapStep",
+        "type": "tuple"
+      }
+    ],
+    "name": "finalizeSwidge",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  }
+]
