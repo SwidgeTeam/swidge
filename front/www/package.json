@@ -22,7 +22,7 @@
 	},
 	"homepage": "https://github.com/zynth17/vitailse#readme",
 	"scripts": {
-		"dev": "vite",
+		"dev": "vite --host",
 		"build": "vue-tsc --noEmit && vite build",
 		"serve": "vite preview",
 		"https-preview": "serve dist",
