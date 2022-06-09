@@ -18,7 +18,6 @@ services:
   front:
     build:
       context: front/
-    image: front
     environment:
       VITE_APP_API_HOST: ${API_URL}
     ports:
@@ -28,11 +27,11 @@ services:
 
   api:
     depends_on:
-      - db
+      - ${DOCKER_DB_SERVICE}
     build:
       context: api/
     environment:
-      DB_HOST: db
+      DB_HOST: ${DOCKER_DB_SERVICE}
       DB_PORT: ${MYSQL_PORT}
       DB_USER: ${MYSQL_USER}
       DB_PASS: ${MYSQL_PASSWORD}
@@ -63,11 +62,11 @@ services:
       - SERVICES=sqs
       - DATA_DIR=/tmp/localstack/data
     ports:
-      - '4566:4566'
+      - ${LOCALSTACK_PORT}:4566
     volumes:
       - ./data/localstack:/tmp/localstack/data
       - /var/run/docker.sock:/var/run/docker.sock
 
 networks:
   default:
-    name: swidge-net
+    name: ${DOCKER_NETWORK_NAME}

@@ -36,11 +36,40 @@ DOCKER_COMPOSE = ${DOCKER_COMPOSE_COMMAND} $(1)
 DOCKER_COMPOSE_RUN = ${DOCKER_COMPOSE_COMMAND} run --user ${DOCKER_USER} $(1)
 DOCKER_COMPOSE_EXEC = ${DOCKER_COMPOSE_COMMAND} exec --user ${DOCKER_USER} $(1)
 
-start:
-	@$(call DOCKER_COMPOSE, up)
+DOCKER_COMMAND ?= docker
+DOCKER = ${DOCKER_COMMAND} $(1)
 
-stop:
+up:
+	@$(call DOCKER_COMPOSE, up --detach)
+
+start:
+	@$(call DOCKER_COMPOSE, start)
+
+stop: down
+
+down:
 	@$(call DOCKER_COMPOSE, stop)
+
+restart:
+	@$(call DOCKER_COMPOSE, restart)
+
+rm:
+	@$(call DOCKER_COMPOSE, rm --force -v)
+
+build:
+	@$(call DOCKER_COMPOSE, build)
+
+create:
+	@$(call DOCKER_COMPOSE, up --no-start)
+
+logs:
+	@$(call DOCKER_COMPOSE, logs --follow)
+
+setup: db-migrate create-queue
+
+fuck: stop rm build create start
+
+off: up logs
 
 db-client:
 	@$(call DOCKER_COMPOSE_EXEC, \
@@ -69,3 +98,15 @@ db-rollback:
 
 db-generate-migration:
 	@$(call DOCKER_COMPOSE_RUN, --rm api migration:generate)
+
+create-queue:
+	@$(call DOCKER, run \
+		--network ${DOCKER_NETWORK_NAME} \
+		--rm -it \
+		-e "AWS_DEFAULT_REGION=${AWS_SQS_REGION}" \
+		-e "AWS_ACCESS_KEY_ID=${AWS_SQS_ACCESS_KEY}" \
+		-e "AWS_SECRET_ACCESS_KEY=${AWS_SQS_SECRET}" \
+		amazon/aws-cli \
+		--endpoint-url=http://${DOCKER_LOCALSTACK_SERVICE}:${LOCALSTACK_PORT} \
+		sqs create-queue --queue-name ${AWS_SQS_QUEUE_NAME} \
+	)
