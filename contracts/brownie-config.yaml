@@ -1,0 +1,38 @@
+dotenv: .env
+
+compiler:
+  solc:
+    version: 0.8.1
+    remappings:
+      - "@openzeppelin=OpenZeppelin/openzeppelin-contracts@4.2.0"
+      - "@uniswap/v3-periphery=Uniswap/v3-periphery@1.3.0"
+      - "@uniswap/v3-core=Uniswap/v3-core@1.0.0"
+      - "@nomiclabs=Nomiclabs/buidler@1.3.0"
+
+networks:
+  default: local
+  development:
+    gas_limit: max
+    gas_buffer: 1
+    gas_price: 0
+    max_fee: null
+    priority_fee: null
+    reverting_tx_gas_limit: max
+    default_contract_owner: true
+    cmd_settings: null
+  live:
+    gas_limit: auto
+    gas_buffer: 1.1
+    gas_price: auto
+    max_fee: null
+    priority_fee: null
+    reverting_tx_gas_limit: false
+    default_contract_owner: false
+
+dependencies:
+  - OpenZeppelin/openzeppelin-contracts@4.2.0
+  - Uniswap/v3-periphery@1.3.0
+  - Uniswap/v3-core@1.0.0
+
+wallet:
+  mnemonic: ${MNEMONIC}
