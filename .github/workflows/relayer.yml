@@ -10,7 +10,6 @@ on:
 jobs:
   build-test-deploy:
     runs-on: ubuntu-latest
-    environment: prod
 
     strategy:
       matrix:
@@ -41,8 +40,8 @@ jobs:
       - name: Deploy to EC2
         uses: up9cloud/action-rsync@v1.1
         env:
-          KEY: ${{ secrets.EC2_SSH_KEY_RELAYER }}
-          HOST: ${{ secrets.EC2_HOST_RELAYER }}
+          KEY: ${{ secrets.PROD_EC2_SSH_KEY_RELAYER }}
+          HOST: ${{ secrets.PROD_EC2_HOST_RELAYER }}
           USER: admin
           TARGET: /home/admin/relayer
           VERBOSE: true

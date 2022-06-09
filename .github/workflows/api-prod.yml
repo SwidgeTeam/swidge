@@ -11,8 +11,6 @@ on:
 jobs:
   workflow-api:
     uses: ./.github/workflows/api.yml
-    with:
-      environment: prod
     secrets:
-      EC2_SSH_KEY_API: ${{ secrets.EC2_SSH_KEY_API }}
-      EC2_HOST_API: ${{ secrets.EC2_HOST_API }}
+      EC2_SSH_KEY_API: ${{ secrets.PROD_EC2_SSH_KEY_API }}
+      EC2_HOST_API: ${{ secrets.PROD_EC2_HOST_API }}

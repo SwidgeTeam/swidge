@@ -3,10 +3,6 @@ name: Deploy Frontend
 on:
   workflow_call:
     inputs:
-      environment:
-        required: true
-        description: 'Environment from which to load variables'
-        type: string
       api-url:
         required: true
         description: 'URL of the API'
@@ -70,7 +66,6 @@ jobs:
 
   deployment:
     needs: build
-    environment: ${{inputs.environment}}
     runs-on: ubuntu-latest
 
     steps:
