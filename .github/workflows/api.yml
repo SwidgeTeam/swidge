@@ -50,8 +50,8 @@ jobs:
       - name: Deploy to EC2
         uses: up9cloud/action-rsync@v1.1
         env:
-          KEY: ${{ secrets.EC2_SSH_KEY }}
-          HOST: ${{ secrets.EC2_HOST }}
+          KEY: ${{ secrets.EC2_SSH_KEY_API }}
+          HOST: ${{ secrets.EC2_HOST_API }}
           USER: admin
           TARGET: /home/admin/api
           VERBOSE: true
