@@ -1,13 +1,11 @@
-FROM node:15.11.0-alpine3.10 as base-image
+FROM node:16.15-alpine3.15
 
-RUN apk add curl;
-
-RUN curl -sL https://unpkg.com/@pnpm/self-installer | node
+RUN apk add curl && \
+    curl -sL https://unpkg.com/@pnpm/self-installer | node
 
 WORKDIR /front_app
 
-COPY www/package.json /front_app/package.json
-COPY www/pnpm-lock.yaml /front_app/pnpm-lock.yaml
+COPY www/package.json www/pnpm-lock.yaml /front_app/
 
 RUN pnpm install
 
