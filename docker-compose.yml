@@ -1,4 +1,4 @@
-version: "3.4"
+version: "3.5"
 
 services:
 
@@ -52,7 +52,22 @@ services:
       REGION: ${AWS_SQS_REGION}
       ACCESS_KEY: ${AWS_SQS_ACCESS_KEY}
       SECRET: ${AWS_SQS_SECRET}
-    ports:
-      - ${API_PORT}:3000
     volumes:
       - ./relayer/www/:/relayer/
+
+  localstack:
+    image: localstack/localstack:0.13
+    environment:
+      - AWS_DEFAULT_REGION=${AWS_SQS_REGION}
+      - EDGE_PORT=4566
+      - SERVICES=sqs
+      - DATA_DIR=/tmp/localstack/data
+    ports:
+      - '4566:4566'
+    volumes:
+      - ./data/localstack:/tmp/localstack/data
+      - /var/run/docker.sock:/var/run/docker.sock
+
+networks:
+  default:
+    name: swidge-net
