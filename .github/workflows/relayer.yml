@@ -4,8 +4,11 @@ on:
   push:
     branches: [ 'master' ]
     paths:
-      - 'relayer/**'
+      - 'relayer/www/**'
       - '.github/workflows/relayer.yml'
+
+env:
+  root-path: relayer/www
 
 jobs:
   build-test-deploy:
@@ -17,7 +20,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./relayer
+        working-directory: ./${{ env.root-path }}
 
     steps:
       - name: Checkout
@@ -46,4 +49,4 @@ jobs:
           TARGET: /home/admin/relayer
           VERBOSE: true
           ARGS: -az --delete-after --include=dist/*** --include=node_modules/*** --exclude=*
-          SOURCE: ./relayer/
+          SOURCE: ./${{ env.root-path }}/

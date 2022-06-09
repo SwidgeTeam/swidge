@@ -43,3 +43,16 @@ services:
       - ${API_PORT}:3000
     volumes:
       - ./api/www/:/api/
+
+  relayer:
+    build:
+      context: relayer/
+    environment:
+      SQS_QUEUE_URL: ${AWS_SQS_QUEUE_URL}
+      REGION: ${AWS_SQS_REGION}
+      ACCESS_KEY: ${AWS_SQS_ACCESS_KEY}
+      SECRET: ${AWS_SQS_SECRET}
+    ports:
+      - ${API_PORT}:3000
+    volumes:
+      - ./relayer/www/:/relayer/
