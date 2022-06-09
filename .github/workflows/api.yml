@@ -10,6 +10,9 @@ on:
         description: 'Hostname of EC2 instance'
         required: true
 
+env:
+  root-path: api/www
+
 jobs:
   build-test-deploy:
     runs-on: ubuntu-latest
@@ -20,7 +23,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./api
+        working-directory: ./${{ env.root-path }}
 
     steps:
       - name: Checkout
@@ -49,4 +52,4 @@ jobs:
           TARGET: /home/admin/api
           VERBOSE: true
           ARGS: -az --delete-after --include=dist/*** --include=migrations/*** --include=node_modules/*** --exclude=*
-          SOURCE: ./api/
+          SOURCE: ./${{ env.root-path }}

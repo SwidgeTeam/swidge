@@ -6,7 +6,14 @@ TEMP_ENV_FILE := $(shell mktemp -t ".env.XXXXXX")
 
 $(eval _ := $(shell \
 	find env -type f -name "*.env" -follow \
-	| xargs cat \
+	| xargs awk 1 \
+	| grep -ve "^\#" \
+	>> ${TEMP_ENV_FILE} \
+))
+
+$(eval _ := $(shell \
+	test -f .env && \
+	cat .env \
 	| grep -ve "^\#" \
 	>> ${TEMP_ENV_FILE} \
 ))
