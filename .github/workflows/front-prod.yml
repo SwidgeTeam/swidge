@@ -13,6 +13,7 @@ jobs:
     uses: ./.github/workflows/front.yml
     with:
       environment: prod
+      api-url: https://api.swidge.xyz
     secrets:
       AWS_S3_BUCKET: ${{secrets.AWS_S3_BUCKET}}
       AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}

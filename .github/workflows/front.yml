@@ -7,6 +7,10 @@ on:
         required: true
         description: 'Environment from which to load variables'
         type: string
+      api-url:
+        required: true
+        description: 'URL of the API'
+        type: string
     secrets:
       AWS_S3_BUCKET:
         description: 'Bucket name where the build will be deployed'
@@ -22,7 +26,7 @@ on:
         required: true
 
 env:
-  VITE_APP_API_HOST: https://api.swidge.xyz
+  VITE_APP_API_HOST: ${{inputs.api-url}}
 
 jobs:
   build:
