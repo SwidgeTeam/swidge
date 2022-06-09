@@ -14,5 +14,5 @@ jobs:
     with:
       environment: prod
     secrets:
-      EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
-      EC2_HOST: ${{ secrets.EC2_HOST }}
+      EC2_SSH_KEY_API: ${{ secrets.EC2_SSH_KEY_API }}
+      EC2_HOST_API: ${{ secrets.EC2_HOST_API }}

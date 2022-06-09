@@ -8,10 +8,10 @@ on:
         description: 'Environment from which to load variables'
         type: string
     secrets:
-      EC2_SSH_KEY:
+      EC2_SSH_KEY_API:
         description: 'SSH key to connect to the EC2 instances'
         required: true
-      EC2_HOST:
+      EC2_HOST_API:
         description: 'Hostname of EC2 instance'
         required: true
 
