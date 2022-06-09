@@ -2,7 +2,7 @@ version: "3.4"
 
 services:
 
-  mariadb:
+  db:
     image: mariadb:10.6
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
@@ -27,20 +27,18 @@ services:
       - ./front/www/:/front_app/
 
   api:
+    depends_on:
+      - db
     build:
       context: api/
     environment:
-      DB_HOST: mariadb
+      DB_HOST: db
       DB_PORT: ${MYSQL_PORT}
       DB_USER: ${MYSQL_USER}
       DB_PASS: ${MYSQL_PASSWORD}
       DB_NAME: ${MYSQL_DATABASE}
       APP_PORT: 3000
       APP_HOST_REGEX: ${API_HOST}
-      SQS_QUEUE_URL: ${AWS_SQS_QUEUE_URL}
-      REGION: ${AWS_SQS_REGION}
-      ACCESS_KEY: ${AWS_SQS_ACCESS_KEY}
-      SECRET: ${AWS_SQS_SECRET}
     ports:
       - ${API_PORT}:3000
     volumes:
