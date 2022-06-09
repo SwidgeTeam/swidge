@@ -23,6 +23,7 @@ on:
 
 env:
   VITE_APP_API_HOST: ${{inputs.api-url}}
+  root-path: front/www
 
 jobs:
   build:
@@ -34,7 +35,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./front/www
+        working-directory: ./${{ env.root-path }}
 
     steps:
       - uses: actions/checkout@v2
@@ -50,7 +51,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           registry-url: https://registry.npmjs.org/
           cache: "pnpm"
-          cache-dependency-path: front/www/pnpm-lock.yaml
+          cache-dependency-path: ${{ env.root-path }}/pnpm-lock.yaml
 
       - name: Install dependencies
         run: pnpm install
@@ -62,7 +63,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: dist
-          path: front/www/dist
+          path: ${{ env.root-path }}/dist
 
   deployment:
     needs: build
@@ -74,7 +75,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: dist
-          path: front/www/dist
+          path: ${{ env.root-path }}/dist
 
       - uses: jakejarvis/s3-sync-action@master
         with:
@@ -84,7 +85,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: 'us-east-1'
-          SOURCE_DIR: 'front/www/dist'
+          SOURCE_DIR: '${{ env.root-path }}/dist'
 
       - uses: chetan/invalidate-cloudfront-action@v2
         env:
