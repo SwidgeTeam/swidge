@@ -52,4 +52,4 @@ jobs:
           TARGET: /home/admin/api
           VERBOSE: true
           ARGS: -az --delete-after --include=dist/*** --include=migrations/*** --include=node_modules/*** --exclude=*
-          SOURCE: ./${{ env.root-path }}
+          SOURCE: ./${{ env.root-path }}/
