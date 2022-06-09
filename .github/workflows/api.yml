@@ -30,7 +30,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-          cache-dependency-path: api/yarn.lock
 
       - name: Install dependencies
         run: yarn install
