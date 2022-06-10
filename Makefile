@@ -28,8 +28,9 @@ ENV_KEYS := $(shell ( \
 
 export ${ENV_KEYS}
 
-DOCKER_USER ?= $(shell id -u)
+REMOVE_TEMP_ENV_FILE := $(shell unlink ${TEMP_ENV_FILE})
 
+DOCKER_USER ?= $(shell id -u)
 DOCKER_COMPOSE_COMMAND ?= docker-compose
 
 DOCKER_COMPOSE = ${DOCKER_COMPOSE_COMMAND} $(1)

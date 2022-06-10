@@ -47,6 +47,8 @@ services:
     build:
       context: relayer/
     environment:
+      PRIVATE_KEY: ${RELAYER_PRIVATE_KEY}
+      API_URL: ${API_URL}
       SQS_QUEUE_URL: ${AWS_SQS_QUEUE_URL}
       REGION: ${AWS_SQS_REGION}
       ACCESS_KEY: ${AWS_SQS_ACCESS_KEY}
@@ -57,10 +59,10 @@ services:
   localstack:
     image: localstack/localstack:0.13
     environment:
-      - AWS_DEFAULT_REGION=${AWS_SQS_REGION}
-      - EDGE_PORT=4566
-      - SERVICES=sqs
-      - DATA_DIR=/tmp/localstack/data
+      AWS_DEFAULT_REGION: ${AWS_SQS_REGION}
+      EDGE_PORT: 4566
+      SERVICES: sqs
+      DATA_DIR: /tmp/localstack/data
     ports:
       - ${LOCALSTACK_PORT}:4566
     volumes:
