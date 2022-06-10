@@ -129,7 +129,7 @@ db-rollback:
 db-generate-migration:
 	@$(call DOCKER_COMPOSE_RUN, --rm api migration:generate)
 
-create-queue:
+AWS_CLI = \
 	@$(call DOCKER, run \
 		--network ${DOCKER_NETWORK_NAME} \
 		--rm -it \
@@ -138,5 +138,11 @@ create-queue:
 		-e "AWS_SECRET_ACCESS_KEY=${AWS_SQS_SECRET}" \
 		amazon/aws-cli \
 		--endpoint-url=http://${DOCKER_LOCALSTACK_SERVICE}:${LOCALSTACK_PORT} \
-		sqs create-queue --queue-name ${AWS_SQS_QUEUE_NAME} \
+		$(1) \
 	)
+
+create-queue:
+	@$(call AWS_CLI, sqs create-queue --queue-name ${AWS_SQS_QUEUE_NAME})
+
+list-queues:
+	@$(call AWS_CLI, sqs list-queues)
