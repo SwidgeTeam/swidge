@@ -65,6 +65,36 @@ create:
 logs:
 	@$(call DOCKER_COMPOSE, logs --follow)
 
+$(addprefix build-, ${MAKE_APP_SERVICES}): build-%:
+	@$(call DOCKER_COMPOSE, build $*)
+
+$(addprefix create-, ${MAKE_APP_SERVICES}): create-%:
+	@$(call DOCKER_COMPOSE, up --no-start $*)
+
+$(addprefix start-, ${MAKE_APP_SERVICES}): start-%:
+	@$(call DOCKER_COMPOSE, up -d $*)
+
+$(addprefix stop-, ${MAKE_APP_SERVICES}): stop-%:
+	@$(call DOCKER_COMPOSE, stop $*)
+
+$(addprefix kill-, ${MAKE_APP_SERVICES}): kill-%:
+	@$(call DOCKER_COMPOSE, kill $*)
+
+$(addprefix restart-, ${MAKE_APP_SERVICES}): restart-%:
+	@$(call DOCKER_COMPOSE, restart $*)
+
+$(addprefix rm-, ${MAKE_APP_SERVICES}): rm-%:
+	@$(call DOCKER_COMPOSE, rm --force -v $*)
+
+$(addprefix fuck-, ${MAKE_APP_SERVICES}): fuck-%: \
+	stop-% rm-% build-% create-% start-%
+
+$(addsuffix -sh, ${MAKE_APP_SERVICES}): %-sh:
+	@$(call DOCKER_COMPOSE, exec $* sh)
+
+$(addsuffix -logs, ${MAKE_APP_SERVICES}): %-logs:
+	@$(call DOCKER_COMPOSE, logs --follow $*)
+
 setup: db-migrate create-queue
 
 fuck: stop rm build create start

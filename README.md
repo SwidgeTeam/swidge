@@ -86,6 +86,8 @@ Make sure the application is running and type:
 $ make db-import < ./path/to/your/dump.sql
 ```
 
+## Troubleshooting
+
 ### Resetting local database
 
 Your local database will store its data on the `data/db` directory. Empty or remove this directory while the application
@@ -95,6 +97,33 @@ is stopped to reset the database. You may need `sudo` to delete these files.
 $ make stop
 $ rm -fr data/db # Or: sudo rm -fr data/db
 $ make start
+$ make db-migrate
+```
+
+### Prompting logs
+
+At any time, you can access to the full live feed of logs of the app by typing:
+
+```sh
+make logs
+```
+
+Or you can get the logs of one specific service with:
+
+```sh
+make <service>-logs
+```
+
+The service names are the names defined fro the services on the docker-compose.yml.
+
+### Recreating Docker images/containers
+
+If some changes have been made to the infrastructure, or if you are experiencing weird issues
+that you might identify as being related to misbehaving infrastructure, you can recreate
+all the infrastructure, and recreate showing logs to be able to debug, with:
+
+```sh
+make fuck off
 ```
 
 ## Git workflow
