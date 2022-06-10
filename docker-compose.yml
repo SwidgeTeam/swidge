@@ -3,7 +3,8 @@ version: "3.5"
 services:
 
   db:
-    image: mariadb:10.6
+    build:
+      context: db/
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -13,7 +14,6 @@ services:
       - ${MYSQL_PORT}:3306
     volumes:
       - ./data/db:/var/lib/mysql
-      - ./db/create.sql:/docker-entrypoint-initdb.d/init.sql
 
   front:
     build:

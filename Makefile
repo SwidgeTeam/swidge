@@ -46,7 +46,6 @@ start:
 	@$(call DOCKER_COMPOSE, start)
 
 stop: down
-
 down:
 	@$(call DOCKER_COMPOSE, stop)
 
@@ -120,6 +119,7 @@ db-import:
 			${MYSQL_DB} \
 	)
 
+db-upgrade: db-migrate
 db-migrate:
 	@$(call DOCKER_COMPOSE_RUN, --rm api migration:run)
 

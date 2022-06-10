@@ -1,3 +1,3 @@
-grant all privileges on mydb.* TO 'user'@'%' IDENTIFIED BY 'userpass';
-grant SUPER on *.* to 'user'@'%' IDENTIFIED BY 'userpass';
+grant all privileges on ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
+grant SUPER on ${MYSQL_DATABASE}.* to '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
 FLUSH PRIVILEGES;
