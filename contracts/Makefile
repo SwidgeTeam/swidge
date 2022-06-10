@@ -26,7 +26,10 @@ BROWNIE_RETRIEVE = $(call BROWNIE_RUN, $(1), scripts/tasks/retrieve.py main $(2)
 BROWNIE_DEPLOY_ALL = $(call BROWNIE_RUN, $(1), scripts/tasks/deploy_all.py)
 
 $(addprefix deploy., ${DEPLOY_COMMANDS}): deploy.%:
-	@$(call BROWNIE_DEPLOY,$(shell echo $* | cut -d'.' -f 1),$(shell echo $* | cut -d'.' -f 2))
+	@$(call BROWNIE_DEPLOY,\
+		$(shell echo $* | cut -d'.' -f 1),\
+		$(shell echo $* | cut -d'.' -f 2)\
+	)
 
 $(addprefix verify.router., ${NETWORKS}): verify.router.%:
 	@$(call BROWNIE_VERIFY,$*)

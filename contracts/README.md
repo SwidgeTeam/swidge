@@ -11,33 +11,39 @@ across a set of different providers.
 ### Set up
 Set required networks in the local brownie networks file.
 ```shell
-make import
+$ make import
 ```
 
 ### Test
 ```shell
-yarn test
+$ yarn test
 ```
 
 ### Deploy
 
-- Deploy router
+- Everything
 
 ```shell
-make deploy.router.<chain>
+$ make deploy.all.<chain>
 ```
 
-- Deploy providers
+- Router
 
 ```shell
-make deploy.anyswap.<chain>
-make deploy.zeroex.<chain>
+$ make deploy.router.<chain>
+```
+
+- Providers
+
+```shell
+$ make deploy.anyswap.<chain>
+$ make deploy.zeroex.<chain>
 ```
 
 - Verify router
 
 ```shell
-make verify.router.<chain>
+$ make verify.router.<chain>
 ```
 
 #### Accepted chains
