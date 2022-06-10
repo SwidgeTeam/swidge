@@ -105,25 +105,25 @@ $ make db-migrate
 At any time, you can access to the full live feed of logs of the app by typing:
 
 ```sh
-make logs
+$ make logs
 ```
 
 Or you can get the logs of one specific service with:
 
 ```sh
-make <service>-logs
+$ make <service-name>-logs
 ```
 
-The service names are the names defined fro the services on the docker-compose.yml.
+The service names are the names defined for the services on the docker-compose.yml.
 
 ### Recreating Docker images/containers
 
 If some changes have been made to the infrastructure, or if you are experiencing weird issues
-that you might identify as being related to misbehaving infrastructure, you can recreate
-all the infrastructure, and recreate showing logs to be able to debug, with:
+that you might identify as being related to misbehaving infrastructure, you can recreate it all
+and restart it showing the logs to be able to debug, with:
 
 ```sh
-make fuck off
+$ make fuck off
 ```
 
 ## Git workflow
@@ -137,19 +137,19 @@ first. Assign the issue to yourself.
 1. Make sure your working directory is clean:
 
    ``` sh
-   git status
+   $ git status
    ```
 
 2. Switch to the point you want to start your branch from. It will be `master` most of the times:
 
    ``` sh
-   git checkout master
+   $ git checkout master
    ```
 
 3. Ensure your branch is up-to-date with remote repository:
 
    ``` sh
-   git pull
+   $ git pull
    ```
 
 4. Create your new branch. Its name should follow the
@@ -157,7 +157,7 @@ first. Assign the issue to yourself.
    an issue with ID `TvKVs0U3`, whose title is `Small amounts on the origin input should be well formatted`:
 
    ``` sh
-   git checkout --branch TvKVs0U3-small-amounts-on-origin-input 
+   $ git checkout --branch TvKVs0U3-small-amounts-on-origin-input 
    # Or: git checkout -b TvKVs0U3-small-amounts-on-origin-input
    ```
 
@@ -167,6 +167,6 @@ first. Assign the issue to yourself.
    add the following arguments in order to link your local branch with the remote one for subsequent pushes:
 
    ``` sh
-   git push --set-upstream origin TvKVs0U3-small-amounts-on-origin-input 
+   $ git push --set-upstream origin TvKVs0U3-small-amounts-on-origin-input 
    # Or: git push -u origin TvKVs0U3-small-amounts-on-origin-input
    ``` 

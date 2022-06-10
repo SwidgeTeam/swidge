@@ -12,7 +12,7 @@ services:
     ports:
       - ${MYSQL_PORT}:3306
     volumes:
-      - ./data/mariadb:/var/lib/mysql
+      - ./data/db:/var/lib/mysql
       - ./db/create.sql:/docker-entrypoint-initdb.d/init.sql
 
   front:
