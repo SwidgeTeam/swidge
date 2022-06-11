@@ -3,7 +3,7 @@ name: Test contracts
 on:
   push:
     paths:
-      - 'contracts/**'
+      - 'contracts/www/**'
       - '.github/workflows/contracts.yml'
 
 jobs:
@@ -16,7 +16,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./contracts
+        working-directory: ./contracts/www
 
     steps:
       - name: Checkout

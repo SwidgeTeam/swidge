@@ -69,6 +69,18 @@ services:
       - ./data/localstack:/tmp/localstack/data
       - /var/run/docker.sock:/var/run/docker.sock
 
+  brownie:
+    build:
+      context: contracts/
+      args:
+        BROWNIE_USER: ${BROWNIE_USER}
+    ports:
+      - 8545:8545
+    volumes:
+      - ./contracts/www/:/projects
+      - ./data/brownie/config/:${BROWNIE_USER_HOME}/.brownie
+      - ./data/brownie/solcx/:${BROWNIE_USER_HOME}/.solcx
+
 networks:
   default:
     name: ${DOCKER_NETWORK_NAME}

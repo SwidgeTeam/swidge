@@ -40,6 +40,8 @@ DOCKER_COMPOSE_EXEC = ${DOCKER_COMPOSE_COMMAND} exec --user ${DOCKER_USER} $(1)
 DOCKER_COMMAND ?= docker
 DOCKER = ${DOCKER_COMMAND} $(1)
 
+### State management
+
 up:
 	@$(call DOCKER_COMPOSE, up --detach)
 
@@ -95,11 +97,13 @@ $(addsuffix -sh, ${MAKE_APP_SERVICES}): %-sh:
 $(addsuffix -logs, ${MAKE_APP_SERVICES}): %-logs:
 	@$(call DOCKER_COMPOSE, logs --follow $*)
 
-setup: db-migrate create-queue
+setup: db-migrate create-queue set-networks-file compile-contracts
 
 fuck: stop rm build create start
 
 off: up logs
+
+### Database
 
 db-client:
 	@$(call DOCKER_COMPOSE_EXEC, \
@@ -130,6 +134,8 @@ db-rollback:
 db-generate-migration:
 	@$(call DOCKER_COMPOSE_RUN, --rm api migration:generate)
 
+### Localstack
+
 AWS_CLI = \
 	@$(call DOCKER, run \
 		--network ${DOCKER_NETWORK_NAME} \
@@ -147,3 +153,34 @@ create-queue:
 
 list-queues:
 	@$(call AWS_CLI, sqs list-queues)
+
+### Brownie
+
+BROWNIE = $(call DOCKER_COMPOSE_RUN, --rm brownie $(1))
+
+NAMED_BROWNIE = \
+	@$(call DOCKER_COMPOSE_RUN, \
+		--rm \
+		--service-ports \
+		--name ${BROWNIE_CONTAINER} \
+		brownie $(1) \
+	)
+
+BROWNIE_DOCKER_EXEC = $(call DOCKER, exec ${BROWNIE_CONTAINER} $(1))
+BROWNIE_RUN = $(call BROWNIE_DOCKER_EXEC, brownie run --network $(1) $(2))
+BROWNIE_DEPLOY_ALL = $(call BROWNIE_RUN, $(1), scripts/tasks/deploy_all.py)
+
+set-networks-file:
+	@$(call BROWNIE, cp network-config.yaml ${BROWNIE_USER_HOME}/.brownie/network-config.yaml)
+
+compile-contracts:
+	@$(call BROWNIE, brownie compile --all)
+
+brownie-bash:
+	@$(call BROWNIE, bash)
+
+$(addprefix fork., ${BROWNIE_NETWORKS}): fork.%:
+	@$(call NAMED_BROWNIE, brownie console --network $*-fork)
+
+$(addprefix deploy.all.fork., ${BROWNIE_NETWORKS}): deploy.all.fork.%:
+	@$(call BROWNIE_DEPLOY_ALL,$*-fork)

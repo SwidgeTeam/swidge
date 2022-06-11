@@ -14,7 +14,7 @@ development:
       gas_limit: 12000000
       mnemonic: brownie
       port: 8545
-    host: http://127.0.0.1
+    host: http://localhost
     id: mainnet-fork
     name: Ganache-CLI (Mainnet Fork)
     timeout: 120
@@ -27,7 +27,7 @@ development:
       gas_limit: 12000000
       mnemonic: brownie
       port: 8545
-    host: http://127.0.0.1
+    host: http://localhost
     id: bsc-fork
     name: Ganache-CLI (BSC-Mainnet Fork)
     timeout: 120
@@ -40,7 +40,7 @@ development:
       gas_limit: 12000000
       mnemonic: brownie
       port: 8546
-    host: http://127.0.0.1
+    host: http://localhost
     id: fantom-fork
     name: Ganache-CLI (FTM-Mainnet Fork)
     timeout: 120
@@ -53,7 +53,7 @@ development:
       gas_limit: 20000000
       mnemonic: brownie
       port: 8545
-    host: http://127.0.0.1
+    host: http://localhost
     id: polygon-fork
     name: Ganache-CLI (Polygon-Mainnet Fork)
     timeout: 120
@@ -66,7 +66,7 @@ development:
       gas_limit: 20000000
       mnemonic: brownie
       port: 8545
-    host: http://127.0.0.1
+    host: http://localhost
     id: xdai-fork
     name: Ganache-CLI (XDai-Mainnet Fork)
     timeout: 120
@@ -79,7 +79,7 @@ development:
       gas_limit: 20000000
       mnemonic: brownie
       port: 8545
-    host: http://127.0.0.1
+    host: http://localhost
     id: avax-fork
     name: Ganache-CLI (Avax-Mainnet Fork)
     timeout: 120

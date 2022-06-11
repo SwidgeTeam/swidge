@@ -13,14 +13,14 @@ fantom:
 local:
   bridgeImpl:
     anyswap:
-      address: '0xa8e7273A1D410A4D60259E8A08F76ba0042049d4'
+      address: '0x27Cdb1eE3eD435C28aF5BC4F3301E9CB5A2931b8'
       code: 0
   bridges:
     anyswap: '0x4f3aff3a747fcade12598081e80c6605a8be192f'
-  router: '0x91048c560D1a8b468C991D76C25f44d16AD60f75'
+  router: '0x071A6f28f30b1FD81578D656d9d91f4bdB76b18C'
   swapImpl:
     zeroex:
-      address: '0x6A81CafE7Ae4ec14145Fbca3884aedF0aaf439Bf'
+      address: '0x6FECfBA2305c69E59c0115e18E4fBF6BF72Aa658'
       code: 0
 polygon:
   bridgeImpl:
