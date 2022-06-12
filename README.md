@@ -99,7 +99,7 @@ $ make fork-<chain>
 That will run Brownie inside a container and fork the selected chain.
 Once you have done that, you can run any of the following helpers.
 
-You can find the accepted chains on [this env file](https://github.com/SwidgeTeam/swidge/blob/master/env/make.env).
+You can find the accepted chains on [this env file](https://github.com/SwidgeTeam/swidge/blob/master/env/brownie.env).
 
 ### Deploy on forked chain
 
