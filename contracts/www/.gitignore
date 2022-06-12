@@ -11,3 +11,4 @@ artifacts
 #Brownie files
 build
 __pycache__
+.hypothesis

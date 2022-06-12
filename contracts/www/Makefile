@@ -15,10 +15,7 @@ $(foreach net, ${NETWORKS}, $(eval _ := $(shell \
 REMOVE_TEMP_ENV_FILE := $(shell unlink ${TEMP_ENV_FILE})
 
 BROWNIE = brownie
-BROWNIE_NETWORKS = ${BROWNIE} networks $(1)
-BROWNIE_COMPILE = ${BROWNIE} compile $(1)
 BROWNIE_RUN = ${BROWNIE} run --network $(1) $(2)
-BROWNIE_FORK = ${BROWNIE} console --network $(1)
 
 BROWNIE_DEPLOY = $(call BROWNIE_RUN, $(2), scripts/tasks/deploy.py main $(1))
 BROWNIE_VERIFY = $(call BROWNIE_RUN, $(1), scripts/tasks/verify-router.py)
@@ -34,17 +31,8 @@ $(addprefix deploy., ${DEPLOY_COMMANDS}): deploy.%:
 $(addprefix verify.router., ${NETWORKS}): verify.router.%:
 	@$(call BROWNIE_VERIFY,$*)
 
-$(addprefix fork., ${NETWORKS}): fork.%:
-	@$(call BROWNIE_FORK,$*-fork)
-
 $(addprefix retrieve., ${NETWORKS}): retrieve.%:
 	@$(call BROWNIE_RETRIEVE,$*,$(TOKEN),$(AMOUNT))
 
 $(addprefix deploy.all., ${NETWORKS}): deploy.all.%:
 	@$(call BROWNIE_DEPLOY_ALL,$*)
-
-import:
-	@${call BROWNIE_NETWORKS, import network-config.yaml true}
-
-compile:
-	@${call BROWNIE_COMPILE, --all}

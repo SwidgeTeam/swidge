@@ -74,8 +74,11 @@ services:
       context: contracts/
       args:
         BROWNIE_USER: ${BROWNIE_USER}
-    ports:
-      - 8545:8545
+    environment:
+      MNEMONIC: ${BROWNIE_MNEMONIC}
+      POLYGON_MAINNET_ALCHEMY_KEY: ${POLYGON_MAINNET_ALCHEMY_KEY}
+      POLYGON_TESTNET_ALCHEMY_KEY: ${POLYGON_TESTNET_ALCHEMY_KEY}
+    network_mode: host
     volumes:
       - ./contracts/www/:/projects
       - ./data/brownie/config/:${BROWNIE_USER_HOME}/.brownie

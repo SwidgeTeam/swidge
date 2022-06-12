@@ -9,7 +9,7 @@ WORKDIR /usr/src/app
 RUN apt-get update && apt-get install -y libssl-dev npm
 
 # Install Ganache chain
-RUN npm install --global ganache-cli
+RUN npm install --global ganache
 
 # Install Brownie
 RUN wget https://raw.githubusercontent.com/eth-brownie/brownie/master/requirements.txt

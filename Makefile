@@ -166,9 +166,12 @@ NAMED_BROWNIE = \
 		brownie $(1) \
 	)
 
-BROWNIE_DOCKER_EXEC = $(call DOCKER, exec ${BROWNIE_CONTAINER} $(1))
+BROWNIE_DOCKER_EXEC = $(call DOCKER, exec -it ${BROWNIE_CONTAINER} $(1))
 BROWNIE_RUN = $(call BROWNIE_DOCKER_EXEC, brownie run --network $(1) $(2))
+
 BROWNIE_DEPLOY_ALL = $(call BROWNIE_RUN, $(1), scripts/tasks/deploy_all.py)
+BROWNIE_GET_COINS = $(call BROWNIE_RUN, $(1), scripts/tasks/steal-coins.py)
+BROWNIE_GET_TOKENS = $(call BROWNIE_RUN, $(1), scripts/tasks/steal-tokens.py main $(2))
 
 set-networks-file:
 	@$(call BROWNIE, cp network-config.yaml ${BROWNIE_USER_HOME}/.brownie/network-config.yaml)
@@ -179,8 +182,14 @@ compile-contracts:
 brownie-bash:
 	@$(call BROWNIE, bash)
 
-$(addprefix fork., ${BROWNIE_NETWORKS}): fork.%:
+$(addprefix fork-, ${BROWNIE_NETWORKS}): fork-%:
 	@$(call NAMED_BROWNIE, brownie console --network $*-fork)
 
-$(addprefix deploy.all.fork., ${BROWNIE_NETWORKS}): deploy.all.fork.%:
+$(addprefix deploy-all-fork-, ${BROWNIE_NETWORKS}): deploy-all-fork-%:
 	@$(call BROWNIE_DEPLOY_ALL,$*-fork)
+
+get-coins:
+	@$(call BROWNIE_GET_COINS, local)
+
+$(addprefix get-tokens-, ${BROWNIE_NETWORKS}): get-tokens-%:
+	@$(call BROWNIE_GET_TOKENS,$*-fork,$(TOKEN))

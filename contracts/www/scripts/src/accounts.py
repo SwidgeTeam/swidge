@@ -1,9 +1,11 @@
+import os
+
 from brownie import accounts, config
 
 """
 Names the accounts with names for the rest of the scripts to use
 """
-mnemonic = config['wallet']['mnemonic']
+mnemonic = os.environ['MNEMONIC']
 acc = accounts.from_mnemonic(mnemonic, 10)
 
 deployer = acc[0]

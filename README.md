@@ -86,6 +86,57 @@ Make sure the application is running and type:
 $ make db-import < ./path/to/your/dump.sql
 ```
 
+## Brownie
+
+### Forking a chain
+
+You can fork any accepted chain with:
+
+``` sh
+$ make fork-<chain>
+```
+
+That will run Brownie inside a container and fork the selected chain.
+Once you have done that, you can run any of the following helpers.
+
+You can find the accepted chains on [this env file](https://github.com/SwidgeTeam/swidge/blob/master/env/make.env).
+
+### Deploy on forked chain
+
+If you are working with the contracts and need to try things on local, you can deploy
+all the contracts' suite on your already forked chain by typing:
+
+``` sh
+$ make deploy-all-fork-<chain>
+```
+
+The _chain_ here must be the same that its already forked, because the contracts to be
+deployed have external contract addresses dependencies.
+
+### Obtain native coins
+
+Whenever you need coins to do transactions on the forked chain,
+you can just get them by typing:
+
+``` sh
+$ make get-coins
+```
+
+This will send a fixed amount of coins to the first three wallets from the _MNEMONIC_
+you have setted on your root's `.env` or the default _MNEMONIC_ from the _env_'s folder.
+
+### Obtain tokens
+
+If you need some tokens instead, you can just get them from an already holding wallet by typing:
+
+``` sh
+$ make get-tokens-<chain> TOKEN=<token_name>
+```
+
+You can find the accepted tokens
+on [this YAML file](https://github.com/SwidgeTeam/swidge/blob/master/contracts/www/tokens.yaml).
+But if the one you're looking for it's not there, you can always add it.
+
 ## Troubleshooting
 
 ### Resetting local database
