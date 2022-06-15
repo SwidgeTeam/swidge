@@ -97,7 +97,7 @@ $(addsuffix -sh, ${MAKE_APP_SERVICES}): %-sh:
 $(addsuffix -logs, ${MAKE_APP_SERVICES}): %-logs:
 	@$(call DOCKER_COMPOSE, logs --follow $*)
 
-setup: db-migrate create-queue set-networks-file compile-contracts
+setup: db-migrate set-networks-file compile-contracts
 
 fuck: stop rm build create start
 
@@ -194,7 +194,9 @@ get-coins:
 $(addprefix get-tokens-, ${BROWNIE_NETWORKS}): get-tokens-%:
 	@$(call BROWNIE_GET_TOKENS,$*-fork,$(TOKEN))
 
-relayer-events:
+### Relayer
+
+relayer-events: create-queue
 	@$(call DOCKER_COMPOSE_RUN, --rm relayer run:dev:events)
 
 relayer-consumer:
