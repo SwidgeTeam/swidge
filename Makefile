@@ -149,7 +149,7 @@ AWS_CLI = \
 	)
 
 create-queue:
-	@$(call AWS_CLI, sqs create-queue --queue-name ${AWS_SQS_QUEUE_NAME})
+	@$(call AWS_CLI, sqs create-queue --queue-name ${AWS_SQS_QUEUE_NAME} --attributes '{"FifoQueue": "True"}')
 
 list-queues:
 	@$(call AWS_CLI, sqs list-queues)
