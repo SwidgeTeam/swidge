@@ -194,5 +194,8 @@ get-coins:
 $(addprefix get-tokens-, ${BROWNIE_NETWORKS}): get-tokens-%:
 	@$(call BROWNIE_GET_TOKENS,$*-fork,$(TOKEN))
 
-relayer-up:
-	@$(call DOCKER_COMPOSE_RUN, --rm relayer run:dev:events-listener)
+relayer-events:
+	@$(call DOCKER_COMPOSE_RUN, --rm relayer run:dev:events)
+
+relayer-consumer:
+	@$(call DOCKER_COMPOSE_RUN, --rm relayer run:dev:consumer)
