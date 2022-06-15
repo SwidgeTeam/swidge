@@ -22,12 +22,35 @@ export class TransactionProcessor {
   async execute(job: TransactionJob) {
     this.logger.log('Received job ', job);
 
-    const swapOrder = await this.transactionRepository.quoteSwap(<SwapRequest>{
-      chainId: job.toChainId,
-      tokenIn: job.srcToken,
-      tokenOut: job.dstToken,
-      amountIn: job.bridgeAmountOut,
-    });
+    let swapDetails;
+
+    if (job.srcToken === job.dstToken) {
+      swapDetails = {
+        providerCode: null,
+        amountIn: job.bridgeAmountOut,
+        tokenIn: job.srcToken,
+        tokenOut: job.dstToken,
+        data: '0x',
+        required: false,
+      };
+    } else {
+      const swapOrder = await this.transactionRepository.quoteSwap(<
+        SwapRequest
+      >{
+        chainId: job.toChainId,
+        tokenIn: job.srcToken,
+        tokenOut: job.dstToken,
+        amountIn: job.bridgeAmountOut,
+      });
+      swapDetails = {
+        providerCode: swapOrder.providerCode,
+        amountIn: job.bridgeAmountOut,
+        tokenIn: swapOrder.tokenIn,
+        tokenOut: swapOrder.tokenOut,
+        data: swapOrder.data,
+        required: swapOrder.required,
+      };
+    }
 
     // Execute transaction
     const params: FinalizeCrossParams = {
@@ -35,14 +58,7 @@ export class TransactionProcessor {
       routerAddress: job.router,
       receiverAddress: job.walletAddress,
       txHash: job.txHash,
-      swap: {
-        providerCode: swapOrder.providerCode,
-        amountIn: job.bridgeAmountOut,
-        tokenIn: swapOrder.tokenIn,
-        tokenOut: swapOrder.tokenOut,
-        data: swapOrder.data,
-        required: swapOrder.required,
-      },
+      swap: swapDetails,
     };
 
     this.logger.log('Calling contract w/ ', params);
