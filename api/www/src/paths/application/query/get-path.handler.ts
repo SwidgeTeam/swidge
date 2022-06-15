@@ -120,19 +120,17 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
       query.dstToken,
       query.toChainId,
     );
-    const destinationBridgingToken = Tokens.USDC[query.toChainId];
 
     let destinationSwapOrder;
-
     if (
       dstToken.address.toLowerCase() ===
-      destinationBridgingToken.address.toLowerCase()
+      bridgingOrder.tokenOut.address.toLowerCase()
     ) {
-      destinationSwapOrder = SwapOrder.notRequired();
+      destinationSwapOrder = SwapOrder.sameToken(dstToken);
     } else {
       const destinationSwapRequest = new SwapRequest(
         query.toChainId,
-        destinationBridgingToken,
+        bridgingOrder.tokenOut,
         dstToken,
         destinationReceivedAmount,
       );
