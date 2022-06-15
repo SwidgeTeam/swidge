@@ -29,7 +29,7 @@ export class ConfigService {
     return this.value('secret');
   }
 
-  private isProduction(): boolean {
+  get isProduction(): boolean {
     return this.value('environment') === 'production';
   }
 
