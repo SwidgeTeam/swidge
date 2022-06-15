@@ -43,16 +43,6 @@ const filteredTokenList = (tokenList: IToken[]) => {
                     return el.name.toLowerCase().includes(props.searchTerm) ||
                         el.symbol.toLowerCase().includes(props.searchTerm)
                 })
-            .filter(
-                (el: IToken) => {
-                    // TODO : remove when we allow not_required transaction on destination chain
-                    if (!props.isOrigin) {
-                        return el.address.toLowerCase() !== '0x04068DA6C83AFCFA0e13ba15A6696662335D5B75'.toLowerCase() &&
-                            el.address.toLowerCase() !== '0x2791bca1f2de4661ed88a30c99a7a9449aa84174'.toLowerCase();
-                    }
-                    return true;
-                }
-            )
     }
 }
 
