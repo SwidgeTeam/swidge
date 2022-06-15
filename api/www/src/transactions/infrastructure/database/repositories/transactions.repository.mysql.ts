@@ -53,8 +53,8 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
       BigInteger.fromBigNumber(result.bridgeAmountIn),
       BigInteger.fromBigNumber(result.bridgeAmountOut),
       new Date(result.executed),
-      new Date(result.bridged),
-      new Date(result.completed),
+      result.bridged ? new Date(result.bridged) : null,
+      result.completed ? new Date(result.completed) : null,
     );
   }
 }
