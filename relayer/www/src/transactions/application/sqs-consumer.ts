@@ -3,6 +3,7 @@ import { Inject } from '@nestjs/common';
 import { Class } from '../../shared/Class';
 import { TransactionsRepository } from '../domain/TransactionsRepository';
 import * as https from 'https';
+import * as http from 'http';
 import { Consumer, SQSMessage } from 'sqs-consumer';
 import { SQS } from 'aws-sdk';
 import { ConfigService } from '../../config/config.service';
@@ -62,25 +63,38 @@ export class SqsConsumer {
         accessKeyId: this.configService.accessKey,
         secretAccessKey: this.configService.secret,
         httpOptions: {
-          agent: new https.Agent({
-            keepAlive: true,
-          }),
+          agent: this.getAgent(),
         },
       }),
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const self = this;
+
     consumer.on('error', (err) => {
-      this.logger.error(err);
+      self.logger.error(err);
     });
 
     consumer.on('processing_error', (err) => {
-      this.logger.log('processing_error ', err.message);
+      self.logger.log('processing_error ', err.message);
     });
 
     consumer.on('message_processed', (msg) => {
-      this.logger.log('message_processed ', msg);
+      self.logger.log('message_processed ', msg);
     });
 
     consumer.start();
+  }
+
+  private getAgent() {
+    if (this.configService.isProduction) {
+      return new https.Agent({
+        keepAlive: true,
+      });
+    }
+
+    return new http.Agent({
+      keepAlive: true,
+    });
   }
 }

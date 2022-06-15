@@ -13,4 +13,7 @@ async function main() {
   await listener.execute();
 }
 
-main();
+main().catch((error) => {
+  console.log(error);
+  throw error;
+});

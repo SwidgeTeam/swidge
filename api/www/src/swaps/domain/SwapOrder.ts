@@ -15,6 +15,10 @@ export class SwapOrder {
     );
   }
 
+  public static sameToken(token: Token) {
+    return new SwapOrder(null, token, token, null, null, null, false);
+  }
+
   constructor(
     private readonly _providerCode: number,
     private readonly _tokenIn: Token,

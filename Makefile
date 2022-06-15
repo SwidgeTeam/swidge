@@ -97,7 +97,7 @@ $(addsuffix -sh, ${MAKE_APP_SERVICES}): %-sh:
 $(addsuffix -logs, ${MAKE_APP_SERVICES}): %-logs:
 	@$(call DOCKER_COMPOSE, logs --follow $*)
 
-setup: db-migrate create-queue set-networks-file compile-contracts
+setup: db-migrate set-networks-file compile-contracts
 
 fuck: stop rm build create start
 
@@ -149,7 +149,7 @@ AWS_CLI = \
 	)
 
 create-queue:
-	@$(call AWS_CLI, sqs create-queue --queue-name ${AWS_SQS_QUEUE_NAME})
+	@$(call AWS_CLI, sqs create-queue --queue-name ${AWS_SQS_QUEUE_NAME} --attributes '{"FifoQueue": "True"}')
 
 list-queues:
 	@$(call AWS_CLI, sqs list-queues)
@@ -193,3 +193,11 @@ get-coins:
 
 $(addprefix get-tokens-, ${BROWNIE_NETWORKS}): get-tokens-%:
 	@$(call BROWNIE_GET_TOKENS,$*-fork,$(TOKEN))
+
+### Relayer
+
+relayer-events: create-queue
+	@$(call DOCKER_COMPOSE_RUN, --rm relayer run:dev:events)
+
+relayer-consumer:
+	@$(call DOCKER_COMPOSE_RUN, --rm relayer run:dev:consumer)

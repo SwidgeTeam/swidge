@@ -53,11 +53,12 @@ services:
       REGION: ${AWS_SQS_REGION}
       ACCESS_KEY: ${AWS_SQS_ACCESS_KEY}
       SECRET: ${AWS_SQS_SECRET}
+    network_mode: host
     volumes:
       - ./relayer/www/:/relayer/
 
   localstack:
-    image: localstack/localstack:0.13
+    image: localstack/localstack:0.14.3
     environment:
       AWS_DEFAULT_REGION: ${AWS_SQS_REGION}
       EDGE_PORT: 4566
