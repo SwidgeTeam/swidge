@@ -162,13 +162,15 @@ HARDHAT_DOCKER_EXEC = $(call DOCKER,exec -it "running-$(1)" $(2))
 HARDHAT_RUN = $(call HARDHAT_DOCKER_EXEC,$(1),npx hardhat --network $(2) $(3))
 
 HARDHAT_DEPLOY_ALL = $(call HARDHAT_RUN,$(1),$(2),deploy-all --chain $(1))
-HARDHAT_GET_TOKENS = $(call HARDHAT_RUN,$(1),$(2),get-tokens --chain $(1) --token $(2))
+HARDHAT_GET_TOKENS = $(call HARDHAT_RUN,$(1),$(2),get-tokens --chain $(1) --token $(3))
 
 fork-chain:
 	@$(call DOCKER_COMPOSE_RUN, \
 		--rm \
-		-e "FORKED_RPC_NODE=${RPC_NODE_$(CHAIN)}" \
-		-p ${EXTERNAL_PORT_$(CHAIN)}:8545 \
+		-e "FORKING=true" \
+		-e "FORKED_RPC_NODE=${$(CHAIN)_RPC_NODE}" \
+		-e "FORKED_CHAIN_ID=${$(CHAIN)_CHAIN_ID}" \
+		-p ${$(CHAIN)_EXTERNAL_PORT}:8545 \
 		--name "running-$(CHAIN)" \
 		hardhat \
 		npx hardhat node \

@@ -12,6 +12,8 @@ const accounts = {
     "test test test test test test test test test test test junk",
 };
 
+const forking = process.env.FORKING === "true";
+
 const config: HardhatUserConfig = {
   solidity: {
     compilers: [
@@ -30,8 +32,10 @@ const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
   networks: {
     hardhat: {
+      accounts,
+      chainId: forking ? Number(process.env.FORKED_CHAIN_ID) : 31337,
       forking: {
-        enabled: process.env.FORKING === "true",
+        enabled: forking,
         url: `${process.env.FORKED_RPC_NODE}`,
       },
     },
@@ -41,13 +45,13 @@ const config: HardhatUserConfig = {
     polygon: {
       url: process.env.RPC_NODE_POLYGON,
       accounts,
-      chainId: 137,
+      chainId: Number(process.env.CHAIN_ID_POLYGON),
       gasMultiplier: 4,
     },
     fantom: {
       url: process.env.RPC_NODE_FANTOM,
       accounts,
-      chainId: 250,
+      chainId: Number(process.env.CHAIN_ID_FANTOM),
       gasMultiplier: 4,
     },
   },

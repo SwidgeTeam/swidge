@@ -75,8 +75,10 @@ services:
       context: contracts/
     environment:
       MNEMONIC: ${MNEMONIC}
-      RPC_NODE_POLYGON: ${RPC_NODE_polygon}
-      RPC_NODE_FANTOM: ${RPC_NODE_fantom}
+      RPC_NODE_FANTOM: ${fantom_RPC_NODE}
+      RPC_NODE_POLYGON: ${polygon_RPC_NODE}
+      CHAIN_ID_FANTOM: ${fantom_CHAIN_ID}
+      CHAIN_ID_POLYGON: ${polygon_CHAIN_ID}
     volumes:
       - ./contracts/www/:/code
 
