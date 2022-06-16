@@ -177,6 +177,25 @@ and restart it showing the logs to be able to debug, with:
 $ make fuck off
 ```
 
+### Customizing the environment
+
+If you need to change any of the environment variables for you local setup, you can
+do so by creating a `.env` file on the root of the project, and adding there any of 
+the variables you wish to override.
+
+For example you could have something like:
+
+```sh
+DOCKER_COMPOSE_COMMAND=docker compose
+MYSQL_PORT=33060
+```
+
+That would tell Makefile to invoke Docker Compose with that custom command, and would 
+use the port 33060 of your machine to expose the MySQL server.
+
+You can do the same with any variable of the conditionally set variables on the Makefile, as 
+also any of the variables on the `/env` folder.
+
 ## Git workflow
 
 ### Resolving an issue
