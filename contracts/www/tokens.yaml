@@ -5,7 +5,7 @@ polygon:
     decimals: 6
   link:
     address: '0x53e0bca35ec356bd5dddfebbd1fc0fd03fabad39'
-    holder: '0xba12222222228d8ba445958a75a0704d566bf2c8'
+    holder: '0x61167073e31b1dad85a3e531211c7b8f1e5cae72'
     decimals: 18
 fantom:
   usdc:

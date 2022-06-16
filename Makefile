@@ -154,7 +154,7 @@ create-queue:
 list-queues:
 	@$(call AWS_CLI, sqs list-queues)
 
-### Contracts
+### Hardhat
 
 HARDHAT = $(call DOCKER_COMPOSE_RUN,--rm hardhat $(1))
 
@@ -162,14 +162,7 @@ HARDHAT_DOCKER_EXEC = $(call DOCKER,exec -it "running-$(1)" $(2))
 HARDHAT_RUN = $(call HARDHAT_DOCKER_EXEC,$(1),npx hardhat --network localhost $(2))
 
 HARDHAT_DEPLOY_ALL = $(call HARDHAT_RUN,$(1),deploy-all --chain $(1))
-HARDHAT_GET_COINS = $(call HARDHAT_RUN,$(1),scripts/tasks/steal-coins.py)
-HARDHAT_GET_TOKENS = $(call HARDHAT_RUN,$(1),scripts/tasks/steal-tokens.py main $(2))
-
-compile-contracts:
-	@$(call HARDHAT, npx hardhat compile)
-
-test-contracts:
-	@$(call HARDHAT, npx hardhat test)
+HARDHAT_GET_TOKENS = $(call HARDHAT_RUN,$(1),get-tokens --chain $(1) --token $(2))
 
 fork-chain:
 	@$(call DOCKER_COMPOSE_RUN, \
@@ -187,11 +180,14 @@ fork-polygon: fork-chain
 fork-fantom: CHAIN=fantom
 fork-fantom: fork-chain
 
+compile-contracts:
+	@$(call HARDHAT, npx hardhat compile)
+
+test-contracts:
+	@$(call HARDHAT, npx hardhat test)
+
 $(addprefix deploy-all-fork-, ${ENABLED_NETWORKS}): deploy-all-fork-%:
 	@$(call HARDHAT_DEPLOY_ALL,$*)
-
-$(addprefix get-coins-, ${ENABLED_NETWORKS}): get-coins-%:
-	@$(call HARDHAT_GET_COINS, $*)
 
 $(addprefix get-tokens-, ${ENABLED_NETWORKS}): get-tokens-%:
 	@$(call HARDHAT_GET_TOKENS,$*,$(token))
