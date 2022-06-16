@@ -1,5 +1,5 @@
 const getAccounts = require("./helpers/accounts.js");
-const { getAddresses } = require("./helpers/addresses.js");
+const { getAddresses, saveAddresses } = require("./helpers/addresses.js");
 
 module.exports = async function (taskArguments, hre, runSuper) {
   // We get the contract to deploy
@@ -10,7 +10,8 @@ module.exports = async function (taskArguments, hre, runSuper) {
   const network = taskArguments.chain;
 
   const { deployer, relayer } = await getAccounts(hre);
-  const addresses = getAddresses(network);
+  const allAddresses = getAddresses();
+  const addresses = allAddresses[network];
 
   const router = await Router.connect(deployer).deploy();
   const zeroEx = await ZeroEx.connect(deployer).deploy();
@@ -39,6 +40,13 @@ module.exports = async function (taskArguments, hre, runSuper) {
 
   // Update the relayer's address
   await router.functions.updateRelayer(relayer.address);
+
+  // Persist new addresses
+  const connectedNetwork = hre.network.name;
+  allAddresses[connectedNetwork].router = router.address;
+  allAddresses[connectedNetwork].bridgeImpl.anyswap.address = anyswap.address;
+  allAddresses[connectedNetwork].swapImpl.zeroex.address = zeroEx.address;
+  saveAddresses(allAddresses);
 
   console.log("Deploy OK");
 };

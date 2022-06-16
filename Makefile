@@ -159,10 +159,10 @@ list-queues:
 HARDHAT = $(call DOCKER_COMPOSE_RUN,--rm hardhat $(1))
 
 HARDHAT_DOCKER_EXEC = $(call DOCKER,exec -it "running-$(1)" $(2))
-HARDHAT_RUN = $(call HARDHAT_DOCKER_EXEC,$(1),npx hardhat --network localhost $(2))
+HARDHAT_RUN = $(call HARDHAT_DOCKER_EXEC,$(1),npx hardhat --network $(2) $(3))
 
-HARDHAT_DEPLOY_ALL = $(call HARDHAT_RUN,$(1),deploy-all --chain $(1))
-HARDHAT_GET_TOKENS = $(call HARDHAT_RUN,$(1),get-tokens --chain $(1) --token $(2))
+HARDHAT_DEPLOY_ALL = $(call HARDHAT_RUN,$(1),$(2),deploy-all --chain $(1))
+HARDHAT_GET_TOKENS = $(call HARDHAT_RUN,$(1),$(2),get-tokens --chain $(1) --token $(2))
 
 fork-chain:
 	@$(call DOCKER_COMPOSE_RUN, \
@@ -187,10 +187,10 @@ test-contracts:
 	@$(call HARDHAT, npx hardhat test)
 
 $(addprefix deploy-all-fork-, ${ENABLED_NETWORKS}): deploy-all-fork-%:
-	@$(call HARDHAT_DEPLOY_ALL,$*)
+	@$(call HARDHAT_DEPLOY_ALL,$*,localhost)
 
 $(addprefix get-tokens-, ${ENABLED_NETWORKS}): get-tokens-%:
-	@$(call HARDHAT_GET_TOKENS,$*,$(token))
+	@$(call HARDHAT_GET_TOKENS,$*,localhost,$(token))
 
 ### Relayer
 

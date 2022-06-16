@@ -1,17 +1,16 @@
 const fs = require("fs");
 const YAML = require("yaml");
 
-const getAddresses = (network) => {
+const getAddresses = () => {
   const file = fs.readFileSync("./contracts.yaml", "utf8");
-  const addresses = YAML.parse(file);
-  return addresses[network];
+  return YAML.parse(file);
 };
 
-const setAddresses = (network, addresses) => {
-  // TODO
+const saveAddresses = (addresses) => {
+  fs.writeFileSync("./contracts.yaml", YAML.stringify(addresses), "utf8");
 };
 
 module.exports = {
-  getAddresses: getAddresses,
-  setAddresses: setAddresses,
+  getAddresses,
+  saveAddresses,
 };
