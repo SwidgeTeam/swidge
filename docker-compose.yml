@@ -70,20 +70,15 @@ services:
       - ./data/localstack:/tmp/localstack/data
       - /var/run/docker.sock:/var/run/docker.sock
 
-  brownie:
+  hardhat:
     build:
       context: contracts/
-      args:
-        BROWNIE_USER: ${BROWNIE_USER}
     environment:
-      MNEMONIC: ${BROWNIE_MNEMONIC}
-      POLYGON_MAINNET_ALCHEMY_KEY: ${POLYGON_MAINNET_ALCHEMY_KEY}
-      POLYGON_TESTNET_ALCHEMY_KEY: ${POLYGON_TESTNET_ALCHEMY_KEY}
-    network_mode: host
+      MNEMONIC: ${MNEMONIC}
+      RPC_NODE_POLYGON: ${RPC_NODE_polygon}
+      RPC_NODE_FANTOM: ${RPC_NODE_fantom}
     volumes:
-      - ./contracts/www/:/projects
-      - ./data/brownie/config/:${BROWNIE_USER_HOME}/.brownie
-      - ./data/brownie/solcx/:${BROWNIE_USER_HOME}/.solcx
+      - ./contracts/www/:/code
 
 networks:
   default:

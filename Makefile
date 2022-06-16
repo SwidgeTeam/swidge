@@ -97,7 +97,7 @@ $(addsuffix -sh, ${MAKE_APP_SERVICES}): %-sh:
 $(addsuffix -logs, ${MAKE_APP_SERVICES}): %-logs:
 	@$(call DOCKER_COMPOSE, logs --follow $*)
 
-setup: db-migrate set-networks-file compile-contracts
+setup: db-migrate compile-contracts
 
 fuck: stop rm build create start
 
@@ -154,45 +154,47 @@ create-queue:
 list-queues:
 	@$(call AWS_CLI, sqs list-queues)
 
-### Brownie
+### Contracts
 
-BROWNIE = $(call DOCKER_COMPOSE_RUN, --rm brownie $(1))
+HARDHAT = $(call DOCKER_COMPOSE_RUN,--rm hardhat $(1))
 
-NAMED_BROWNIE = \
-	@$(call DOCKER_COMPOSE_RUN, \
-		--rm \
-		--service-ports \
-		--name ${BROWNIE_CONTAINER} \
-		brownie $(1) \
-	)
+HARDHAT_DOCKER_EXEC = $(call DOCKER,exec -it "running-$(1)" $(2))
+HARDHAT_RUN = $(call HARDHAT_DOCKER_EXEC,$(1),npx hardhat --network localhost $(2))
 
-BROWNIE_DOCKER_EXEC = $(call DOCKER, exec -it ${BROWNIE_CONTAINER} $(1))
-BROWNIE_RUN = $(call BROWNIE_DOCKER_EXEC, brownie run --network $(1) $(2))
-
-BROWNIE_DEPLOY_ALL = $(call BROWNIE_RUN, $(1), scripts/tasks/deploy_all.py)
-BROWNIE_GET_COINS = $(call BROWNIE_RUN, $(1), scripts/tasks/steal-coins.py)
-BROWNIE_GET_TOKENS = $(call BROWNIE_RUN, $(1), scripts/tasks/steal-tokens.py main $(2))
-
-set-networks-file:
-	@$(call BROWNIE, cp network-config.yaml ${BROWNIE_USER_HOME}/.brownie/network-config.yaml)
+HARDHAT_DEPLOY_ALL = $(call HARDHAT_RUN,$(1),deploy-all --chain $(1))
+HARDHAT_GET_COINS = $(call HARDHAT_RUN,$(1),scripts/tasks/steal-coins.py)
+HARDHAT_GET_TOKENS = $(call HARDHAT_RUN,$(1),scripts/tasks/steal-tokens.py main $(2))
 
 compile-contracts:
-	@$(call BROWNIE, brownie compile --all)
+	@$(call HARDHAT, npx hardhat compile)
 
-brownie-bash:
-	@$(call BROWNIE, bash)
+test-contracts:
+	@$(call HARDHAT, npx hardhat test)
 
-$(addprefix fork-, ${BROWNIE_NETWORKS}): fork-%:
-	@$(call NAMED_BROWNIE, brownie console --network $*-fork)
+fork-chain:
+	@$(call DOCKER_COMPOSE_RUN, \
+		--rm \
+		-e "FORKED_RPC_NODE=${RPC_NODE_$(CHAIN)}" \
+		-p ${EXTERNAL_PORT_$(CHAIN)}:8545 \
+		--name "running-$(CHAIN)" \
+		hardhat \
+		npx hardhat node \
+	)
 
-$(addprefix deploy-all-fork-, ${BROWNIE_NETWORKS}): deploy-all-fork-%:
-	@$(call BROWNIE_DEPLOY_ALL,$*-fork)
+fork-polygon: CHAIN=polygon
+fork-polygon: fork-chain
 
-get-coins:
-	@$(call BROWNIE_GET_COINS, local)
+fork-fantom: CHAIN=fantom
+fork-fantom: fork-chain
 
-$(addprefix get-tokens-, ${BROWNIE_NETWORKS}): get-tokens-%:
-	@$(call BROWNIE_GET_TOKENS,$*-fork,$(TOKEN))
+$(addprefix deploy-all-fork-, ${ENABLED_NETWORKS}): deploy-all-fork-%:
+	@$(call HARDHAT_DEPLOY_ALL,$*)
+
+$(addprefix get-coins-, ${ENABLED_NETWORKS}): get-coins-%:
+	@$(call HARDHAT_GET_COINS, $*)
+
+$(addprefix get-tokens-, ${ENABLED_NETWORKS}): get-tokens-%:
+	@$(call HARDHAT_GET_TOKENS,$*,$(token))
 
 ### Relayer
 
