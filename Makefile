@@ -159,7 +159,7 @@ list-queues:
 HARDHAT = $(call DOCKER_COMPOSE_RUN,--rm hardhat $(1))
 
 HARDHAT_DOCKER_EXEC = $(call DOCKER,exec -it "running-$(1)" $(2))
-HARDHAT_RUN = $(call HARDHAT_DOCKER_EXEC,$(1),npx hardhat --network $(2) $(3))
+HARDHAT_RUN = $(call HARDHAT_DOCKER_EXEC,$(1),yarn $(3) --network $(2))
 
 HARDHAT_DEPLOY_ALL = $(call HARDHAT_RUN,$(1),$(2),deploy-all --chain $(1))
 HARDHAT_GET_TOKENS = $(call HARDHAT_RUN,$(1),$(2),get-tokens --chain $(1) --token $(3))
@@ -173,7 +173,7 @@ fork-chain:
 		-p ${$(CHAIN)_EXTERNAL_PORT}:8545 \
 		--name "running-$(CHAIN)" \
 		hardhat \
-		npx hardhat node \
+		up \
 	)
 
 fork-polygon: CHAIN=polygon
@@ -183,13 +183,13 @@ fork-fantom: CHAIN=fantom
 fork-fantom: fork-chain
 
 compile-contracts:
-	@$(call HARDHAT, npx hardhat compile)
+	@$(call HARDHAT, build)
 
 test-contracts:
-	@$(call HARDHAT, npx hardhat test)
+	@$(call HARDHAT, test)
 
 $(addprefix deploy-all-fork-, ${ENABLED_NETWORKS}): deploy-all-fork-%:
-	@$(call HARDHAT_DEPLOY_ALL,$*,localhost)
+	$(call HARDHAT_DEPLOY_ALL,$*,localhost)
 
 $(addprefix get-tokens-, ${ENABLED_NETWORKS}): get-tokens-%:
 	@$(call HARDHAT_GET_TOKENS,$*,localhost,$(token))
