@@ -191,7 +191,7 @@ $(addprefix get-tokens-, ${ENABLED_NETWORKS}): get-tokens-%:
 ### Relayer
 
 relayer-events: create-queue
-	@$(call DOCKER_COMPOSE_RUN, --rm relayer run:dev:events)
+	@$(call DOCKER_COMPOSE_RUN, --rm ${DOCKER_RELAYER_SERVICE} run:dev:events)
 
 relayer-consumer:
-	@$(call DOCKER_COMPOSE_RUN, --rm relayer run:dev:consumer)
+	@$(call DOCKER_COMPOSE_RUN, --rm ${DOCKER_RELAYER_SERVICE} run:dev:consumer)
