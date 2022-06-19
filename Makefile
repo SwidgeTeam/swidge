@@ -97,7 +97,7 @@ $(addsuffix -sh, ${MAKE_APP_SERVICES}): %-sh:
 $(addsuffix -logs, ${MAKE_APP_SERVICES}): %-logs:
 	@$(call DOCKER_COMPOSE, logs --follow $*)
 
-setup: db-migrate compile-contracts
+setup: db-migrate build-contracts
 
 fuck: stop rm build create start
 
@@ -156,43 +156,37 @@ list-queues:
 
 ### Hardhat
 
-HARDHAT = $(call DOCKER_COMPOSE_RUN,--rm hardhat $(1))
+CONTRACTS = $(call DOCKER_COMPOSE_RUN,--rm ${DOCKER_CONTRACTS_SERVICE} $(1))
 
-HARDHAT_DOCKER_EXEC = $(call DOCKER,exec -it "running-$(1)" $(2))
-HARDHAT_RUN = $(call HARDHAT_DOCKER_EXEC,$(1),yarn $(3) --network $(2))
+CONTRACTS_DOCKER_EXEC = $(call DOCKER,exec -it "running-$(1)" $(2))
+CONTRACTS_RUN = $(call HARDHAT_DOCKER_EXEC,$(1),yarn $(3) --network $(2))
 
-HARDHAT_DEPLOY_ALL = $(call HARDHAT_RUN,$(1),$(2),deploy-all --chain $(1))
-HARDHAT_GET_TOKENS = $(call HARDHAT_RUN,$(1),$(2),get-tokens --chain $(1) --token $(3))
+CONTRACTS_DEPLOY_ALL = $(call CONTRACTS_RUN,$(1),$(2),deploy-all --chain $(1))
+CONTRACTS_GET_TOKENS = $(call CONTRACTS_RUN,$(1),$(2),get-tokens --chain $(1) --token $(3))
 
-fork-chain:
+$(addprefix fork-, ${ENABLED_NETWORKS}): fork-%:
 	@$(call DOCKER_COMPOSE_RUN, \
 		--rm \
 		-e "FORKING=true" \
-		-e "FORKED_RPC_NODE=${$(CHAIN)_RPC_NODE}" \
-		-e "FORKED_CHAIN_ID=${$(CHAIN)_CHAIN_ID}" \
-		-p ${$(CHAIN)_EXTERNAL_PORT}:8545 \
-		--name "running-$(CHAIN)" \
-		hardhat \
+		-e "FORKED_RPC_NODE=${$*_RPC_NODE}" \
+		-e "FORKED_CHAIN_ID=${$*_CHAIN_ID}" \
+		-p ${$*_EXTERNAL_PORT}:8545 \
+		--name "running-$*" \
+		${DOCKER_CONTRACTS_SERVICE} \
 		up \
 	)
 
-fork-polygon: CHAIN=polygon
-fork-polygon: fork-chain
-
-fork-fantom: CHAIN=fantom
-fork-fantom: fork-chain
-
-compile-contracts:
-	@$(call HARDHAT, build)
+build-contracts:
+	@$(call CONTRACTS, build)
 
 test-contracts:
-	@$(call HARDHAT, test)
+	@$(call CONTRACTS, test)
 
 $(addprefix deploy-all-fork-, ${ENABLED_NETWORKS}): deploy-all-fork-%:
-	$(call HARDHAT_DEPLOY_ALL,$*,localhost)
+	$(call CONTRACTS_DEPLOY_ALL,$*,localhost)
 
 $(addprefix get-tokens-, ${ENABLED_NETWORKS}): get-tokens-%:
-	@$(call HARDHAT_GET_TOKENS,$*,localhost,$(token))
+	@$(call CONTRACTS_GET_TOKENS,$*,localhost,$(token))
 
 ### Relayer
 
