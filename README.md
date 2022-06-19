@@ -113,18 +113,6 @@ $ make deploy-all-fork-<chain>
 The _chain_ here must be the same that its already forked, because the contracts to be
 deployed have external contract addresses dependencies.
 
-### Obtain native coins
-
-Whenever you need coins to do transactions on the forked chain,
-you can just get them by typing:
-
-``` sh
-$ make get-coins
-```
-
-This will send a fixed amount of coins to the first three wallets from the _MNEMONIC_
-you have setted on your root's `.env` or the default _MNEMONIC_ from the _env_'s folder.
-
 ### Obtain tokens
 
 If you need some tokens instead, you can just get them from an already holding wallet by typing:
