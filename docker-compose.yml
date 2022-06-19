@@ -11,7 +11,7 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - ${MYSQL_PORT}:3306
+      - ${MYSQL_PORT}:${MYSQL_INTERNAL_PORT}
     volumes:
       - ./data/db:/var/lib/mysql
 
@@ -32,7 +32,7 @@ services:
       context: api/
     environment:
       DB_HOST: ${DOCKER_DB_SERVICE}
-      DB_PORT: ${MYSQL_PORT}
+      DB_PORT: ${MYSQL_INTERNAL_PORT}
       DB_USER: ${MYSQL_USER}
       DB_PASS: ${MYSQL_PASSWORD}
       DB_NAME: ${MYSQL_DATABASE}
