@@ -15,6 +15,7 @@ export interface FinalizeCrossParams {
     tokenIn: ContractAddress;
     tokenOut: ContractAddress;
     data: string;
+    estimatedGas: string;
     required: boolean;
   };
 }

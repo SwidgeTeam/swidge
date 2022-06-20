@@ -26,6 +26,7 @@ export class GetSwapOrder {
         allowanceTarget: ContractAddress;
         data: string;
         buyAmount: string;
+        estimatedGas: string;
       }>(
         `${urls[request.chainId]}/swap/v1/quote` +
           `?sellToken=${request.tokenIn.address}` +
@@ -51,6 +52,7 @@ export class GetSwapOrder {
       response.allowanceTarget,
       encodedData,
       BigInteger.fromBigNumber(response.buyAmount),
+      response.estimatedGas,
       true,
     );
   }

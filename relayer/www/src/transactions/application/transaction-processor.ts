@@ -30,6 +30,7 @@ export class TransactionProcessor {
         amountIn: job.bridgeAmountOut,
         tokenIn: job.srcToken,
         tokenOut: job.dstToken,
+        estimatedGas: '',
         data: '0x',
         required: false,
       };
@@ -48,6 +49,7 @@ export class TransactionProcessor {
         tokenIn: swapOrder.tokenIn,
         tokenOut: swapOrder.tokenOut,
         data: swapOrder.data,
+        estimatedGas: swapOrder.estimatedGas,
         required: swapOrder.required,
       };
     }

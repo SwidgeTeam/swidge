@@ -11,6 +11,7 @@ export interface RouterCallPayload {
         tokenOut: string
         data: string
         required: boolean
+        estimatedGas: string
     },
     bridge: {
         tokenIn: string

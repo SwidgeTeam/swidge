@@ -6,6 +6,7 @@ export class SwapOrder {
     private readonly _tokenIn: ContractAddress,
     private readonly _tokenOut: ContractAddress,
     private readonly _data: string,
+    private readonly _estimatedGas: string,
     private readonly _required: boolean,
   ) {}
 
@@ -23,6 +24,10 @@ export class SwapOrder {
 
   get data(): string {
     return this._data;
+  }
+
+  get estimatedGas(): string {
+    return this._estimatedGas;
   }
 
   get required(): boolean {

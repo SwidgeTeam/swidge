@@ -62,6 +62,7 @@ export class TransactionsRepositoryImpl implements TransactionsRepository {
       tokenIn: string;
       tokenOut: string;
       data: string;
+      estimatedGas: string;
       required: boolean;
     }>(
       `${this.configService.apiUrl}/quote/swap` +
@@ -76,6 +77,7 @@ export class TransactionsRepositoryImpl implements TransactionsRepository {
       response.tokenIn,
       response.tokenOut,
       response.data,
+      response.estimatedGas,
       response.required,
     );
   }

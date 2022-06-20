@@ -11,12 +11,13 @@ export class SwapOrder {
       null,
       null,
       null,
+      null,
       false,
     );
   }
 
   public static sameToken(token: Token) {
-    return new SwapOrder(null, token, token, null, null, null, false);
+    return new SwapOrder(null, token, token, null, null, null, null, false);
   }
 
   constructor(
@@ -26,6 +27,7 @@ export class SwapOrder {
     private readonly _approvalAddress: ContractAddress,
     private readonly _data: string,
     private readonly _buyAmount: BigInteger,
+    private readonly _estimatedGas: string,
     private readonly _required: boolean,
   ) {}
 
@@ -51,6 +53,10 @@ export class SwapOrder {
 
   get buyAmount(): BigInteger {
     return this._buyAmount;
+  }
+
+  get estimatedGas(): string {
+    return this._estimatedGas;
   }
 
   get buyAmountDecimal(): string {

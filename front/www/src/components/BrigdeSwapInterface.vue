@@ -66,6 +66,7 @@ const quotedPath = ref<GetQuoteResponse>({
         data: "",
         required: false,
         amountOut: "",
+        estimatedGas: ""
     },
     bridge: {
         tokenIn: {
@@ -340,6 +341,7 @@ const onExecuteTransaction = async () => {
             tokenOut: quotedPath.value.originSwap.tokenOut.address,
             data: quotedPath.value.originSwap.data,
             required: quotedPath.value.originSwap.required,
+            estimatedGas: quotedPath.value.originSwap.estimatedGas,
         },
         bridge: {
             toChainId: quotedPath.value.bridge.toChainId,

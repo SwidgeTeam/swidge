@@ -12,7 +12,8 @@ export default interface GetQuoteResponse {
         tokenOut: TokenDetails,
         data: string,
         amountOut: string,
-        required: boolean
+        required: boolean,
+        estimatedGas: string,
     },
     bridge: {
         tokenIn: TokenDetails,
