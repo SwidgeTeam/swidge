@@ -154,7 +154,7 @@ create-queue:
 list-queues:
 	@$(call AWS_CLI, sqs list-queues)
 
-### Hardhat
+### Contracts
 
 CONTRACTS = $(call DOCKER_COMPOSE_RUN,--rm ${DOCKER_CONTRACTS_SERVICE} $(1))
 
@@ -190,8 +190,10 @@ $(addprefix get-tokens-, ${ENABLED_NETWORKS}): get-tokens-%:
 
 ### Relayer
 
+RELAYER = $(call DOCKER_COMPOSE_RUN,--rm ${DOCKER_RELAYER_SERVICE} $(1))
+
 relayer-events: create-queue
-	@$(call DOCKER_COMPOSE_RUN, --rm ${DOCKER_RELAYER_SERVICE} run:dev:events)
+	@$(call RELAYER,run:dev:events)
 
 relayer-consumer:
-	@$(call DOCKER_COMPOSE_RUN, --rm ${DOCKER_RELAYER_SERVICE} run:dev:consumer)
+	@$(call RELAYER,run:dev:consumer)
