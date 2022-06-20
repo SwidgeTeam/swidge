@@ -4,8 +4,8 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
-import "./dexs/IDEX.sol";
-import "./bridge/IBridge.sol";
+import "./providers/dexs/IDEX.sol";
+import "./providers/bridge/IBridge.sol";
 
 contract Router is Ownable {
     address private NATIVE_TOKEN_ADDRESS = address(0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE);
