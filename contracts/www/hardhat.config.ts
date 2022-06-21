@@ -1,6 +1,7 @@
 import "@nomiclabs/hardhat-waffle";
 import "hardhat-deploy";
 import "hardhat-deploy-ethers";
+import "@nomiclabs/hardhat-etherscan";
 import "./tasks/index";
 
 import { HardhatUserConfig } from "hardhat/types";
@@ -53,6 +54,12 @@ const config: HardhatUserConfig = {
       accounts,
       chainId: Number(process.env.CHAIN_ID_FANTOM),
       gasMultiplier: 2,
+    },
+  },
+  etherscan: {
+    apiKey: {
+      polygon: String(process.env.POLYGONSCAN_API_KEY),
+      opera: String(process.env.FTMSCAN_API_KEY),
     },
   },
 };

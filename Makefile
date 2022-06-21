@@ -158,13 +158,26 @@ list-queues:
 
 CONTRACTS = $(call DOCKER_COMPOSE_RUN,--rm ${DOCKER_CONTRACTS_SERVICE} $(1))
 
-CONTRACTS_DOCKER_EXEC = $(call DOCKER,exec -it "running-$(1)" $(2))
-CONTRACTS_RUN = $(call CONTRACTS_DOCKER_EXEC,$(1),yarn $(3) --network $(2))
+build-contracts:
+	@$(call CONTRACTS, build)
 
-CONTRACTS_DEPLOY_DIAMOND = $(call CONTRACTS_RUN,$(1),$(2),deploy-diamond)
-CONTRACTS_UPDATE_DIAMOND = $(call CONTRACTS_RUN,$(1),$(2),update-diamond --chain $(1) --facet $(3))
-CONTRACTS_DEPLOY_ALL = $(call CONTRACTS_RUN,$(1),$(2),deploy-all --chain $(1))
-CONTRACTS_GET_TOKENS = $(call CONTRACTS_RUN,$(1),$(2),get-tokens --chain $(1) --token $(3))
+test-contracts:
+	@$(call CONTRACTS, test)
+
+# Live chain
+
+CONTRACTS_LIVE_RUN = $(call CONTRACTS,$(1) --network $(2) --chain $(2))
+
+$(addprefix deploy-all-, ${ENABLED_NETWORKS}): deploy-all-%:
+	@$(call CONTRACTS_LIVE_RUN,deploy-all,$*)
+
+$(addprefix deploy-providers-, ${ENABLED_NETWORKS}): deploy-providers-%:
+	@$(call CONTRACTS_LIVE_RUN,deploy-providers,$*)
+
+$(addprefix verify-, ${ENABLED_NETWORKS}): verify-%:
+	@$(call CONTRACTS_LIVE_RUN,verify-diamond,$*)
+
+# Forked chain
 
 $(addprefix fork-, ${ENABLED_NETWORKS}): fork-%:
 	@$(call DOCKER_COMPOSE_RUN, \
@@ -178,13 +191,13 @@ $(addprefix fork-, ${ENABLED_NETWORKS}): fork-%:
 		up \
 	)
 
-build-contracts:
-	@$(call CONTRACTS, build)
+CONTRACTS_DOCKER_EXEC = $(call DOCKER,exec -it "running-$(1)" $(2))
+CONTRACTS_RUN = $(call CONTRACTS_DOCKER_EXEC,$(1),yarn $(3) --network $(2))
 
-test-contracts:
-	@$(call CONTRACTS, test)
-
-# Forked chains
+CONTRACTS_DEPLOY_DIAMOND = $(call CONTRACTS_RUN,$(1),$(2),deploy-diamond)
+CONTRACTS_UPDATE_DIAMOND = $(call CONTRACTS_RUN,$(1),$(2),update-diamond --chain $(1) --facet $(3))
+CONTRACTS_DEPLOY_ALL = $(call CONTRACTS_RUN,$(1),$(2),deploy-all --chain $(1))
+CONTRACTS_GET_TOKENS = $(call CONTRACTS_RUN,$(1),$(2),get-tokens --chain $(1) --token $(3))
 
 $(addprefix deploy-diamond-fork-, ${ENABLED_NETWORKS}): deploy-diamond-fork-%:
 	@$(call CONTRACTS_DEPLOY_DIAMOND,$*,localhost)
@@ -197,15 +210,6 @@ $(addprefix deploy-all-fork-, ${ENABLED_NETWORKS}): deploy-all-fork-%:
 
 $(addprefix get-tokens-, ${ENABLED_NETWORKS}): get-tokens-%:
 	@$(call CONTRACTS_GET_TOKENS,$*,localhost,$(token))
-
-# Live chains
-
-$(addprefix deploy-all-, ${ENABLED_NETWORKS}): deploy-all-%:
-	@$(call CONTRACTS,deploy-all --network $* --chain $*)
-
-$(addprefix deploy-providers-, ${ENABLED_NETWORKS}): deploy-providers-%:
-	@$(call CONTRACTS,deploy-providers --network $* --chain $*)
-
 
 ### Relayer
 
