@@ -184,6 +184,8 @@ build-contracts:
 test-contracts:
 	@$(call CONTRACTS, test)
 
+# Forked chains
+
 $(addprefix deploy-diamond-fork-, ${ENABLED_NETWORKS}): deploy-diamond-fork-%:
 	@$(call CONTRACTS_DEPLOY_DIAMOND,$*,localhost)
 
@@ -195,6 +197,15 @@ $(addprefix deploy-all-fork-, ${ENABLED_NETWORKS}): deploy-all-fork-%:
 
 $(addprefix get-tokens-, ${ENABLED_NETWORKS}): get-tokens-%:
 	@$(call CONTRACTS_GET_TOKENS,$*,localhost,$(token))
+
+# Live chains
+
+$(addprefix deploy-all-, ${ENABLED_NETWORKS}): deploy-all-%:
+	@$(call CONTRACTS,deploy-all --network $* --chain $*)
+
+$(addprefix deploy-providers-, ${ENABLED_NETWORKS}): deploy-providers-%:
+	@$(call CONTRACTS,deploy-providers --network $* --chain $*)
+
 
 ### Relayer
 

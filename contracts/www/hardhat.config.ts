@@ -46,13 +46,13 @@ const config: HardhatUserConfig = {
       url: process.env.RPC_NODE_POLYGON,
       accounts,
       chainId: Number(process.env.CHAIN_ID_POLYGON),
-      gasMultiplier: 4,
+      gasMultiplier: 2,
     },
     fantom: {
       url: process.env.RPC_NODE_FANTOM,
       accounts,
       chainId: Number(process.env.CHAIN_ID_FANTOM),
-      gasMultiplier: 4,
+      gasMultiplier: 2,
     },
   },
 };

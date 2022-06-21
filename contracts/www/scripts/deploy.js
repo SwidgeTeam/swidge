@@ -124,13 +124,13 @@ const updateProviders = async (
     addresses.implementation.swap.zeroex.code,
     zeroEx.address
   );
-  await providerUpdater.updateBridgeProvider(
+  await providerUpdater.functions.updateBridgeProvider(
     addresses.implementation.bridge.anyswap.code,
     anyswap.address
   );
 
   // update the relayer's address
-  await providerUpdater.updateRelayer(relayerAddress);
+  await providerUpdater.functions.updateRelayer(relayerAddress);
 };
 
 module.exports = {
@@ -138,4 +138,5 @@ module.exports = {
   deployDiamond,
   deployFacets,
   deployProviders,
+  updateProviders,
 };
