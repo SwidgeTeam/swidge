@@ -13,11 +13,6 @@ module.exports = async function (taskArguments, hre, runSuper) {
     addresses
   );
 
-  const providerUpdater = await hre.ethers.getContractAt(
-    "ProviderUpdaterFacet",
-    addresses.diamond
-  );
-
   // if process fails we need to acces the already deployed contracts
   //const zeroEx = await hre.ethers.getContractAt(
   //  "ZeroEx",
@@ -29,9 +24,9 @@ module.exports = async function (taskArguments, hre, runSuper) {
   //);
 
   await updateProviders(
+    hre.ethers,
     zeroEx,
     anyswap,
-    providerUpdater,
     addresses,
     addresses.diamond,
     relayer.address

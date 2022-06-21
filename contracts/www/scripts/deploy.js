@@ -19,9 +19,9 @@ const deployAll = async (ethers, deployer, relayer, network) => {
   const [zeroEx, anyswap] = await deployProviders(ethers, deployer, addresses);
 
   await updateProviders(
+    ethers,
     zeroEx,
     anyswap,
-    providerUpdater,
     addresses,
     diamondProxy.address,
     relayer.address
@@ -108,9 +108,9 @@ const deployProviders = async (ethers, deployer, addresses) => {
 };
 
 const updateProviders = async (
+  ethers,
   zeroEx,
   anyswap,
-  providerUpdater,
   addresses,
   diamondAddress,
   relayerAddress
@@ -118,6 +118,11 @@ const updateProviders = async (
   // update diamond's address on implementations
   await zeroEx.updateRouter(diamondAddress);
   await anyswap.updateRouter(diamondAddress);
+
+  const providerUpdater = await ethers.getContractAt(
+    "ProviderUpdaterFacet",
+    diamondAddress
+  );
 
   // set implementations addresses on diamond
   await providerUpdater.updateSwapProvider(
