@@ -17,27 +17,27 @@ localhost:
     bridge:
       anyswap: "0x4f3aff3a747fcade12598081e80c6605a8be192f"
 fantom:
-  diamond: ""
+  diamond: "0x0cbe369477c4665278275d28802f07b53e5ba6b4"
   facet:
-    router: ""
-    providerUpdater: ""
-    cutter: ""
+    router: "0xaB05F9576C6703cb59A25b47A5532e4d74C2316b"
+    providerUpdater: "0x700E17DBb8FE70b2a68c1CB25787923c44792346"
+    cutter: "0xc330F71aD6Bb57346Eb8F8c07036bDBAE20A9C08"
   implementation:
     bridge:
       anyswap:
-        address: "0xaf5259C18498938B796ee635EaFC0b2F3576b642"
+        address: "0x21EEc81ab30663ab8F935D3Ff9F822ee87785186"
         code: 0
     swap:
       zeroex:
-        address: "0x4240Bf98a20a25484Ce842e48829441f6F253eaa"
+        address: "0x4dCb6FBB887d601496627F83029B0BCDD06c0bc4"
         code: 0
   providers:
     bridge:
       anyswap: "0x1ccca1ce62c62f7be95d4a67722a8fdbed6eecb4"
 polygon:
-  diamond: ""
+  diamond: "0x7A64a46Df9C4C44b5D6b9d6650923f78620584d0"
   facet:
-    router: ""
+    router: "0x83aA8D0695D810A1c40Bca1e448884D5bf90B12F"
     providerUpdater: ""
     cutter: ""
   implementation:
