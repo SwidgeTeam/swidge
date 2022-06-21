@@ -6,30 +6,8 @@ module.exports = async function (taskArguments, hre, runSuper) {
   const { deployer, relayer } = await getAccounts(hre);
   const network = taskArguments.chain;
   const allAddresses = getAddresses();
-  const addresses = allAddresses[network];
 
-  const contracts = await deployAll(hre.ethers, deployer, network);
-
-  // update diamond's address on implementations
-  await contracts.zeroEx.updateRouter(contracts.diamondProxy.address);
-  await contracts.anyswap.updateRouter(contracts.diamondProxy.address);
-
-  // set implementations addresses on diamond
-  const providersUpdater = await hre.ethers.getContractAt(
-    "ProviderUpdaterFacet",
-    contracts.diamondProxy.address
-  );
-  await providersUpdater.updateSwapProvider(
-    addresses.implementation.swap.zeroex.code,
-    contracts.zeroEx.address
-  );
-  await providersUpdater.updateBridgeProvider(
-    addresses.implementation.bridge.anyswap.code,
-    contracts.anyswap.address
-  );
-
-  // update the relayer's address
-  await providersUpdater.updateRelayer(relayer.address);
+  const contracts = await deployAll(hre.ethers, deployer, relayer, network);
 
   // persist new addresses
   const addr = allAddresses[hre.network.name];
