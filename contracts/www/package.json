@@ -5,6 +5,7 @@
     "build": "hardhat compile",
     "test": "hardhat test",
     "deploy-diamond": "hardhat deploy-diamond",
+    "update-diamond": "hardhat update-diamond",
     "deploy-all": "hardhat deploy-all",
     "get-tokens": "hardhat get-tokens"
   },
