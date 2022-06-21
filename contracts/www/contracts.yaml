@@ -1,4 +1,5 @@
 localhost:
+  diamond: "0x43946B0C5b780F71002F0f3D08BF871D29d3c245"
   bridgeImpl:
     anyswap:
       address: "0x27Cdb1eE3eD435C28aF5BC4F3301E9CB5A2931b8"
@@ -11,6 +12,7 @@ localhost:
       address: "0x6FECfBA2305c69E59c0115e18E4fBF6BF72Aa658"
       code: 0
 fantom:
+  diamond: ""
   bridgeImpl:
     anyswap:
       address: "0xaf5259C18498938B796ee635EaFC0b2F3576b642"
@@ -23,6 +25,7 @@ fantom:
       address: "0x4240Bf98a20a25484Ce842e48829441f6F253eaa"
       code: 0
 polygon:
+  diamond: ""
   bridgeImpl:
     anyswap:
       address: "0xaf5259C18498938B796ee635EaFC0b2F3576b642"

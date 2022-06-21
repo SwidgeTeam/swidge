@@ -4,6 +4,7 @@
     "up": "hardhat node",
     "build": "hardhat compile",
     "test": "hardhat test",
+    "deploy-diamond": "hardhat deploy-diamond",
     "deploy-all": "hardhat deploy-all",
     "get-tokens": "hardhat get-tokens"
   },

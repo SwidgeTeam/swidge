@@ -161,6 +161,7 @@ CONTRACTS = $(call DOCKER_COMPOSE_RUN,--rm ${DOCKER_CONTRACTS_SERVICE} $(1))
 CONTRACTS_DOCKER_EXEC = $(call DOCKER,exec -it "running-$(1)" $(2))
 CONTRACTS_RUN = $(call CONTRACTS_DOCKER_EXEC,$(1),yarn $(3) --network $(2))
 
+CONTRACTS_DEPLOY_DIAMOND = $(call CONTRACTS_RUN,$(1),$(2),deploy-diamond)
 CONTRACTS_DEPLOY_ALL = $(call CONTRACTS_RUN,$(1),$(2),deploy-all --chain $(1))
 CONTRACTS_GET_TOKENS = $(call CONTRACTS_RUN,$(1),$(2),get-tokens --chain $(1) --token $(3))
 
@@ -182,8 +183,11 @@ build-contracts:
 test-contracts:
 	@$(call CONTRACTS, test)
 
+$(addprefix deploy-diamond-fork-, ${ENABLED_NETWORKS}): deploy-diamond-fork-%:
+	@$(call CONTRACTS_DEPLOY_DIAMOND,$*,localhost)
+
 $(addprefix deploy-all-fork-, ${ENABLED_NETWORKS}): deploy-all-fork-%:
-	$(call CONTRACTS_DEPLOY_ALL,$*,localhost)
+	@$(call CONTRACTS_DEPLOY_ALL,$*,localhost)
 
 $(addprefix get-tokens-, ${ENABLED_NETWORKS}): get-tokens-%:
 	@$(call CONTRACTS_GET_TOKENS,$*,localhost,$(token))
