@@ -159,7 +159,7 @@ list-queues:
 CONTRACTS = $(call DOCKER_COMPOSE_RUN,--rm ${DOCKER_CONTRACTS_SERVICE} $(1))
 
 CONTRACTS_DOCKER_EXEC = $(call DOCKER,exec -it "running-$(1)" $(2))
-CONTRACTS_RUN = $(call HARDHAT_DOCKER_EXEC,$(1),yarn $(3) --network $(2))
+CONTRACTS_RUN = $(call CONTRACTS_DOCKER_EXEC,$(1),yarn $(3) --network $(2))
 
 CONTRACTS_DEPLOY_ALL = $(call CONTRACTS_RUN,$(1),$(2),deploy-all --chain $(1))
 CONTRACTS_GET_TOKENS = $(call CONTRACTS_RUN,$(1),$(2),get-tokens --chain $(1) --token $(3))
