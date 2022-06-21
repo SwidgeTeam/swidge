@@ -86,7 +86,7 @@ const deployFacets = async (ethers, deployer, diamondAddress) => {
     "IDiamondCutter",
     diamondAddress
   );
-  await diamondCutter.diamondCut(cuts);
+  (await diamondCutter.diamondCut(cuts)).wait();
 
   return [providerUpdaterFacet, routerFacet];
 };
@@ -116,8 +116,8 @@ const updateProviders = async (
   relayerAddress
 ) => {
   // update diamond's address on implementations
-  await zeroEx.updateRouter(diamondAddress);
-  await anyswap.updateRouter(diamondAddress);
+  (await zeroEx.updateRouter(diamondAddress)).wait();
+  (await anyswap.updateRouter(diamondAddress)).wait();
 
   const providerUpdater = await ethers.getContractAt(
     "ProviderUpdaterFacet",
@@ -125,17 +125,21 @@ const updateProviders = async (
   );
 
   // set implementations addresses on diamond
-  await providerUpdater.updateSwapProvider(
-    addresses.implementation.swap.zeroex.code,
-    zeroEx.address
-  );
-  await providerUpdater.functions.updateBridgeProvider(
-    addresses.implementation.bridge.anyswap.code,
-    anyswap.address
-  );
+  (
+    await providerUpdater.updateSwapProvider(
+      addresses.implementation.swap.zeroex.code,
+      zeroEx.address
+    )
+  ).wait();
+  (
+    await providerUpdater.functions.updateBridgeProvider(
+      addresses.implementation.bridge.anyswap.code,
+      anyswap.address
+    )
+  ).wait();
 
   // update the relayer's address
-  await providerUpdater.functions.updateRelayer(relayerAddress);
+  (await providerUpdater.functions.updateRelayer(relayerAddress)).wait();
 };
 
 module.exports = {
