@@ -1,53 +1,53 @@
 localhost:
-  diamond: "0x7A64a46Df9C4C44b5D6b9d6650923f78620584d0"
+  diamond: "0xaA87Bb994b945F4E654cEDB14DDBDeD624B48890"
   facet:
-    router: "0x83aA8D0695D810A1c40Bca1e448884D5bf90B12F"
-    providerUpdater: "0x15Fd114CA577b64731aF45De84256168F6bB2B61"
-    cutter: "0x71896dF8Fd025a95b0856B3A5c33CB446DC1D85b"
+    router: "0x0C80BadE3E4aA134bD95d48B611E692B96BcD033"
+    providerUpdater: "0x1D54092A51497C5b925cC0aB0BD6504583923214"
+    cutter: "0xc4f0F25e51cCc3CA4eD593Ec112a42559B34c015"
   implementation:
     bridge:
       anyswap:
-        address: "0x7e118bdB73A5a6DEc8A55676daEEac5951d3Be8C"
+        address: "0x474587fa0346F0971162b36a0346584Ff745B9c6"
         code: 0
     swap:
       zeroex:
-        address: "0x6813632F98C9fcA44ce772e5Fb145C31985289f6"
+        address: "0xa6318769cEfcAd7454c69bb47D864375ac286e89"
         code: 0
   providers:
     bridge:
       anyswap: "0x4f3aff3a747fcade12598081e80c6605a8be192f"
 fantom:
-  diamond: "0x0cbe369477c4665278275d28802f07b53e5ba6b4"
+  diamond: "0x6FECfBA2305c69E59c0115e18E4fBF6BF72Aa658"
   facet:
-    router: "0xaB05F9576C6703cb59A25b47A5532e4d74C2316b"
-    providerUpdater: "0x700E17DBb8FE70b2a68c1CB25787923c44792346"
-    cutter: "0xc330F71aD6Bb57346Eb8F8c07036bDBAE20A9C08"
+    router: "0x210A3D6C246b2b4877F68A9805149aD9e432F0EC"
+    providerUpdater: "0x27Cdb1eE3eD435C28aF5BC4F3301E9CB5A2931b8"
+    cutter: "0x071A6f28f30b1FD81578D656d9d91f4bdB76b18C"
   implementation:
     bridge:
       anyswap:
-        address: "0x21EEc81ab30663ab8F935D3Ff9F822ee87785186"
+        address: "0x461f0EC1B30aE5e083Becdc3a4f8C7666fDeec0f"
         code: 0
     swap:
       zeroex:
-        address: "0x4dCb6FBB887d601496627F83029B0BCDD06c0bc4"
+        address: "0x0688b5a4B9e7923630f3064d1DF07ec407dd0A5f"
         code: 0
   providers:
     bridge:
       anyswap: "0x1ccca1ce62c62f7be95d4a67722a8fdbed6eecb4"
 polygon:
-  diamond: "0x7A64a46Df9C4C44b5D6b9d6650923f78620584d0"
+  diamond: "0x6FECfBA2305c69E59c0115e18E4fBF6BF72Aa658"
   facet:
-    router: "0x83aA8D0695D810A1c40Bca1e448884D5bf90B12F"
-    providerUpdater: ""
-    cutter: ""
+    router: "0x210A3D6C246b2b4877F68A9805149aD9e432F0EC"
+    providerUpdater: "0x27Cdb1eE3eD435C28aF5BC4F3301E9CB5A2931b8"
+    cutter: "0x071A6f28f30b1FD81578D656d9d91f4bdB76b18C"
   implementation:
     bridge:
       anyswap:
-        address: "0xaf5259C18498938B796ee635EaFC0b2F3576b642"
+        address: "0x461f0EC1B30aE5e083Becdc3a4f8C7666fDeec0f"
         code: 0
     swap:
       zeroex:
-        address: "0x4240Bf98a20a25484Ce842e48829441f6F253eaa"
+        address: "0x0688b5a4B9e7923630f3064d1DF07ec407dd0A5f"
         code: 0
   providers:
     bridge:
