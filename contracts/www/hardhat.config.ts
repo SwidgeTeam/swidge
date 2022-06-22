@@ -2,6 +2,7 @@ import "@nomiclabs/hardhat-waffle";
 import "hardhat-deploy";
 import "hardhat-deploy-ethers";
 import "@nomiclabs/hardhat-etherscan";
+import "hardhat-gas-reporter";
 import "./tasks/index";
 
 import { HardhatUserConfig } from "hardhat/types";
@@ -61,6 +62,9 @@ const config: HardhatUserConfig = {
       polygon: String(process.env.POLYGONSCAN_API_KEY),
       opera: String(process.env.FTMSCAN_API_KEY),
     },
+  },
+  gasReporter: {
+    enabled: process.env.GAS_REPORTING === "true",
   },
 };
 

@@ -75,6 +75,7 @@ services:
       context: contracts/
     environment:
       MNEMONIC: ${MNEMONIC}
+      GAS_REPORTING: ${GAS_REPORTING}
       RPC_NODE_FANTOM: ${fantom_RPC_NODE}
       RPC_NODE_POLYGON: ${polygon_RPC_NODE}
       CHAIN_ID_FANTOM: ${fantom_CHAIN_ID}
