@@ -2,89 +2,13 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
-import "./dexs/IDEX.sol";
-import "./bridge/IBridge.sol";
+import "../providers/dexs/IDEX.sol";
+import "../providers/bridge/IBridge.sol";
+import "../libraries/LibDiamond.sol";
+import "../libraries/LibApp.sol";
 
-contract Router is Ownable {
-    address private NATIVE_TOKEN_ADDRESS = address(0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE);
-    address private relayerAddress;
-    mapping(uint8 => IBridge) private bridgeProviders;
-    mapping(uint8 => IDEX) private swapProviders;
-
-    enum dexCode {
-        ZeroEx // 0
-    }
-
-    enum bridgeCode {
-        Anyswap // 0
-    }
-
-    /**
-     * @dev Throws if called by any account other than the relayer.
-     */
-    modifier onlyRelayer() {
-        require(relayerAddress == _msgSender(), "Caller is not the relayer");
-        _;
-    }
-
-    /**
-     * @dev Emitted when a bridge provider address is updated
-     */
-    event UpdatedBridgeProvider(
-        uint8 code,
-        address provAddress
-    );
-
-    /**
-     * @dev Emitted when a swap provider address is updated
-     */
-    event UpdatedSwapProvider(
-        uint8 code,
-        address provAddress
-    );
-
-    /**
-     * @dev Emitted when the relayer address is updated
-     */
-    event UpdatedRelayer(
-        address oldAddress,
-        address newAddress
-    );
-
-    /**
-     * @dev Emitted when a multi-chain swap is initiated
-     */
-    event CrossInitiated(
-        address srcToken,
-        address bridgeTokenIn,
-        address bridgeTokenOut,
-        address dstToken,
-        uint256 fromChain,
-        uint256 toChain,
-        uint256 amountIn,
-        uint256 amountCross
-    );
-
-    /**
-     * @dev Emitted when a single-chain swap is completed
-     */
-    event SwapExecuted(
-        address srcToken,
-        address dstToken,
-        uint256 chainId,
-        uint256 amountIn,
-        uint256 amountOut
-    );
-
-    /**
-     * @dev Emitted when a multi-chain swap is finalized
-     */
-    event CrossFinalized(
-        string txHash,
-        uint256 amountOut
-    );
+contract RouterFacet {
 
     /**
      * @dev Defines the details for the swap step
@@ -137,7 +61,7 @@ contract Router is Ownable {
             tokenToTakeIn = _bridgeStep.tokenIn;
         }
 
-        if (tokenToTakeIn != NATIVE_TOKEN_ADDRESS) {
+        if (tokenToTakeIn != LibApp.NATIVE_TOKEN_ADDRESS) {
             // Take ownership of user's tokens
             TransferHelper.safeTransferFrom(
                 tokenToTakeIn,
@@ -151,11 +75,11 @@ contract Router is Ownable {
         // Store the amount for the next step
         // depending on the step to take
         if (_swapStep.required) {
-            IDEX swapper = swapProviders[_swapStep.providerCode];
+            IDEX swapper = LibApp.getSwapProvider(_swapStep.providerCode);
 
             uint256 valueToSend;
             // Check the native coins value that we have to forward to the swap impl
-            if (_swapStep.tokenIn == NATIVE_TOKEN_ADDRESS) {
+            if (_swapStep.tokenIn == LibApp.NATIVE_TOKEN_ADDRESS) {
                 valueToSend = _amount;
             }
             else {
@@ -185,7 +109,7 @@ contract Router is Ownable {
 
         if (_bridgeStep.required) {
             // Load selected bridge provider
-            IBridge bridge = bridgeProviders[uint8(bridgeCode.Anyswap)];
+            IBridge bridge = LibApp.getBridgeProvider(uint8(LibApp.BridgeCode.Anyswap));
 
             // Approve tokens for the bridge to take
             TransferHelper.safeApprove(
@@ -218,7 +142,7 @@ contract Router is Ownable {
         else {
             // Bridging is not required, means we are not changing network
             // so we send the assets back to the user
-            if (_swapStep.tokenOut == NATIVE_TOKEN_ADDRESS) {
+            if (_swapStep.tokenOut == LibApp.NATIVE_TOKEN_ADDRESS) {
                 payable(msg.sender).transfer(finalAmount);
             }
             else {
@@ -245,13 +169,14 @@ contract Router is Ownable {
         address _receiver,
         string calldata _originHash,
         SwapStep calldata _swapStep
-    ) external payable onlyRelayer {
+    ) external payable {
+        require(LibApp.relayerAddress() == msg.sender, "Caller is not the relayer");
 
         uint256 finalAmount;
         // Check if last swap is required,
         // and store final user-reaching amount
         if (_swapStep.required) {
-            IDEX swapper = swapProviders[_swapStep.providerCode];
+            IDEX swapper = LibApp.getSwapProvider(_swapStep.providerCode);
 
             // Approve swapper contract
             TransferHelper.safeApprove(
@@ -272,7 +197,7 @@ contract Router is Ownable {
             finalAmount = _amount;
         }
 
-        if (_swapStep.tokenOut == NATIVE_TOKEN_ADDRESS) {
+        if (_swapStep.tokenOut == LibApp.NATIVE_TOKEN_ADDRESS) {
             // Sent native coins
             payable(_receiver).transfer(finalAmount);
         }
@@ -289,44 +214,43 @@ contract Router is Ownable {
     }
 
     /**
-     * @dev Updates the address of a bridge provider contract
+     * @dev Emitted when a multi-chain swap is initiated
      */
-    function updateBridgeProvider(bridgeCode _code, address _address) external onlyOwner {
-        require(_address != address(0), 'ZeroAddress not allowed');
-        uint8 code = uint8(_code);
-        bridgeProviders[code] = IBridge(_address);
-        emit UpdatedBridgeProvider(code, _address);
-    }
+    event CrossInitiated(
+        address srcToken,
+        address bridgeTokenIn,
+        address bridgeTokenOut,
+        address dstToken,
+        uint256 fromChain,
+        uint256 toChain,
+        uint256 amountIn,
+        uint256 amountCross
+    );
 
     /**
-     * @dev Updates the address of a swap provider contract
+     * @dev Emitted when a single-chain swap is completed
      */
-    function updateSwapProvider(dexCode _code, address payable _address) external onlyOwner {
-        require(_address != address(0), 'ZeroAddress not allowed');
-        uint8 code = uint8(_code);
-        swapProviders[code] = IDEX(_address);
-        emit UpdatedSwapProvider(code, _address);
-    }
+    event SwapExecuted(
+        address srcToken,
+        address dstToken,
+        uint256 chainId,
+        uint256 amountIn,
+        uint256 amountOut
+    );
 
     /**
-     * @dev Updates the address of the authorized relayer
+     * @dev Emitted when a multi-chain swap is finalized
      */
-    function updateRelayer(address _relayerAddress) external onlyOwner {
-        require(_relayerAddress != address(0), 'ZeroAddress not allowed');
-        address oldAddress = relayerAddress;
-        relayerAddress = _relayerAddress;
-        emit UpdatedRelayer(oldAddress, relayerAddress);
-    }
+    event CrossFinalized(
+        string txHash,
+        uint256 amountOut
+    );
 
     /**
      * @dev To retrieve any tokens that got stuck on the contract
      */
-    function retrieve(address _token, uint256 _amount) external onlyOwner {
+    function retrieve(address _token, uint256 _amount) external {
+        LibDiamond.enforceIsContractOwner();
         TransferHelper.safeTransfer(_token, msg.sender, _amount);
     }
-
-    /**
-     * To allow this contract to receive natives from the swapper impl
-     */
-    receive() external payable {}
 }

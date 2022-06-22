@@ -1,6 +1,7 @@
 import "@nomiclabs/hardhat-waffle";
 import "hardhat-deploy";
 import "hardhat-deploy-ethers";
+import "@nomiclabs/hardhat-etherscan";
 import "./tasks/index";
 
 import { HardhatUserConfig } from "hardhat/types";
@@ -43,16 +44,22 @@ const config: HardhatUserConfig = {
       url: "http://127.0.0.1:8545",
     },
     polygon: {
-      url: process.env.RPC_NODE_POLYGON,
+      url: process.env.RPC_NODE_POLYGON || "https://polygon-rpc.com/",
       accounts,
-      chainId: Number(process.env.CHAIN_ID_POLYGON),
-      gasMultiplier: 4,
+      chainId: Number(process.env.CHAIN_ID_POLYGON || 137),
+      gasMultiplier: 2,
     },
     fantom: {
-      url: process.env.RPC_NODE_FANTOM,
+      url: process.env.RPC_NODE_FANTOM || "https://rpc.ftm.tools/",
       accounts,
-      chainId: Number(process.env.CHAIN_ID_FANTOM),
-      gasMultiplier: 4,
+      chainId: Number(process.env.CHAIN_ID_FANTOM || 250),
+      gasMultiplier: 2,
+    },
+  },
+  etherscan: {
+    apiKey: {
+      polygon: String(process.env.POLYGONSCAN_API_KEY),
+      opera: String(process.env.FTMSCAN_API_KEY),
     },
   },
 };

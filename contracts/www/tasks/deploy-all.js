@@ -1,52 +1,25 @@
 const getAccounts = require("./helpers/accounts.js");
 const { getAddresses, saveAddresses } = require("./helpers/addresses.js");
+const { deployAll } = require("../scripts/deploy");
 
 module.exports = async function (taskArguments, hre, runSuper) {
-  // We get the contract to deploy
-  const Router = await hre.ethers.getContractFactory("Router");
-  const ZeroEx = await hre.ethers.getContractFactory("ZeroEx");
-  const Anyswap = await hre.ethers.getContractFactory("Anyswap");
-
-  const network = taskArguments.chain;
-
   const { deployer, relayer } = await getAccounts(hre);
+  const network = taskArguments.chain;
   const allAddresses = getAddresses();
-  const addresses = allAddresses[network];
 
-  const router = await Router.connect(deployer).deploy();
-  const zeroEx = await ZeroEx.connect(deployer).deploy();
-  const anyswap = await Anyswap.connect(deployer).deploy(
-    addresses.bridges.anyswap
-  );
+  const contracts = await deployAll(hre.ethers, deployer, relayer, network);
 
-  // Deploy contracts
-  await router.deployed();
-  await zeroEx.deployed();
-  await anyswap.deployed();
+  // persist new addresses
+  const addr = allAddresses[hre.network.name];
 
-  // Update router's address on implementations
-  await zeroEx.functions.updateRouter(router.address);
-  await anyswap.functions.updateRouter(router.address);
+  addr.diamond = contracts.diamondProxy.address;
+  addr.facet.router = contracts.routerFacet.address;
+  addr.facet.providerUpdater = contracts.providerUpdaterFacet.address;
+  addr.facet.cutter = contracts.diamondCutterFacet.address;
+  addr.implementation.bridge.anyswap.address = contracts.anyswap.address;
+  addr.implementation.swap.zeroex.address = contracts.zeroEx.address;
 
-  // Set implementations addresses on router
-  await router.functions.updateSwapProvider(
-    addresses.swapImpl.zeroex.code,
-    anyswap.address
-  );
-  await router.functions.updateBridgeProvider(
-    addresses.bridgeImpl.anyswap.code,
-    anyswap.address
-  );
+  allAddresses[hre.network.name] = addr;
 
-  // Update the relayer's address
-  await router.functions.updateRelayer(relayer.address);
-
-  // Persist new addresses
-  const connectedNetwork = hre.network.name;
-  allAddresses[connectedNetwork].router = router.address;
-  allAddresses[connectedNetwork].bridgeImpl.anyswap.address = anyswap.address;
-  allAddresses[connectedNetwork].swapImpl.zeroex.address = zeroEx.address;
   saveAddresses(allAddresses);
-
-  console.log("Deploy OK");
 };

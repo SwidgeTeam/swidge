@@ -1,5 +1,6 @@
 import {FakeContract, smock} from "@defi-wonderland/smock";
 import {ethers} from "hardhat";
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 export const ZeroAddress = '0x0000000000000000000000000000000000000000';
 export const RandomAddress = '0x1231231231231231321231231231231231231231';
@@ -10,6 +11,21 @@ export interface TokenContractResponses {
     approve?: boolean;
     transfer?: boolean;
     transferFrom?: boolean;
+}
+
+export async function getAccounts(): Promise<{
+    owner: SignerWithAddress;
+    anyoneElse: SignerWithAddress;
+    relayer: SignerWithAddress;
+    random: SignerWithAddress;
+}> {
+    const [owner, anyoneElse, relayer, random] = await ethers.getSigners();
+    return {
+        owner,
+        anyoneElse,
+        relayer,
+        random,
+    };
 }
 
 /**

@@ -79,6 +79,8 @@ services:
       RPC_NODE_POLYGON: ${polygon_RPC_NODE}
       CHAIN_ID_FANTOM: ${fantom_CHAIN_ID}
       CHAIN_ID_POLYGON: ${polygon_CHAIN_ID}
+      POLYGONSCAN_API_KEY: ${POLYGONSCAN_API_KEY}
+      FTMSCAN_API_KEY: ${FTMSCAN_API_KEY}
     volumes:
       - ./contracts/www/:/code
 

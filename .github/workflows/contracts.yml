@@ -6,9 +6,6 @@ on:
       - 'contracts/www/**'
       - '.github/workflows/contracts.yml'
 
-env:
-  DOCKER_USER: 1000
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,6 +13,10 @@ jobs:
       matrix:
         node-version: [ 16.x ]
       fail-fast: false
+
+    defaults:
+      run:
+        working-directory: ./contracts/www
 
     steps:
       - name: Checkout
@@ -28,16 +29,11 @@ jobs:
 
       - name: Install dependencies
         run: yarn install
-        working-directory: ./contracts/www
-
-      - name: Create required folders
-        run: mkdir artifacts cache && chmod -R 777 artifacts cache
-        working-directory: ./contracts/www
 
       - name: Build contracts
-        run: make compile-contracts
+        run: yarn build
 
       - name: Run Tests
-        run: make test-contracts
+        run: yarn test
 
 

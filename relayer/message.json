@@ -1,0 +1,30 @@
+{
+  "txHash": {
+    "DataType": "String",
+    "StringValue": ""
+  },
+  "wallet": {
+    "DataType": "String",
+    "StringValue": ""
+  },
+  "fromChain": {
+    "DataType": "String",
+    "StringValue": ""
+  },
+  "toChain": {
+    "DataType": "String",
+    "StringValue": ""
+  },
+  "srcToken": {
+    "DataType": "String",
+    "StringValue": ""
+  },
+  "dstToken": {
+    "DataType": "String",
+    "StringValue": ""
+  },
+  "router": {
+    "DataType": "String",
+    "StringValue": ""
+  }
+}

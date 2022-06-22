@@ -1,19 +1,21 @@
 import {ethers} from "hardhat";
 import chai, {expect} from "chai";
-import {fakeTokenContract, RandomAddress, ZeroAddress, zeroExEncodedCalldata} from "../shared";
+import {fakeTokenContract, RandomAddress, ZeroAddress} from "../../shared";
 import {Contract, ContractFactory} from "ethers";
-import {smock} from "@defi-wonderland/smock";
+import {FakeContract, smock} from "@defi-wonderland/smock";
 
 chai.use(smock.matchers);
 
-describe('ZeroEx', () => {
-    let ZeroExFactory: ContractFactory;
+describe('Multichain', () => {
+    let AnyswapFactory: ContractFactory;
     let contract: Contract;
+    let providerContract: FakeContract;
 
     beforeEach(async () => {
-        ZeroExFactory = await ethers.getContractFactory("ZeroEx");
+        AnyswapFactory = await ethers.getContractFactory("Anyswap");
         const [owner] = await ethers.getSigners();
-        contract = await ZeroExFactory.connect(owner).deploy();
+        providerContract = await fakeMultichainContract();
+        contract = await AnyswapFactory.connect(owner).deploy(providerContract.address);
     });
 
     it("Should fail if anyone else than the owner tries to update the router address", async function () {
@@ -23,7 +25,7 @@ describe('ZeroEx', () => {
         /** Act */
         const call = contract
             .connect(anyoneElse)
-            .updateRouter(random.address);
+            .updateRouter(random.address)
 
         /** Assert */
         await expect(call).to.be.reverted;
@@ -67,11 +69,11 @@ describe('ZeroEx', () => {
         /** Act */
         const call = contract
             .connect(anyoneElse)
-            .swap(
-                RandomAddress,
+            .send(
                 RandomAddress,
                 router.address,
                 1000000,
+                1337,
                 '0x',
             );
 
@@ -88,19 +90,21 @@ describe('ZeroEx', () => {
 
         // Create to fake ERC20 tokens
         const fakeTokenIn = await fakeTokenContract();
-        const fakeTokenOut = await fakeTokenContract();
 
-        // Generate the fake contract and the payload
-        const [callData] = await zeroExEncodedCalldata();
+        // Generate random bytes for function payload
+        const callData = ethers.utils.defaultAbiCoder.encode(['address'], [RandomAddress]);
+
+        // Set the provider response to fail
+        providerContract.anySwapOutUnderlying.reverts();
 
         /** Act */
         const call = contract
             .connect(router)
-            .swap(
+            .send(
                 fakeTokenIn.address,
-                fakeTokenOut.address,
                 router.address,
                 1000000,
+                1337,
                 callData,
             );
 
@@ -108,38 +112,44 @@ describe('ZeroEx', () => {
         await expect(call).to.be.reverted;
     });
 
-    it("Should execute provider swap and return token to router", async function () {
+    it("Should execute correctly and send right parameters", async function () {
         /** Arrange */
         const [owner, anyoneElse, router] = await ethers.getSigners();
         await contract
             .connect(owner)
             .updateRouter(router.address);
 
-        // Create two fake ERC20 tokens
+        // Create to fake ERC20 tokens
         const fakeTokenIn = await fakeTokenContract();
-        const fakeTokenOut = await fakeTokenContract();
 
-        // Fake response from executed methods on the output token
-        fakeTokenOut.balanceOf.returnsAtCall(0, 10);
-        fakeTokenOut.balanceOf.returnsAtCall(1, 20);
-
-        // Generate the fake contract and the payload
-        const [callData, myFake] = await zeroExEncodedCalldata();
+        // Generate random bytes for function payload
+        const callData = ethers.utils.defaultAbiCoder.encode(['address'], [RandomAddress]);
 
         /** Act */
         await contract
             .connect(router)
-            .swap(
+            .send(
                 fakeTokenIn.address,
-                fakeTokenOut.address,
                 router.address,
                 1000000,
+                1337,
                 callData,
             );
 
         /** Assert */
-        expect(myFake.testFunction).to.have.been.calledOnce;
-        expect(fakeTokenOut.transfer).to.have.been.calledOnceWith(router.address, 10);
+        await expect(providerContract.anySwapOutUnderlying)
+            .to.be.calledOnceWith(
+                RandomAddress,
+                router.address,
+                1000000,
+                1337
+            );
     });
-
 });
+
+async function fakeMultichainContract() {
+    const abi = [
+        "function anySwapOutUnderlying(address token, address to, uint amount, uint toChainID) external",
+    ];
+    return await smock.fake(abi);
+}

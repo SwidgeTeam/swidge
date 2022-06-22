@@ -143,9 +143,16 @@ AWS_CLI = \
 		-e "AWS_DEFAULT_REGION=${AWS_SQS_REGION}" \
 		-e "AWS_ACCESS_KEY_ID=${AWS_SQS_ACCESS_KEY}" \
 		-e "AWS_SECRET_ACCESS_KEY=${AWS_SQS_SECRET}" \
+		$(2) \
 		amazon/aws-cli \
 		--endpoint-url=http://${DOCKER_LOCALSTACK_SERVICE}:${LOCALSTACK_PORT} \
 		$(1) \
+	)
+
+AWS_CLI_MESSAGE = \
+	@$(call AWS_CLI,\
+		$(1),\
+		-v $(PWD)/relayer/message.json:/message.json\
 	)
 
 create-queue:
@@ -154,15 +161,39 @@ create-queue:
 list-queues:
 	@$(call AWS_CLI, sqs list-queues)
 
+send-message:
+	@$(call AWS_CLI_MESSAGE, sqs send-message \
+ 		--queue-url ${AWS_SQS_QUEUE_URL} \
+ 		--message-body '' \
+ 		--message-deduplication-id '' \
+ 		--message-group-id '' \
+ 		--message-attributes file:///message.json \
+ 	)
+
 ### Contracts
 
 CONTRACTS = $(call DOCKER_COMPOSE_RUN,--rm ${DOCKER_CONTRACTS_SERVICE} $(1))
 
-CONTRACTS_DOCKER_EXEC = $(call DOCKER,exec -it "running-$(1)" $(2))
-CONTRACTS_RUN = $(call CONTRACTS_DOCKER_EXEC,$(1),yarn $(3) --network $(2))
+build-contracts:
+	@$(call CONTRACTS, build)
 
-CONTRACTS_DEPLOY_ALL = $(call CONTRACTS_RUN,$(1),$(2),deploy-all --chain $(1))
-CONTRACTS_GET_TOKENS = $(call CONTRACTS_RUN,$(1),$(2),get-tokens --chain $(1) --token $(3))
+test-contracts:
+	@$(call CONTRACTS, test)
+
+# Live chain
+
+CONTRACTS_LIVE_RUN = $(call CONTRACTS,$(1) --network $(2) --chain $(2))
+
+$(addprefix deploy-all-, ${ENABLED_NETWORKS}): deploy-all-%:
+	@$(call CONTRACTS_LIVE_RUN,deploy-all,$*)
+
+$(addprefix deploy-providers-, ${ENABLED_NETWORKS}): deploy-providers-%:
+	@$(call CONTRACTS_LIVE_RUN,deploy-providers,$*)
+
+$(addprefix verify-, ${ENABLED_NETWORKS}): verify-%:
+	@$(call CONTRACTS_LIVE_RUN,verify-diamond,$*)
+
+# Forked chain
 
 $(addprefix fork-, ${ENABLED_NETWORKS}): fork-%:
 	@$(call DOCKER_COMPOSE_RUN, \
@@ -176,14 +207,22 @@ $(addprefix fork-, ${ENABLED_NETWORKS}): fork-%:
 		up \
 	)
 
-build-contracts:
-	@$(call CONTRACTS, build)
+CONTRACTS_DOCKER_EXEC = $(call DOCKER,exec -it "running-$(1)" $(2))
+CONTRACTS_RUN = $(call CONTRACTS_DOCKER_EXEC,$(1),yarn $(3) --network $(2))
 
-test-contracts:
-	@$(call CONTRACTS, test)
+CONTRACTS_DEPLOY_DIAMOND = $(call CONTRACTS_RUN,$(1),$(2),deploy-diamond)
+CONTRACTS_UPDATE_DIAMOND = $(call CONTRACTS_RUN,$(1),$(2),update-diamond --chain $(1) --facet $(3))
+CONTRACTS_DEPLOY_ALL = $(call CONTRACTS_RUN,$(1),$(2),deploy-all --chain $(1))
+CONTRACTS_GET_TOKENS = $(call CONTRACTS_RUN,$(1),$(2),get-tokens --chain $(1) --token $(3))
+
+$(addprefix deploy-diamond-fork-, ${ENABLED_NETWORKS}): deploy-diamond-fork-%:
+	@$(call CONTRACTS_DEPLOY_DIAMOND,$*,localhost)
+
+$(addprefix update-diamond-fork-, ${ENABLED_NETWORKS}): update-diamond-fork-%:
+	@$(call CONTRACTS_UPDATE_DIAMOND,$*,localhost,$(facet))
 
 $(addprefix deploy-all-fork-, ${ENABLED_NETWORKS}): deploy-all-fork-%:
-	$(call CONTRACTS_DEPLOY_ALL,$*,localhost)
+	@$(call CONTRACTS_DEPLOY_ALL,$*,localhost)
 
 $(addprefix get-tokens-, ${ENABLED_NETWORKS}): get-tokens-%:
 	@$(call CONTRACTS_GET_TOKENS,$*,localhost,$(token))
