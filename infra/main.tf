@@ -40,15 +40,10 @@ module "network" {
   availability_zones  = local.availability_zones
 }
 
-module "ami" {
-  source = "./modules/ami"
-}
-
 module "api_instance" {
   source = "./modules/instance"
 
   name        = "api"
-  ami_id      = module.ami.ami_id
   environment = var.environment
   subnets     = module.network.public_subnets
 }

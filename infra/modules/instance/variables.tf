@@ -12,7 +12,3 @@ variable "subnets" {
   }))
   description = "Subnets to create the instance on"
 }
-
-variable "ami_id" {
-  description = "AMI ID to use on the instance"
-}

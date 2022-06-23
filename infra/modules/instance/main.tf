@@ -8,8 +8,12 @@ resource "aws_network_interface" "net_interface" {
   }
 }
 
+module "ami" {
+  source = "../ami"
+}
+
 resource "aws_instance" "instance" {
-  ami           = var.ami_id
+  ami           = module.ami.ami_id
   instance_type = "t2.micro"
   count         = length(var.subnets)
 
