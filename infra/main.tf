@@ -20,15 +20,17 @@ provider "aws" {
 locals {
   availability_zones = [
     "${var.region}a",
+    "${var.region}b",
   ]
   api_public_subnets_cidr = [
     cidrsubnet(var.vpc_cidr, 4, 1),
-  ]
-  relayer_public_subnets_cidr = [
     cidrsubnet(var.vpc_cidr, 4, 2),
   ]
-  db_private_subnets_cidr = [
+  relayer_public_subnets_cidr = [
     cidrsubnet(var.vpc_cidr, 4, 3),
+  ]
+  db_private_subnets_cidr = [
+    cidrsubnet(var.vpc_cidr, 4, 4),
   ]
 }
 

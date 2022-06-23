@@ -56,3 +56,53 @@ resource "aws_security_group" "api-sg" {
     Name = "allow_http_ssh"
   }
 }
+
+/*== Load balancer ==*/
+
+resource "aws_lb" "api-balancer" {
+  name               = "${var.environment}-alb-${local.name}"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.https_https.id]
+  subnets            = [for subnet in module.api-subnets.public_subnets : subnet.id]
+
+  enable_deletion_protection = true
+
+  tags = {
+    Environment = var.environment
+  }
+}
+
+resource "aws_security_group" "https_https" {
+  name        = "allow_http_https"
+  description = "Allow HTTP & HTTPS inbound connections"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    description = "HTTP from anywhere"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "HTTPS from anywhere"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  tags = {
+    Name = "allow_http_https"
+  }
+}
