@@ -59,21 +59,63 @@ resource "aws_security_group" "api-sg" {
 
 /*== Load balancer ==*/
 
+// create application load balance
 resource "aws_lb" "api-balancer" {
   name               = "${var.environment}-alb-${local.name}"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.https_https.id]
+  security_groups    = [aws_security_group.http_https.id]
   subnets            = [for subnet in module.api-subnets.public_subnets : subnet.id]
-
-  enable_deletion_protection = true
 
   tags = {
     Environment = var.environment
   }
 }
 
-resource "aws_security_group" "https_https" {
+// define an instances target group
+resource "aws_lb_target_group" "api-target-group" {
+  name     = "api-instances-group"
+  port     = 80
+  protocol = "HTTP"
+  vpc_id   = var.vpc_id
+}
+
+// add instance to target group
+resource "aws_lb_target_group_attachment" "api-instances-target-group" {
+  target_group_arn = aws_lb_target_group.api-target-group.arn
+  target_id        = element(module.api-instance.instances_id, 1)
+  port             = 80
+}
+
+// set HTTP listener on LB
+resource "aws_alb_listener" "http-alb-listener" {
+  load_balancer_arn = aws_lb.api-balancer.arn
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.api-target-group.arn
+  }
+}
+
+// set HTTPS listener on LB
+resource "aws_lb_listener" "https-alb-listener" {
+  load_balancer_arn = aws_lb.api-balancer.arn
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = var.certificate_arn
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.api-target-group.arn
+  }
+}
+
+
+// security group for alb
+resource "aws_security_group" "http_https" {
   name        = "allow_http_https"
   description = "Allow HTTP & HTTPS inbound connections"
   vpc_id      = var.vpc_id

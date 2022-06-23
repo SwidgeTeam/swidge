@@ -54,6 +54,25 @@ resource "aws_internet_gateway" "igw" {
   }
 }
 
+/** Certificate **/
+
+resource "aws_acm_certificate" "cert" {
+  domain_name       = "swidge.xyz"
+  validation_method = "DNS"
+
+  subject_alternative_names = [
+    "*.swidge.xyz"
+  ]
+
+  tags = {
+    Environment = var.environment
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 /** API **/
 
 module "api" {
@@ -65,6 +84,7 @@ module "api" {
   public_subnets_cidr = local.api_public_subnets_cidr
   availability_zones  = local.availability_zones
   internet_gateway_id = aws_internet_gateway.igw.id
+  certificate_arn     = aws_acm_certificate.cert.arn
 }
 
 /** Relayer **/

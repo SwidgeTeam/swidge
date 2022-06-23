@@ -24,3 +24,8 @@ variable "availability_zones" {
   type        = list(string)
   description = "The az that the resources will be launched"
 }
+
+variable "certificate_arn" {
+  type        = string
+  description = "ARN of the certificate to use when SSL is needed"
+}

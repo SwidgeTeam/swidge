@@ -28,3 +28,7 @@ resource "aws_instance" "instance" {
     Environment = var.environment
   }
 }
+
+output "instances_id" {
+  value = aws_instance.instance.*.id
+}
