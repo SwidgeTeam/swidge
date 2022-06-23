@@ -18,6 +18,7 @@ module "api-instance" {
   source = "../../modules/instance"
 
   name              = local.name
+  instance_type     = "t2.micro"
   environment       = var.environment
   subnets           = [element(module.api-subnets.public_subnets, 1)]
   security_group_id = aws_security_group.api-sg.id

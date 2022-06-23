@@ -6,6 +6,10 @@ variable "name" {
   description = "Name of the instance"
 }
 
+variable "instance_type" {
+  description = "Type of instance to be used"
+}
+
 variable "subnets" {
   type = list(object({
     id : string

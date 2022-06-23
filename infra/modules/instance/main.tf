@@ -15,7 +15,7 @@ module "ami" {
 
 resource "aws_instance" "instance" {
   ami           = module.ami.ami_id
-  instance_type = "t2.micro"
+  instance_type = var.instance_type
   count         = length(var.subnets)
 
   network_interface {
