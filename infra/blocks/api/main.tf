@@ -21,7 +21,7 @@ module "api-instance" {
   instance_type     = "t2.micro"
   environment       = var.environment
   subnets           = [element(module.api-subnets.public_subnets, 1)]
-  security_group_id = aws_security_group.api-sg.id
+  security_group_id = aws_security_group.api_http_ssh.id
 }
 
 module "application_load_balancer" {
@@ -36,7 +36,7 @@ module "application_load_balancer" {
   subnets         = module.api-subnets.public_subnets
 }
 
-resource "aws_security_group" "api-sg" {
+resource "aws_security_group" "api_http_ssh" {
   name        = "allow_http_ssh"
   description = "Allow HTTP & SSH into the instance"
   vpc_id      = var.vpc_id

@@ -11,23 +11,23 @@ resource "aws_lb" "balancer" {
   }
 }
 
-// define an instances target group
-resource "aws_lb_target_group" "api-target-group" {
-  name     = "api-instances-group"
+// define instances target group
+resource "aws_lb_target_group" "target-group" {
+  name     = "${var.name}-instances-group"
   port     = 80
   protocol = "HTTP"
   vpc_id   = var.vpc_id
 }
 
 // add instance to target group
-resource "aws_lb_target_group_attachment" "api-instances-target-group" {
+resource "aws_lb_target_group_attachment" "instances-target-group" {
   count            = length(var.instances_id)
-  target_group_arn = aws_lb_target_group.api-target-group.arn
+  target_group_arn = aws_lb_target_group.target-group.arn
   target_id        = element(var.instances_id, count.index)
   port             = 80
 }
 
-// set HTTP listener on LB
+// set HTTP listener
 resource "aws_alb_listener" "http-alb-listener" {
   load_balancer_arn = aws_lb.balancer.arn
   port              = "80"
@@ -35,11 +35,11 @@ resource "aws_alb_listener" "http-alb-listener" {
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.api-target-group.arn
+    target_group_arn = aws_lb_target_group.target-group.arn
   }
 }
 
-// set HTTPS listener on LB
+// set HTTPS listener
 resource "aws_lb_listener" "https-alb-listener" {
   load_balancer_arn = aws_lb.balancer.arn
   port              = "443"
@@ -49,7 +49,7 @@ resource "aws_lb_listener" "https-alb-listener" {
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.api-target-group.arn
+    target_group_arn = aws_lb_target_group.target-group.arn
   }
 }
 
