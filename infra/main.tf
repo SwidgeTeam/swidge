@@ -19,6 +19,15 @@ locals {
   availability_zones = [
     "${var.region}a",
   ]
+  api_public_subnets_cidr = [
+    cidrsubnet(var.vpc_cidr, 4, 1),
+  ]
+  relayer_public_subnets_cidr = [
+    cidrsubnet(var.vpc_cidr, 4, 2),
+  ]
+  db_private_subnets_cidr = [
+    cidrsubnet(var.vpc_cidr, 4, 3),
+  ]
 }
 
 /** Modules **/
@@ -30,20 +39,20 @@ module "my_vpc" {
   vpc_cidr    = var.vpc_cidr
 }
 
-module "network" {
-  source = "./modules/network"
+module "api-subnets" {
+  source = "./modules/public_subnets"
 
   region              = var.region
   environment         = var.environment
   vpc_id              = module.my_vpc.vpc_id
-  public_subnets_cidr = var.api_public_subnets_cidr
+  public_subnets_cidr = local.api_public_subnets_cidr
   availability_zones  = local.availability_zones
 }
 
-module "api_instance" {
+module "api-instance" {
   source = "./modules/instance"
 
   name        = "api"
   environment = var.environment
-  subnets     = module.network.public_subnets
+  subnets     = module.api-subnets.public_subnets
 }

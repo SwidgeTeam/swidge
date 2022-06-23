@@ -1,4 +1,4 @@
-resource "aws_subnet" "public_subnet" {
+resource "aws_subnet" "public_subnets" {
   vpc_id                  = var.vpc_id
   count                   = length(var.public_subnets_cidr)
   cidr_block              = element(var.public_subnets_cidr, count.index)
@@ -31,7 +31,7 @@ resource "aws_internet_gateway" "igw" {
 
 resource "aws_route_table_association" "public" {
   count          = length(var.public_subnets_cidr)
-  subnet_id      = element(aws_subnet.public_subnet.*.id, count.index)
+  subnet_id      = element(aws_subnet.public_subnets.*.id, count.index)
   route_table_id = aws_route_table.public.id
 }
 
@@ -41,10 +41,6 @@ resource "aws_route" "public_internet_gateway" {
   gateway_id             = aws_internet_gateway.igw.id
 }
 
-/*******\
- Outputs
-\*******/
-
 output "public_subnets" {
-  value = aws_subnet.public_subnet
+  value = aws_subnet.public_subnets
 }
