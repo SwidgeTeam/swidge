@@ -38,30 +38,11 @@ module "ami" {
   source = "./modules/ami"
 }
 
-/** Instances **/
+module "api_instance" {
+  source = "./modules/instance"
 
-resource "aws_network_interface" "api_net_interface" {
-  subnet_id         = element(module.network.public_subnets.*.id, count.index)
-  count             = length(var.public_subnets_cidr)
-  private_ips_count = 1
-
-  tags = {
-    Name = "api_network_interface"
-  }
-}
-
-resource "aws_instance" "api-instance" {
-  ami           = module.ami.ami_id
-  instance_type = "t2.micro"
-  count         = length(var.public_subnets_cidr)
-
-  network_interface {
-    network_interface_id = element(aws_network_interface.api_net_interface.*.id, count.index)
-    device_index         = 0
-  }
-
-  tags = {
-    Name        = "${var.environment}-api-instance"
-    Environment = var.environment
-  }
+  name        = "api"
+  ami_id      = module.ami.ami_id
+  environment = var.environment
+  subnets     = module.network.public_subnets
 }
