@@ -2,6 +2,7 @@ resource "aws_network_interface" "net_interface" {
   subnet_id         = element(var.subnets.*.id, count.index)
   count             = length(var.subnets)
   private_ips_count = 1
+  security_groups   = [var.security_group_id]
 
   tags = {
     Name = "${var.name}_network_interface"

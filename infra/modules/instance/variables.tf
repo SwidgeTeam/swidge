@@ -12,3 +12,8 @@ variable "subnets" {
   }))
   description = "Subnets to create the instance on"
 }
+
+variable "security_group_id" {
+  type = string
+  description = "Security group ID to attach to the instance"
+}

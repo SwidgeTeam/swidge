@@ -73,7 +73,7 @@ module "relayer" {
   region              = var.region
   environment         = var.environment
   vpc_id              = module.my_vpc.vpc_id
-  public_subnets_cidr = local.api_public_subnets_cidr
+  public_subnets_cidr = local.relayer_public_subnets_cidr
   availability_zones  = local.availability_zones
   internet_gateway_id = aws_internet_gateway.igw.id
 }
