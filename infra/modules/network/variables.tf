@@ -6,13 +6,13 @@ variable "region" {
   description = "The region to launch the bastion host"
 }
 
-variable "vpc_cidr" {
-  description = "The CIDR block of the vpc"
+variable "vpc_id" {
+  description = "The VPC ID"
 }
 
 variable "public_subnets_cidr" {
   type        = list(string)
-  description = "The CIDR block for the public subnet for API"
+  description = "The CIDR block for the public subnet"
 }
 
 variable "availability_zones" {

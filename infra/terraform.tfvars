@@ -3,6 +3,6 @@ region      = "us-west-2"
 environment = "test"
 
 /* module networking */
-vpc_cidr             = "10.0.0.0/16"
-public_subnets_cidr  = ["10.0.0.0/20"] //List of Public subnet cidr range
-private_subnets_cidr = ["10.0.16.0/20"] //List of private subnet cidr range
+vpc_cidr                = "10.0.0.0/16"
+api_public_subnets_cidr = ["10.0.0.0/20"]
+db_private_subnets_cidr = ["10.0.16.0/20"]

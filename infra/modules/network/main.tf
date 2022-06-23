@@ -1,24 +1,5 @@
-/*******\
- The VPC
-\*******/
-
-resource "aws_vpc" "my_vpc" {
-  cidr_block           = var.vpc_cidr
-  enable_dns_hostnames = true
-  enable_dns_support   = true
-
-  tags = {
-    Name        = "${var.environment}-vpc"
-    Environment = var.environment
-  }
-}
-
-/*******\
- Subnets
-\*******/
-
-resource "aws_subnet" "public_subnet_api" {
-  vpc_id                  = aws_vpc.my_vpc.id
+resource "aws_subnet" "public_subnet" {
+  vpc_id                  = var.vpc_id
   count                   = length(var.public_subnets_cidr)
   cidr_block              = element(var.public_subnets_cidr, count.index)
   availability_zone       = element(var.availability_zones, count.index)
@@ -31,7 +12,7 @@ resource "aws_subnet" "public_subnet_api" {
 }
 
 resource "aws_route_table" "public" {
-  vpc_id = aws_vpc.my_vpc.id
+  vpc_id = var.vpc_id
 
   tags = {
     Name        = "${var.environment}-public-route-table"
@@ -40,7 +21,7 @@ resource "aws_route_table" "public" {
 }
 
 resource "aws_internet_gateway" "igw" {
-  vpc_id = aws_vpc.my_vpc.id
+  vpc_id = var.vpc_id
 
   tags = {
     Name        = "${var.environment}-igw"
@@ -50,7 +31,7 @@ resource "aws_internet_gateway" "igw" {
 
 resource "aws_route_table_association" "public" {
   count          = length(var.public_subnets_cidr)
-  subnet_id      = element(aws_subnet.public_subnet_api.*.id, count.index)
+  subnet_id      = element(aws_subnet.public_subnet.*.id, count.index)
   route_table_id = aws_route_table.public.id
 }
 
@@ -60,45 +41,10 @@ resource "aws_route" "public_internet_gateway" {
   gateway_id             = aws_internet_gateway.igw.id
 }
 
-
-/****************************\
- VPC's Default Security Group
-\****************************/
-
-resource "aws_security_group" "default" {
-  name        = "${var.environment}-default-sg"
-  description = "Default security group to allow inbound/outbound from the VPC"
-  vpc_id      = aws_vpc.my_vpc.id
-  depends_on  = [aws_vpc.my_vpc]
-
-  ingress {
-    from_port = "0"
-    to_port   = "0"
-    protocol  = "-1"
-    self      = true
-  }
-
-  egress {
-    from_port = "0"
-    to_port   = "0"
-    protocol  = "-1"
-    self      = "true"
-  }
-
-  tags = {
-    Environment = var.environment
-  }
-}
-
-
 /*******\
  Outputs
 \*******/
 
-output "my_vpc_id" {
-  value = aws_vpc.my_vpc.id
-}
-
 output "public_subnets" {
-  value = aws_subnet.public_subnet_api
+  value = aws_subnet.public_subnet
 }

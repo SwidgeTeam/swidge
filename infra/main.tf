@@ -1,4 +1,3 @@
-
 /** Provider **/
 
 terraform {
@@ -24,13 +23,20 @@ locals {
 
 /** Modules **/
 
+module "my_vpc" {
+  source = "./modules/vpc"
+
+  environment = var.environment
+  vpc_cidr    = var.vpc_cidr
+}
+
 module "network" {
   source = "./modules/network"
 
   region              = var.region
   environment         = var.environment
-  vpc_cidr            = var.vpc_cidr
-  public_subnets_cidr = var.public_subnets_cidr
+  vpc_id              = module.my_vpc.vpc_id
+  public_subnets_cidr = var.api_public_subnets_cidr
   availability_zones  = local.availability_zones
 }
 
