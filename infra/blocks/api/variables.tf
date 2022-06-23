@@ -1,7 +1,3 @@
-variable "name" {
-  description = "Name of resource for which the subnets are dedicated"
-}
-
 variable "environment" {
   description = "The Deployment environment"
 }

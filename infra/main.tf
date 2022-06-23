@@ -32,7 +32,7 @@ locals {
   ]
 }
 
-/** Modules **/
+/** VPC **/
 
 module "my_vpc" {
   source = "./modules/vpc"
@@ -41,20 +41,39 @@ module "my_vpc" {
   vpc_cidr    = var.vpc_cidr
 }
 
-module "api-subnets" {
-  source = "./modules/public_subnets"
+/** Internet gateway **/
+
+resource "aws_internet_gateway" "igw" {
+  vpc_id = module.my_vpc.vpc_id
+
+  tags = {
+    Name        = "${var.environment}-igw"
+    Environment = var.environment
+  }
+}
+
+/** API **/
+
+module "api" {
+  source = "./blocks/api"
 
   region              = var.region
   environment         = var.environment
   vpc_id              = module.my_vpc.vpc_id
   public_subnets_cidr = local.api_public_subnets_cidr
   availability_zones  = local.availability_zones
+  internet_gateway_id = aws_internet_gateway.igw.id
 }
 
-module "api-instance" {
-  source = "./modules/instance"
+/** Relayer **/
 
-  name        = "api"
-  environment = var.environment
-  subnets     = module.api-subnets.public_subnets
+module "relayer" {
+  source = "./blocks/relayer"
+
+  region              = var.region
+  environment         = var.environment
+  vpc_id              = module.my_vpc.vpc_id
+  public_subnets_cidr = local.api_public_subnets_cidr
+  availability_zones  = local.availability_zones
+  internet_gateway_id = aws_internet_gateway.igw.id
 }
