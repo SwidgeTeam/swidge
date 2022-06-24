@@ -1,12 +1,15 @@
 variable "environment" {
+  type        = string
   description = "The Deployment environment"
 }
 
 variable "region" {
+  type        = string
   description = "The region to launch the bastion host"
 }
 
 variable "vpc_id" {
+  type        = string
   description = "The VPC ID"
 }
 

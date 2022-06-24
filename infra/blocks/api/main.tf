@@ -69,3 +69,7 @@ resource "aws_security_group" "api_http_ssh" {
     Name = "allow_http_ssh"
   }
 }
+
+output "api_security_group_id" {
+  value = aws_security_group.api_http_ssh.id
+}

@@ -38,6 +38,7 @@ locals {
   ]
   db_private_subnets_cidr = [
     cidrsubnet(var.vpc_cidr, 4, 4),
+    cidrsubnet(var.vpc_cidr, 4, 5),
   ]
 }
 
@@ -117,4 +118,18 @@ module "front" {
 
 resource "aws_iam_user" "deployer" {
   name = "github-deployer"
+}
+
+module "database" {
+  source = "./blocks/db"
+
+  region                    = var.region
+  environment               = var.environment
+  vpc_id                    = module.my_vpc.vpc_id
+  private_subnets_cidr      = local.db_private_subnets_cidr
+  availability_zones        = local.availability_zones
+  allowed_security_group_id = module.api.api_security_group_id
+  database_name             = var.database_name
+  database_username         = var.database_username
+  database_password         = var.database_password
 }
