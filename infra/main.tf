@@ -18,6 +18,8 @@ provider "aws" {
 provider "aws" {
   alias      = "east"
   region     = "us-east-1"
+  access_key = var.aws_access_key
+  secret_key = var.aws_secret_key
 }
 
 /** Local variables **/
@@ -79,7 +81,7 @@ module "regional_cert" {
   environment = var.environment
 }
 
-/** API **/
+/** Services **/
 
 module "api" {
   source = "./blocks/api"
@@ -92,8 +94,6 @@ module "api" {
   internet_gateway_id = aws_internet_gateway.igw.id
   certificate_arn     = module.regional_cert.arn
 }
-
-/** Relayer **/
 
 module "relayer" {
   source = "./blocks/relayer"
@@ -109,6 +109,12 @@ module "relayer" {
 module "front" {
   source = "./blocks/front"
 
-  environment     = var.environment
-  certificate_arn = module.global_cert.arn
+  environment          = var.environment
+  service_url          = "app.${var.domain}"
+  deployer_account_arn = aws_iam_user.deployer.arn
+  certificate_arn      = module.global_cert.arn
+}
+
+resource "aws_iam_user" "deployer" {
+  name = "github-deployer"
 }

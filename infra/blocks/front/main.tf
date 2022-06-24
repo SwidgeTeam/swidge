@@ -7,6 +7,41 @@ resource "aws_s3_bucket_acl" "front_acl" {
   acl    = "private"
 }
 
+resource "aws_s3_bucket_policy" "allow_access_to_anyone" {
+  bucket = aws_s3_bucket.front_bucket.id
+  policy = <<EOP
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Principal": {
+                    "AWS": "${var.deployer_account_arn}"
+                },
+                "Action": [
+                    "s3:GetObject",
+                    "s3:PutObject",
+                    "s3:DeleteObject"
+                ],
+                "Resource": "${aws_s3_bucket.front_bucket.arn}/*"
+            },
+            {
+                "Effect": "Allow",
+                "Principal": "*",
+                "Action": "s3:GetObject",
+                "Resource": "${aws_s3_bucket.front_bucket.arn}/*"
+            },
+            {
+                "Effect": "Allow",
+                "Principal": "*",
+                "Action": "s3:ListBucket",
+                "Resource": "${aws_s3_bucket.front_bucket.arn}"
+            }
+        ]
+    }
+  EOP
+}
+
 locals {
   s3_origin_id = "front-${var.environment}"
 }
@@ -19,10 +54,9 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
 
   enabled             = true
   is_ipv6_enabled     = true
-  comment             = "Some comment"
   default_root_object = "index.html"
 
-  aliases = ["app.test.swidge.xyz"]
+  aliases = [var.service_url]
 
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
@@ -54,8 +88,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
-    acm_certificate_arn            = var.certificate_arn
-    ssl_support_method             = "sni-only"
+    acm_certificate_arn = var.certificate_arn
+    ssl_support_method  = "sni-only"
   }
 }
