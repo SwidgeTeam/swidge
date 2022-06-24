@@ -15,6 +15,11 @@ provider "aws" {
   secret_key = var.aws_secret_key
 }
 
+provider "aws" {
+  alias      = "east"
+  region     = "us-east-1"
+}
+
 /** Local variables **/
 
 locals {
@@ -56,6 +61,15 @@ resource "aws_internet_gateway" "igw" {
 
 /** Certificate **/
 
+module "global_cert" {
+  source    = "./modules/certificate"
+  providers = {
+    aws : aws.east
+  }
+  domain      = var.domain
+  environment = var.environment
+}
+
 module "regional_cert" {
   source    = "./modules/certificate"
   providers = {
@@ -90,4 +104,11 @@ module "relayer" {
   public_subnets_cidr = local.relayer_public_subnets_cidr
   availability_zones  = local.availability_zones
   internet_gateway_id = aws_internet_gateway.igw.id
+}
+
+module "front" {
+  source = "./blocks/front"
+
+  environment     = var.environment
+  certificate_arn = module.global_cert.arn
 }
