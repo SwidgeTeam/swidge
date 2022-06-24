@@ -22,7 +22,7 @@ $(eval _ := $(shell \
 
 ENV_KEYS := $(shell ( \
 	cat ${TEMP_ENV_FILE} \
-	| sed -E 's/^([A-Za-z][A-Za-z0-9_-]*)\s*\??:??=\s*(.*)/\1/' \
+	| sed -E 's/^([A-Za-z][A-Za-z0-9_-]*)=(.*)/\1/' \
 	| sort -u \
 ))
 
