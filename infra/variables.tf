@@ -19,3 +19,6 @@ variable "aws_secret_key" {
   description = "AWS Secret Key"
 }
 
+variable "domain" {
+  description = "Base domain name for the environment"
+}
