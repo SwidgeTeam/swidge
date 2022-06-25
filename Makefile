@@ -1,15 +1,15 @@
-ifeq (${ENV},)
-	ENV := dev
-endif
+ENV ?= dev
 
 TEMP_ENV_FILE := $(shell mktemp -t ".env.XXXXXX")
 
-$(eval _ := $(shell \
-	find env -type f -name "*.env" -follow \
+$(foreach env, default ${ENV}, $(eval _ := $(shell \
+	find env/${env} -type f -name "*.env" -follow \
 	| xargs awk 1 \
 	| grep -ve "^\#" \
-	>> ${TEMP_ENV_FILE} \
+	>> ${TEMP_ENV_FILE}) \
 ))
+
+
 
 $(eval _ := $(shell \
 	test -f .env && \
