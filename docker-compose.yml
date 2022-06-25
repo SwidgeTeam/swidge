@@ -85,6 +85,18 @@ services:
     volumes:
       - ./contracts/www/:/code
 
+  terraform:
+    image: hashicorp/terraform:1.2.3
+    environment:
+      TF_VAR_aws_access_key: ${CREATOR_AWS_ACCESS_KEY}
+      TF_VAR_aws_secret_key: ${CREATOR_AWS_SECRET_KEY}
+      TF_VAR_database_name: ${AURORA_DB_NAME}
+      TF_VAR_database_username: ${AURORA_MASTER_USERNAME}
+      TF_VAR_database_password: ${AURORA_MASTER_PASSWORD}
+    volumes:
+      - ./infrastructure:/code
+    working_dir: /code
+
 networks:
   default:
     name: ${DOCKER_NETWORK_NAME}
