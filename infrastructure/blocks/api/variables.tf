@@ -32,3 +32,8 @@ variable "certificate_arn" {
   type        = string
   description = "ARN of the certificate to use when SSL is needed"
 }
+
+variable "instance_type" {
+  type        = string
+  description = "Instance type to be used"
+}

@@ -18,7 +18,7 @@ module "relayer-instance" {
   source = "../../modules/instance"
 
   name              = local.name
-  instance_type     = "t2.micro"
+  instance_type     = var.instance_type
   environment       = var.environment
   subnets           = [element(module.relayer-subnets.public_subnets, 1)]
   security_group_id = aws_security_group.relayer-sg.id

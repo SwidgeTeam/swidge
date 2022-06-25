@@ -99,6 +99,7 @@ module "api" {
   availability_zones  = local.availability_zones
   internet_gateway_id = aws_internet_gateway.igw.id
   certificate_arn     = module.regional_cert.arn
+  instance_type       = var.api_instance_type
 }
 
 module "relayer" {
@@ -110,6 +111,7 @@ module "relayer" {
   public_subnets_cidr = local.relayer_public_subnets_cidr
   availability_zones  = local.availability_zones
   internet_gateway_id = aws_internet_gateway.igw.id
+  instance_type       = var.relayer_instance_type
 }
 
 module "front" {

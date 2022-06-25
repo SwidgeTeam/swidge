@@ -29,14 +29,26 @@ variable "base_url" {
   description = "Base URL to use on the exposed services"
 }
 
+variable "api_instance_type" {
+  type        = string
+  description = "API instance type"
+}
+
+variable "relayer_instance_type" {
+  type        = string
+  description = "Relayer instance type"
+}
+
 variable "database_name" {
   type        = string
   description = "The database name"
 }
+
 variable "database_username" {
   type        = string
   description = "The database user"
 }
+
 variable "database_password" {
   type        = string
   description = "The database password"
