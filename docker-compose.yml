@@ -93,6 +93,9 @@ services:
       TF_VAR_database_name: ${AURORA_DB_NAME}
       TF_VAR_database_username: ${AURORA_MASTER_USERNAME}
       TF_VAR_database_password: ${AURORA_MASTER_PASSWORD}
+      TF_VAR_region: ${TF_AWS_REGION}
+      TF_VAR_environment: ${TF_ENVIRONMENT}
+      TF_VAR_base_url: ${TF_BASE_URL}
     volumes:
       - ./infrastructure:/code
     working_dir: /code
