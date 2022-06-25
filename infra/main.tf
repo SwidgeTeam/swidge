@@ -116,10 +116,6 @@ module "front" {
   certificate_arn      = module.global_cert.arn
 }
 
-resource "aws_iam_user" "deployer" {
-  name = "github-deployer"
-}
-
 module "database" {
   source = "./blocks/db"
 
@@ -132,4 +128,26 @@ module "database" {
   database_name             = var.database_name
   database_username         = var.database_username
   database_password         = var.database_password
+}
+
+/** Accounts **/
+
+resource "aws_iam_user" "deployer" {
+  name = "github-deployer"
+}
+
+resource "aws_iam_user_policy" "create_invalidations" {
+  user   = aws_iam_user.deployer.name
+  policy = jsonencode({
+    Version   = "2012-10-17"
+    Statement = [
+      {
+        Action   = "cloudfront:CreateInvalidation"
+        Effect   = "Allow"
+        Resource = [
+          module.front.distribution_arn,
+        ]
+      },
+    ]
+  })
 }

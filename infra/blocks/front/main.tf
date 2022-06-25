@@ -92,3 +92,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     ssl_support_method  = "sni-only"
   }
 }
+
+output "distribution_arn" {
+  value = aws_cloudfront_distribution.s3_distribution.arn
+}
