@@ -43,14 +43,14 @@ DOCKER = ${DOCKER_COMMAND} $(1)
 ### State management
 
 up:
-	@$(call DOCKER_COMPOSE, up --detach)
+	@$(call DOCKER_COMPOSE, up --detach ${MAKE_APP_SERVICES})
 
 start:
-	@$(call DOCKER_COMPOSE, start)
+	@$(call DOCKER_COMPOSE, start ${MAKE_APP_SERVICES})
 
 stop: down
 down:
-	@$(call DOCKER_COMPOSE, stop)
+	@$(call DOCKER_COMPOSE, stop ${MAKE_APP_SERVICES})
 
 restart:
 	@$(call DOCKER_COMPOSE, restart)
@@ -59,15 +59,15 @@ rm:
 	@$(call DOCKER_COMPOSE, rm --force -v)
 
 build:
-	@$(call DOCKER_COMPOSE, build)
+	@$(call DOCKER_COMPOSE, build ${MAKE_APP_SERVICES})
 
 create:
-	@$(call DOCKER_COMPOSE, up --no-start)
+	@$(call DOCKER_COMPOSE, up --no-start ${MAKE_APP_SERVICES})
 
 logs:
 	@$(call DOCKER_COMPOSE, logs --follow)
 
-$(addprefix build-, ${MAKE_APP_SERVICES}): build-%:
+$(addprefix build-, ${MAKE_DOCKER_IMAGES}): build-%:
 	@$(call DOCKER_COMPOSE, build $*)
 
 $(addprefix create-, ${MAKE_APP_SERVICES}): create-%:
