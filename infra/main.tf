@@ -74,6 +74,7 @@ module "global_cert" {
   }
   domain      = var.base_url
   environment = var.environment
+  dns_zone_id = aws_route53_zone.dns_zone.id
 }
 
 module "regional_cert" {
@@ -83,6 +84,7 @@ module "regional_cert" {
   }
   domain      = var.base_url
   environment = var.environment
+  dns_zone_id = aws_route53_zone.dns_zone.id
 }
 
 /** Services **/
