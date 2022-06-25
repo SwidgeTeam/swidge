@@ -93,6 +93,6 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   }
 }
 
-output "distribution_arn" {
-  value = aws_cloudfront_distribution.s3_distribution.arn
+output "distribution" {
+  value = aws_cloudfront_distribution.s3_distribution
 }

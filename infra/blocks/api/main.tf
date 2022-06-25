@@ -73,3 +73,7 @@ resource "aws_security_group" "api_http_ssh" {
 output "api_security_group_id" {
   value = aws_security_group.api_http_ssh.id
 }
+
+output "balancer" {
+  value = module.application_load_balancer.balancer
+}

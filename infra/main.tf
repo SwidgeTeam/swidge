@@ -25,10 +25,6 @@ provider "aws" {
 /** Local variables **/
 
 locals {
-  availability_zones = [
-    "${var.region}a",
-    "${var.region}b",
-  ]
   api_public_subnets_cidr = [
     cidrsubnet(var.vpc_cidr, 4, 1),
     cidrsubnet(var.vpc_cidr, 4, 2),
@@ -40,6 +36,13 @@ locals {
     cidrsubnet(var.vpc_cidr, 4, 4),
     cidrsubnet(var.vpc_cidr, 4, 5),
   ]
+  availability_zones = [
+    "${var.region}a",
+    "${var.region}b",
+    "${var.region}c",
+  ]
+  front_service_url = "app.${var.base_url}"
+  api_service_url   = "api.${var.base_url}"
 }
 
 /** VPC **/
@@ -69,7 +72,7 @@ module "global_cert" {
   providers = {
     aws : aws.east
   }
-  domain      = var.domain
+  domain      = var.base_url
   environment = var.environment
 }
 
@@ -78,7 +81,7 @@ module "regional_cert" {
   providers = {
     aws : aws
   }
-  domain      = var.domain
+  domain      = var.base_url
   environment = var.environment
 }
 
@@ -111,7 +114,7 @@ module "front" {
   source = "./blocks/front"
 
   environment          = var.environment
-  service_url          = "app.${var.domain}"
+  service_url          = local.front_service_url
   deployer_account_arn = aws_iam_user.deployer.arn
   certificate_arn      = module.global_cert.arn
 }
@@ -145,9 +148,40 @@ resource "aws_iam_user_policy" "create_invalidations" {
         Action   = "cloudfront:CreateInvalidation"
         Effect   = "Allow"
         Resource = [
-          module.front.distribution_arn,
+          module.front.distribution.arn,
         ]
       },
     ]
   })
+}
+
+/** DNZ zone & records **/
+
+// must be imported before apply on a clean setup(if exists)
+resource "aws_route53_zone" "dns_zone" {
+  name = var.domain
+}
+
+resource "aws_route53_record" "api_balancer" {
+  zone_id = aws_route53_zone.dns_zone.id
+  name    = local.api_service_url
+  type    = "A"
+
+  alias {
+    name                   = module.api.balancer.dns_name
+    zone_id                = module.api.balancer.zone_id
+    evaluate_target_health = false
+  }
+}
+
+resource "aws_route53_record" "front_distribution" {
+  zone_id = aws_route53_zone.dns_zone.id
+  name    = local.front_service_url
+  type    = "A"
+
+  alias {
+    name                   = module.front.distribution.domain_name
+    zone_id                = module.front.distribution.hosted_zone_id
+    evaluate_target_health = false
+  }
 }

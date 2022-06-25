@@ -88,3 +88,7 @@ resource "aws_security_group" "http_https" {
     Name = "allow_http_https"
   }
 }
+
+output "balancer" {
+  value = aws_lb.balancer
+}

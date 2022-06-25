@@ -21,7 +21,12 @@ variable "aws_secret_key" {
 
 variable "domain" {
   type        = string
-  description = "Base domain name for the environment"
+  description = "Domain name"
+}
+
+variable "base_url" {
+  type        = string
+  description = "Base URL to use on the exposed services"
 }
 
 variable "database_name" {
