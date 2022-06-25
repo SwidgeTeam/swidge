@@ -40,6 +40,13 @@ DOCKER_COMPOSE_EXEC = ${DOCKER_COMPOSE_COMMAND} exec --user ${DOCKER_USER} $(1)
 DOCKER_COMMAND ?= docker
 DOCKER = ${DOCKER_COMMAND} $(1)
 
+CONFIRM = (\
+	printf "$(1) [y/N]" 1>&2; printf " " 1>&2; \
+	read answer && ( \
+	test "$${answer:-N}" = "y" || \
+	test "$${answer:-N}" = "Y") \
+)
+
 ### State management
 
 up:
@@ -185,12 +192,15 @@ test-contracts:
 CONTRACTS_LIVE_RUN = $(call CONTRACTS,$(1) --network $(2) --chain $(2))
 
 $(addprefix deploy-all-, ${ENABLED_NETWORKS}): deploy-all-%:
+	@$(call CONFIRM,Deploy all?)
 	@$(call CONTRACTS_LIVE_RUN,deploy-all,$*)
 
 $(addprefix deploy-providers-, ${ENABLED_NETWORKS}): deploy-providers-%:
+	@$(call CONFIRM,Deploy providers?)
 	@$(call CONTRACTS_LIVE_RUN,deploy-providers,$*)
 
 $(addprefix verify-, ${ENABLED_NETWORKS}): verify-%:
+	@$(call CONFIRM,Verify diamond?)
 	@$(call CONTRACTS_LIVE_RUN,verify-diamond,$*)
 
 # Forked chain

@@ -86,7 +86,7 @@ Make sure the application is running and type:
 $ make db-import < ./path/to/your/dump.sql
 ```
 
-## Brownie
+## Hardhat
 
 ### Forking a chain
 
@@ -99,7 +99,7 @@ $ make fork-<chain>
 That will run Brownie inside a container and fork the selected chain.
 Once you have done that, you can run any of the following helpers.
 
-You can find the accepted chains on [this env file](https://github.com/SwidgeTeam/swidge/blob/master/env/brownie.env).
+You can find the accepted chains on [this env file](https://github.com/SwidgeTeam/swidge/blob/master/env/default/brownie.env).
 
 ### Deploy on forked chain
 
@@ -118,11 +118,11 @@ deployed have external contract addresses dependencies.
 If you need some tokens instead, you can just get them from an already holding wallet by typing:
 
 ``` sh
-$ make get-tokens-<chain> TOKEN=<token_name>
+$ make get-tokens-<chain> token=<token_name>
 ```
 
 You can find the accepted tokens
-on [this YAML file](https://github.com/SwidgeTeam/swidge/blob/master/contracts/www/tokens.yaml).
+on [this YAML file](https://github.com/SwidgeTeam/swidge/blob/master/contracts/www/tasks/helpers/tokens.yaml).
 But if the one you're looking for it's not there, you can always add it.
 
 ## Troubleshooting
