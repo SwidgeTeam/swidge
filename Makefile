@@ -236,3 +236,16 @@ relayer-events: create-queue
 
 relayer-consumer:
 	@$(call RELAYER,run:dev:consumer)
+
+### Terraform
+
+TERRAFORM = $(call DOCKER_COMPOSE_RUN,--rm ${DOCKER_TERRAFORM_SERVICE} $(1))
+
+tf-apply:
+	@$(call TERRAFORM,apply)
+
+tf-plan:
+	@$(call TERRAFORM,plan)
+
+tf-destroy:
+	@$(call TERRAFORM,destroy)
