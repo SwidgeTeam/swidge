@@ -29,3 +29,13 @@ variable "instance_type" {
   type        = string
   description = "Instance type to be used"
 }
+
+variable "transactions_queue" {
+  type        = string
+  description = "Name of the queue for the processed transactions"
+}
+
+variable "relayer_account_arn" {
+  type        = string
+  description = "ARN of the account used to produce/consume transactions"
+}

@@ -24,6 +24,53 @@ module "relayer-instance" {
   security_group_id = aws_security_group.relayer-sg.id
 }
 
+resource "aws_sqs_queue" "transactions" {
+  name                        = var.transactions_queue
+  fifo_queue                  = true
+  content_based_deduplication = true
+  delay_seconds               = 0
+  message_retention_seconds   = 345600
+  receive_wait_time_seconds   = 10
+
+  tags = {
+    Environment = var.environment
+  }
+}
+
+resource "aws_sqs_queue_policy" "transactions" {
+  queue_url = aws_sqs_queue.transactions.id
+  policy = <<EOP
+    {
+      "Version": "2008-10-17",
+      "Id": "__default_policy_ID",
+      "Statement": [
+        {
+          "Sid": "__sender_statement",
+          "Effect": "Allow",
+          "Principal": {
+            "AWS": "${var.relayer_account_arn}"
+          },
+          "Action": "SQS:SendMessage",
+          "Resource": "${aws_sqs_queue.transactions.arn}"
+        },
+        {
+          "Sid": "__receiver_statement",
+          "Effect": "Allow",
+          "Principal": {
+            "AWS": "${var.relayer_account_arn}"
+          },
+          "Action": [
+            "SQS:ChangeMessageVisibility",
+            "SQS:DeleteMessage",
+            "SQS:ReceiveMessage"
+          ],
+          "Resource": "${aws_sqs_queue.transactions.arn}"
+        }
+      ]
+    }
+  EOP
+}
+
 resource "aws_security_group" "relayer-sg" {
   name        = "allow_ssh"
   description = "Allow SSH into the instance"

@@ -112,6 +112,8 @@ module "relayer" {
   availability_zones  = local.availability_zones
   internet_gateway_id = aws_internet_gateway.igw.id
   instance_type       = var.relayer_instance_type
+  transactions_queue  = var.transactions_queue
+  relayer_account_arn = aws_iam_user.relayer.arn
 }
 
 module "front" {
@@ -143,6 +145,10 @@ resource "aws_iam_user" "deployer" {
   name = "github-deployer"
 }
 
+resource "aws_iam_user" "relayer" {
+  name = "relayer-queuer"
+}
+
 resource "aws_iam_user_policy" "create_invalidations" {
   user   = aws_iam_user.deployer.name
   policy = jsonencode({
@@ -161,7 +167,7 @@ resource "aws_iam_user_policy" "create_invalidations" {
 
 /** DNZ zone & records **/
 
-// must be imported before apply on a clean setup(if exists)
+// must be imported before `apply` on a clean Terraform setup
 resource "aws_route53_zone" "dns_zone" {
   name = var.domain
 }

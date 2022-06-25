@@ -53,3 +53,8 @@ variable "database_password" {
   type        = string
   description = "The database password"
 }
+
+variable "transactions_queue" {
+  type        = string
+  description = "Name of the queue for the processed transactions"
+}
