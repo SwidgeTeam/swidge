@@ -6,7 +6,7 @@ const deployAll = async (ethers, deployer, relayer) => {
     deployer
   );
 
-  const [relayerUpdater, router] = await deployFacets(
+  const [relayerUpdater, router, diamondLoupe] = await deployFacets(
     ethers,
     deployer,
     diamondProxy.address
@@ -17,6 +17,7 @@ const deployAll = async (ethers, deployer, relayer) => {
   return {
     diamondProxy: diamondProxy,
     diamondCutterFacet: diamondCutterFacet,
+    diamondLoupeFacet: diamondLoupe,
     relayerUpdaterFacet: relayerUpdater,
     routerFacet: router,
   };
@@ -80,7 +81,7 @@ const deployFacets = async (ethers, deployer, diamondAddress) => {
   );
   (await diamondCutter.diamondCut(cuts)).wait();
 
-  return [relayerUpdaterFacet, routerFacet];
+  return [relayerUpdaterFacet, routerFacet, diamondLoupeFacet];
 };
 
 const updateRelayer = async (ethers, diamondAddress, relayerAddress) => {

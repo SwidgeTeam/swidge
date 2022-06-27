@@ -13,9 +13,10 @@ module.exports = async function (taskArguments, hre, runSuper) {
   const addr = allAddresses[hre.network.name];
 
   addr.diamond = contracts.diamondProxy.address;
-  addr.facet.router = contracts.routerFacet.address;
-  addr.facet.relayerUpdater = contracts.relayerUpdaterFacet.address;
-  addr.facet.cutter = contracts.diamondCutterFacet.address;
+  addr.facet.RouterFacet = contracts.routerFacet.address;
+  addr.facet.RelayerUpdaterFacet = contracts.relayerUpdaterFacet.address;
+  addr.facet.DiamondCutter = contracts.diamondCutterFacet.address;
+  addr.facet.DiamondLoupeFacet = contracts.diamondLoupeFacet.address;
 
   allAddresses[hre.network.name] = addr;
 
