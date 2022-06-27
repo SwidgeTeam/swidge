@@ -9,6 +9,7 @@ export interface FinalizeCrossParams {
   routerAddress: ContractAddress;
   receiverAddress: string;
   txHash: string;
+  fee: string;
   swap: {
     providerCode: number;
     amountIn: string;
@@ -50,7 +51,7 @@ export class RouterCaller {
       ],
       {
         gasPrice: feeData.gasPrice,
-        gasLimit: 9000000,
+        gasLimit: params.swap.estimatedGas,
       },
     ).catch((error) => {
       throw new Error(error.body);

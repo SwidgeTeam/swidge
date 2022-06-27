@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 library LibStorage {
     bytes32 constant DIAMOND_STORAGE_POSITION = keccak256("xyz.swidge.storage.diamond");
     bytes32 constant PROVIDERS_STORAGE_POSITION = keccak256("xyz.swidge.storage.app");
+    bytes32 constant FEE_STORAGE_POSITION = keccak256("xyz.swidge.storage.fees");
 
     struct DiamondStorage {
         mapping(bytes4 => Facet) facets;
@@ -12,16 +13,20 @@ library LibStorage {
         address relayerAddress;
     }
 
-    struct Facet {
-        address facetAddress;
-        uint16 selectorPosition;
-    }
-
     struct ProviderStorage {
         mapping(uint8 => Provider) bridgeProviders;
         mapping(uint8 => Provider) swapProviders;
         uint16 totalBridges;
         uint16 totalSwappers;
+    }
+
+    struct FeeStorage {
+        mapping(address => uint256) fees;
+    }
+
+    struct Facet {
+        address facetAddress;
+        uint16 selectorPosition;
     }
 
     struct Provider {
@@ -38,10 +43,17 @@ library LibStorage {
         }
     }
 
-    function providers() internal pure returns (ProviderStorage storage s) {
+    function providers() internal pure returns (ProviderStorage storage ps) {
         bytes32 position = PROVIDERS_STORAGE_POSITION;
         assembly {
-            s.slot := position
+            ps.slot := position
+        }
+    }
+
+    function fees() internal pure returns (FeeStorage storage fs) {
+        bytes32 position = FEE_STORAGE_POSITION;
+        assembly {
+            fs.slot := position
         }
     }
 
