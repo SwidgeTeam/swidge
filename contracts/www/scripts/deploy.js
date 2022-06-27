@@ -1,39 +1,24 @@
 const { FacetCutAction, getSelectors } = require("./libs/diamond");
-const { getAddresses } = require("../tasks/helpers/addresses");
 
-const deployAll = async (ethers, deployer, relayer, network) => {
-  const allAddresses = getAddresses();
-  const addresses = allAddresses[network];
-
+const deployAll = async (ethers, deployer, relayer) => {
   const [diamondProxy, diamondCutterFacet] = await deployDiamond(
     ethers,
     deployer
   );
 
-  const [providerUpdater, router] = await deployFacets(
+  const [relayerUpdater, router] = await deployFacets(
     ethers,
     deployer,
     diamondProxy.address
   );
 
-  const [zeroEx, anyswap] = await deployProviders(ethers, deployer, addresses);
-
-  await updateProviders(
-    ethers,
-    zeroEx,
-    anyswap,
-    addresses,
-    diamondProxy.address,
-    relayer.address
-  );
+  await updateRelayer(ethers, diamondProxy.address, relayer.address);
 
   return {
     diamondProxy: diamondProxy,
     diamondCutterFacet: diamondCutterFacet,
-    providerUpdaterFacet: providerUpdater,
+    relayerUpdaterFacet: relayerUpdater,
     routerFacet: router,
-    zeroEx: zeroEx,
-    anyswap: anyswap,
   };
 };
 
@@ -58,14 +43,14 @@ const deployDiamond = async (ethers, deployer) => {
 };
 
 const deployFacets = async (ethers, deployer, diamondAddress) => {
-  // deploy ProviderUpdaterFacet
-  const ProviderUpdaterFacet = await ethers.getContractFactory(
-    "ProviderUpdaterFacet"
+  // deploy RelayerUpdaterFacet
+  const RelayerUpdaterFacet = await ethers.getContractFactory(
+    "RelayerUpdaterFacet"
   );
-  const providerUpdaterFacet = await ProviderUpdaterFacet.connect(
+  const relayerUpdaterFacet = await RelayerUpdaterFacet.connect(
     deployer
   ).deploy();
-  await providerUpdaterFacet.deployed();
+  await relayerUpdaterFacet.deployed();
 
   // deploy RouterFacet
   const RouterFacet = await ethers.getContractFactory("RouterFacet");
@@ -73,7 +58,7 @@ const deployFacets = async (ethers, deployer, diamondAddress) => {
   await routerFacet.deployed();
 
   // update facets
-  const facets = [routerFacet, providerUpdaterFacet];
+  const facets = [routerFacet, relayerUpdaterFacet];
   const cuts = [];
   for (const facet of facets) {
     cuts.push({
@@ -88,64 +73,21 @@ const deployFacets = async (ethers, deployer, diamondAddress) => {
   );
   (await diamondCutter.diamondCut(cuts)).wait();
 
-  return [providerUpdaterFacet, routerFacet];
+  return [relayerUpdaterFacet, routerFacet];
 };
 
-const deployProviders = async (ethers, deployer, addresses) => {
-  // deploy ZeroEx
-  const ZeroEx = await ethers.getContractFactory("ZeroEx");
-  const zeroEx = await ZeroEx.connect(deployer).deploy();
-  await zeroEx.deployed();
-
-  // deploy Anyswap
-  const Anyswap = await ethers.getContractFactory("Anyswap");
-  const anyswap = await Anyswap.connect(deployer).deploy(
-    addresses.providers.bridge.anyswap
-  );
-  await anyswap.deployed();
-
-  return [zeroEx, anyswap];
-};
-
-const updateProviders = async (
-  ethers,
-  zeroEx,
-  anyswap,
-  addresses,
-  diamondAddress,
-  relayerAddress
-) => {
-  // update diamond's address on implementations
-  (await zeroEx.updateRouter(diamondAddress)).wait();
-  (await anyswap.updateRouter(diamondAddress)).wait();
-
-  const providerUpdater = await ethers.getContractAt(
-    "ProviderUpdaterFacet",
+const updateRelayer = async (ethers, diamondAddress, relayerAddress) => {
+  const relayerUpdater = await ethers.getContractAt(
+    "RelayerUpdaterFacet",
     diamondAddress
   );
 
-  // set implementations addresses on diamond
-  (
-    await providerUpdater.updateSwapProvider(
-      addresses.implementation.swap.zeroex.code,
-      zeroEx.address
-    )
-  ).wait();
-  (
-    await providerUpdater.functions.updateBridgeProvider(
-      addresses.implementation.bridge.anyswap.code,
-      anyswap.address
-    )
-  ).wait();
-
   // update the relayer's address
-  (await providerUpdater.functions.updateRelayer(relayerAddress)).wait();
+  (await relayerUpdater.functions.updateRelayer(relayerAddress)).wait();
 };
 
 module.exports = {
   deployAll,
   deployDiamond,
   deployFacets,
-  deployProviders,
-  updateProviders,
 };

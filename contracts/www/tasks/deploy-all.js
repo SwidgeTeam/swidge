@@ -14,10 +14,8 @@ module.exports = async function (taskArguments, hre, runSuper) {
 
   addr.diamond = contracts.diamondProxy.address;
   addr.facet.router = contracts.routerFacet.address;
-  addr.facet.providerUpdater = contracts.providerUpdaterFacet.address;
+  addr.facet.relayerUpdater = contracts.relayerUpdaterFacet.address;
   addr.facet.cutter = contracts.diamondCutterFacet.address;
-  addr.implementation.bridge.anyswap.address = contracts.anyswap.address;
-  addr.implementation.swap.zeroex.address = contracts.zeroEx.address;
 
   allAddresses[hre.network.name] = addr;
 

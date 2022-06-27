@@ -8,6 +8,7 @@ import {
 } from "../shared";
 import { Contract } from "ethers";
 import { smock } from "@defi-wonderland/smock";
+
 const { deployDiamond, deployFacets } = require("../../scripts/deploy");
 
 chai.use(smock.matchers);
@@ -21,7 +22,7 @@ describe("RouterFacet", function () {
     const [diamondProxy] = await deployDiamond(ethers, owner);
     await deployFacets(ethers, owner, diamondProxy.address);
     providerUpdater = await ethers.getContractAt(
-      "ProviderUpdaterFacet",
+      "RelayerUpdaterFacet",
       diamondProxy.address
     );
     router = await ethers.getContractAt("RouterFacet", diamondProxy.address);
@@ -48,23 +49,7 @@ describe("RouterFacet", function () {
 
     it("Should only execute swap if no bridging step is required", async function () {
       /** Arrange */
-      const { owner, anyoneElse } = await getAccounts();
-
-      // Deploy fake providers
-      const mockAnyswapContract = await mockAnyswap();
-      const mockZeroExContract = await mockZeroEx();
-
-      // Update providers' router address
-      await mockAnyswapContract.connect(owner).updateRouter(router.address);
-      await mockZeroExContract.connect(owner).updateRouter(router.address);
-
-      // Set providers on router
-      await providerUpdater
-        .connect(owner)
-        .updateBridgeProvider(0, mockAnyswapContract.address);
-      await providerUpdater
-        .connect(owner)
-        .updateSwapProvider(0, mockZeroExContract.address);
+      const { anyoneElse } = await getAccounts();
 
       // Create two fake ERC20 tokens
       const fakeTokenIn = await fakeTokenContract();
@@ -96,35 +81,11 @@ describe("RouterFacet", function () {
           1000000,
           10
         );
-
-      await expect(mockZeroExContract.swap).to.be.calledOnceWith(
-        fakeTokenIn.address,
-        fakeTokenOut.address,
-        router.address,
-        1000000,
-        callData
-      );
     });
 
     it("Should only execute bridge if no swapping step is required", async function () {
       /** Arrange */
-      const { owner, anyoneElse } = await getAccounts();
-
-      // Deploy fake providers
-      const mockAnyswapContract = await mockAnyswap();
-      const mockZeroExContract = await mockZeroEx();
-
-      // Update providers' router address
-      await mockAnyswapContract.connect(owner).updateRouter(router.address);
-      await mockZeroExContract.connect(owner).updateRouter(router.address);
-
-      // Set providers on router
-      await providerUpdater
-        .connect(owner)
-        .updateBridgeProvider(0, mockAnyswapContract.address);
-      await providerUpdater
-        .connect(owner)
-        .updateSwapProvider(0, mockZeroExContract.address);
+      const { anyoneElse } = await getAccounts();
 
       // Create two fake ERC20 tokens
       const fakeTokenIn = await fakeTokenContract();
@@ -157,35 +118,11 @@ describe("RouterFacet", function () {
           1000000,
           1000000
         );
-
-      await expect(mockAnyswapContract.send).to.be.calledOnceWith(
-        fakeTokenIn.address,
-        router.address,
-        1000000,
-        1337,
-        callData
-      );
     });
 
     it("Should execute swap and bridge when required", async function () {
       /** Arrange */
-      const { owner, anyoneElse } = await getAccounts();
-
-      // Deploy fake providers
-      const mockAnyswapContract = await mockAnyswap();
-      const mockZeroExContract = await mockZeroEx();
-
-      // Update providers' router address
-      await mockAnyswapContract.connect(owner).updateRouter(router.address);
-      await mockZeroExContract.connect(owner).updateRouter(router.address);
-
-      // Set providers on router
-      await providerUpdater
-        .connect(owner)
-        .updateBridgeProvider(0, mockAnyswapContract.address);
-      await providerUpdater
-        .connect(owner)
-        .updateSwapProvider(0, mockZeroExContract.address);
+      const { anyoneElse } = await getAccounts();
 
       // Create two fake ERC20 tokens
       const fakeTokenIn = await fakeTokenContract();
@@ -225,22 +162,6 @@ describe("RouterFacet", function () {
           1000000,
           10
         );
-
-      await expect(mockZeroExContract.swap).to.be.calledOnceWith(
-        fakeTokenIn.address,
-        fakeTokenOut.address,
-        router.address,
-        1000000,
-        callDataSwap
-      );
-
-      await expect(mockAnyswapContract.send).to.be.calledOnceWith(
-        fakeTokenOut.address,
-        router.address,
-        10,
-        1337,
-        callDataBridge
-      );
     });
   });
 
@@ -270,17 +191,6 @@ describe("RouterFacet", function () {
       const { owner, relayer } = await getAccounts();
       await providerUpdater.connect(owner).updateRelayer(relayer.address);
 
-      // Deploy fake provider
-      const mockZeroExContract = await mockZeroEx();
-
-      // Update provider's router address
-      await mockZeroExContract.connect(owner).updateRouter(router.address);
-
-      // Set provider on router
-      await providerUpdater
-        .connect(owner)
-        .updateSwapProvider(0, mockZeroExContract.address);
-
       // Create two fake ERC20 tokens
       const fakeTokenIn = await fakeTokenContract();
       const fakeTokenOut = await fakeTokenContract();
@@ -306,14 +216,6 @@ describe("RouterFacet", function () {
       await expect(call)
         .to.emit(router, "CrossFinalized")
         .withArgs("txHash", 10);
-
-      await expect(mockZeroExContract.swap).to.be.calledOnceWith(
-        fakeTokenIn.address,
-        fakeTokenOut.address,
-        router.address,
-        1000000,
-        callData
-      );
     });
 
     it("Should revert if the provider fails", async function () {
@@ -321,22 +223,9 @@ describe("RouterFacet", function () {
       const { owner, relayer } = await getAccounts();
       await providerUpdater.connect(owner).updateRelayer(relayer.address);
 
-      // Deploy fake provider
-      const mockZeroExContract = await mockZeroEx();
-
-      // Update provider's router address
-      await mockZeroExContract.connect(owner).updateRouter(router.address);
-
-      // Set provider on router
-      await providerUpdater
-        .connect(owner)
-        .updateSwapProvider(0, mockZeroExContract.address);
-
       // Create two fake ERC20 tokens
       const fakeTokenIn = await fakeTokenContract();
       const fakeTokenOut = await fakeTokenContract();
-
-      mockZeroExContract.swap.reverts();
 
       const [callData] = await zeroExEncodedCalldata();
 
@@ -379,16 +268,3 @@ describe("RouterFacet", function () {
     await expect(fakeToken.transfer).to.be.calledOnceWith(owner.address, 1);
   });
 });
-
-async function mockAnyswap() {
-  const RouterFactory = await smock.mock("Anyswap");
-  const { owner } = await getAccounts();
-  const someContract = await fakeTokenContract();
-  return await RouterFactory.connect(owner).deploy(someContract.address);
-}
-
-async function mockZeroEx() {
-  const RouterFactory = await smock.mock("ZeroEx");
-  const { owner } = await getAccounts();
-  return await RouterFactory.connect(owner).deploy();
-}

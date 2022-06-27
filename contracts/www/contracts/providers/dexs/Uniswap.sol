@@ -3,9 +3,8 @@ pragma solidity ^0.8.0;
 
 import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
-import "./IDEX.sol";
 
-contract Uniswap is IDEX {
+contract Uniswap {
     address private providerAddress;
 
     // Set the pool fee to 0.3%.
@@ -21,7 +20,7 @@ contract Uniswap is IDEX {
         address _router,
         uint256 _amountIn,
         bytes calldata _data
-    ) external payable override onlyRouter returns (uint256 amountOut) {
+    ) external payable returns (uint256 amountOut) {
         TransferHelper.safeTransferFrom(_tokenIn, _router, address(this), _amountIn);
         TransferHelper.safeApprove(_tokenIn, providerAddress, _amountIn);
 
