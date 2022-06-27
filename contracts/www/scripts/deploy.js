@@ -52,13 +52,20 @@ const deployFacets = async (ethers, deployer, diamondAddress) => {
   ).deploy();
   await relayerUpdaterFacet.deployed();
 
+  // deploy ProviderUpdaterFacet
+  const DiamondLoupeFacet = await ethers.getContractFactory(
+    "DiamondLoupeFacet"
+  );
+  const diamondLoupeFacet = await DiamondLoupeFacet.connect(deployer).deploy();
+  await diamondLoupeFacet.deployed();
+
   // deploy RouterFacet
   const RouterFacet = await ethers.getContractFactory("RouterFacet");
   const routerFacet = await RouterFacet.connect(deployer).deploy();
   await routerFacet.deployed();
 
   // update facets
-  const facets = [routerFacet, relayerUpdaterFacet];
+  const facets = [routerFacet, relayerUpdaterFacet, diamondLoupeFacet];
   const cuts = [];
   for (const facet of facets) {
     cuts.push({

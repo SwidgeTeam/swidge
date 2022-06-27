@@ -193,9 +193,17 @@ $(addprefix deploy-all-, ${ENABLED_NETWORKS}): deploy-all-%:
 	@$(call CONFIRM,Deploy all?)
 	@$(call CONTRACTS_LIVE_RUN,deploy-all,$*)
 
+$(addprefix deploy-facet-, ${ENABLED_NETWORKS}): deploy-facet-%:
+	@$(call CONFIRM,Deploy facet?)
+	@$(call CONTRACTS_LIVE_RUN,deploy-facet --facet $(facet),$*)
+
 $(addprefix verify-, ${ENABLED_NETWORKS}): verify-%:
 	@$(call CONFIRM,Verify diamond?)
 	@$(call CONTRACTS_LIVE_RUN,verify-diamond,$*)
+
+$(addprefix loupe-, ${ENABLED_NETWORKS}): loupe-%:
+	@$(call CONFIRM,Loupe into diamond?)
+	@$(call CONTRACTS_LIVE_RUN,loupe,$*)
 
 # Forked chain
 
@@ -234,6 +242,9 @@ $(addprefix deploy-all-fork-, ${ENABLED_NETWORKS}): deploy-all-fork-%:
 
 $(addprefix get-tokens-, ${ENABLED_NETWORKS}): get-tokens-%:
 	@$(call CONTRACTS_GET_TOKENS,$*,localhost,$(token))
+
+$(addprefix loupe-fork-, ${ENABLED_NETWORKS}): loupe-fork-%:
+	@$(call CONTRACTS_RUN,$*,localhost,loupe --chain localhost)
 
 ### Relayer
 
