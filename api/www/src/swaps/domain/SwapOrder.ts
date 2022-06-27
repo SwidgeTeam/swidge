@@ -5,11 +5,11 @@ import { Token } from '../../shared/domain/Token';
 export class SwapOrder {
   public static notRequired() {
     return new SwapOrder(
-      null,
+      0,
       Token.null(),
       Token.null(),
       null,
-      null,
+      '0x',
       null,
       null,
       false,
