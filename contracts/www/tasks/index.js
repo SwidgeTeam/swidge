@@ -4,6 +4,11 @@ task("deploy-all", "Deploy all contracts on current network")
   .addParam("chain", "Name of the network to deploy")
   .setAction(require("./deploy-all"));
 
+task("deploy-facet", "Deploy and wire a facet")
+  .addParam("chain", "Name of the target network")
+  .addParam("facet", "Name of the facet contract to deploy")
+  .setAction(require("./deploy-facet"));
+
 task("update-diamond", "Updates relation of selectors-adresses")
   .addParam("chain", "Name of the target network")
   .addParam("facet", "Name of the facet to update")

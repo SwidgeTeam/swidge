@@ -9,8 +9,6 @@ $(foreach env, default ${ENV}, $(eval _ := $(shell \
 	>> ${TEMP_ENV_FILE}) \
 ))
 
-
-
 $(eval _ := $(shell \
 	test -f .env && \
 	cat .env \
@@ -218,6 +216,7 @@ CONTRACTS_RUN = $(call CONTRACTS_DOCKER_EXEC,$(1),yarn $(3) --network $(2))
 
 CONTRACTS_DEPLOY_DIAMOND = $(call CONTRACTS_RUN,$(1),$(2),deploy-diamond)
 CONTRACTS_UPDATE_DIAMOND = $(call CONTRACTS_RUN,$(1),$(2),update-diamond --chain $(1) --facet $(3))
+CONTRACTS_DEPLOY_FACET = $(call CONTRACTS_RUN,$(1),$(2),deploy-facet --chain $(2) --facet $(3))
 CONTRACTS_DEPLOY_ALL = $(call CONTRACTS_RUN,$(1),$(2),deploy-all --chain $(1))
 CONTRACTS_GET_TOKENS = $(call CONTRACTS_RUN,$(1),$(2),get-tokens --chain $(1) --token $(3))
 
@@ -226,6 +225,9 @@ $(addprefix deploy-diamond-fork-, ${ENABLED_NETWORKS}): deploy-diamond-fork-%:
 
 $(addprefix update-diamond-fork-, ${ENABLED_NETWORKS}): update-diamond-fork-%:
 	@$(call CONTRACTS_UPDATE_DIAMOND,$*,localhost,$(facet))
+
+$(addprefix deploy-facet-fork-, ${ENABLED_NETWORKS}): deploy-facet-fork-%:
+	@$(call CONTRACTS_DEPLOY_FACET,$*,localhost,$(facet))
 
 $(addprefix deploy-all-fork-, ${ENABLED_NETWORKS}): deploy-all-fork-%:
 	@$(call CONTRACTS_DEPLOY_ALL,$*,localhost)

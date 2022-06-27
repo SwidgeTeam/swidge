@@ -5,6 +5,7 @@
     "build": "hardhat compile",
     "test": "hardhat test",
     "deploy-all": "hardhat deploy-all",
+    "deploy-facet": "hardhat deploy-facet",
     "update-diamond": "hardhat update-diamond",
     "verify-diamond": "hardhat verify-diamond",
     "get-tokens": "hardhat get-tokens"
