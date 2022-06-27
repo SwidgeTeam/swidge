@@ -205,6 +205,10 @@ $(addprefix loupe-, ${ENABLED_NETWORKS}): loupe-%:
 	@$(call CONFIRM,Loupe into diamond?)
 	@$(call CONTRACTS_LIVE_RUN,loupe,$*)
 
+$(addprefix retrieve-, ${ENABLED_NETWORKS}): retrieve-%:
+	@$(call CONFIRM,Retrieve $(amount) of $(token)?)
+	@$(call CONTRACTS_LIVE_RUN,retrieve --token $(token) --amount $(amount),$*)
+
 # Forked chain
 
 $(addprefix fork-, ${ENABLED_NETWORKS}): fork-%:

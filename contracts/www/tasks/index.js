@@ -26,3 +26,9 @@ task("get-tokens", "Get tokens on the forked network")
   .addParam("chain", "Name of the network to deploy")
   .addParam("token", "Name of the token you want to get")
   .setAction(require("./get-tokens"));
+
+task("retrieve", "Get tokens on the forked network")
+  .addParam("chain", "Name of the network to deploy")
+  .addParam("token", "Name of the token you want to get")
+  .addParam("amount", "Amount to retrieve")
+  .setAction(require("./retrieve"));
