@@ -195,10 +195,6 @@ $(addprefix deploy-all-, ${ENABLED_NETWORKS}): deploy-all-%:
 	@$(call CONFIRM,Deploy all?)
 	@$(call CONTRACTS_LIVE_RUN,deploy-all,$*)
 
-$(addprefix deploy-providers-, ${ENABLED_NETWORKS}): deploy-providers-%:
-	@$(call CONFIRM,Deploy providers?)
-	@$(call CONTRACTS_LIVE_RUN,deploy-providers,$*)
-
 $(addprefix verify-, ${ENABLED_NETWORKS}): verify-%:
 	@$(call CONFIRM,Verify diamond?)
 	@$(call CONTRACTS_LIVE_RUN,verify-diamond,$*)

@@ -3,10 +3,10 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
-import "../providers/dexs/IDEX.sol";
-import "../providers/bridge/IBridge.sol";
 import "../libraries/LibDiamond.sol";
 import "../libraries/LibApp.sol";
+import "../libraries/LibBridge.sol";
+import "../libraries/LibSwap.sol";
 
 contract RouterFacet {
 
@@ -14,7 +14,7 @@ contract RouterFacet {
      * @dev Defines the details for the swap step
      */
     struct SwapStep {
-        uint8 providerCode;
+        LibSwap.DexCode providerCode;
         address tokenIn;
         address tokenOut;
         bytes data;
@@ -75,28 +75,12 @@ contract RouterFacet {
         // Store the amount for the next step
         // depending on the step to take
         if (_swapStep.required) {
-            IDEX swapper = LibApp.getSwapProvider(_swapStep.providerCode);
-
-            uint256 valueToSend;
-            // Check the native coins value that we have to forward to the swap impl
-            if (_swapStep.tokenIn == LibApp.NATIVE_TOKEN_ADDRESS) {
-                valueToSend = _amount;
-            }
-            else {
-                valueToSend = msg.value;
-                // Approve swapper contract
-                TransferHelper.safeApprove(
-                    _swapStep.tokenIn,
-                    address(swapper),
-                    _amount
-                );
-            }
 
             // Execute the swap
-            finalAmount = swapper.swap{value : valueToSend}(
+            finalAmount = LibSwap.swap(
+                _swapStep.providerCode,
                 _swapStep.tokenIn,
                 _swapStep.tokenOut,
-                address(this),
                 _amount,
                 _swapStep.data
             );
@@ -108,20 +92,10 @@ contract RouterFacet {
         }
 
         if (_bridgeStep.required) {
-            // Load selected bridge provider
-            IBridge bridge = LibApp.getBridgeProvider(uint8(LibApp.BridgeCode.Anyswap));
-
-            // Approve tokens for the bridge to take
-            TransferHelper.safeApprove(
-                _bridgeStep.tokenIn,
-                address(bridge),
-                finalAmount
-            );
-
             // Execute bridge process
-            bridge.send(
+            LibBridge.send(
+                LibBridge.BridgeCode.Anyswap,
                 _bridgeStep.tokenIn,
-                address(this),
                 finalAmount,
                 _bridgeStep.toChainId,
                 _bridgeStep.data
@@ -174,21 +148,12 @@ contract RouterFacet {
 
         uint256 finalAmount;
         // Check if last swap is required,
-        // and store final user-reaching amount
+        // and store user's receiving amount
         if (_swapStep.required) {
-            IDEX swapper = LibApp.getSwapProvider(_swapStep.providerCode);
-
-            // Approve swapper contract
-            TransferHelper.safeApprove(
-                _swapStep.tokenIn,
-                address(swapper),
-                _amount
-            );
-
-            finalAmount = swapper.swap(
+            finalAmount = LibSwap.swap(
+                _swapStep.providerCode,
                 _swapStep.tokenIn,
                 _swapStep.tokenOut,
-                address(this),
                 _amount,
                 _swapStep.data
             );
