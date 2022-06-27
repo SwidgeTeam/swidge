@@ -9,8 +9,6 @@ $(foreach env, default ${ENV}, $(eval _ := $(shell \
 	>> ${TEMP_ENV_FILE}) \
 ))
 
-
-
 $(eval _ := $(shell \
 	test -f .env && \
 	cat .env \
@@ -195,9 +193,17 @@ $(addprefix deploy-all-, ${ENABLED_NETWORKS}): deploy-all-%:
 	@$(call CONFIRM,Deploy all?)
 	@$(call CONTRACTS_LIVE_RUN,deploy-all,$*)
 
+$(addprefix deploy-facet-, ${ENABLED_NETWORKS}): deploy-facet-%:
+	@$(call CONFIRM,Deploy facet?)
+	@$(call CONTRACTS_LIVE_RUN,deploy-facet --facet $(facet),$*)
+
 $(addprefix verify-, ${ENABLED_NETWORKS}): verify-%:
 	@$(call CONFIRM,Verify diamond?)
 	@$(call CONTRACTS_LIVE_RUN,verify-diamond,$*)
+
+$(addprefix loupe-, ${ENABLED_NETWORKS}): loupe-%:
+	@$(call CONFIRM,Loupe into diamond?)
+	@$(call CONTRACTS_LIVE_RUN,loupe,$*)
 
 # Forked chain
 
@@ -218,6 +224,7 @@ CONTRACTS_RUN = $(call CONTRACTS_DOCKER_EXEC,$(1),yarn $(3) --network $(2))
 
 CONTRACTS_DEPLOY_DIAMOND = $(call CONTRACTS_RUN,$(1),$(2),deploy-diamond)
 CONTRACTS_UPDATE_DIAMOND = $(call CONTRACTS_RUN,$(1),$(2),update-diamond --chain $(1) --facet $(3))
+CONTRACTS_DEPLOY_FACET = $(call CONTRACTS_RUN,$(1),$(2),deploy-facet --chain $(2) --facet $(3))
 CONTRACTS_DEPLOY_ALL = $(call CONTRACTS_RUN,$(1),$(2),deploy-all --chain $(1))
 CONTRACTS_GET_TOKENS = $(call CONTRACTS_RUN,$(1),$(2),get-tokens --chain $(1) --token $(3))
 
@@ -227,11 +234,17 @@ $(addprefix deploy-diamond-fork-, ${ENABLED_NETWORKS}): deploy-diamond-fork-%:
 $(addprefix update-diamond-fork-, ${ENABLED_NETWORKS}): update-diamond-fork-%:
 	@$(call CONTRACTS_UPDATE_DIAMOND,$*,localhost,$(facet))
 
+$(addprefix deploy-facet-fork-, ${ENABLED_NETWORKS}): deploy-facet-fork-%:
+	@$(call CONTRACTS_DEPLOY_FACET,$*,localhost,$(facet))
+
 $(addprefix deploy-all-fork-, ${ENABLED_NETWORKS}): deploy-all-fork-%:
 	@$(call CONTRACTS_DEPLOY_ALL,$*,localhost)
 
 $(addprefix get-tokens-, ${ENABLED_NETWORKS}): get-tokens-%:
 	@$(call CONTRACTS_GET_TOKENS,$*,localhost,$(token))
+
+$(addprefix loupe-fork-, ${ENABLED_NETWORKS}): loupe-fork-%:
+	@$(call CONTRACTS_RUN,$*,localhost,loupe --chain localhost)
 
 ### Relayer
 
