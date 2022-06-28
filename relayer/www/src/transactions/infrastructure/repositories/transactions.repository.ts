@@ -10,6 +10,9 @@ import { Inject } from '@nestjs/common';
 import { Class } from '../../../shared/Class';
 import { SwapOrder } from '../../domain/SwapOrder';
 import { Contract } from '../../../shared/domain/Contract';
+import { TransactionJson } from './TransactionJson';
+import { Transaction } from '../../domain/Transaction';
+import { BigNumber } from 'ethers';
 
 export class TransactionsRepositoryImpl implements TransactionsRepository {
   constructor(
@@ -55,6 +58,42 @@ export class TransactionsRepositoryImpl implements TransactionsRepository {
         completed: payload.completed ? payload.completed.getTime() : '',
       },
       this.headers(),
+    );
+  }
+
+  /**
+   * Fetches the full transaction given a txHash
+   * @param txHash
+   */
+  public async getTx(txHash: string): Promise<Transaction | null> {
+    const response = await this.httpClient.get<TransactionJson>(
+      `${this.configService.apiUrl}/transaction/${txHash}`,
+      this.headers(),
+    );
+
+    if (response === null) {
+      return null;
+    }
+
+    return new Transaction(
+      response.txHash,
+      response.walletAddress,
+      response.routerAddress,
+      response.fromChainId,
+      response.toChainId,
+      response.srcToken,
+      response.bridgeTokenIn,
+      response.bridgeTokenOut,
+      response.dstToken,
+      response.amountIn ? BigNumber.from(response.amountIn) : null,
+      response.bridgeAmountIn ? BigNumber.from(response.bridgeAmountIn) : null,
+      response.bridgeAmountOut
+        ? BigNumber.from(response.bridgeAmountOut)
+        : null,
+      response.amountOut ? BigNumber.from(response.amountOut) : null,
+      response.executed ? new Date(response.executed) : null,
+      response.bridged ? new Date(response.bridged) : null,
+      response.completed ? new Date(response.completed) : null,
     );
   }
 
