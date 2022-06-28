@@ -12,7 +12,7 @@ const deployAll = async (ethers, deployer, relayer) => {
     diamondProxy.address
   );
 
-  await updateRelayer(ethers, diamondProxy.address, relayer.address);
+  await updateRelayer(ethers, deployer, diamondProxy.address, relayer.address);
 
   return {
     diamondProxy: diamondProxy,
@@ -94,7 +94,7 @@ const deployFacets = async (ethers, deployer, diamondAddress) => {
     "IDiamondCutter",
     diamondAddress
   );
-  (await diamondCutter.diamondCut(cuts)).wait();
+  (await diamondCutter.connect(deployer).diamondCut(cuts)).wait();
 
   return [
     relayerUpdaterFacet,
@@ -104,14 +104,19 @@ const deployFacets = async (ethers, deployer, diamondAddress) => {
   ];
 };
 
-const updateRelayer = async (ethers, diamondAddress, relayerAddress) => {
+const updateRelayer = async (
+  ethers,
+  deployer,
+  diamondAddress,
+  relayerAddress
+) => {
   const relayerUpdater = await ethers.getContractAt(
     "RelayerUpdaterFacet",
     diamondAddress
   );
 
   // update the relayer's address
-  (await relayerUpdater.functions.updateRelayer(relayerAddress)).wait();
+  (await relayerUpdater.connect(deployer).updateRelayer(relayerAddress)).wait();
 };
 
 module.exports = {

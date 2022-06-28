@@ -1,5 +1,5 @@
 module.exports = async function getAccounts(hre) {
-  const [deployer, relayer, user] = await hre.ethers.getSigners();
+  const [d1, relayer, d2, deployer, user] = await hre.ethers.getSigners();
 
   return {
     deployer: deployer,
