@@ -70,4 +70,20 @@ contract ProviderUpdaterFacet {
         return bridges;
     }
 
+    /**
+     * @dev Lists all the bridge providers and its details
+     */
+    function listSwappers() external view returns (LibApp.Provider[] memory) {
+        LibApp.AppStorage storage s = LibApp.appStorage();
+        LibApp.Provider[] memory swappers = new LibApp.Provider[](1);
+        for (uint8 index; index < 1; index++) {
+            LibApp.Provider memory swap = s.swapProviders[index];
+            swappers[index].code = swap.code;
+            swappers[index].enabled = swap.enabled;
+            swappers[index].implementation = swap.implementation;
+            swappers[index].handler = swap.handler;
+        }
+        return swappers;
+    }
+
 }
