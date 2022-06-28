@@ -6,7 +6,7 @@ const deployAll = async (ethers, deployer, relayer) => {
     deployer
   );
 
-  const [relayerUpdater, router, diamondLoupe] = await deployFacets(
+  const [relayerUpdater, router, diamondLoupe, providerUpdater] = await deployFacets(
     ethers,
     deployer,
     diamondProxy.address
@@ -19,6 +19,7 @@ const deployAll = async (ethers, deployer, relayer) => {
     diamondCutterFacet: diamondCutterFacet,
     diamondLoupeFacet: diamondLoupe,
     relayerUpdaterFacet: relayerUpdater,
+    providerUpdaterFacet: providerUpdater,
     routerFacet: router,
   };
 };
@@ -54,6 +55,15 @@ const deployFacets = async (ethers, deployer, diamondAddress) => {
   await relayerUpdaterFacet.deployed();
 
   // deploy ProviderUpdaterFacet
+  const ProviderUpdaterFacet = await ethers.getContractFactory(
+    "ProviderUpdaterFacet"
+  );
+  const providerUpdaterFacet = await ProviderUpdaterFacet.connect(
+    deployer
+  ).deploy();
+  await providerUpdaterFacet.deployed();
+
+  // deploy ProviderUpdaterFacet
   const DiamondLoupeFacet = await ethers.getContractFactory(
     "DiamondLoupeFacet"
   );
@@ -66,7 +76,12 @@ const deployFacets = async (ethers, deployer, diamondAddress) => {
   await routerFacet.deployed();
 
   // update facets
-  const facets = [routerFacet, relayerUpdaterFacet, diamondLoupeFacet];
+  const facets = [
+    routerFacet,
+    relayerUpdaterFacet,
+    diamondLoupeFacet,
+    providerUpdaterFacet,
+  ];
   const cuts = [];
   for (const facet of facets) {
     cuts.push({
@@ -81,7 +96,12 @@ const deployFacets = async (ethers, deployer, diamondAddress) => {
   );
   (await diamondCutter.diamondCut(cuts)).wait();
 
-  return [relayerUpdaterFacet, routerFacet, diamondLoupeFacet];
+  return [
+    relayerUpdaterFacet,
+    routerFacet,
+    diamondLoupeFacet,
+    providerUpdaterFacet,
+  ];
 };
 
 const updateRelayer = async (ethers, diamondAddress, relayerAddress) => {
