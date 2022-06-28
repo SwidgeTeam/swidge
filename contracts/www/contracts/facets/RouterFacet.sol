@@ -5,7 +5,6 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
 import "../libraries/LibDiamond.sol";
 import "../libraries/LibApp.sol";
-import "../libraries/LibSwap.sol";
 
 contract RouterFacet {
 
@@ -75,7 +74,7 @@ contract RouterFacet {
         // depending on the step to take
         if (_swapStep.required) {
             // Execute the swap
-            finalAmount = LibSwap.swap(
+            finalAmount = LibApp.swap(
                 _swapStep.providerCode,
                 _swapStep.tokenIn,
                 _swapStep.tokenOut,
@@ -148,7 +147,7 @@ contract RouterFacet {
         // Check if last swap is required,
         // and store user's receiving amount
         if (_swapStep.required) {
-            finalAmount = LibSwap.swap(
+            finalAmount = LibApp.swap(
                 _swapStep.providerCode,
                 _swapStep.tokenIn,
                 _swapStep.tokenOut,

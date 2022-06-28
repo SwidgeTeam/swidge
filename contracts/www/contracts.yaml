@@ -10,9 +10,14 @@ localhost:
     Anyswap:
       code: 0
       enabled: true
-      implementation: "0x7B19dBCaCf0fF7611efEc642e0b44085419FFa9A"
-      arguments:
-        - "0x1ccca1ce62c62f7be95d4a67722a8fdbed6eecb4"
+      implementation: "0x7f6F25Bc9e3BB4099878B66103d9cbcC7Bd8F95C"
+      handler: "0x4f3aff3a747fcade12598081e80c6605a8be192f"
+  dex:
+    ZeroEx:
+      code: 0
+      enabled: true
+      implementation: "0x7f6F25Bc9e3BB4099878B66103d9cbcC7Bd8F95C"
+      handler: "0x0000000000000000000000000000000000000000"
 fantom:
   diamond: "0x6FECfBA2305c69E59c0115e18E4fBF6BF72Aa658"
   facet:

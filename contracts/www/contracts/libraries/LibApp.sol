@@ -4,7 +4,10 @@ pragma solidity ^0.8.0;
 library LibApp {
     bytes32 constant APP_STORAGE_POSITION = keccak256("xyz.swidge.app.storage");
     address constant NATIVE_TOKEN_ADDRESS = address(0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE);
-    bytes4 constant BRIDGE_SEND_SELECTOR = bytes4(keccak256(bytes('send(address,uint256,uint256,bytes)')));
+
+    enum DexCode {
+        ZeroEx // 0
+    }
 
     enum BridgeCode {
         Anyswap // 0
@@ -42,6 +45,7 @@ library LibApp {
         return appStorage().swapProviders[_code];
     }
 
+    bytes4 constant BRIDGE_SEND_SELECTOR = bytes4(keccak256(bytes('send(address,uint256,uint256,bytes)')));
 
     function send(
         uint8 _code,
@@ -60,5 +64,29 @@ library LibApp {
         );
 
         require(success, "Bridge failed");
+    }
+
+    bytes4 constant SWAPPER_SWAP_SELECTOR = bytes4(keccak256(bytes('swap(address,address,uint256,bytes)')));
+
+    function swap(
+        uint8 _code,
+        address _tokenIn,
+        address _tokenOut,
+        uint256 _amountIn,
+        bytes memory _data
+    ) internal returns (uint256) {
+        LibApp.Provider memory swapper = LibApp.getSwapper(_code);
+        if (!swapper.enabled) {
+            revert("Swapper not enabled");
+        }
+
+        (bool success, bytes memory data) = swapper.implementation.delegatecall(
+            abi.encodeWithSelector(SWAPPER_SWAP_SELECTOR, _tokenIn, _tokenOut, _amountIn, _data)
+        );
+        require(success, "Swap failed");
+
+        (uint256 boughtAmount) = abi.decode(data, (uint256));
+
+        return boughtAmount;
     }
 }

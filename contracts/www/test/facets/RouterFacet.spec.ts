@@ -4,6 +4,7 @@ import {
   fakeTokenContract,
   getAccounts,
   RandomAddress,
+  ZeroAddress,
   zeroExEncodedCalldata,
 } from "../shared";
 import { Contract } from "ethers";
@@ -17,6 +18,7 @@ describe("RouterFacet", function () {
   let relaterUpdater: Contract;
   let providerUpdater: Contract;
   let anyswap: Contract;
+  let zeroEx: Contract;
   let router: Contract;
 
   beforeEach(async () => {
@@ -37,6 +39,14 @@ describe("RouterFacet", function () {
     );
     anyswap = await Anyswap.deploy();
     await anyswap.deployed();
+
+    const ZeroEx = await ethers.getContractFactory(
+      "ZeroEx",
+      diamondProxy.address
+    );
+    zeroEx = await ZeroEx.deploy();
+    await zeroEx.deployed();
+
     router = await ethers.getContractAt("RouterFacet", diamondProxy.address);
   });
 
@@ -61,7 +71,7 @@ describe("RouterFacet", function () {
 
     it("Should only execute swap if no bridging step is required", async function () {
       /** Arrange */
-      const { anyoneElse } = await getAccounts();
+      const { owner, anyoneElse } = await getAccounts();
 
       // Create two fake ERC20 tokens
       const fakeTokenIn = await fakeTokenContract();
@@ -72,6 +82,10 @@ describe("RouterFacet", function () {
       fakeTokenOut.balanceOf.returnsAtCall(1, 20);
 
       const [callData] = await zeroExEncodedCalldata();
+
+      await providerUpdater
+        .connect(owner)
+        .updateSwapper([0, true, zeroEx.address, ZeroAddress]);
 
       /** Act */
       const call = router
@@ -162,6 +176,10 @@ describe("RouterFacet", function () {
 
       await providerUpdater
         .connect(owner)
+        .updateSwapper([0, true, zeroEx.address, ZeroAddress]);
+
+      await providerUpdater
+        .connect(owner)
         .updateBridge([
           0,
           true,
@@ -230,6 +248,10 @@ describe("RouterFacet", function () {
       fakeTokenOut.balanceOf.returnsAtCall(1, 20);
 
       const [callData] = await zeroExEncodedCalldata();
+
+      await providerUpdater
+        .connect(owner)
+        .updateSwapper([0, true, zeroEx.address, ZeroAddress]);
 
       /** Act */
       const call = router
