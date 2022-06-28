@@ -1,8 +1,12 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, Post, Res, SetMetadata } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { CreateTransactionCommand } from '../../application/command/create-transaction.command';
 import { Response } from 'express';
 import { CustomController } from '../../../shared/infrastructure/CustomController';
+import {
+  AUTH_GUARD_CONFIG,
+  AuthGuardConfig,
+} from '../../../shared/infrastructure/AuthGuard';
 
 @Controller()
 export class PostTransactionController extends CustomController {
@@ -11,6 +15,7 @@ export class PostTransactionController extends CustomController {
   }
 
   @Post('/transaction')
+  @SetMetadata(AUTH_GUARD_CONFIG, { protected: true } as AuthGuardConfig)
   async postTransaction(
     @Body('txHash') txHash,
     @Body('walletAddress') walletAddress,

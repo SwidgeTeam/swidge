@@ -1,8 +1,12 @@
-import { Body, Controller, Param, Put, Res } from '@nestjs/common';
+import { Body, Controller, Param, Put, Res, SetMetadata } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { Response } from 'express';
 import { CustomController } from '../../../shared/infrastructure/CustomController';
 import { UpdateTransactionCommand } from '../../application/command/update-transaction.command';
+import {
+  AUTH_GUARD_CONFIG,
+  AuthGuardConfig,
+} from '../../../shared/infrastructure/AuthGuard';
 
 @Controller()
 export class PutTransactionController extends CustomController {
@@ -11,6 +15,7 @@ export class PutTransactionController extends CustomController {
   }
 
   @Put('/transaction/:hash')
+  @SetMetadata(AUTH_GUARD_CONFIG, { protected: true } as AuthGuardConfig)
   async postTransaction(
     @Param('hash') txHash,
     @Body('bridgeAmountIn') bridgeAmountIn,
