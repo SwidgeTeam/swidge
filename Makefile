@@ -269,6 +269,9 @@ RELAYER = $(call DOCKER_COMPOSE_RUN,--rm ${DOCKER_RELAYER_SERVICE} $(1))
 relayer-events: create-queue
 	@$(call RELAYER,run:dev:events)
 
+relayer-multichain:
+	@$(call RELAYER,run:dev:multichain)
+
 relayer-consumer:
 	@$(call RELAYER,run:dev:consumer)
 

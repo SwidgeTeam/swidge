@@ -9,6 +9,7 @@ import { ConfigService } from '../../../config/config.service';
 import { Inject } from '@nestjs/common';
 import { Class } from '../../../shared/Class';
 import { SwapOrder } from '../../domain/SwapOrder';
+import { Contract } from '../../../shared/domain/Contract';
 
 export class TransactionsRepositoryImpl implements TransactionsRepository {
   constructor(
@@ -97,6 +98,24 @@ export class TransactionsRepositoryImpl implements TransactionsRepository {
     }>(`${this.configService.apiUrl}/address/router`);
 
     return response.address;
+  }
+
+  /**
+   * Fetch the contracts of Multichain
+   */
+  public async getMultichainRouters(): Promise<Contract[]> {
+    const response = await this.httpClient.get<{
+      addresses: [
+        {
+          chainId: string;
+          address: string;
+        },
+      ];
+    }>(`${this.configService.apiUrl}/address/bridge?type=multichain`);
+
+    return response.addresses.map((row) => {
+      return new Contract(row.chainId, row.address);
+    });
   }
 
   private headers() {

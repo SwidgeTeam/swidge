@@ -1,5 +1,6 @@
 import { SwapOrder } from './SwapOrder';
 import { ContractAddress } from '../../shared/types';
+import { Contract } from '../../shared/domain/Contract';
 
 export interface CreateTransactionPayload {
   txHash: string;
@@ -38,4 +39,6 @@ export interface TransactionsRepository {
   quoteSwap(request: SwapRequest): Promise<SwapOrder>;
 
   getRouterAddress(): Promise<string>;
+
+  getMultichainRouters(): Promise<Contract[]>;
 }

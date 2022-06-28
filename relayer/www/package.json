@@ -18,6 +18,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "run:dev:events": "ts-node src/events-listener.ts",
+    "run:dev:multichain": "ts-node src/multichain-listener.ts",
     "run:dev:consumer": "ts-node src/queue-consumer.ts",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
   },

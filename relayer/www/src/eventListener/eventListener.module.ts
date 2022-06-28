@@ -7,10 +7,12 @@ import { ConfigService as NestJSConfigService } from '@nestjs/config';
 import httpClientProvider from '../shared/http/httpClient.provider';
 import { LoggerModule } from '../logger/logger.module';
 import { CustomLogger } from '../logger/CustomLogger';
+import { MultichainListener } from './application/multichain-listener';
 
 @Module({
   imports: [ConfigModule, LoggerModule],
   providers: [
+    MultichainListener,
     EventsListener,
     ConfigService,
     NestJSConfigService,
