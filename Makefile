@@ -237,6 +237,7 @@ CONTRACTS_RUN = $(call CONTRACTS_DOCKER_EXEC,$(1),yarn $(2) --chain localhost --
 CONTRACTS_UPDATE_DIAMOND = $(call CONTRACTS_RUN,$(1),update-diamond --facet $(2))
 CONTRACTS_DEPLOY_FACET = $(call CONTRACTS_RUN,$(1),deploy-facet --facet $(2))
 CONTRACTS_DEPLOY_BRIDGE = $(call CONTRACTS_RUN,$(1),deploy-bridge --bridge $(2))
+CONTRACTS_DEPLOY_DEX = $(call CONTRACTS_RUN,$(1),deploy-dex --dex $(2))
 CONTRACTS_DEPLOY_ALL = $(call CONTRACTS_RUN,$(1),deploy-all)
 CONTRACTS_GET_TOKENS = $(call CONTRACTS_RUN,$(1),get-tokens --token $(2))
 
@@ -248,6 +249,9 @@ $(addprefix deploy-facet-fork-, ${ENABLED_NETWORKS}): deploy-facet-fork-%:
 
 $(addprefix deploy-bridge-fork-, ${ENABLED_NETWORKS}): deploy-bridge-fork-%:
 	@$(call CONTRACTS_DEPLOY_BRIDGE,$*,$(bridge))
+
+$(addprefix deploy-dex-fork-, ${ENABLED_NETWORKS}): deploy-dex-fork-%:
+	@$(call CONTRACTS_DEPLOY_DEX,$*,$(dex))
 
 $(addprefix deploy-all-fork-, ${ENABLED_NETWORKS}): deploy-all-fork-%:
 	@$(call CONTRACTS_DEPLOY_ALL,$*)

@@ -11,8 +11,8 @@ contract ZeroEx is IDEX {
         address _tokenIn,
         address _tokenOut,
         uint256 _amountIn,
-        bytes memory _data
-    ) external override returns (uint256) {
+        bytes calldata _data
+    ) external payable override returns (uint256) {
         // Extract the contract address and callData
         (address payable callAddress) = abi.decode(_data, (address));
 

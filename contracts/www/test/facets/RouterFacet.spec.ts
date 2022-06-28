@@ -2,7 +2,7 @@ import chai, { expect } from "chai";
 import { ethers } from "hardhat";
 import {
   fakeTokenContract,
-  getAccounts,
+  getAccounts, NativeToken,
   RandomAddress,
   ZeroAddress,
   zeroExEncodedCalldata,
@@ -208,6 +208,50 @@ describe("RouterFacet", function () {
           31337,
           1337,
           1000000,
+          10
+        );
+    });
+
+    it("Should swap successfully from native token", async function () {
+      /** Arrange */
+      const { owner, anyoneElse } = await getAccounts();
+
+      // Create two fake ERC20 tokens
+      const fakeTokenOut = await fakeTokenContract();
+
+      // Fake response from executed methods on the output token
+      fakeTokenOut.balanceOf.returnsAtCall(0, 10);
+      fakeTokenOut.balanceOf.returnsAtCall(1, 20);
+
+      const [callData] = await zeroExEncodedCalldata();
+
+      await providerUpdater
+        .connect(owner)
+        .updateSwapper([0, true, zeroEx.address, ZeroAddress]);
+
+      const amountIn = ethers.utils.parseEther("1.0");
+
+      /** Act */
+      const call = router
+        .connect(anyoneElse)
+        .initSwidge(
+          amountIn,
+          [0, NativeToken, fakeTokenOut.address, callData, true],
+          [RandomAddress, 1337, "0x", false],
+          [RandomAddress, RandomAddress],
+          {
+            value: amountIn,
+          }
+        );
+
+      /** Assert */
+      await expect(call)
+        .to.emit(router, "SwapExecuted")
+        .withArgs(
+          NativeToken,
+          fakeTokenOut.address,
+          31337,
+          "1000000000000000000",
           10
         );
     });

@@ -2,6 +2,7 @@ import {FakeContract, smock} from "@defi-wonderland/smock";
 import {ethers} from "hardhat";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
+export const NativeToken = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
 export const ZeroAddress = '0x0000000000000000000000000000000000000000';
 export const RandomAddress = '0x1231231231231231321231231231231231231231';
 
