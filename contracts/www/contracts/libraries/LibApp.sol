@@ -7,6 +7,14 @@ library LibApp {
 
     struct AppStorage {
         address relayerAddress;
+        mapping(uint8 => Provider) bridgeProviders;
+        mapping(uint8 => Provider) swapProviders;
+    }
+
+    struct Provider {
+        uint8 code;
+        bool enabled;
+        address contractAddress;
     }
 
     function appStorage() internal pure returns (AppStorage storage s) {
@@ -18,5 +26,13 @@ library LibApp {
 
     function relayerAddress() internal view returns (address) {
         return appStorage().relayerAddress;
+    }
+
+    function getBridge(uint8 _code) internal view returns (Provider memory) {
+        return appStorage().bridgeProviders[_code];
+    }
+
+    function getSwapper(uint8 _code) internal view returns (Provider memory) {
+        return appStorage().swapProviders[_code];
     }
 }

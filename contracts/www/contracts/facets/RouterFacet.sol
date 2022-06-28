@@ -94,7 +94,7 @@ contract RouterFacet {
         if (_bridgeStep.required) {
             // Execute bridge process
             LibBridge.send(
-                LibBridge.BridgeCode.Anyswap,
+                uint8(LibBridge.BridgeCode.Anyswap),
                 _bridgeStep.tokenIn,
                 finalAmount,
                 _bridgeStep.toChainId,
