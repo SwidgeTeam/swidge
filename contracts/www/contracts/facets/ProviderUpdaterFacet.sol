@@ -33,4 +33,21 @@ contract ProviderUpdaterFacet {
         s.bridgeProviders[_provider.code] = _provider;
         emit UpdatedBridgeProvider(_provider.code, oldAddress, _provider.implementation);
     }
+
+    /**
+     * @dev Lists all the bridge providers and its details
+     */
+    function listBridges() external view returns (LibApp.Provider[] memory) {
+        LibApp.AppStorage storage s = LibApp.appStorage();
+        LibApp.Provider[] memory bridges = new LibApp.Provider[](1);
+        for (uint8 index; index < 1; index++) {
+            LibApp.Provider memory bridge = s.bridgeProviders[index];
+            bridges[index].code = bridge.code;
+            bridges[index].enabled = bridge.enabled;
+            bridges[index].implementation = bridge.implementation;
+            bridges[index].handler = bridge.handler;
+        }
+        return bridges;
+    }
+
 }
