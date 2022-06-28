@@ -5,7 +5,6 @@ import { RpcNode } from '../../shared/RpcNode';
 import {
   SwapRequest,
   TransactionsRepository,
-  UpdateTransactionPayload,
 } from '../domain/TransactionsRepository';
 import { TransactionJob } from '../domain/TransactionJob';
 import { CustomLogger } from '../../logger/CustomLogger';
@@ -68,13 +67,5 @@ export class TransactionProcessor {
     await this.routerCaller.call(params);
 
     this.logger.log('Tx executed');
-
-    await this.transactionRepository.update(<UpdateTransactionPayload>{
-      txHash: job.txHash,
-      bridgeAmountOut: job.bridgeAmountOut,
-      bridged: new Date(),
-    });
-
-    this.logger.log('Tx updated');
   }
 }

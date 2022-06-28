@@ -9,7 +9,6 @@ import { LoggerModule } from '../logger/logger.module';
 import { CustomLogger } from '../logger/CustomLogger';
 import { SqsConsumer } from './application/sqs-consumer';
 import { TransactionProcessor } from './application/transaction-processor';
-import { MultichainTransactionFetcher } from './application/multichain-transaction-fetcher';
 
 @Module({
   imports: [ConfigModule, LoggerModule],
@@ -17,7 +16,6 @@ import { MultichainTransactionFetcher } from './application/multichain-transacti
     SqsConsumer,
     RouterCaller,
     TransactionProcessor,
-    MultichainTransactionFetcher,
     ConfigService,
     NestJSConfigService,
     CustomLogger,

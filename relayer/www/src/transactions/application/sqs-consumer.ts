@@ -8,7 +8,6 @@ import { Consumer, SQSMessage } from 'sqs-consumer';
 import { SQS } from 'aws-sdk';
 import { ConfigService } from '../../config/config.service';
 import { TransactionProcessor } from './transaction-processor';
-import { MultichainTransactionFetcher } from './multichain-transaction-fetcher';
 import { TransactionJob } from '../domain/TransactionJob';
 
 export class SqsConsumer {
@@ -16,7 +15,6 @@ export class SqsConsumer {
     private readonly configService: ConfigService,
     private readonly logger: CustomLogger,
     private readonly transactionProcessor: TransactionProcessor,
-    private readonly multichainTransactionFetcher: MultichainTransactionFetcher,
     @Inject(Class.TransactionsRepository)
     private readonly repository: TransactionsRepository,
   ) {}
@@ -33,17 +31,15 @@ export class SqsConsumer {
         this.logger.log('Processing message w/ txHash ' + txHash);
 
         // Get details from Multichain API
-        const multichainTx = await this.multichainTransactionFetcher.execute(
-          txHash,
-        );
+        const tx = await this.repository.getTx(txHash);
 
-        // If Multichain does not have details of this txHash, stop process
-        if (multichainTx === null) {
-          throw new Error('Multichain TX not yet indexed');
+        // If tx doesnt exist on the DB, something wrong happened
+        if (tx === null) {
+          throw new Error('!! Tx not indexed !!');
         }
 
-        if (!multichainTx.isCompleted) {
-          throw new Error('Multichain TX not yet completed');
+        if (!tx.bridged || !tx.bridgeAmountOut) {
+          throw new Error('Tx not bridged yet');
         }
 
         // If tx is found, finish process
@@ -54,7 +50,7 @@ export class SqsConsumer {
           dstToken: message.MessageAttributes.dstToken.StringValue,
           toChainId: message.MessageAttributes.toChain.StringValue,
           walletAddress: message.MessageAttributes.wallet.StringValue,
-          bridgeAmountOut: multichainTx.toValue,
+          bridgeAmountOut: tx.bridgeAmountOut,
         };
         await this.transactionProcessor.execute(transactionJob);
       },
