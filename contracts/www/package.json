@@ -12,7 +12,8 @@
     "verify-diamond": "hardhat verify-diamond",
     "get-tokens": "hardhat get-tokens",
     "loupe": "hardhat loupe",
-    "retrieve": "hardhat retrieve"
+    "retrieve": "hardhat retrieve",
+    "update-relayer": "hardhat update-relayer"
   },
   "devDependencies": {
     "@defi-wonderland/smock": "^2.0.7",

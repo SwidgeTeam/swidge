@@ -42,3 +42,7 @@ task("retrieve", "Get tokens on the forked network")
   .addParam("token", "Name of the token you want to get")
   .addParam("amount", "Amount to retrieve")
   .setAction(require("./retrieve"));
+
+task("update-relayer", "Update the relayer's address")
+  .addParam("chain", "Name of the network to update")
+  .setAction(require("./update-relayer"));

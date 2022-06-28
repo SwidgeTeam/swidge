@@ -217,6 +217,10 @@ $(addprefix retrieve-, ${ENABLED_NETWORKS}): retrieve-%:
 	@$(call CONFIRM,Retrieve $(amount) of $(token)?)
 	@$(call CONTRACTS_LIVE_RUN,retrieve --token $(token) --amount $(amount),$*)
 
+$(addprefix update-relayer-, ${ENABLED_NETWORKS}): update-relayer-%:
+	@$(call CONFIRM,Update relayer?)
+	@$(call CONTRACTS_LIVE_RUN,update-relayer,$*)
+
 # Forked chain
 
 $(addprefix fork-, ${ENABLED_NETWORKS}): fork-%:
