@@ -21,28 +21,40 @@ localhost:
 fantom:
   diamond: "0x6FECfBA2305c69E59c0115e18E4fBF6BF72Aa658"
   facet:
-    RouterFacet: "0xA65FEf1a9cdF76C540836B6bB197a9764ebc025f"
+    RouterFacet: "0x37b33Bb95EF363f3e73D9Cd77670A6852f243B80"
     RelayerUpdaterFacet: "0x4c3135b62a6814c48c0fca923DC921fe05945B15"
     DiamondCutter: "0x071A6f28f30b1FD81578D656d9d91f4bdB76b18C"
     DiamondLoupeFacet: "0x44DF1763DEF78AC11b544e7B50cC7A2B36E37d92"
+    ProviderUpdaterFacet: "0xA61073E68C12Ad61a2D4eBCd4eCdCD69b5ec53ac"
   bridge:
     Anyswap:
       code: 0
       enabled: true
-      implementation: ""
-      arguments:
-        - "0x1ccca1ce62c62f7be95d4a67722a8fdbed6eecb4"
+      implementation: "0x082A0c1A5C20e8A0c759B20A7C17Cf9BCcd76acF"
+      handler: "0x1ccca1ce62c62f7be95d4a67722a8fdbed6eecb4"
+  dex:
+    ZeroEx:
+      code: 0
+      enabled: true
+      implementation: "0xB031607fa22E72fED3f507b770f8479c04D908C8"
+      handler: "0x0000000000000000000000000000000000000000"
 polygon:
   diamond: "0x6FECfBA2305c69E59c0115e18E4fBF6BF72Aa658"
   facet:
-    RouterFacet: "0xf4EB3CF40e54Ef77255BDfd3Bb3f28c1b3737230"
+    RouterFacet: "0x02F922f0eBf3118B9A5C2E68A9f11e99c80c8ea3"
     RelayerUpdaterFacet: "0xb119573c2Ef09e3a68E55A54DF99FaB6a6649a44"
     DiamondCutter: "0x071A6f28f30b1FD81578D656d9d91f4bdB76b18C"
     DiamondLoupeFacet: "0x702fAD862775ff4FDA75931b042Eee0B852e5a62"
+    ProviderUpdaterFacet: "0xB031607fa22E72fED3f507b770f8479c04D908C8"
   bridge:
     Anyswap:
       code: 0
       enabled: true
-      implementation: ""
-      arguments:
-        - "0x4f3aff3a747fcade12598081e80c6605a8be192f"
+      implementation: "0xd6603cA11A2b35e34Eac3777345C9e00CED7a4a5"
+      handler: "0x4f3aff3a747fcade12598081e80c6605a8be192f"
+  dex:
+    ZeroEx:
+      code: 0
+      enabled: true
+      implementation: "0x81605E736C779d5215F56812Ad267B12c5c2347c"
+      handler: "0x0000000000000000000000000000000000000000"
