@@ -45,7 +45,7 @@ library LibApp {
         return appStorage().swapProviders[_code];
     }
 
-    bytes4 constant BRIDGE_SEND_SELECTOR = bytes4(keccak256(bytes('send(address,uint256,uint256,bytes)')));
+    //bytes4 constant BRIDGE_SEND_SELECTOR = bytes4(keccak256(bytes('send(address,uint256,uint256,bytes)')));
 
     function send(
         uint8 _code,
@@ -54,19 +54,19 @@ library LibApp {
         uint256 _toChainId,
         bytes memory _data
     ) internal {
-        LibApp.Provider memory bridge = LibApp.getBridge(_code);
+        Provider memory bridge = getBridge(_code);
         if (!bridge.enabled) {
             revert("Bridge not enabled");
         }
 
         (bool success,) = bridge.implementation.delegatecall(
-            abi.encodeWithSelector(BRIDGE_SEND_SELECTOR, _token, _amount, _toChainId, _data)
+            abi.encodeWithSelector(0x49bb2f22, _token, _amount, _toChainId, _data)
         );
 
         require(success, "Bridge failed");
     }
 
-    bytes4 constant SWAPPER_SWAP_SELECTOR = bytes4(keccak256(bytes('swap(address,address,uint256,bytes)')));
+    //bytes4 constant SWAPPER_SWAP_SELECTOR = bytes4(keccak256(bytes('swap(address,address,uint256,bytes)')));
 
     function swap(
         uint8 _code,
@@ -75,13 +75,15 @@ library LibApp {
         uint256 _amountIn,
         bytes memory _data
     ) internal returns (uint256) {
-        LibApp.Provider memory swapper = LibApp.getSwapper(_code);
+        Provider memory swapper = getSwapper(_code);
         if (!swapper.enabled) {
             revert("Swapper not enabled");
         }
 
+        // bytes4(keccak256(bytes('swap(address,address,uint256,bytes)')))
+
         (bool success, bytes memory data) = swapper.implementation.delegatecall(
-            abi.encodeWithSelector(SWAPPER_SWAP_SELECTOR, _tokenIn, _tokenOut, _amountIn, _data)
+            abi.encodeWithSelector(0x43a0a7f2, _tokenIn, _tokenOut, _amountIn, _data)
         );
         require(success, "Swap failed");
 

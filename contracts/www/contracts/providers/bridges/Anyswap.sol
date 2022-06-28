@@ -5,8 +5,6 @@ import "./IBridge.sol";
 import "../../libraries/LibApp.sol";
 
 contract Anyswap is IBridge {
-    bytes4 constant SEND_SELECTOR = bytes4(keccak256(bytes('anySwapOutUnderlying(address,address,uint256,uint256)')));
-
     function send(
         address _token,
         uint256 _amount,
@@ -21,8 +19,10 @@ contract Anyswap is IBridge {
         // Decode data to get address of custom token
         address _anyTokenAddress = abi.decode(_data, (address));
 
+        // bytes4(keccak256(bytes('anySwapOutUnderlying(address,address,uint256,uint256)')));
+
         (bool success,) = bridge.handler.call(
-            abi.encodeWithSelector(SEND_SELECTOR, _anyTokenAddress, address(this), _amount, _toChainId)
+            abi.encodeWithSelector(0xedbdf5e2, _anyTokenAddress, address(this), _amount, _toChainId)
         );
 
         require(success, "Bridge: Anyswap failed");
