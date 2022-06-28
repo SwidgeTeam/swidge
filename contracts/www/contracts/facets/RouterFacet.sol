@@ -5,7 +5,6 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
 import "../libraries/LibDiamond.sol";
 import "../libraries/LibApp.sol";
-import "../libraries/LibBridge.sol";
 import "../libraries/LibSwap.sol";
 
 contract RouterFacet {
@@ -14,7 +13,7 @@ contract RouterFacet {
      * @dev Defines the details for the swap step
      */
     struct SwapStep {
-        LibSwap.DexCode providerCode;
+        uint8 providerCode;
         address tokenIn;
         address tokenOut;
         bytes data;
@@ -75,7 +74,6 @@ contract RouterFacet {
         // Store the amount for the next step
         // depending on the step to take
         if (_swapStep.required) {
-
             // Execute the swap
             finalAmount = LibSwap.swap(
                 _swapStep.providerCode,
@@ -93,8 +91,8 @@ contract RouterFacet {
 
         if (_bridgeStep.required) {
             // Execute bridge process
-            LibBridge.send(
-                uint8(LibBridge.BridgeCode.Anyswap),
+            LibApp.send(
+                uint8(LibApp.BridgeCode.Anyswap),
                 _bridgeStep.tokenIn,
                 finalAmount,
                 _bridgeStep.toChainId,

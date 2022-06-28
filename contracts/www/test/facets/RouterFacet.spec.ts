@@ -14,17 +14,29 @@ const { deployDiamond, deployFacets } = require("../../scripts/deploy");
 chai.use(smock.matchers);
 
 describe("RouterFacet", function () {
+  let relaterUpdater: Contract;
   let providerUpdater: Contract;
+  let anyswap: Contract;
   let router: Contract;
 
   beforeEach(async () => {
     const { owner } = await getAccounts();
     const [diamondProxy] = await deployDiamond(ethers, owner);
     await deployFacets(ethers, owner, diamondProxy.address);
-    providerUpdater = await ethers.getContractAt(
+    relaterUpdater = await ethers.getContractAt(
       "RelayerUpdaterFacet",
       diamondProxy.address
     );
+    providerUpdater = await ethers.getContractAt(
+      "ProviderUpdaterFacet",
+      diamondProxy.address
+    );
+    const Anyswap = await ethers.getContractFactory(
+      "Anyswap",
+      diamondProxy.address
+    );
+    anyswap = await Anyswap.deploy();
+    await anyswap.deployed();
     router = await ethers.getContractAt("RouterFacet", diamondProxy.address);
   });
 
@@ -85,7 +97,7 @@ describe("RouterFacet", function () {
 
     it("Should only execute bridge if no swapping step is required", async function () {
       /** Arrange */
-      const { anyoneElse } = await getAccounts();
+      const { owner, anyoneElse } = await getAccounts();
 
       // Create two fake ERC20 tokens
       const fakeTokenIn = await fakeTokenContract();
@@ -94,6 +106,15 @@ describe("RouterFacet", function () {
         ["address"],
         [RandomAddress]
       );
+
+      await providerUpdater
+        .connect(owner)
+        .updateBridge([
+          0,
+          true,
+          anyswap.address,
+          "0x4f3aff3a747fcade12598081e80c6605a8be192f",
+        ]);
 
       /** Act */
       const call = router
@@ -122,7 +143,7 @@ describe("RouterFacet", function () {
 
     it("Should execute swap and bridge when required", async function () {
       /** Arrange */
-      const { anyoneElse } = await getAccounts();
+      const { owner, anyoneElse } = await getAccounts();
 
       // Create two fake ERC20 tokens
       const fakeTokenIn = await fakeTokenContract();
@@ -138,6 +159,15 @@ describe("RouterFacet", function () {
         ["address"],
         [RandomAddress]
       );
+
+      await providerUpdater
+        .connect(owner)
+        .updateBridge([
+          0,
+          true,
+          anyswap.address,
+          "0x4f3aff3a747fcade12598081e80c6605a8be192f",
+        ]);
 
       /** Act */
       const call = router
@@ -169,7 +199,7 @@ describe("RouterFacet", function () {
     it("Should if anyone else than relayer is the caller", async function () {
       /** Arrange */
       const { owner, anyoneElse, relayer } = await getAccounts();
-      await providerUpdater.connect(owner).updateRelayer(relayer.address);
+      await relaterUpdater.connect(owner).updateRelayer(relayer.address);
 
       /** Act */
       const call = router
@@ -189,7 +219,7 @@ describe("RouterFacet", function () {
     it("Should execute the swap if relayer is the caller", async function () {
       /** Arrange */
       const { owner, relayer } = await getAccounts();
-      await providerUpdater.connect(owner).updateRelayer(relayer.address);
+      await relaterUpdater.connect(owner).updateRelayer(relayer.address);
 
       // Create two fake ERC20 tokens
       const fakeTokenIn = await fakeTokenContract();
@@ -221,7 +251,7 @@ describe("RouterFacet", function () {
     it("Should revert if the provider fails", async function () {
       /** Arrange */
       const { owner, relayer } = await getAccounts();
-      await providerUpdater.connect(owner).updateRelayer(relayer.address);
+      await relaterUpdater.connect(owner).updateRelayer(relayer.address);
 
       // Create two fake ERC20 tokens
       const fakeTokenIn = await fakeTokenContract();

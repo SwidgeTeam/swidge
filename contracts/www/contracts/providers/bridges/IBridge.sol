@@ -6,5 +6,5 @@ interface IBridge {
         uint256 _amount,
         uint256 _toChainId,
         bytes memory _data
-    ) external;
+    ) external returns (bool);
 }

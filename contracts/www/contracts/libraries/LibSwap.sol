@@ -12,13 +12,13 @@ library LibSwap {
     }
 
     function swap(
-        DexCode _code,
+        uint8 _code,
         address _tokenIn,
         address _tokenOut,
         uint256 _amountIn,
         bytes memory _data
     ) internal returns (uint256 boughtAmount) {
-        if (_code == DexCode.ZeroEx) {
+        if (_code == uint8(DexCode.ZeroEx)) {
             boughtAmount = send_zeroEx(
                 _tokenIn,
                 _tokenOut,
