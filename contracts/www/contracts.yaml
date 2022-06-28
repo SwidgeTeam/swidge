@@ -41,20 +41,20 @@ fantom:
 polygon:
   diamond: "0x6FECfBA2305c69E59c0115e18E4fBF6BF72Aa658"
   facet:
-    RouterFacet: "0x02F922f0eBf3118B9A5C2E68A9f11e99c80c8ea3"
-    RelayerUpdaterFacet: "0xb119573c2Ef09e3a68E55A54DF99FaB6a6649a44"
+    RouterFacet: "0x798C8E7a164D7B349a4dee3CaC8C8C2883099101"
+    RelayerUpdaterFacet: "0x7b9b083f5df40B186420D799625Dc89770727E24"
     DiamondCutter: "0x071A6f28f30b1FD81578D656d9d91f4bdB76b18C"
     DiamondLoupeFacet: "0x702fAD862775ff4FDA75931b042Eee0B852e5a62"
-    ProviderUpdaterFacet: "0xB031607fa22E72fED3f507b770f8479c04D908C8"
+    ProviderUpdaterFacet: "0x260939EeAC45604c6029507f0fafdb738fF4AF7c"
   bridge:
     Anyswap:
       code: 0
       enabled: true
-      implementation: "0xd6603cA11A2b35e34Eac3777345C9e00CED7a4a5"
+      implementation: "0xd68AeE027B8731e4E8dA40228F9f2a7Cc1A4916A"
       handler: "0x4f3aff3a747fcade12598081e80c6605a8be192f"
   dex:
     ZeroEx:
       code: 0
       enabled: true
-      implementation: "0x81605E736C779d5215F56812Ad267B12c5c2347c"
+      implementation: "0x76ab75e52Af23C9A35511C544b30c8fc4e8F45d9"
       handler: "0x0000000000000000000000000000000000000000"
