@@ -54,6 +54,7 @@ services:
       REGION: ${AWS_SQS_REGION}
       ACCESS_KEY: ${AWS_SQS_ACCESS_KEY}
       SECRET: ${AWS_SQS_SECRET}
+      API_AUTH_TOKEN: ${API_AUTH_TOKEN}
     network_mode: host
     volumes:
       - ./relayer/www/:/relayer/

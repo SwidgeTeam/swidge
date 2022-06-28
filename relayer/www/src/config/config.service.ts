@@ -29,6 +29,10 @@ export class ConfigService {
     return this.value('secret');
   }
 
+  get apiAuthToken() {
+    return this.value('auth_token');
+  }
+
   get isProduction(): boolean {
     return this.value('environment') === 'production';
   }

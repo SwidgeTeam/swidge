@@ -21,18 +21,22 @@ export class TransactionsRepositoryImpl implements TransactionsRepository {
    * @param payload
    */
   public async create(payload: CreateTransactionPayload): Promise<void> {
-    await this.httpClient.post(`${this.configService.apiUrl}/transaction`, {
-      txHash: payload.txHash,
-      walletAddress: payload.walletAddress,
-      routerAddress: payload.routerAddress,
-      fromChainId: payload.fromChainId,
-      toChainId: payload.toChainId,
-      srcToken: payload.srcToken,
-      bridgeTokenIn: payload.bridgeTokenIn,
-      bridgeTokenOut: payload.bridgeTokenOut,
-      dstToken: payload.dstToken,
-      amount: payload.amountIn.toString(),
-    });
+    await this.httpClient.post(
+      `${this.configService.apiUrl}/transaction`,
+      {
+        txHash: payload.txHash,
+        walletAddress: payload.walletAddress,
+        routerAddress: payload.routerAddress,
+        fromChainId: payload.fromChainId,
+        toChainId: payload.toChainId,
+        srcToken: payload.srcToken,
+        bridgeTokenIn: payload.bridgeTokenIn,
+        bridgeTokenOut: payload.bridgeTokenOut,
+        dstToken: payload.dstToken,
+        amount: payload.amountIn.toString(),
+      },
+      this.headers(),
+    );
   }
 
   /**
@@ -49,6 +53,7 @@ export class TransactionsRepositoryImpl implements TransactionsRepository {
         bridged: payload.bridged ? payload.bridged.getTime() : '',
         completed: payload.completed ? payload.completed.getTime() : '',
       },
+      this.headers(),
     );
   }
 
@@ -66,10 +71,11 @@ export class TransactionsRepositoryImpl implements TransactionsRepository {
       required: boolean;
     }>(
       `${this.configService.apiUrl}/quote/swap` +
-      `?chainId=${request.chainId}` +
-      `&tokenIn=${request.tokenIn}` +
-      `&tokenOut=${request.tokenOut}` +
-      `&amountIn=${request.amountIn.toString()}`,
+        `?chainId=${request.chainId}` +
+        `&tokenIn=${request.tokenIn}` +
+        `&tokenOut=${request.tokenOut}` +
+        `&amountIn=${request.amountIn.toString()}`,
+      this.headers(),
     );
 
     return new SwapOrder(
@@ -91,5 +97,11 @@ export class TransactionsRepositoryImpl implements TransactionsRepository {
     }>(`${this.configService.apiUrl}/address/router`);
 
     return response.address;
+  }
+
+  private headers() {
+    return {
+      Authorization: `Bearer ${this.configService.apiAuthToken}`,
+    };
   }
 }

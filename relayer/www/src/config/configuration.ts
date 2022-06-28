@@ -8,4 +8,5 @@ export default () => ({
   region: process.env.REGION,
   access_key: process.env.ACCESS_KEY,
   secret: process.env.SECRET,
+  auth_token: process.env.API_AUTH_TOKEN,
 });
