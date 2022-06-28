@@ -197,6 +197,10 @@ $(addprefix deploy-facet-, ${ENABLED_NETWORKS}): deploy-facet-%:
 	@$(call CONFIRM,Deploy facet?)
 	@$(call CONTRACTS_LIVE_RUN,deploy-facet --facet $(facet),$*)
 
+$(addprefix deploy-bridge-, ${ENABLED_NETWORKS}): deploy-bridge-%:
+	@$(call CONFIRM,Deploy bridge?)
+	@$(call CONTRACTS_LIVE_RUN,deploy-bridge --bridge $(bridge),$*)
+
 $(addprefix verify-, ${ENABLED_NETWORKS}): verify-%:
 	@$(call CONFIRM,Verify diamond?)
 	@$(call CONTRACTS_LIVE_RUN,verify-diamond,$*)
@@ -224,7 +228,7 @@ $(addprefix fork-, ${ENABLED_NETWORKS}): fork-%:
 	)
 
 CONTRACTS_DOCKER_EXEC = $(call DOCKER,exec -it "running-$(1)" $(2))
-CONTRACTS_RUN = $(call CONTRACTS_DOCKER_EXEC,$(1),yarn $(2) --chain $(1) --network localhost)
+CONTRACTS_RUN = $(call CONTRACTS_DOCKER_EXEC,$(1),yarn $(2) --chain localhost --network localhost)
 
 CONTRACTS_UPDATE_DIAMOND = $(call CONTRACTS_RUN,$(1),update-diamond --facet $(2))
 CONTRACTS_DEPLOY_FACET = $(call CONTRACTS_RUN,$(1),deploy-facet --facet $(2))
