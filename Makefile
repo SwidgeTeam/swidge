@@ -201,6 +201,10 @@ $(addprefix deploy-bridge-, ${ENABLED_NETWORKS}): deploy-bridge-%:
 	@$(call CONFIRM,Deploy bridge?)
 	@$(call CONTRACTS_LIVE_RUN,deploy-bridge --bridge $(bridge),$*)
 
+$(addprefix deploy-dex-, ${ENABLED_NETWORKS}): deploy-dex-%:
+	@$(call CONFIRM,Deploy dex?)
+	@$(call CONTRACTS_LIVE_RUN,deploy-dex --dex $(dex),$*)
+
 $(addprefix verify-, ${ENABLED_NETWORKS}): verify-%:
 	@$(call CONFIRM,Verify diamond?)
 	@$(call CONTRACTS_LIVE_RUN,verify-diamond,$*)

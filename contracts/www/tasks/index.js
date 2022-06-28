@@ -14,6 +14,11 @@ task("deploy-bridge", "Deploy and wire a bridge implementation")
   .addParam("bridge", "Name of the bridge")
   .setAction(require("./deploy-bridge"));
 
+task("deploy-dex", "Deploy and wire a DEX implementation")
+  .addParam("chain", "Name of the target network")
+  .addParam("dex", "Name of the DEX")
+  .setAction(require("./deploy-dex"));
+
 task("loupe", "Loupe into the diamond")
   .addParam("chain", "Name of the target network")
   .setAction(require("./loupe"));

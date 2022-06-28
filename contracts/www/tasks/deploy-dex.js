@@ -4,14 +4,14 @@ const { getAddresses, saveAddresses } = require("./helpers/addresses.js");
 module.exports = async function (taskArguments, hre, runSuper) {
   const { deployer } = await getAccounts(hre);
   const chain = taskArguments.chain;
-  const bridgeName = taskArguments.bridge;
+  const dexName = taskArguments.bridge;
   const allAddresses = getAddresses();
   const addresses = allAddresses[chain];
-  const bridgeDetails = addresses.bridge[bridgeName];
+  const dexDetails = addresses.dex[dexName];
 
-  const Bridge = await hre.ethers.getContractFactory(bridgeName);
-  const bridge = await Bridge.connect(deployer).deploy();
-  await bridge.deployed();
+  const Dex = await hre.ethers.getContractFactory(dexName);
+  const dex = await Dex.connect(deployer).deploy();
+  await dex.deployed();
 
   const providerUpdater = await hre.ethers.getContractAt(
     "ProviderUpdaterFacet",
@@ -19,14 +19,14 @@ module.exports = async function (taskArguments, hre, runSuper) {
   );
 
   (
-    await providerUpdater.connect(deployer).updateBridge({
-      code: bridgeDetails.code,
-      enabled: bridgeDetails.enabled,
-      implementation: bridge.address,
-      handler: bridgeDetails.handler,
+    await providerUpdater.connect(deployer).updateSwapper({
+      code: dexDetails.code,
+      enabled: dexDetails.enabled,
+      implementation: dex.address,
+      handler: dexDetails.handler,
     })
   ).wait();
 
-  allAddresses[chain].bridge[bridgeName].implementation = bridge.address;
+  allAddresses[chain].dex[dexName].implementation = dex.address;
   saveAddresses(allAddresses);
 };
