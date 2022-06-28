@@ -224,31 +224,31 @@ $(addprefix fork-, ${ENABLED_NETWORKS}): fork-%:
 	)
 
 CONTRACTS_DOCKER_EXEC = $(call DOCKER,exec -it "running-$(1)" $(2))
-CONTRACTS_RUN = $(call CONTRACTS_DOCKER_EXEC,$(1),yarn $(3) --network $(2))
+CONTRACTS_RUN = $(call CONTRACTS_DOCKER_EXEC,$(1),yarn $(2) --chain $(1) --network localhost)
 
-CONTRACTS_DEPLOY_DIAMOND = $(call CONTRACTS_RUN,$(1),$(2),deploy-diamond)
-CONTRACTS_UPDATE_DIAMOND = $(call CONTRACTS_RUN,$(1),$(2),update-diamond --chain $(1) --facet $(3))
-CONTRACTS_DEPLOY_FACET = $(call CONTRACTS_RUN,$(1),$(2),deploy-facet --chain $(2) --facet $(3))
-CONTRACTS_DEPLOY_ALL = $(call CONTRACTS_RUN,$(1),$(2),deploy-all --chain $(1))
-CONTRACTS_GET_TOKENS = $(call CONTRACTS_RUN,$(1),$(2),get-tokens --chain $(1) --token $(3))
-
-$(addprefix deploy-diamond-fork-, ${ENABLED_NETWORKS}): deploy-diamond-fork-%:
-	@$(call CONTRACTS_DEPLOY_DIAMOND,$*,localhost)
+CONTRACTS_UPDATE_DIAMOND = $(call CONTRACTS_RUN,$(1),update-diamond --facet $(2))
+CONTRACTS_DEPLOY_FACET = $(call CONTRACTS_RUN,$(1),deploy-facet --facet $(2))
+CONTRACTS_DEPLOY_BRIDGE = $(call CONTRACTS_RUN,$(1),deploy-bridge --bridge $(2))
+CONTRACTS_DEPLOY_ALL = $(call CONTRACTS_RUN,$(1),deploy-all)
+CONTRACTS_GET_TOKENS = $(call CONTRACTS_RUN,$(1),get-tokens --token $(2))
 
 $(addprefix update-diamond-fork-, ${ENABLED_NETWORKS}): update-diamond-fork-%:
-	@$(call CONTRACTS_UPDATE_DIAMOND,$*,localhost,$(facet))
+	@$(call CONTRACTS_UPDATE_DIAMOND,$*,$(facet))
 
 $(addprefix deploy-facet-fork-, ${ENABLED_NETWORKS}): deploy-facet-fork-%:
-	@$(call CONTRACTS_DEPLOY_FACET,$*,localhost,$(facet))
+	@$(call CONTRACTS_DEPLOY_FACET,$*,$(facet))
+
+$(addprefix deploy-bridge-fork-, ${ENABLED_NETWORKS}): deploy-bridge-fork-%:
+	@$(call CONTRACTS_DEPLOY_BRIDGE,$*,$(bridge))
 
 $(addprefix deploy-all-fork-, ${ENABLED_NETWORKS}): deploy-all-fork-%:
-	@$(call CONTRACTS_DEPLOY_ALL,$*,localhost)
+	@$(call CONTRACTS_DEPLOY_ALL,$*)
 
 $(addprefix get-tokens-, ${ENABLED_NETWORKS}): get-tokens-%:
-	@$(call CONTRACTS_GET_TOKENS,$*,localhost,$(token))
+	@$(call CONTRACTS_GET_TOKENS,$*,$(token))
 
 $(addprefix loupe-fork-, ${ENABLED_NETWORKS}): loupe-fork-%:
-	@$(call CONTRACTS_RUN,$*,localhost,loupe --chain localhost)
+	@$(call CONTRACTS_RUN,$*,loupe)
 
 ### Relayer
 

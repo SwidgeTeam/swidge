@@ -9,6 +9,11 @@ task("deploy-facet", "Deploy and wire a facet")
   .addParam("facet", "Name of the facet contract to deploy")
   .setAction(require("./deploy-facet"));
 
+task("deploy-bridge", "Deploy and wire a bridge implementation")
+  .addParam("chain", "Name of the target network")
+  .addParam("bridge", "Name of the bridge")
+  .setAction(require("./deploy-bridge"));
+
 task("loupe", "Loupe into the diamond")
   .addParam("chain", "Name of the target network")
   .setAction(require("./loupe"));
