@@ -209,10 +209,6 @@ $(addprefix verify-, ${ENABLED_NETWORKS}): verify-%:
 	@$(call CONFIRM,Verify diamond?)
 	@$(call CONTRACTS_LIVE_RUN,verify-diamond,$*)
 
-$(addprefix loupe-, ${ENABLED_NETWORKS}): loupe-%:
-	@$(call CONFIRM,Loupe into diamond?)
-	@$(call CONTRACTS_LIVE_RUN,loupe,$*)
-
 $(addprefix retrieve-, ${ENABLED_NETWORKS}): retrieve-%:
 	@$(call CONFIRM,Retrieve $(amount) of $(token)?)
 	@$(call CONTRACTS_LIVE_RUN,retrieve --token $(token) --amount $(amount),$*)
@@ -220,6 +216,15 @@ $(addprefix retrieve-, ${ENABLED_NETWORKS}): retrieve-%:
 $(addprefix update-relayer-, ${ENABLED_NETWORKS}): update-relayer-%:
 	@$(call CONFIRM,Update relayer?)
 	@$(call CONTRACTS_LIVE_RUN,update-relayer,$*)
+
+$(addprefix loupe-diamond-, ${ENABLED_NETWORKS}): loupe-diamond-%:
+	@$(call CONTRACTS_LIVE_RUN,loupe --store diamond,$*)
+
+$(addprefix loupe-bridge-, ${ENABLED_NETWORKS}): loupe-bridge-%:
+	@$(call CONTRACTS_LIVE_RUN,loupe --store bridge,$*)
+
+$(addprefix loupe-swap-, ${ENABLED_NETWORKS}): loupe-swap-%:
+	@$(call CONTRACTS_LIVE_RUN,loupe --store swap,$*)
 
 # Forked chain
 

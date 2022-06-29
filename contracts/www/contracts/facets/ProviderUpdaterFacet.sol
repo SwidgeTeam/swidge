@@ -1,18 +1,9 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "../libraries/LibDiamond.sol";
-import "../libraries/LibApp.sol";
+import "../libraries/LibStorage.sol";
 
 contract ProviderUpdaterFacet {
-
-    /**
-     * @dev Throws if called by any account other than the owner.
-     */
-    modifier onlyOwner() {
-        LibDiamond.enforceIsContractOwner();
-        _;
-    }
 
     /**
      * @dev Emitted when the relayer address is updated
@@ -35,33 +26,35 @@ contract ProviderUpdaterFacet {
     /**
      * @dev Updates the address of the authorized relayer
      */
-    function updateBridge(LibApp.Provider calldata _provider) external onlyOwner {
+    function updateBridge(LibStorage.Provider calldata _provider) external {
+        LibStorage.enforceIsContractOwner();
         require(_provider.implementation != address(0), 'ZeroAddress not allowed for bridge');
-        LibApp.AppStorage storage s = LibApp.appStorage();
-        address oldAddress = s.bridgeProviders[_provider.code].implementation;
-        s.bridgeProviders[_provider.code] = _provider;
+        LibStorage.ProviderStorage storage ps = LibStorage.providers();
+        address oldAddress = ps.bridgeProviders[_provider.code].implementation;
+        ps.bridgeProviders[_provider.code] = _provider;
         emit UpdatedBridgeProvider(_provider.code, oldAddress, _provider.implementation);
     }
 
     /**
      * @dev Updates the address of the authorized relayer
      */
-    function updateSwapper(LibApp.Provider calldata _provider) external onlyOwner {
+    function updateSwapper(LibStorage.Provider calldata _provider) external {
+        LibStorage.enforceIsContractOwner();
         require(_provider.implementation != address(0), 'ZeroAddress not allowed for bridge');
-        LibApp.AppStorage storage s = LibApp.appStorage();
-        address oldAddress = s.swapProviders[_provider.code].implementation;
-        s.swapProviders[_provider.code] = _provider;
+        LibStorage.ProviderStorage storage ps = LibStorage.providers();
+        address oldAddress = ps.swapProviders[_provider.code].implementation;
+        ps.swapProviders[_provider.code] = _provider;
         emit UpdatedSwapProvider(_provider.code, oldAddress, _provider.implementation);
     }
 
     /**
      * @dev Lists all the bridge providers and its details
      */
-    function listBridges() external view returns (LibApp.Provider[] memory) {
-        LibApp.AppStorage storage s = LibApp.appStorage();
-        LibApp.Provider[] memory bridges = new LibApp.Provider[](1);
+    function listBridges() external view returns (LibStorage.Provider[] memory) {
+        LibStorage.ProviderStorage storage ps = LibStorage.providers();
+        LibStorage.Provider[] memory bridges = new LibStorage.Provider[](1);
         for (uint8 index; index < 1; index++) {
-            LibApp.Provider memory bridge = s.bridgeProviders[index];
+            LibStorage.Provider memory bridge = ps.bridgeProviders[index];
             bridges[index].code = bridge.code;
             bridges[index].enabled = bridge.enabled;
             bridges[index].implementation = bridge.implementation;
@@ -73,11 +66,11 @@ contract ProviderUpdaterFacet {
     /**
      * @dev Lists all the bridge providers and its details
      */
-    function listSwappers() external view returns (LibApp.Provider[] memory) {
-        LibApp.AppStorage storage s = LibApp.appStorage();
-        LibApp.Provider[] memory swappers = new LibApp.Provider[](1);
+    function listSwappers() external view returns (LibStorage.Provider[] memory) {
+        LibStorage.ProviderStorage storage ps = LibStorage.providers();
+        LibStorage.Provider[] memory swappers = new LibStorage.Provider[](1);
         for (uint8 index; index < 1; index++) {
-            LibApp.Provider memory swap = s.swapProviders[index];
+            LibStorage.Provider memory swap = ps.swapProviders[index];
             swappers[index].code = swap.code;
             swappers[index].enabled = swap.enabled;
             swappers[index].implementation = swap.implementation;

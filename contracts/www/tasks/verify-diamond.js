@@ -6,6 +6,6 @@ module.exports = async function (taskArguments, hre, runSuper) {
 
   await hre.run("verify:verify", {
     address: addresses.diamond,
-    constructorArguments: [addresses.facet.cutter],
+    constructorArguments: [addresses.facet.DiamondCutterFacet],
   });
 };

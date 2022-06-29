@@ -3,8 +3,8 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
-import "../libraries/LibDiamond.sol";
-import "../libraries/LibApp.sol";
+import "../libraries/LibStorage.sol";
+import "../libraries/LibProvider.sol";
 
 contract RouterFacet {
 
@@ -59,7 +59,7 @@ contract RouterFacet {
             tokenToTakeIn = _bridgeStep.tokenIn;
         }
 
-        if (tokenToTakeIn != LibApp.NATIVE_TOKEN_ADDRESS) {
+        if (tokenToTakeIn != nativeToken()) {
             // Take ownership of user's tokens
             TransferHelper.safeTransferFrom(
                 tokenToTakeIn,
@@ -74,7 +74,7 @@ contract RouterFacet {
         // depending on the step to take
         if (_swapStep.required) {
             // Execute the swap
-            finalAmount = LibApp.swap(
+            finalAmount = LibProvider.swap(
                 _swapStep.providerCode,
                 _swapStep.tokenIn,
                 _swapStep.tokenOut,
@@ -90,8 +90,8 @@ contract RouterFacet {
 
         if (_bridgeStep.required) {
             // Execute bridge process
-            LibApp.send(
-                uint8(LibApp.BridgeCode.Anyswap),
+            LibProvider.bridge(
+                0, // TODO : from input
                 _bridgeStep.tokenIn,
                 finalAmount,
                 _bridgeStep.toChainId,
@@ -113,7 +113,7 @@ contract RouterFacet {
         else {
             // Bridging is not required, means we are not changing network
             // so we send the assets back to the user
-            if (_swapStep.tokenOut == LibApp.NATIVE_TOKEN_ADDRESS) {
+            if (_swapStep.tokenOut == nativeToken()) {
                 payable(msg.sender).transfer(finalAmount);
             }
             else {
@@ -141,13 +141,13 @@ contract RouterFacet {
         string calldata _originHash,
         SwapStep calldata _swapStep
     ) external payable {
-        require(LibApp.relayerAddress() == msg.sender, "Caller is not the relayer");
+        LibStorage.enforceIsRelayer();
 
         uint256 finalAmount;
         // Check if last swap is required,
         // and store user's receiving amount
         if (_swapStep.required) {
-            finalAmount = LibApp.swap(
+            finalAmount = LibProvider.swap(
                 _swapStep.providerCode,
                 _swapStep.tokenIn,
                 _swapStep.tokenOut,
@@ -159,7 +159,7 @@ contract RouterFacet {
             finalAmount = _amount;
         }
 
-        if (_swapStep.tokenOut == LibApp.NATIVE_TOKEN_ADDRESS) {
+        if (_swapStep.tokenOut == nativeToken()) {
             // Sent native coins
             payable(_receiver).transfer(finalAmount);
         }
@@ -173,6 +173,13 @@ contract RouterFacet {
         }
 
         emit CrossFinalized(_originHash, finalAmount);
+    }
+
+    /**
+     * @dev just a shortcut
+     */
+    function nativeToken() internal pure returns (address){
+        return LibProvider.nativeToken();
     }
 
     /**
@@ -212,7 +219,7 @@ contract RouterFacet {
      * @dev To retrieve any tokens that got stuck on the contract
      */
     function retrieve(address _token, uint256 _amount) external {
-        LibDiamond.enforceIsContractOwner();
+        LibStorage.enforceIsContractOwner();
         TransferHelper.safeTransfer(_token, msg.sender, _amount);
     }
 }

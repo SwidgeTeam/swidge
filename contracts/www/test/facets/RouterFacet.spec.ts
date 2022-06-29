@@ -275,7 +275,7 @@ describe("RouterFacet", function () {
         ]);
 
       /** Assert */
-      await expect(call).to.be.revertedWith("Caller is not the relayer");
+      await expect(call).to.be.revertedWith("Must be relayer");
     });
 
     it("Should execute the swap if relayer is the caller", async function () {
