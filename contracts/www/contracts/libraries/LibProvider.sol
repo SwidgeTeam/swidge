@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import "../interfaces/IBridge.sol";
 import "../interfaces/IDEX.sol";
 import "./LibStorage.sol";
+import "./LibBytes.sol";
 
 library LibProvider {
 
@@ -32,14 +33,17 @@ library LibProvider {
             revert("Bridge not enabled");
         }
 
-        (bool success,) = _bridge.implementation.delegatecall(
+        (bool success,bytes memory data) = _bridge.implementation.delegatecall(
             abi.encodeWithSelector(
                 IBridge.send.selector,
                 _bridge.handler, _token, _amount, _toChainId, _data
             )
         );
 
-        require(success, "Bridge failed");
+        if (!success) {
+            string memory _revertMsg = _getRevertMsg(data);
+            revert(string(abi.encodePacked("Bridge failed: ", _revertMsg)));
+        }
     }
 
     function swap(
@@ -62,10 +66,26 @@ library LibProvider {
             )
         );
 
-        require(success, "Swap failed");
+        if (!success) {
+            string memory _revertMsg = _getRevertMsg(data);
+            revert(string(abi.encodePacked("Swap failed: ", _revertMsg)));
+        }
 
         (uint256 boughtAmount) = abi.decode(data, (uint256));
 
         return boughtAmount;
+    }
+
+    /// @dev Get the revert message from a call
+    /// @notice This is needed in order to get the human-readable revert message from a call
+    /// @param _res Response of the call
+    /// @return Revert message string
+    function _getRevertMsg(bytes memory _res) internal pure returns (string memory) {
+        // If the _res length is less than 68, then the transaction failed silently
+        if (_res.length < 68) return 'Reverted silently';
+        // Remove the selector which is the first 4 bytes
+        bytes memory revertData = LibBytes.slice(_res, 4, _res.length - 4);
+        // All that remains is the revert string
+        return abi.decode(revertData, (string));
     }
 }

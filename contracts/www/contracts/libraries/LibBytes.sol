@@ -10,11 +10,7 @@ library LibBytes {
         bytes memory _bytes,
         uint256 _start,
         uint256 _length
-    )
-    internal
-    pure
-    returns (bytes memory)
-    {
+    ) internal pure returns (bytes memory) {
         require(_length + 31 >= _length, "slice_overflow");
         require(_bytes.length >= _start + _length, "slice_outOfBounds");
 
