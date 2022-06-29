@@ -8,7 +8,6 @@
     "deploy-facet": "hardhat deploy-facet",
     "deploy-bridge": "hardhat deploy-bridge",
     "deploy-dex": "hardhat deploy-dex",
-    "update-diamond": "hardhat update-diamond",
     "verify-diamond": "hardhat verify-diamond",
     "get-tokens": "hardhat get-tokens",
     "loupe": "hardhat loupe",

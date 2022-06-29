@@ -24,11 +24,6 @@ task("loupe", "Loupe into the diamond")
   .addParam("store", "Store to look at")
   .setAction(require("./loupe"));
 
-task("update-diamond", "Updates relation of selectors-adresses")
-  .addParam("chain", "Name of the target network")
-  .addParam("facet", "Name of the facet to update")
-  .setAction(require("./update-diamond"));
-
 task("verify-diamond", "Verifies the diamond contract")
   .addParam("chain", "Name of the target network")
   .setAction(require("./verify-diamond"));

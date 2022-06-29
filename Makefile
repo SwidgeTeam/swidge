@@ -185,9 +185,11 @@ build-contracts:
 test-contracts:
 	@$(call CONTRACTS, test)
 
-# Live chain
+## Live chain
 
 CONTRACTS_LIVE_RUN = $(call CONTRACTS,$(1) --network $(2) --chain $(2))
+
+# : deploy
 
 $(addprefix deploy-all-, ${ENABLED_NETWORKS}): deploy-all-%:
 	@$(call CONFIRM,Deploy all?)
@@ -205,6 +207,8 @@ $(addprefix deploy-dex-, ${ENABLED_NETWORKS}): deploy-dex-%:
 	@$(call CONFIRM,Deploy dex?)
 	@$(call CONTRACTS_LIVE_RUN,deploy-dex --dex $(dex),$*)
 
+# : mantain
+
 $(addprefix verify-, ${ENABLED_NETWORKS}): verify-%:
 	@$(call CONFIRM,Verify diamond?)
 	@$(call CONTRACTS_LIVE_RUN,verify-diamond,$*)
@@ -217,6 +221,8 @@ $(addprefix update-relayer-, ${ENABLED_NETWORKS}): update-relayer-%:
 	@$(call CONFIRM,Update relayer?)
 	@$(call CONTRACTS_LIVE_RUN,update-relayer,$*)
 
+# : loupe
+
 $(addprefix loupe-diamond-, ${ENABLED_NETWORKS}): loupe-diamond-%:
 	@$(call CONTRACTS_LIVE_RUN,loupe --store diamond,$*)
 
@@ -225,6 +231,24 @@ $(addprefix loupe-bridge-, ${ENABLED_NETWORKS}): loupe-bridge-%:
 
 $(addprefix loupe-swap-, ${ENABLED_NETWORKS}): loupe-swap-%:
 	@$(call CONTRACTS_LIVE_RUN,loupe --store swap,$*)
+
+# : bulk deploy
+
+$(addprefix dd-, ${ENABLED_NETWORKS}): dd-%: # will create new address
+	@$(call CONFIRM,You REALLY want to create a new diamond?)
+	@$(call CONTRACTS_LIVE_RUN,deploy-all,$*)
+	@$(call CONTRACTS_LIVE_RUN,deploy-bridge --bridge Anyswap,$*)
+	@$(call CONTRACTS_LIVE_RUN,deploy-dex --dex ZeroEx,$*)
+
+$(addprefix ud-, ${ENABLED_NETWORKS}): ud-%: # will use current address
+	@$(call CONFIRM,You REALLY want to update the whole diamond?)
+	@$(call CONTRACTS_LIVE_RUN,deploy-facet --facet RouterFacet,$*)
+	@$(call CONTRACTS_LIVE_RUN,deploy-facet --facet RelayerUpdaterFacet,$*)
+	@$(call CONTRACTS_LIVE_RUN,deploy-facet --facet ProviderUpdaterFacet,$*)
+	@$(call CONTRACTS_LIVE_RUN,deploy-facet --facet DiamondLoupeFacet,$*)
+	@$(call CONTRACTS_LIVE_RUN,deploy-facet --facet DiamondCutterFacet,$*)
+	@$(call CONTRACTS_LIVE_RUN,deploy-bridge --bridge Anyswap,$*)
+	@$(call CONTRACTS_LIVE_RUN,deploy-dex --dex ZeroEx,$*)
 
 # Forked chain
 
@@ -243,15 +267,17 @@ $(addprefix fork-, ${ENABLED_NETWORKS}): fork-%:
 CONTRACTS_DOCKER_EXEC = $(call DOCKER,exec -it "running-$(1)" $(2))
 CONTRACTS_RUN = $(call CONTRACTS_DOCKER_EXEC,$(1),yarn $(2) --chain localhost --network localhost)
 
-CONTRACTS_UPDATE_DIAMOND = $(call CONTRACTS_RUN,$(1),update-diamond --facet $(2))
+CONTRACTS_DEPLOY_ALL = $(call CONTRACTS_RUN,$(1),deploy-all)
 CONTRACTS_DEPLOY_FACET = $(call CONTRACTS_RUN,$(1),deploy-facet --facet $(2))
 CONTRACTS_DEPLOY_BRIDGE = $(call CONTRACTS_RUN,$(1),deploy-bridge --bridge $(2))
 CONTRACTS_DEPLOY_DEX = $(call CONTRACTS_RUN,$(1),deploy-dex --dex $(2))
-CONTRACTS_DEPLOY_ALL = $(call CONTRACTS_RUN,$(1),deploy-all)
 CONTRACTS_GET_TOKENS = $(call CONTRACTS_RUN,$(1),get-tokens --token $(2))
+CONTRACTS_LOUPE = $(call CONTRACTS_RUN,$(1),loupe --store $(2))
 
-$(addprefix update-diamond-fork-, ${ENABLED_NETWORKS}): update-diamond-fork-%:
-	@$(call CONTRACTS_UPDATE_DIAMOND,$*,$(facet))
+# : deploy
+
+$(addprefix deploy-all-fork-, ${ENABLED_NETWORKS}): deploy-all-fork-%:
+	@$(call CONTRACTS_DEPLOY_ALL,$*)
 
 $(addprefix deploy-facet-fork-, ${ENABLED_NETWORKS}): deploy-facet-fork-%:
 	@$(call CONTRACTS_DEPLOY_FACET,$*,$(facet))
@@ -262,14 +288,37 @@ $(addprefix deploy-bridge-fork-, ${ENABLED_NETWORKS}): deploy-bridge-fork-%:
 $(addprefix deploy-dex-fork-, ${ENABLED_NETWORKS}): deploy-dex-fork-%:
 	@$(call CONTRACTS_DEPLOY_DEX,$*,$(dex))
 
-$(addprefix deploy-all-fork-, ${ENABLED_NETWORKS}): deploy-all-fork-%:
-	@$(call CONTRACTS_DEPLOY_ALL,$*)
+# : fake
 
 $(addprefix get-tokens-, ${ENABLED_NETWORKS}): get-tokens-%:
 	@$(call CONTRACTS_GET_TOKENS,$*,$(token))
 
-$(addprefix loupe-fork-, ${ENABLED_NETWORKS}): loupe-fork-%:
-	@$(call CONTRACTS_RUN,$*,loupe)
+# : loupe
+
+$(addprefix loupe-fork-diamond-, ${ENABLED_NETWORKS}): loupe-fork-diamond-%:
+	@$(call CONTRACTS_LOUPE,$*,diamond)
+
+$(addprefix loupe-fork-bridge-, ${ENABLED_NETWORKS}): loupe-fork-bridge-%:
+	@$(call CONTRACTS_LOUPE,$*,bridge)
+
+$(addprefix loupe-fork-swap-, ${ENABLED_NETWORKS}): loupe-fork-swap-%:
+	@$(call CONTRACTS_LOUPE,$*,swap)
+
+# : bulk deploy
+
+$(addprefix ddf-, ${ENABLED_NETWORKS}): ddf-%:
+	@$(call CONTRACTS_DEPLOY_ALL,$*)
+	@$(call CONTRACTS_DEPLOY_BRIDGE,$*,Anyswap)
+	@$(call CONTRACTS_DEPLOY_DEX,$*,ZeroEx)
+
+$(addprefix udf-, ${ENABLED_NETWORKS}): udf-%:
+	@$(call CONTRACTS_DEPLOY_FACET,$*,RouterFacet)
+	@$(call CONTRACTS_DEPLOY_FACET,$*,RelayerUpdaterFacet)
+	@$(call CONTRACTS_DEPLOY_FACET,$*,ProviderUpdaterFacet)
+	@$(call CONTRACTS_DEPLOY_FACET,$*,DiamondLoupeFacet)
+	@$(call CONTRACTS_DEPLOY_FACET,$*,DiamondCutterFacet)
+	@$(call CONTRACTS_DEPLOY_BRIDGE,$*,Anyswap)
+	@$(call CONTRACTS_DEPLOY_DEX,$*,ZeroEx)
 
 ### Relayer
 
