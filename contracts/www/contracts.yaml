@@ -22,40 +22,40 @@ localhost:
 fantom:
   diamond: "0x1a6e1ef1d28A7d9feD016c88f4d1858367564781"
   facet:
-    RouterFacet: "0xD79a773316b54F390702Ba962238a080f8686539"
-    RelayerUpdaterFacet: "0xFFe588b6c0fC789c8ac23d7fb3AFC031C61D9227"
-    DiamondLoupeFacet: "0x56CE178868B653480cD65AaF81C01b30C005a299"
-    ProviderUpdaterFacet: "0xb5A87Cd4C9C83f75cE9a25299bf66523B7410952"
-    DiamondCutterFacet: "0xEAe85FC046F6C03f769995D2801572Ca839989a0"
+    RouterFacet: "0x2998030be94725BAeF48B978494fFDEcce5b5DE1"
+    RelayerUpdaterFacet: "0x323C4B3a99118669f6ac31582C85B608FfD6e34e"
+    DiamondLoupeFacet: "0x2a744014Ca5354d98dd752F1a61A4Ee8110f4a6a"
+    ProviderUpdaterFacet: "0xf66579Ff926e44BD583a8455beFaBb88dECcAFfc"
+    DiamondCutterFacet: "0xD9bF09fdb4242f0D64cA8B0B8ADB3D5663661546"
   bridge:
     Anyswap:
       code: 0
       enabled: true
-      implementation: "0xA8ACd74A054676FccC07f1512403A8281A6a1E67"
+      implementation: "0x68FC9040e507C329208eeA45C7E9E0946EB81501"
       handler: "0x1ccca1ce62c62f7be95d4a67722a8fdbed6eecb4"
   dex:
     ZeroEx:
       code: 0
       enabled: true
-      implementation: "0xF7B2e0F99e595DFBdE1f57b661EE3fe813634ea1"
+      implementation: "0x6106fcf1AbC3f125B34A5675400791bfcfAcb168"
       handler: "0x0000000000000000000000000000000000000000"
 polygon:
   diamond: "0x1a6e1ef1d28A7d9feD016c88f4d1858367564781"
   facet:
-    RouterFacet: "0xD79a773316b54F390702Ba962238a080f8686539"
-    RelayerUpdaterFacet: "0xFFe588b6c0fC789c8ac23d7fb3AFC031C61D9227"
-    DiamondLoupeFacet: "0x56CE178868B653480cD65AaF81C01b30C005a299"
-    ProviderUpdaterFacet: "0xb5A87Cd4C9C83f75cE9a25299bf66523B7410952"
-    DiamondCutterFacet: "0xEAe85FC046F6C03f769995D2801572Ca839989a0"
+    RouterFacet: "0x02b4eE9e6cAD5C73E186b996dbF6Da810b8514bE"
+    RelayerUpdaterFacet: "0xc446F424e1f95ea1ADf0b77fFae23f17A0569378"
+    DiamondLoupeFacet: "0xF01741149641A9d03FA72447F35839C85CA1c806"
+    ProviderUpdaterFacet: "0xC1521b1880e095c44D0C4F7B3fd084103eA54E10"
+    DiamondCutterFacet: "0xa0f5DcDD4962CEb565F98735682dcF40DE7C12Eb"
   bridge:
     Anyswap:
       code: 0
       enabled: true
-      implementation: "0x79B38753e46BD2b88170A58B403de0aBE2229D35"
+      implementation: "0x9a86e6459AD5Fe3e3535E1aeb4461aCEB6BA67Ca"
       handler: "0x4f3aff3a747fcade12598081e80c6605a8be192f"
   dex:
     ZeroEx:
       code: 0
       enabled: true
-      implementation: "0x65D246154885DBeA92Dee1EA8065A407E16D5fce"
+      implementation: "0x9031DaA015C311DE595C1aFA2f805B6b497f7CBd"
       handler: "0x0000000000000000000000000000000000000000"
