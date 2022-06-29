@@ -21,6 +21,7 @@ task("deploy-dex", "Deploy and wire a DEX implementation")
 
 task("loupe", "Loupe into the diamond")
   .addParam("chain", "Name of the target network")
+  .addParam("store", "Store to look at")
   .setAction(require("./loupe"));
 
 task("update-diamond", "Updates relation of selectors-adresses")

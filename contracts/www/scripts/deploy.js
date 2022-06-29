@@ -6,11 +6,8 @@ const deployAll = async (ethers, deployer, relayer) => {
     deployer
   );
 
-  const [relayerUpdater, router, diamondLoupe, providerUpdater] = await deployFacets(
-    ethers,
-    deployer,
-    diamondProxy.address
-  );
+  const [relayerUpdater, router, diamondLoupe, providerUpdater] =
+    await deployFacets(ethers, deployer, diamondProxy.address);
 
   await updateRelayer(ethers, deployer, diamondProxy.address, relayer.address);
 
@@ -24,6 +21,12 @@ const deployAll = async (ethers, deployer, relayer) => {
   };
 };
 
+/**
+ * Deploys minimal, diamond and cutter facet in one move
+ * @param ethers
+ * @param deployer
+ * @returns {Promise<*[]>}
+ */
 const deployDiamond = async (ethers, deployer) => {
   // deploy DiamondCutterFacet
   const DiamondCutterFacet = await ethers.getContractFactory(
@@ -34,16 +37,23 @@ const deployDiamond = async (ethers, deployer) => {
   ).deploy();
   await diamondCutterFacet.deployed();
 
-  // deploy DiamondProxy
-  const DiamondProxy = await ethers.getContractFactory("DiamondProxy");
-  const diamondProxy = await DiamondProxy.connect(deployer).deploy(
+  // deploy Diamond
+  const Diamond = await ethers.getContractFactory("Diamond");
+  const diamond = await Diamond.connect(deployer).deploy(
     diamondCutterFacet.address
   );
-  await diamondProxy.deployed();
+  await diamond.deployed();
 
-  return [diamondProxy, diamondCutterFacet];
+  return [diamond, diamondCutterFacet];
 };
 
+/**
+ * Deploy and add all the facets
+ * @param ethers
+ * @param deployer
+ * @param diamondAddress
+ * @returns {Promise<*[]>}
+ */
 const deployFacets = async (ethers, deployer, diamondAddress) => {
   // deploy RelayerUpdaterFacet
   const RelayerUpdaterFacet = await ethers.getContractFactory(
@@ -90,11 +100,12 @@ const deployFacets = async (ethers, deployer, diamondAddress) => {
       functionSelectors: getSelectors(facet),
     });
   }
+
   const diamondCutter = await ethers.getContractAt(
     "IDiamondCutter",
     diamondAddress
   );
-  (await diamondCutter.connect(deployer).diamondCut(cuts)).wait();
+  await (await diamondCutter.connect(deployer).diamondCut(cuts)).wait();
 
   return [
     relayerUpdaterFacet,
@@ -116,7 +127,9 @@ const updateRelayer = async (
   );
 
   // update the relayer's address
-  (await relayerUpdater.connect(deployer).updateRelayer(relayerAddress)).wait();
+  await (
+    await relayerUpdater.connect(deployer).updateRelayer(relayerAddress)
+  ).wait();
 };
 
 module.exports = {

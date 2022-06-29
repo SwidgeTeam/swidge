@@ -15,7 +15,7 @@ module.exports = async function (taskArguments, hre, runSuper) {
   addr.diamond = contracts.diamondProxy.address;
   addr.facet.RouterFacet = contracts.routerFacet.address;
   addr.facet.RelayerUpdaterFacet = contracts.relayerUpdaterFacet.address;
-  addr.facet.DiamondCutter = contracts.diamondCutterFacet.address;
+  addr.facet.DiamondCutterFacet = contracts.diamondCutterFacet.address;
   addr.facet.DiamondLoupeFacet = contracts.diamondLoupeFacet.address;
   addr.facet.ProviderUpdaterFacet = contracts.providerUpdaterFacet.address;
 
