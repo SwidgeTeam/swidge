@@ -2,7 +2,8 @@ import chai, { expect } from "chai";
 import { ethers } from "hardhat";
 import {
   fakeTokenContract,
-  getAccounts, NativeToken,
+  getAccounts,
+  NativeToken,
   RandomAddress,
   ZeroAddress,
   zeroExEncodedCalldata,
@@ -33,17 +34,11 @@ describe("RouterFacet", function () {
       "ProviderUpdaterFacet",
       diamondProxy.address
     );
-    const Anyswap = await ethers.getContractFactory(
-      "Anyswap",
-      diamondProxy.address
-    );
+    const Anyswap = await ethers.getContractFactory("Anyswap");
     anyswap = await Anyswap.deploy();
     await anyswap.deployed();
 
-    const ZeroEx = await ethers.getContractFactory(
-      "ZeroEx",
-      diamondProxy.address
-    );
+    const ZeroEx = await ethers.getContractFactory("ZeroEx");
     zeroEx = await ZeroEx.deploy();
     await zeroEx.deployed();
 
@@ -109,6 +104,47 @@ describe("RouterFacet", function () {
         );
     });
 
+    it("Should fail if bridge handler has no code", async function () {
+      /** Arrange */
+      const { owner, anyoneElse } = await getAccounts();
+
+      // Create two fake ERC20 tokens
+      const fakeTokenIn = await fakeTokenContract();
+
+      const callData = ethers.utils.defaultAbiCoder.encode(
+        ["address"],
+        [RandomAddress]
+      );
+
+      const providerSwapCode = 0;
+      const providerBridgeCode = 0;
+
+      // : Update the provider in use to have no code
+      await providerUpdater
+        .connect(owner)
+        .updateBridge([
+          providerBridgeCode,
+          true,
+          anyswap.address,
+          "0x0c0de0c0de0c0de0c0de0c0de0c0de0c0de0c0de",
+        ]);
+
+      /** Act */
+      const call = router
+        .connect(anyoneElse)
+        .initSwidge(
+          1000000,
+          [providerSwapCode, RandomAddress, RandomAddress, "0x", false],
+          [fakeTokenIn.address, 1337, callData, true],
+          [RandomAddress, RandomAddress]
+        );
+
+      /** Assert */
+      await expect(call).to.be.revertedWith(
+        "Bridge failed: Bridge provider has no code"
+      );
+    });
+
     it("Should only execute bridge if no swapping step is required", async function () {
       /** Arrange */
       const { owner, anyoneElse } = await getAccounts();
@@ -121,13 +157,19 @@ describe("RouterFacet", function () {
         [RandomAddress]
       );
 
+      const providerSwapCode = 0;
+      const providerBridgeCode = 0;
+
+      // : deploy a provider handler compliant with the interface
+      const anyswapMock = await anyswapRouterMock();
+
       await providerUpdater
         .connect(owner)
         .updateBridge([
-          0,
+          providerBridgeCode,
           true,
           anyswap.address,
-          "0x4f3aff3a747fcade12598081e80c6605a8be192f",
+          anyswapMock.address,
         ]);
 
       /** Act */
@@ -135,7 +177,7 @@ describe("RouterFacet", function () {
         .connect(anyoneElse)
         .initSwidge(
           1000000,
-          [0, RandomAddress, RandomAddress, "0x", false],
+          [providerSwapCode, RandomAddress, RandomAddress, "0x", false],
           [fakeTokenIn.address, 1337, callData, true],
           [RandomAddress, RandomAddress]
         );
@@ -174,17 +216,21 @@ describe("RouterFacet", function () {
         [RandomAddress]
       );
 
-      await providerUpdater
-        .connect(owner)
-        .updateSwapper([0, true, zeroEx.address, ZeroAddress]);
+      const providerSwapCode = 0;
+      const providerBridgeCode = 0;
 
       await providerUpdater
         .connect(owner)
+        .updateSwapper([providerSwapCode, true, zeroEx.address, ZeroAddress]);
+
+      const anyswapMock = await anyswapRouterMock();
+      await providerUpdater
+        .connect(owner)
         .updateBridge([
-          0,
+          providerBridgeCode,
           true,
           anyswap.address,
-          "0x4f3aff3a747fcade12598081e80c6605a8be192f",
+          anyswapMock.address,
         ]);
 
       /** Act */
@@ -192,7 +238,13 @@ describe("RouterFacet", function () {
         .connect(anyoneElse)
         .initSwidge(
           1000000,
-          [0, fakeTokenIn.address, fakeTokenOut.address, callDataSwap, true],
+          [
+            providerSwapCode,
+            fakeTokenIn.address,
+            fakeTokenOut.address,
+            callDataSwap,
+            true,
+          ],
           [fakeTokenOut.address, 1337, callDataBridge, true],
           [RandomAddress, RandomAddress]
         );
@@ -364,3 +416,13 @@ describe("RouterFacet", function () {
     await expect(fakeToken.transfer).to.be.calledOnceWith(owner.address, 1);
   });
 });
+
+async function anyswapRouterMock(): Promise<Contract> {
+  // : deploy a provider handler compliant with the interface
+  const AnyswapV4RouterMock = await ethers.getContractFactory(
+    "AnyswapV4RouterMock"
+  );
+  const anyswapMock = await AnyswapV4RouterMock.deploy();
+  await anyswapMock.deployed();
+  return anyswapMock;
+}
