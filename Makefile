@@ -102,7 +102,7 @@ $(addsuffix -sh, ${MAKE_APP_SERVICES}): %-sh:
 $(addsuffix -logs, ${MAKE_APP_SERVICES}): %-logs:
 	@$(call DOCKER_COMPOSE, logs --follow $*)
 
-setup: db-migrate build-contracts
+setup: db-migrate
 
 fuck: stop rm build create start
 
