@@ -141,7 +141,7 @@ describe("RouterFacet", function () {
 
       /** Assert */
       await expect(call).to.be.revertedWith(
-        "Bridge failed: Bridge provider has no code"
+        "Bridge failed: Provider has no code"
       );
     });
 

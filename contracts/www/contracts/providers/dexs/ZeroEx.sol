@@ -46,8 +46,12 @@ contract ZeroEx is IDEX {
         }
 
         // Execute swap with ZeroEx and compute final `boughtAmount`
-        (bool success,) = callAddress.call{value : valueToSend}(callData);
-        require(success, "ZeroEx failed");
+        (bool success,bytes memory data) = callAddress.call{value : valueToSend}(callData);
+
+        if (!success) {
+            string memory _revertMsg = LibBytes.getRevertMsg(data);
+            revert(string(abi.encodePacked("ZeroEx failed: ", _revertMsg)));
+        }
 
         if (isNativeOut) {
             boughtAmount = address(this).balance - boughtAmount;
