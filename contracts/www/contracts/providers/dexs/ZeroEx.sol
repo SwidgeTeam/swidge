@@ -17,7 +17,7 @@ contract ZeroEx is IDEX {
         // Extract the contract address and callData
         (address payable callAddress) = abi.decode(_data, (address));
 
-        LibStorage.enforceHasContractCode(callAddress, "Swap provider has no code");
+        LibStorage.enforceHasContractCode(callAddress, "Provider has no code");
 
         // Remove first 32 bytes(address)
         // to have the correct callData for provider
@@ -47,7 +47,7 @@ contract ZeroEx is IDEX {
 
         // Execute swap with ZeroEx and compute final `boughtAmount`
         (bool success,) = callAddress.call{value : valueToSend}(callData);
-        require(success, "Swap: ZeroEx failed");
+        require(success, "ZeroEx failed");
 
         if (isNativeOut) {
             boughtAmount = address(this).balance - boughtAmount;

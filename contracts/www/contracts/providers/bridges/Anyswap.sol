@@ -13,7 +13,7 @@ contract Anyswap is IBridge {
         uint256 _toChainId,
         bytes calldata _data
     ) external payable override returns (bool){
-        LibStorage.enforceHasContractCode(_handler, "Bridge provider has no code");
+        LibStorage.enforceHasContractCode(_handler, "Provider has no code");
 
         // Approve tokens for the bridge to take
         TransferHelper.safeApprove(_token, _handler, _amount);
@@ -26,7 +26,7 @@ contract Anyswap is IBridge {
             abi.encodeWithSelector(0xedbdf5e2, _anyTokenAddress, address(this), _amount, _toChainId)
         );
 
-        require(success, "Bridge: Anyswap failed");
+        require(success, "Anyswap failed");
 
         return true;
     }
