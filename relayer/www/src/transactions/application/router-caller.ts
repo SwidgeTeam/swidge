@@ -1,4 +1,4 @@
-import { ethers, ContractReceipt } from 'ethers';
+import { ethers, ContractReceipt, BigNumber } from 'ethers';
 import { ConfigService } from '../../config/config.service';
 import { ContractAddress } from '../../shared/types';
 import routerAbi from './router.json';
@@ -40,6 +40,7 @@ export class RouterCaller {
     // Create transaction
     const tx = await Router.finalizeSwidge(
       params.swap.amountIn,
+      params.fee,
       params.receiverAddress,
       params.txHash,
       [
@@ -50,8 +51,9 @@ export class RouterCaller {
         params.swap.required,
       ],
       {
-        gasPrice: feeData.gasPrice,
-        gasLimit: params.swap.estimatedGas,
+        // Increase everything 20% just to give some room
+        gasPrice: feeData.gasPrice.mul(1.2),
+        gasLimit: BigNumber.from(params.swap.estimatedGas).mul(1.2),
       },
     ).catch((error) => {
       throw new Error(error.body);
