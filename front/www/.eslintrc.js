@@ -21,6 +21,8 @@ module.exports = {
         'prettier',
     ],
     rules: {
+        'quotes': [2, 'single', {'avoidEscape': true}],
+        'semi': [2, 'never'],
         'vue/no-unused-vars': 'error',
         'vue/multi-word-component-names': 'off',
         indent: 'error',
