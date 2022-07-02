@@ -3,7 +3,6 @@ import IToken from '@/tokens/models/IToken'
 import { ChevronDownIcon } from '@heroicons/vue/outline'
 import { INetwork } from '@/models/INetwork'
 import { computed } from 'vue';
-import math from 'mathjs'
 
 const props = defineProps<{
     value: number
@@ -26,7 +25,7 @@ const onChange = (event: Event) => {
     event.target.value = event.target.value
         .replace(/[^0-9.]/g, '')
         .replace(/(\..*)\./g, '$1')
-    emits('update:value', math.bignumber(event.target.value))
+    emits('update:value', Number(event.target.value))
 }
 
 const setToMaxAmount = () => {
