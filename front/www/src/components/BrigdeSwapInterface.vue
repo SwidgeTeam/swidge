@@ -177,7 +177,7 @@ const shouldQuote = () => {
 /**
  * Handles the update of the amount on the origin amount
  */
-const handleSourceInputChanged = ($event) => {
+const handleSourceInputChanged = () => {
   if (shouldQuote()) {
     onQuote();
   }
@@ -506,8 +506,8 @@ const closeModalStatus = () => {
                 :chain-info="sourceChainInfo"
                 :balance="sourceTokenMaxAmount"
                 :disabled-input="false"
-                @input-changed="handleSourceInputChanged()"
-                @on-click-max-amount="handleSourceInputChanged()"
+                @input-changed="handleSourceInputChanged"
+                @on-click-max-amount="handleSourceInputChanged"
                 @open-token-list="() => handleOpenTokenList(true)"
               />
             </div>
