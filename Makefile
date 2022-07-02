@@ -242,11 +242,11 @@ $(addprefix dd-, ${ENABLED_NETWORKS}): dd-%: # will create new address
 
 $(addprefix ud-, ${ENABLED_NETWORKS}): ud-%: # will use current address
 	@$(call CONFIRM,You REALLY want to update the whole diamond?)
+	@$(call CONTRACTS_LIVE_RUN,deploy-facet --facet DiamondCutterFacet,$*)
 	@$(call CONTRACTS_LIVE_RUN,deploy-facet --facet RouterFacet,$*)
 	@$(call CONTRACTS_LIVE_RUN,deploy-facet --facet RelayerUpdaterFacet,$*)
 	@$(call CONTRACTS_LIVE_RUN,deploy-facet --facet ProviderUpdaterFacet,$*)
 	@$(call CONTRACTS_LIVE_RUN,deploy-facet --facet DiamondLoupeFacet,$*)
-	@$(call CONTRACTS_LIVE_RUN,deploy-facet --facet DiamondCutterFacet,$*)
 	@$(call CONTRACTS_LIVE_RUN,deploy-bridge --bridge Anyswap,$*)
 	@$(call CONTRACTS_LIVE_RUN,deploy-dex --dex ZeroEx,$*)
 
