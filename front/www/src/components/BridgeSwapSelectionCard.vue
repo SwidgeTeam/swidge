@@ -25,23 +25,11 @@ const onChange = (event: Event) => {
     event.target.value = event.target.value
         .replace(/[^0-9.]/g, '')
         .replace(/(\..*)\./g, '$1')
-    const fixedValue = toFixed(Number(event.target.value));
-    emits('update:value', fixedValue)
+        .replace(/^0*(\d)/gm, '$1')
+
+    emits('update:value', event.target.value)
 }
-const toFixed = (x: number) => {
-    let val = '';
-    let expoSmall = parseInt(x.toString().split('e-')[1]);
-    let expoBig = parseInt(x.toString().split('+')[1]);
-    if (Math.abs(x) < 1.0 && expoSmall) {
-        x *= Math.pow(10, expoSmall - 1);
-        val = '0.' + (new Array(expoSmall)).join('0') + x.toString().substring(2);
-    } else if (expoBig && expoBig > 20) {
-        expoBig -= 20;
-        x /= Math.pow(10, expoBig);
-        val = x + (new Array(expoBig + 1)).join('0');
-    } else val = x.toString();
-    return val;
-}
+
 const setToMaxAmount = () => {
     if (!props.balance) return
     emits('update:value', props.balance)
