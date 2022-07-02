@@ -2,7 +2,7 @@
 import IToken from '@/tokens/models/IToken'
 import { ChevronDownIcon } from '@heroicons/vue/outline'
 import { INetwork } from '@/models/INetwork'
-import { computed } from 'vue';
+import { computed } from 'vue'
 
 const props = defineProps<{
     value: string
@@ -30,13 +30,16 @@ const onChange = (event: Event) => {
 }
 const toFixed = (x: number) => {
     let val = '';
-    let e = parseInt(x.toString().split('e-')[1]);
-    if (Math.abs(x) < 1.0 && e) {
-        x *= Math.pow(10, e - 1);
-        val = '0.' + (new Array(e)).join('0') + x.toString().substring(2);
-    } else {
-        val = x.toString();
-    }
+    let expoSmall = parseInt(x.toString().split('e-')[1]);
+    let expoBig = parseInt(x.toString().split('+')[1]);
+    if (Math.abs(x) < 1.0 && expoSmall) {
+        x *= Math.pow(10, expoSmall - 1);
+        val = '0.' + (new Array(expoSmall)).join('0') + x.toString().substring(2);
+    } else if (expoBig && expoBig > 20) {
+        expoBig -= 20;
+        x /= Math.pow(10, expoBig);
+        val = x + (new Array(expoBig + 1)).join('0');
+    } else val = x.toString();
     return val;
 }
 const setToMaxAmount = () => {
