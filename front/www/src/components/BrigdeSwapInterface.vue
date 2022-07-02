@@ -20,8 +20,8 @@ import { TransactionSteps } from "@/models/TransactionSteps";
 const web3Store = useWeb3Store()
 const { switchToNetwork, getChainProvider, getBalance } = web3Store
 
-const sourceTokenAmount = ref<number>(0)
-const destinationTokenAmount = ref<number>(0)
+const sourceTokenAmount = ref<string>('')
+const destinationTokenAmount = ref<string>('')
 const sourceTokenMaxAmount = ref<string>('')
 
 const isModalTokensOpen = ref(false)
@@ -39,7 +39,7 @@ const selectedSourceToken = ref<IToken>({
     decimals: 0,
     img: "",
     name: "",
-    replaceByDefault(): void {},
+    replaceByDefault(): void { },
     symbol: ""
 })
 const selectedDestinationToken = ref<IToken>({
@@ -47,7 +47,7 @@ const selectedDestinationToken = ref<IToken>({
     decimals: 0,
     img: "",
     name: "",
-    replaceByDefault(): void {},
+    replaceByDefault(): void { },
     symbol: ""
 })
 const quotedPath = ref<GetQuoteResponse>({
@@ -170,7 +170,7 @@ const shouldQuote = () => {
     return (
         selectedSourceToken.value.address &&
         selectedDestinationToken.value.address &&
-        sourceTokenAmount.value !== 0
+        Number(sourceTokenAmount.value) !== 0
     )
 }
 
@@ -263,7 +263,7 @@ const updateOriginToken = async (token: IToken) => {
         // Update token details
         selectedSourceToken.value = token
         // Reset amount
-        sourceTokenAmount.value = 0
+        sourceTokenAmount.value = ''
         // Check user's token balance
         await updateTokenBalance(token.address)
     }
@@ -303,10 +303,10 @@ const onQuote = async () => {
             srcToken: selectedSourceToken.value.address,
             toChainId: destinationChainInfo.id,
             dstToken: selectedDestinationToken.value.address,
-            amount: sourceTokenAmount.value.toString()
+            amount: sourceTokenAmount.value
         })
         quotedPath.value = quote
-        destinationTokenAmount.value = Number(quote.amountOut)
+        destinationTokenAmount.value = quote.amountOut
         isGettingQuote.value = false
         isExecuteButtonDisabled.value = false
         transactionAlertMessage.value = ''
@@ -317,7 +317,7 @@ const onQuote = async () => {
         if (e instanceof Error) {
             transactionAlertMessage.value = e.message
             showTransactionAlert.value = true
-            destinationTokenAmount.value = 0
+            destinationTokenAmount.value = ''
         } else {
             console.log('Unexpected error', e);
         }
@@ -329,7 +329,7 @@ const onQuote = async () => {
  */
 const onExecuteTransaction = async () => {
     const amountIn = ethers.utils.parseUnits(
-        sourceTokenAmount.value.toString(),
+        sourceTokenAmount.value,
         selectedSourceToken.value.decimals
     );
     const contractCallPayload: RouterCallPayload = {
@@ -434,7 +434,7 @@ const setUpEventListener = (executedTxHash: string) => {
 const openTransactionStatusModal = () => {
     steps.value.origin.tokenIn = quotedPath.value.originSwap.tokenIn.name
     steps.value.origin.tokenOut = quotedPath.value.originSwap.tokenOut.name
-    steps.value.origin.amountIn = sourceTokenAmount.value.toString()
+    steps.value.origin.amountIn = sourceTokenAmount.value
     steps.value.origin.amountOut = quotedPath.value.originSwap.amountOut
     steps.value.origin.required = quotedPath.value.originSwap.required
     steps.value.origin.completed = false
@@ -473,73 +473,44 @@ const closeModalStatus = () => {
 
 <template>
     <div class="flex flex-col flex-grow bg-background-main-dark">
-        <Header
-            class="py-2"
-            @switch-network="handleGlobalNetworkSwitched($event)"
-        />
+        <Header class="py-2" @switch-network="handleGlobalNetworkSwitched($event)" />
         <main class="flex items-center justify-center mt-20">
             <div class="flex gap-40">
                 <div class="flex flex-col gap-6">
                     <div class="flex items-center justify-between">
                         <span class="text-3xl">Swap & Bridge</span>
-                        <ArrowCircleRightIcon
-                            v-if="!isFaqOpen"
-                            class="w-7 h-7 cursor-pointer"
-                            @click="isFaqOpen = true"/>
-                        <XCircleIcon
-                            v-if="isFaqOpen"
-                            class="w-7 h-7 cursor-pointer"
-                            @click="isFaqOpen = false"/>
+                        <ArrowCircleRightIcon v-if="!isFaqOpen" class="w-7 h-7 cursor-pointer"
+                            @click="isFaqOpen = true" />
+                        <XCircleIcon v-if="isFaqOpen" class="w-7 h-7 cursor-pointer" @click="isFaqOpen = false" />
                     </div>
-                    <div
-                        class="flex flex-col gap-8 px-12 py-6 rounded-3xl bg-cards-background-dark-grey">
+                    <div class="flex flex-col gap-8 px-12 py-6 rounded-3xl bg-cards-background-dark-grey">
                         <div class="flex flex-col w-full gap-4">
                             <span class="text-2xl">You send:</span>
-                            <BridgeSwapSelectionCard
-                                v-model:value="sourceTokenAmount"
-                                :token="selectedSourceToken"
-                                :chain-info="sourceChainInfo"
-                                :balance="sourceTokenMaxAmount"
-                                :disabled-input="false"
+                            <BridgeSwapSelectionCard v-model:value="sourceTokenAmount" :token="selectedSourceToken"
+                                :chain-info="sourceChainInfo" :balance="sourceTokenMaxAmount" :disabled-input="false"
                                 @input-changed="handleSourceInputChanged()"
                                 @on-click-max-amount="handleSourceInputChanged()"
-                                @open-token-list="() => handleOpenTokenList(true)"/>
+                                @open-token-list="() => handleOpenTokenList(true)" />
                         </div>
                         <div class="flex items-center justify-center w-full">
-                            <ArrowDownIcon class="h-6"/>
+                            <ArrowDownIcon class="h-6" />
                         </div>
                         <div class="flex flex-col w-full gap-4">
                             <span class="text-2xl">You receive:</span>
-                            <BridgeSwapSelectionCard
-                                v-model:value="destinationTokenAmount"
-                                :chain-info="destinationChainInfo"
-                                :disabled-input="true"
-                                :token="selectedDestinationToken"
-                                @open-token-list="() => handleOpenTokenList(false)"/>
+                            <BridgeSwapSelectionCard v-model:value="destinationTokenAmount"
+                                :chain-info="destinationChainInfo" :disabled-input="true"
+                                :token="selectedDestinationToken" @open-token-list="() => handleOpenTokenList(false)" />
                         </div>
-                        <BridgeSwapInteractiveButton
-                            :text="buttonLabel"
-                            :is-loading="isGettingQuote"
-                            :disabled="isExecuteButtonDisabled"
-                            :on-click="onExecuteTransaction"
-                        />
+                        <BridgeSwapInteractiveButton :text="buttonLabel" :is-loading="isGettingQuote"
+                            :disabled="isExecuteButtonDisabled" :on-click="onExecuteTransaction" />
                     </div>
-                    <ModalNetworkAndTokenSelect
-                        :is-modal-open="isModalTokensOpen"
-                        :networks="getNetworks()"
-                        :is-origin="isSourceChainToken"
-                        @close-modal="isModalTokensOpen = false"
-                        @update-token="handleUpdateTokenFromModal($event)"
-                    />
-                    <ModalSwidgeStatus
-                        :steps="steps"
-                        :show="isModalStatusOpen"
-                        :source-chain="sourceChainInfo.name"
-                        :destination-chain="destinationChainInfo.name"
-                        @close-modal="closeModalStatus"
-                    />
+                    <ModalNetworkAndTokenSelect :is-modal-open="isModalTokensOpen" :networks="getNetworks()"
+                        :is-origin="isSourceChainToken" @close-modal="isModalTokensOpen = false"
+                        @update-token="handleUpdateTokenFromModal($event)" />
+                    <ModalSwidgeStatus :steps="steps" :show="isModalStatusOpen" :source-chain="sourceChainInfo.name"
+                        :destination-chain="destinationChainInfo.name" @close-modal="closeModalStatus" />
                 </div>
-                <FAQCard v-if="isFaqOpen"/>
+                <FAQCard v-if="isFaqOpen" />
             </div>
         </main>
     </div>
