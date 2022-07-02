@@ -10,6 +10,7 @@ contract ProviderUpdaterFacet {
      */
     event UpdatedBridgeProvider(
         uint8 code,
+        bool enabled,
         address oldAddress,
         address newAddress
     );
@@ -19,6 +20,7 @@ contract ProviderUpdaterFacet {
      */
     event UpdatedSwapProvider(
         uint8 code,
+        bool enabled,
         address oldAddress,
         address newAddress
     );
@@ -31,8 +33,12 @@ contract ProviderUpdaterFacet {
         require(_provider.implementation != address(0), 'ZeroAddress not allowed for bridge');
         LibStorage.ProviderStorage storage ps = LibStorage.providers();
         address oldAddress = ps.bridgeProviders[_provider.code].implementation;
+        if (ps.bridgeProviders[_provider.code].implementation == address(0)) {
+            // only increment if the bridge didn't exist
+            ps.totalBridges++;
+        }
         ps.bridgeProviders[_provider.code] = _provider;
-        emit UpdatedBridgeProvider(_provider.code, oldAddress, _provider.implementation);
+        emit UpdatedBridgeProvider(_provider.code, _provider.enabled, oldAddress, _provider.implementation);
     }
 
     /**
@@ -43,8 +49,12 @@ contract ProviderUpdaterFacet {
         require(_provider.implementation != address(0), 'ZeroAddress not allowed for bridge');
         LibStorage.ProviderStorage storage ps = LibStorage.providers();
         address oldAddress = ps.swapProviders[_provider.code].implementation;
+        if (ps.swapProviders[_provider.code].implementation == address(0)) {
+            // only increment if the swapper didn't exist
+            ps.totalSwappers++;
+        }
         ps.swapProviders[_provider.code] = _provider;
-        emit UpdatedSwapProvider(_provider.code, oldAddress, _provider.implementation);
+        emit UpdatedSwapProvider(_provider.code, _provider.enabled, oldAddress, _provider.implementation);
     }
 
     /**
@@ -52,13 +62,15 @@ contract ProviderUpdaterFacet {
      */
     function listBridges() external view returns (LibStorage.Provider[] memory) {
         LibStorage.ProviderStorage storage ps = LibStorage.providers();
-        LibStorage.Provider[] memory bridges = new LibStorage.Provider[](1);
-        for (uint8 index; index < 1; index++) {
+        LibStorage.Provider[] memory bridges = new LibStorage.Provider[](ps.totalBridges);
+        for (uint8 index; index < ps.totalBridges; index++) {
             LibStorage.Provider memory bridge = ps.bridgeProviders[index];
-            bridges[index].code = bridge.code;
-            bridges[index].enabled = bridge.enabled;
-            bridges[index].implementation = bridge.implementation;
-            bridges[index].handler = bridge.handler;
+            bridges[index] = LibStorage.Provider(
+                bridge.code,
+                bridge.enabled,
+                bridge.implementation,
+                bridge.handler
+            );
         }
         return bridges;
     }
@@ -68,13 +80,15 @@ contract ProviderUpdaterFacet {
      */
     function listSwappers() external view returns (LibStorage.Provider[] memory) {
         LibStorage.ProviderStorage storage ps = LibStorage.providers();
-        LibStorage.Provider[] memory swappers = new LibStorage.Provider[](1);
-        for (uint8 index; index < 1; index++) {
+        LibStorage.Provider[] memory swappers = new LibStorage.Provider[](ps.totalSwappers);
+        for (uint8 index; index < ps.totalSwappers; index++) {
             LibStorage.Provider memory swap = ps.swapProviders[index];
-            swappers[index].code = swap.code;
-            swappers[index].enabled = swap.enabled;
-            swappers[index].implementation = swap.implementation;
-            swappers[index].handler = swap.handler;
+            swappers[index] = LibStorage.Provider(
+                swap.code,
+                swap.enabled,
+                swap.implementation,
+                swap.handler
+            );
         }
         return swappers;
     }

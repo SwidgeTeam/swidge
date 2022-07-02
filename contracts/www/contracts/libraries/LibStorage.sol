@@ -20,6 +20,8 @@ library LibStorage {
     struct ProviderStorage {
         mapping(uint8 => Provider) bridgeProviders;
         mapping(uint8 => Provider) swapProviders;
+        uint16 totalBridges;
+        uint16 totalSwappers;
     }
 
     struct Provider {
