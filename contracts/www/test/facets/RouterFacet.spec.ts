@@ -16,7 +16,6 @@ const Deployer = require("../../scripts/Deployer");
 chai.use(smock.matchers);
 
 describe("RouterFacet", function () {
-  let relaterUpdater: Contract;
   let providerUpdater: Contract;
   let router: Contract;
   let anyswap: Contract;
@@ -27,7 +26,6 @@ describe("RouterFacet", function () {
     const deployer = new Deployer(ethers, owner, relayer);
     await deployer.deploy();
 
-    relaterUpdater = await deployer.interactWith("RelayerUpdaterFacet");
     providerUpdater = await deployer.interactWith("ProviderUpdaterFacet");
     router = await deployer.interactWith("RouterFacet");
 
@@ -302,8 +300,7 @@ describe("RouterFacet", function () {
   describe("Swidge finalize process", () => {
     it("Should fail if anyone else than relayer is the caller", async function () {
       /** Arrange */
-      const { owner, anyoneElse, relayer } = await getAccounts();
-      await relaterUpdater.connect(owner).updateRelayer(relayer.address);
+      const { anyoneElse } = await getAccounts();
 
       /** Act */
       const call = router
@@ -323,7 +320,6 @@ describe("RouterFacet", function () {
     it("Should execute the swap if relayer is the caller", async function () {
       /** Arrange */
       const { owner, relayer } = await getAccounts();
-      await relaterUpdater.connect(owner).updateRelayer(relayer.address);
 
       // Create two fake ERC20 tokens
       const fakeTokenIn = await fakeTokenContract();
@@ -358,8 +354,7 @@ describe("RouterFacet", function () {
 
     it("Should revert if the provider fails", async function () {
       /** Arrange */
-      const { owner, relayer } = await getAccounts();
-      await relaterUpdater.connect(owner).updateRelayer(relayer.address);
+      const { relayer } = await getAccounts();
 
       // Create two fake ERC20 tokens
       const fakeTokenIn = await fakeTokenContract();
