@@ -1,11 +1,18 @@
 const { FacetCutAction, getSelectors } = require("./libs/diamond");
-const { ethers } = require("hardhat");
 
 module.exports = class Deployer {
   ethers;
   deployer;
   relayer;
+
   diamond;
+
+  diamondCutterFacet;
+  diamondLoupeFacet;
+  routerFacet;
+  relayerUpdaterFacet;
+  providerUpdaterFacet;
+  feeManagerFacet;
 
   constructor(_ethers, _deployer, _relayer) {
     this.ethers = _ethers;
@@ -18,26 +25,24 @@ module.exports = class Deployer {
    * @returns {Promise<void>}
    */
   async deploy() {
-    const diamondCutterFacet = await this.deployByName("DiamondCutterFacet");
+    this.diamondCutterFacet = await this.deployByName("DiamondCutterFacet");
 
     this.diamond = await this.deployByName("Diamond", [
-      diamondCutterFacet.address,
+      this.diamondCutterFacet.address,
     ]);
 
-    const relayerUpdaterFacet = await this.deployByName("RelayerUpdaterFacet");
-    const providerUpdaterFacet = await this.deployByName(
-      "ProviderUpdaterFacet"
-    );
-    const diamondLoupeFacet = await this.deployByName("DiamondLoupeFacet");
-    const feeManagerFacet = await this.deployByName("FeeManagerFacet");
-    const routerFacet = await this.deployByName("RouterFacet");
+    this.relayerUpdaterFacet = await this.deployByName("RelayerUpdaterFacet");
+    this.providerUpdaterFacet = await this.deployByName("ProviderUpdaterFacet");
+    this.diamondLoupeFacet = await this.deployByName("DiamondLoupeFacet");
+    this.feeManagerFacet = await this.deployByName("FeeManagerFacet");
+    this.routerFacet = await this.deployByName("RouterFacet");
 
     await this.setFacets([
-      routerFacet,
-      relayerUpdaterFacet,
-      diamondLoupeFacet,
-      providerUpdaterFacet,
-      feeManagerFacet,
+      this.routerFacet,
+      this.relayerUpdaterFacet,
+      this.diamondLoupeFacet,
+      this.providerUpdaterFacet,
+      this.feeManagerFacet,
     ]);
 
     await this.updateRelayer();
@@ -84,7 +89,7 @@ module.exports = class Deployer {
    * @returns {Promise<Contract>}
    */
   async interactWith(contractName) {
-    return await ethers.getContractAt(contractName, this.diamond.address);
+    return await this.ethers.getContractAt(contractName, this.diamond.address);
   }
 
   /**
@@ -98,5 +103,22 @@ module.exports = class Deployer {
     const contract = await Factory.connect(this.deployer).deploy(...args);
     await contract.deployed();
     return contract;
+  }
+
+  /** Accessors **/
+
+  getDiamond() {
+    return this.diamond;
+  }
+
+  getFacets() {
+    return {
+      diamondCutterFacet: this.diamondCutterFacet,
+      diamondLoupeFacet: this.diamondLoupeFacet,
+      routerFacet: this.routerFacet,
+      relayerUpdaterFacet: this.relayerUpdaterFacet,
+      providerUpdaterFacet: this.providerUpdaterFacet,
+      feeManagerFacet: this.feeManagerFacet,
+    };
   }
 };
