@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import LoadingCircle from "./svg/LoadingCircle.vue";
+import LoadingCircle from './svg/LoadingCircle.vue'
 
 defineProps<{
   text: string

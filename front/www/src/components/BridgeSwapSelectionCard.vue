@@ -54,7 +54,8 @@ const trimmedBalance = computed({
 </script>
 
 <template>
-    <div class="
+    <div
+        class="
             flex flex-col
             gap-2
             px-6
@@ -64,7 +65,11 @@ const trimmedBalance = computed({
         ">
         <div class="flex justify-between w-full">
             <div class="flex items-center gap-2 cursor-pointer font-extralight" @click="emits('open-token-list')">
-                <img v-if="chainInfo && chainInfo.icon !== ''" :src="chainInfo.icon" class="rounded-full" width="24"
+                <img
+                    v-if="chainInfo && chainInfo.icon !== ''"
+                    :src="chainInfo.icon"
+                    class="rounded-full"
+                    width="24"
                     height="24" />
                 <div>
                     {{
@@ -81,14 +86,22 @@ const trimmedBalance = computed({
         <div class="flex w-full gap-8">
             <div class="flex items-center w-full gap-2 text-xl cursor-pointer">
                 <div class="flex gap-2 items-center" @click="emits('open-token-list')">
-                    <img v-if="token && token.img !== ''" :src="token.img" width="32" class="rounded-full" height="32"
+                    <img
+                        v-if="token && token.img !== ''"
+                        :src="token.img"
+                        width="32"
+                        class="rounded-full"
+                        height="32"
                         @error="onFallbackImgHandler" />
                     <span class="min-w-[rem]">{{
                             token ? token.symbol : 'Select Token'
                     }}</span>
                     <ChevronDownIcon class="h-6" />
                 </div>
-                <button v-if="balance && token && chainInfo" class="
+                <button
+                    v-if="balance && token && chainInfo"
+                    @click="setToMaxAmount"
+                    class="
                         px-2
                         text-[14px]
                         font-roboto
@@ -99,12 +112,17 @@ const trimmedBalance = computed({
                         focus:ring-2
                         focus:ring-offset-2
                         focus:ring-[#B22F7F]
-                    " @click="setToMaxAmount">
+                    ">
                     MAX
                 </button>
             </div>
             <div>
-                <input type="text" :disabled="disabledInput" :value="value" placeholder="0.0" class="
+                <input
+                    type="text"
+                    :disabled="disabledInput"
+                    :value="value"
+                    placeholder="0.0"
+                    class="
                         w-40
                         p-0
                         text-2xl text-right
@@ -114,8 +132,15 @@ const trimmedBalance = computed({
                         appearance-none
                         focus:border-transparent focus:ring-0
                         truncate
-                    " autocomplete="off" autocorrect="off" minlength="1" maxlength="79" inputmode="decimal"
-                    pattern="^[0-9]*[.,]?[0-9]*$" @change="emits('input-changed')" @input="onChange" />
+                    "
+                    autocomplete="off"
+                    autocorrect="off"
+                    minlength="1"
+                    maxlength="79"
+                    inputmode="decimal"
+                    pattern="^[0-9]*[.,]?[0-9]*$"
+                    @change="emits('input-changed')"
+                    @input="onChange" />
             </div>
         </div>
     </div>

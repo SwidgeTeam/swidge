@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import {Dialog, DialogOverlay, TransitionChild, TransitionRoot} from '@headlessui/vue'
-import {XIcon} from '@heroicons/vue/solid';
-import networks from "@/assets/Networks";
+import {XIcon} from '@heroicons/vue/solid'
+import networks from '@/assets/Networks'
 
 defineProps<{
   isModalOpen: boolean
@@ -13,15 +13,15 @@ const emits = defineEmits<{
 }>()
 
 const onCloseModal = () => {
-  emits('close-modal')
+    emits('close-modal')
 }
 
 const selectChain = (chain: string) => {
-  emits('set-chain', chain);
+    emits('set-chain', chain)
 }
 
 const getNetworks = () => {
-  return Array.from(networks.values())
+    return Array.from(networks.values())
 }
 
 

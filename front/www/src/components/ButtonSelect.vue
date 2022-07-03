@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue'
 import { ChevronDownIcon } from '@heroicons/vue/solid'
-import { computed } from 'vue';
+import { computed } from 'vue'
 
 const props = defineProps<{
   list: string[]

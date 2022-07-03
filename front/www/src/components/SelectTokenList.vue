@@ -1,10 +1,10 @@
 <script setup lang='ts'>
-import { ref } from 'vue';
-import ButtonSelect from './ButtonSelect.vue';
-import TokenDisplay from './TokenDisplay.vue';
-import NetworkAndTokenNothingFound from './NetworkAndTokenNothingFound.vue';
-import IToken from '@/tokens/models/IToken';
-import { INetwork } from "@/models/INetwork";
+import { ref } from 'vue'
+import ButtonSelect from './ButtonSelect.vue'
+import TokenDisplay from './TokenDisplay.vue'
+import NetworkAndTokenNothingFound from './NetworkAndTokenNothingFound.vue'
+import IToken from '@/tokens/models/IToken'
+import { INetwork } from '@/models/INetwork'
 
 const props = defineProps<{
     chainList: INetwork[]
@@ -58,15 +58,18 @@ const filteredTokenList = (tokenList: IToken[]) => {
                     v-model:selected="selectedFilter"
                     :list="filterList"/>
             </div>
-            <span v-if="selectedNetworkId !== '' || searchTerm !== ''"
+            <span
+v-if="selectedNetworkId !== '' || searchTerm !== ''"
                   class="text-sm font-extralight mt-1 ml-auto">Network</span>
         </div>
         <div class="h-80 w-full overflow-y-auto">
             <NetworkAndTokenNothingFound
                 v-if="selectedNetworkId === '' && searchTerm === ''"/>
-            <ul v-if="selectedNetworkId !== '' || searchTerm !== ''"
+            <ul
+v-if="selectedNetworkId !== '' || searchTerm !== ''"
                 class="text-base flex flex-col mt-6">
-                <template v-for="chain in filteredChainList(chainList)"
+                <template
+v-for="chain in filteredChainList(chainList)"
                           :key="chain.id">
                     <li
                         v-for="token in filteredTokenList(chain.tokens)"
@@ -84,7 +87,8 @@ const filteredTokenList = (tokenList: IToken[]) => {
               chain: chain
             })"
                     >
-                        <TokenDisplay :token="token"
+                        <TokenDisplay
+:token="token"
                                       :chain-name="chain.name"/>
                     </li>
                 </template>

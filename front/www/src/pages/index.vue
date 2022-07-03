@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useWeb3Store } from '@/store/web3'
-import { onMounted } from 'vue';
-import BrigdeSwapInterfaceVue from '@/components/BrigdeSwapInterface.vue';
+import { onMounted } from 'vue'
+import BrigdeSwapInterfaceVue from '@/components/BrigdeSwapInterface.vue'
 
 const { connect } = useWeb3Store()
 

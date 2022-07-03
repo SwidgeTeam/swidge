@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { useWeb3Store } from '@/store/web3'
-import { storeToRefs } from 'pinia';
-import AddressButton from './Buttons/AddressButton.vue';
-import ChainButton from './Buttons/ChainButton.vue';
-import SwidgeLogo from './svg/SwidgeLogo.vue';
-import ModalNetworks from "@/components/ModalNetworks.vue";
-import { computed, ref } from "vue";
-import ConnectButton from "@/components/Buttons/ConnectButton.vue";
-import networks from "@/assets/Networks";
+import { storeToRefs } from 'pinia'
+import AddressButton from './Buttons/AddressButton.vue'
+import ChainButton from './Buttons/ChainButton.vue'
+import SwidgeLogo from './svg/SwidgeLogo.vue'
+import ModalNetworks from '@/components/ModalNetworks.vue'
+import { computed, ref } from 'vue'
+import ConnectButton from '@/components/Buttons/ConnectButton.vue'
+import networks from '@/assets/Networks'
 
 const emits = defineEmits<{
     (event: 'switch-network', chainId: string): void

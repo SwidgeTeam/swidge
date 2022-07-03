@@ -43,7 +43,7 @@ const selectedSourceToken = ref<IToken>({
     decimals: 0,
     img: '',
     name: '',
-    replaceByDefault(): void { },
+    replaceByDefault(): void {},
     symbol: '',
 })
 const selectedDestinationToken = ref<IToken>({
@@ -51,7 +51,7 @@ const selectedDestinationToken = ref<IToken>({
     decimals: 0,
     img: '',
     name: '',
-    replaceByDefault(): void { },
+    replaceByDefault(): void {},
     symbol: '',
 })
 const quotedPath = ref<GetQuoteResponse>({
@@ -299,12 +299,12 @@ const updateDestinationChainInfo = (chain: INetwork) => {
  * Quotes the possible path for a given pair and amount
  */
 const onQuote = async () => {
-    showTransactionAlert.value = false;
-    isExecuteButtonDisabled.value = true;
-    isGettingQuote.value = true;
+    showTransactionAlert.value = false
+    isExecuteButtonDisabled.value = true
+    isGettingQuote.value = true
 
     if (!selectedSourceToken.value || !selectedDestinationToken.value) {
-        return;
+        return
     }
     try {
         const quote: GetQuoteResponse = await SwidgeAPI.getQuote({
@@ -313,31 +313,31 @@ const onQuote = async () => {
             toChainId: destinationChainInfo.id,
             dstToken: selectedDestinationToken.value.address,
             amount: sourceTokenAmount.value.toString(),
-        });
-        quotedPath.value = quote;
-        destinationTokenAmount.value = quote.amountOut;
-        isGettingQuote.value = false;
+        })
+        quotedPath.value = quote
+        destinationTokenAmount.value = quote.amountOut
+        isGettingQuote.value = false
 
         if (Number(sourceTokenAmount.value) > Number(sourceTokenMaxAmount.value)) {
-            showTransactionAlert.value = true;
-            transactionAlertMessage.value = "Insufficient Balance";
-            return;
+            showTransactionAlert.value = true
+            transactionAlertMessage.value = 'Insufficient Balance'
+            return
         }
-        isExecuteButtonDisabled.value = false;
-        transactionAlertMessage.value = "";
-        showTransactionAlert.value = false;
+        isExecuteButtonDisabled.value = false
+        transactionAlertMessage.value = ''
+        showTransactionAlert.value = false
     } catch (e: unknown) {
-        isGettingQuote.value = false;
-        isExecuteButtonDisabled.value = true;
+        isGettingQuote.value = false
+        isExecuteButtonDisabled.value = true
         if (e instanceof Error) {
-            transactionAlertMessage.value = e.message;
-            showTransactionAlert.value = true;
-            destinationTokenAmount.value = '';
+            transactionAlertMessage.value = e.message
+            showTransactionAlert.value = true
+            destinationTokenAmount.value = ''
         } else {
-            console.log("Unexpected error", e);
+            console.log('Unexpected error', e)
         }
     }
-};
+}
 
 /**
  * Executes and stores the transaction
@@ -494,11 +494,17 @@ const closeModalStatus = () => {
                 <div class="flex flex-col gap-6">
                     <div class="flex items-center justify-between">
                         <span class="text-3xl">Swap & Bridge</span>
-                        <ArrowCircleRightIcon v-if="!isFaqOpen" class="w-7 h-7 cursor-pointer"
+                        <ArrowCircleRightIcon
+                            v-if="!isFaqOpen"
+                            class="w-7 h-7 cursor-pointer"
                             @click="isFaqOpen = true" />
-                        <XCircleIcon v-if="isFaqOpen" class="w-7 h-7 cursor-pointer" @click="isFaqOpen = false" />
+                        <XCircleIcon
+                            v-if="isFaqOpen"
+                            class="w-7 h-7 cursor-pointer"
+                            @click="isFaqOpen = false" />
                     </div>
-                    <div class="
+                    <div
+                        class="
                             flex flex-col
                             gap-8
                             px-12
@@ -508,8 +514,12 @@ const closeModalStatus = () => {
                         ">
                         <div class="flex flex-col w-full gap-4">
                             <span class="text-2xl">You send:</span>
-                            <BridgeSwapSelectionCard v-model:value="sourceTokenAmount" :token="selectedSourceToken"
-                                :chain-info="sourceChainInfo" :balance="sourceTokenMaxAmount" :disabled-input="false"
+                            <BridgeSwapSelectionCard
+                                v-model:value="sourceTokenAmount"
+                                :token="selectedSourceToken"
+                                :chain-info="sourceChainInfo"
+                                :balance="sourceTokenMaxAmount"
+                                :disabled-input="false"
                                 @input-changed="handleSourceInputChanged()"
                                 @on-click-max-amount="handleSourceInputChanged()"
                                 @open-token-list="() => handleOpenTokenList(true)" />
@@ -519,18 +529,31 @@ const closeModalStatus = () => {
                         </div>
                         <div class="flex flex-col w-full gap-4">
                             <span class="text-2xl">You receive:</span>
-                            <BridgeSwapSelectionCard v-model:value="destinationTokenAmount"
-                                :chain-info="destinationChainInfo" :disabled-input="true"
-                                :token="selectedDestinationToken" @open-token-list="() => handleOpenTokenList(false)" />
+                            <BridgeSwapSelectionCard
+                                v-model:value="destinationTokenAmount"
+                                :chain-info="destinationChainInfo"
+                                :disabled-input="true"
+                                :token="selectedDestinationToken"
+                                @open-token-list="() => handleOpenTokenList(false)" />
                         </div>
-                        <BridgeSwapInteractiveButton :text="buttonLabel" :is-loading="isGettingQuote"
-                            :disabled="isExecuteButtonDisabled" :on-click="onExecuteTransaction" />
+                        <BridgeSwapInteractiveButton
+                            :text="buttonLabel"
+                            :is-loading="isGettingQuote"
+                            :disabled="isExecuteButtonDisabled"
+                            :on-click="onExecuteTransaction" />
                     </div>
-                    <ModalNetworkAndTokenSelect :is-modal-open="isModalTokensOpen" :networks="getNetworks()"
-                        :is-origin="isSourceChainToken" @close-modal="isModalTokensOpen = false"
+                    <ModalNetworkAndTokenSelect
+                        :is-modal-open="isModalTokensOpen"
+                        :networks="getNetworks()"
+                        :is-origin="isSourceChainToken"
+                        @close-modal="isModalTokensOpen = false"
                         @update-token="handleUpdateTokenFromModal($event)" />
-                    <ModalSwidgeStatus :steps="steps" :show="isModalStatusOpen" :source-chain="sourceChainInfo.name"
-                        :destination-chain="destinationChainInfo.name" @close-modal="closeModalStatus" />
+                    <ModalSwidgeStatus
+                        :steps="steps"
+                        :show="isModalStatusOpen"
+                        :source-chain="sourceChainInfo.name"
+                        :destination-chain="destinationChainInfo.name"
+                        @close-modal="closeModalStatus" />
                 </div>
                 <FAQCard v-if="isFaqOpen" />
             </div>

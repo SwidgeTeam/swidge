@@ -1,7 +1,7 @@
 <script setup lang='ts'>
-import { CheckCircleIcon } from '@heroicons/vue/outline';
-import Spinner from 'vue-spinner/src/ScaleLoader.vue';
-import { computed } from "vue";
+import { CheckCircleIcon } from '@heroicons/vue/outline'
+import Spinner from 'vue-spinner/src/ScaleLoader.vue'
+import { computed } from 'vue'
 
 const props = defineProps({
     title: { type: String, required: true },
@@ -10,7 +10,7 @@ const props = defineProps({
     amountIn: { type: String, required: true },
     amountOut: { type: String, required: true },
     completed: { type: Boolean, required: false, default: false },
-});
+})
 
 const subtitle = computed({
     get: () => {

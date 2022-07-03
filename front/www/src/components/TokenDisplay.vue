@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import IToken from '@/tokens/models/IToken';
+import IToken from '@/tokens/models/IToken'
 
 defineProps<{
   token: IToken
@@ -12,7 +12,7 @@ defineProps<{
   <div class="flex justify-between items-center">
     <div class="flex items-center gap-2">
       <img
-:src="token.img"
+        :src="token.img"
         width="35"
         height="35"
         class="rounded-full overflow-hidden block"

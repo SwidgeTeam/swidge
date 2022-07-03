@@ -1,12 +1,12 @@
 <script setup lang='ts'>
 import { Dialog, DialogOverlay, TransitionChild, TransitionRoot } from '@headlessui/vue'
-import { XIcon } from '@heroicons/vue/solid';
-import { ref } from 'vue';
-import SearchInputBox from './SearchInputBox.vue';
-import NetworkLineSelector from './NetworkLineSelector.vue';
-import SelectTokenList from './SelectTokenList.vue';
-import IToken from '@/tokens/models/IToken';
-import { INetwork } from "@/models/INetwork";
+import { XIcon } from '@heroicons/vue/solid'
+import { ref } from 'vue'
+import SearchInputBox from './SearchInputBox.vue'
+import NetworkLineSelector from './NetworkLineSelector.vue'
+import SelectTokenList from './SelectTokenList.vue'
+import IToken from '@/tokens/models/IToken'
+import { INetwork } from '@/models/INetwork'
 
 defineProps<{
     isModalOpen: boolean

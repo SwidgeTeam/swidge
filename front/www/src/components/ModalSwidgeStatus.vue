@@ -1,10 +1,10 @@
 <script setup lang='ts'>
 import { Dialog, DialogOverlay, TransitionChild, TransitionRoot } from '@headlessui/vue'
-import { XIcon } from '@heroicons/vue/outline';
+import { XIcon } from '@heroicons/vue/outline'
 
-import StatusStep from './StatusStep.vue';
-import { TransactionSteps } from "@/models/TransactionSteps";
-import { computed } from "vue";
+import StatusStep from './StatusStep.vue'
+import { TransactionSteps } from '@/models/TransactionSteps'
+import { computed } from 'vue'
 
 const props = defineProps<{
     show: boolean
@@ -19,9 +19,9 @@ const emits = defineEmits<{
 
 const successMessage = computed({
     get: () => {
-        const amountIn = props.steps.origin.amountIn;
-        const tokenIn = props.steps.origin.tokenIn;
-        let amountOut, tokenOut;
+        const amountIn = props.steps.origin.amountIn
+        const tokenIn = props.steps.origin.tokenIn
+        let amountOut, tokenOut
         if (props.sourceChain === props.destinationChain) {
             amountOut = props.steps.origin.amountOut
             tokenOut = props.steps.origin.tokenOut
@@ -29,8 +29,8 @@ const successMessage = computed({
             amountOut = props.steps.destination.amountOut
             tokenOut = props.steps.destination.tokenOut
         }
-        return "You’ve successfully transferred " + Number(amountIn).toFixed(2) + " " + tokenIn + " on " + props.sourceChain +
-            " to " + Number(amountOut).toFixed(2) + " " + tokenOut + " on " + props.destinationChain
+        return 'You’ve successfully transferred ' + Number(amountIn).toFixed(2) + ' ' + tokenIn + ' on ' + props.sourceChain +
+            ' to ' + Number(amountOut).toFixed(2) + ' ' + tokenOut + ' on ' + props.destinationChain
     },
     set: () => null
 })

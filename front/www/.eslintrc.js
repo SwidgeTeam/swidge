@@ -25,6 +25,18 @@ module.exports = {
         'semi': [2, 'never'],
         'vue/no-unused-vars': 'error',
         'vue/multi-word-component-names': 'off',
+        'vue/first-attribute-linebreak': ['error', {
+            'singleline': 'ignore',
+            'multiline': 'below'
+        }],
+        'vue/max-attributes-per-line': ['error', {
+            'singleline': {
+                'max': 2
+            },
+            'multiline': {
+                'max': 1
+            }
+        }],
         indent: 'error',
     },
     overrides: [
