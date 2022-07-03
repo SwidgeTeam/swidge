@@ -1,21 +1,25 @@
 <script setup lang='ts'>
-import { ArrowDownIcon, ArrowCircleRightIcon, XCircleIcon } from '@heroicons/vue/outline';
-import { ref, reactive, computed } from 'vue';
-import BridgeSwapSelectionCard from './BridgeSwapSelectionCard.vue';
-import ModalNetworkAndTokenSelect from './ModalNetworkAndTokenSelect.vue';
-import Header from '@/components/Header.vue';
-import FAQCard from '@/components/FAQCard.vue';
+import {
+    ArrowDownIcon,
+    ArrowCircleRightIcon,
+    XCircleIcon,
+} from '@heroicons/vue/outline'
+import { ref, reactive, computed } from 'vue'
+import BridgeSwapSelectionCard from './BridgeSwapSelectionCard.vue'
+import ModalNetworkAndTokenSelect from './ModalNetworkAndTokenSelect.vue'
+import Header from '@/components/Header.vue'
+import FAQCard from '@/components/FAQCard.vue'
 import IToken from '@/tokens/models/IToken'
-import BridgeSwapInteractiveButton from './BridgeSwapInteractiveButton.vue';
+import BridgeSwapInteractiveButton from './BridgeSwapInteractiveButton.vue'
 import SwidgeAPI from '@/api/swidge-api'
-import GetQuoteResponse from '@/api/models/get-quote-response';
-import { RouterCaller, RouterCallPayload } from "@/contracts/routerCaller";
-import { useWeb3Store } from "@/store/web3";
-import { ethers, providers } from "ethers";
-import networks from "@/assets/Networks";
-import { INetwork } from "@/models/INetwork";
-import ModalSwidgeStatus from './ModalSwidgeStatus.vue';
-import { TransactionSteps } from "@/models/TransactionSteps";
+import GetQuoteResponse from '@/api/models/get-quote-response'
+import { RouterCaller, RouterCallPayload } from '@/contracts/routerCaller'
+import { useWeb3Store } from '@/store/web3'
+import { ethers, providers } from 'ethers'
+import networks from '@/assets/Networks'
+import { INetwork } from '@/models/INetwork'
+import ModalSwidgeStatus from './ModalSwidgeStatus.vue'
+import { TransactionSteps } from '@/models/TransactionSteps'
 
 const web3Store = useWeb3Store()
 const { switchToNetwork, getChainProvider, getBalance } = web3Store
@@ -35,26 +39,26 @@ const transactionAlertMessage = ref<string>('')
 const isExecutingTransaction = ref<boolean>(false)
 
 const selectedSourceToken = ref<IToken>({
-    address: "",
+    address: '',
     decimals: 0,
-    img: "",
-    name: "",
-    replaceByDefault(): void { },
-    symbol: ""
+    img: '',
+    name: '',
+    replaceByDefault(): void {},
+    symbol: '',
 })
 const selectedDestinationToken = ref<IToken>({
-    address: "",
+    address: '',
     decimals: 0,
-    img: "",
-    name: "",
-    replaceByDefault(): void { },
-    symbol: ""
+    img: '',
+    name: '',
+    replaceByDefault(): void {},
+    symbol: '',
 })
 const quotedPath = ref<GetQuoteResponse>({
-    router: "",
-    amountOut: "",
+    router: '',
+    amountOut: '',
     originSwap: {
-        code: "",
+        code: '',
         tokenIn: {
             name: '',
             address: '',
@@ -63,10 +67,10 @@ const quotedPath = ref<GetQuoteResponse>({
             name: '',
             address: '',
         },
-        data: "",
+        data: '',
         required: false,
-        amountOut: "",
-        estimatedGas: ""
+        amountOut: '',
+        estimatedGas: '',
     },
     bridge: {
         tokenIn: {
@@ -77,10 +81,10 @@ const quotedPath = ref<GetQuoteResponse>({
             name: '',
             address: '',
         },
-        toChainId: "",
-        data: "",
+        toChainId: '',
+        data: '',
         required: false,
-        amountOut: "",
+        amountOut: '',
     },
     destinationSwap: {
         tokenIn: {
@@ -99,14 +103,14 @@ const sourceChainInfo = reactive<INetwork>({
     icon: '',
     id: '',
     tokens: [],
-    rpcUrl: ''
+    rpcUrl: '',
 })
 const destinationChainInfo = reactive<INetwork>({
     name: '',
     icon: '',
     id: '',
     tokens: [],
-    rpcUrl: ''
+    rpcUrl: '',
 })
 
 const steps = ref<TransactionSteps>({
@@ -145,11 +149,12 @@ const buttonLabel = computed({
             return transactionAlertMessage.value
         } else if (isExecutingTransaction.value) {
             return 'Executing'
-        } else {
+        }
+        else {
             return 'Swidge'
         }
     },
-    set: () => null
+    set: () => null,
 })
 
 /**
@@ -213,16 +218,18 @@ const handleGlobalNetworkSwitched = (chainId: string) => {
  * Handles selection of a token from the selection modal
  * @param info
  */
-const handleUpdateTokenFromModal = (info: { token: IToken, chain: INetwork }) => {
+const handleUpdateTokenFromModal = (info: {
+    token: IToken
+    chain: INetwork
+}) => {
     if (isSourceChainToken.value) {
         // If the origin network is being chosen
         if (sourceChainInfo.id != info.chain.id) {
             // If we changed origin network, inform wallet
-            switchToNetwork(info.chain.id)
-                .then(() => {
-                    updateOriginChainInfo(info.chain)
-                    updateOriginToken(info.token)
-                })
+            switchToNetwork(info.chain.id).then(() => {
+                updateOriginChainInfo(info.chain)
+                updateOriginToken(info.token)
+            })
         } else {
             updateOriginToken(info.token)
         }
@@ -292,8 +299,17 @@ const updateDestinationChainInfo = (chain: INetwork) => {
  * Quotes the possible path for a given pair and amount
  */
 const onQuote = async () => {
-    isExecuteButtonDisabled.value = true
-    isGettingQuote.value = true
+    showTransactionAlert.value = false;
+    isExecuteButtonDisabled.value = true;
+    isGettingQuote.value = true;
+
+    if(sourceTokenAmount.value > sourceTokenMaxAmount.value) {
+        showTransactionAlert.value = true;
+        isGettingQuote.value = false;
+        transactionAlertMessage.value = 'Insufficient Balance'
+        return
+    }
+
     if (!selectedSourceToken.value || !selectedDestinationToken.value) {
         return
     }
@@ -319,7 +335,7 @@ const onQuote = async () => {
             showTransactionAlert.value = true
             destinationTokenAmount.value = ''
         } else {
-            console.log('Unexpected error', e);
+            console.log('Unexpected error', e)
         }
     }
 }
@@ -331,7 +347,7 @@ const onExecuteTransaction = async () => {
     const amountIn = ethers.utils.parseUnits(
         sourceTokenAmount.value,
         selectedSourceToken.value.decimals
-    );
+    )
     const contractCallPayload: RouterCallPayload = {
         router: quotedPath.value.router,
         amountIn: amountIn.toString(),
@@ -352,8 +368,8 @@ const onExecuteTransaction = async () => {
         destinationSwap: {
             tokenIn: quotedPath.value.destinationSwap.tokenIn.address,
             tokenOut: quotedPath.value.destinationSwap.tokenOut.address,
-        }
-    };
+        },
+    }
 
     setExecutingButton()
 
@@ -402,20 +418,18 @@ const unsetExecutingButton = () => {
  * @param executedTxHash
  */
 const setUpEventListener = (executedTxHash: string) => {
-    const provider = getChainProvider(quotedPath.value.bridge.toChainId);
+    const provider = getChainProvider(quotedPath.value.bridge.toChainId)
 
     const filter = {
         address: quotedPath.value.router,
-        topics: [
-            ethers.utils.id("CrossFinalized(string,uint256)")
-        ]
-    };
+        topics: [ethers.utils.id('CrossFinalized(string,uint256)')],
+    }
 
     provider.on(filter, (event) => {
         const [txHash] = ethers.utils.defaultAbiCoder.decode(
             ['string', 'uint256'],
             event.data
-        );
+        )
         if (executedTxHash === txHash) {
             steps.value.bridge.completed = true
             steps.value.destination.completed = true
@@ -446,8 +460,10 @@ const openTransactionStatusModal = () => {
     steps.value.bridge.required = quotedPath.value.bridge.required
     steps.value.bridge.completed = false
 
-    steps.value.destination.tokenIn = quotedPath.value.destinationSwap.tokenIn.name
-    steps.value.destination.tokenOut = quotedPath.value.destinationSwap.tokenOut.name
+    steps.value.destination.tokenIn =
+        quotedPath.value.destinationSwap.tokenIn.name
+    steps.value.destination.tokenOut =
+        quotedPath.value.destinationSwap.tokenOut.name
     steps.value.destination.amountIn = quotedPath.value.bridge.amountOut
     steps.value.destination.amountOut = quotedPath.value.amountOut
     steps.value.destination.required = quotedPath.value.destinationSwap.required
@@ -463,7 +479,7 @@ const openTransactionStatusModal = () => {
  * closing also all the listeners set on the providers
  */
 const closeModalStatus = () => {
-    providersOnUse.value.forEach(provider => {
+    providersOnUse.value.forEach((provider) => {
         provider.removeAllListeners()
     })
     providersOnUse.value = []
@@ -479,11 +495,27 @@ const closeModalStatus = () => {
                 <div class="flex flex-col gap-6">
                     <div class="flex items-center justify-between">
                         <span class="text-3xl">Swap & Bridge</span>
-                        <ArrowCircleRightIcon v-if="!isFaqOpen" class="w-7 h-7 cursor-pointer"
-                            @click="isFaqOpen = true" />
-                        <XCircleIcon v-if="isFaqOpen" class="w-7 h-7 cursor-pointer" @click="isFaqOpen = false" />
+                        <ArrowCircleRightIcon
+                            v-if="!isFaqOpen"
+                            class="w-7 h-7 cursor-pointer"
+                            @click="isFaqOpen = true"
+                        />
+                        <XCircleIcon
+                            v-if="isFaqOpen"
+                            class="w-7 h-7 cursor-pointer"
+                            @click="isFaqOpen = false"
+                        />
                     </div>
-                    <div class="flex flex-col gap-8 px-12 py-6 rounded-3xl bg-cards-background-dark-grey">
+                    <div
+                        class="
+                            flex flex-col
+                            gap-8
+                            px-12
+                            py-6
+                            rounded-3xl
+                            bg-cards-background-dark-grey
+                        "
+                    >
                         <div class="flex flex-col w-full gap-4">
                             <span class="text-2xl">You send:</span>
                             <BridgeSwapSelectionCard v-model:value="sourceTokenAmount" :token="selectedSourceToken"
