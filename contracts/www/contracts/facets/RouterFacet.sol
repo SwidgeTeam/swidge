@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
 import "../libraries/LibStorage.sol";
 import "../libraries/LibProvider.sol";
+import "../libraries/LibFees.sol";
 
 contract RouterFacet {
 
@@ -146,7 +147,7 @@ contract RouterFacet {
 
         // Store the amount of tokens we keep for the tx fee
         // they will be taken to the relayer wallet on a different process
-        LibStorage.fees().fees[_swapStep.tokenIn] = _txFee;
+        LibFees.addFee(_swapStep.tokenIn, _txFee);
 
         uint256 finalAmount;
         // Check if last swap is required,

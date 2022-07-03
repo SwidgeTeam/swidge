@@ -22,6 +22,8 @@ library LibStorage {
 
     struct FeeStorage {
         mapping(address => uint256) fees;
+        mapping(address => bool) accruedTokens;
+        address[] accruedTokensList;
     }
 
     struct Facet {
