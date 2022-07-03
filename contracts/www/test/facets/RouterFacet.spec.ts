@@ -17,6 +17,7 @@ chai.use(smock.matchers);
 
 describe("RouterFacet", function () {
   let providerUpdater: Contract;
+  let feeManager: Contract;
   let router: Contract;
   let anyswap: Contract;
   let zeroEx: Contract;
@@ -27,6 +28,7 @@ describe("RouterFacet", function () {
     await deployer.deploy();
 
     providerUpdater = await deployer.interactWith("ProviderUpdaterFacet");
+    feeManager = await deployer.interactWith("FeeManagerFacet");
     router = await deployer.interactWith("RouterFacet");
 
     anyswap = await deployer.deployByName("Anyswap");
@@ -350,6 +352,77 @@ describe("RouterFacet", function () {
       await expect(call)
         .to.emit(router, "CrossFinalized")
         .withArgs("txHash", 10);
+    });
+
+    it("Should accrue the indicated fees", async function () {
+      /** Arrange */
+      const { owner, relayer } = await getAccounts();
+
+      // Create two fake ERC20 tokens
+      const fakeTokenIn1 = await fakeTokenContract();
+      const fakeTokenIn2 = await fakeTokenContract();
+      const fakeTokenOut = await fakeTokenContract();
+
+      // Fake response from executed methods on the output token
+      fakeTokenOut.balanceOf.returnsAtCall(0, 10);
+      fakeTokenOut.balanceOf.returnsAtCall(1, 20);
+      fakeTokenOut.balanceOf.returnsAtCall(2, 20);
+      fakeTokenOut.balanceOf.returnsAtCall(3, 20);
+      fakeTokenOut.balanceOf.returnsAtCall(4, 20);
+      fakeTokenOut.balanceOf.returnsAtCall(5, 20);
+
+      const [callData] = await zeroExEncodedCalldata();
+      const providerCode = 0;
+
+      await providerUpdater
+        .connect(owner)
+        .updateSwapper([providerCode, true, zeroEx.address, ZeroAddress]);
+
+      /** Act */
+      // tx one
+      await router
+        .connect(relayer)
+        .finalizeSwidge(1000000, 10000, RandomAddress, "txHash", [
+          providerCode,
+          fakeTokenIn1.address,
+          fakeTokenOut.address,
+          callData,
+          true,
+        ]);
+
+      // tx two
+      await router
+        .connect(relayer)
+        .finalizeSwidge(1000000, 20000, RandomAddress, "txHash", [
+          providerCode,
+          fakeTokenIn1.address,
+          fakeTokenOut.address,
+          callData,
+          true,
+        ]);
+
+      // tx three
+      await router
+        .connect(relayer)
+        .finalizeSwidge(1000000, 20000, RandomAddress, "txHash", [
+          providerCode,
+          fakeTokenIn2.address,
+          fakeTokenOut.address,
+          callData,
+          true,
+        ]);
+
+      // get accrued fees
+      const fees = await feeManager.connect(owner).listAccruedFees();
+
+      /** Assert */
+      expect(fees).to.be.length(2);
+
+      expect(fees[0].token).to.equal(fakeTokenIn1.address);
+      expect(fees[0].amount.toNumber()).to.equal(30000);
+
+      expect(fees[1].token).to.equal(fakeTokenIn2.address);
+      expect(fees[1].amount.toNumber()).to.equal(20000);
     });
 
     it("Should revert if the provider fails", async function () {
