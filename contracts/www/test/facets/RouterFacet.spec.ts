@@ -310,7 +310,7 @@ describe("RouterFacet", function () {
   });
 
   describe("Swidge finalize process", () => {
-    it("Should if anyone else than relayer is the caller", async function () {
+    it("Should fail if anyone else than relayer is the caller", async function () {
       /** Arrange */
       const { owner, anyoneElse, relayer } = await getAccounts();
       await relaterUpdater.connect(owner).updateRelayer(relayer.address);
@@ -318,7 +318,7 @@ describe("RouterFacet", function () {
       /** Act */
       const call = router
         .connect(anyoneElse)
-        .finalizeSwidge(1000000, RandomAddress, "txHash", [
+        .finalizeSwidge(1000000, 10000, RandomAddress, "txHash", [
           1,
           RandomAddress,
           RandomAddress,
@@ -352,7 +352,7 @@ describe("RouterFacet", function () {
       /** Act */
       const call = router
         .connect(relayer)
-        .finalizeSwidge(1000000, RandomAddress, "txHash", [
+        .finalizeSwidge(1000000, 10000, RandomAddress, "txHash", [
           0,
           fakeTokenIn.address,
           fakeTokenOut.address,
