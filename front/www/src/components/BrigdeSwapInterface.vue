@@ -43,7 +43,7 @@ const selectedSourceToken = ref<IToken>({
     decimals: 0,
     img: '',
     name: '',
-    replaceByDefault(): void {},
+    replaceByDefault(): void { },
     symbol: '',
 })
 const selectedDestinationToken = ref<IToken>({
@@ -51,7 +51,7 @@ const selectedDestinationToken = ref<IToken>({
     decimals: 0,
     img: '',
     name: '',
-    replaceByDefault(): void {},
+    replaceByDefault(): void { },
     symbol: '',
 })
 const quotedPath = ref<GetQuoteResponse>({
@@ -303,15 +303,8 @@ const onQuote = async () => {
     isExecuteButtonDisabled.value = true;
     isGettingQuote.value = true;
 
-    if(sourceTokenAmount.value > sourceTokenMaxAmount.value) {
-        showTransactionAlert.value = true;
-        isGettingQuote.value = false;
-        transactionAlertMessage.value = 'Insufficient Balance'
-        return
-    }
-
     if (!selectedSourceToken.value || !selectedDestinationToken.value) {
-        return
+        return;
     }
     try {
         const quote: GetQuoteResponse = await SwidgeAPI.getQuote({
@@ -319,26 +312,32 @@ const onQuote = async () => {
             srcToken: selectedSourceToken.value.address,
             toChainId: destinationChainInfo.id,
             dstToken: selectedDestinationToken.value.address,
-            amount: sourceTokenAmount.value
-        })
-        quotedPath.value = quote
-        destinationTokenAmount.value = quote.amountOut
-        isGettingQuote.value = false
-        isExecuteButtonDisabled.value = false
-        transactionAlertMessage.value = ''
-        showTransactionAlert.value = false
+            amount: sourceTokenAmount.value.toString(),
+        });
+        quotedPath.value = quote;
+        destinationTokenAmount.value = quote.amountOut;
+        isGettingQuote.value = false;
+
+        if (Number(sourceTokenAmount.value) > Number(sourceTokenMaxAmount.value)) {
+            showTransactionAlert.value = true;
+            transactionAlertMessage.value = "Insufficient Balance";
+            return;
+        }
+        isExecuteButtonDisabled.value = false;
+        transactionAlertMessage.value = "";
+        showTransactionAlert.value = false;
     } catch (e: unknown) {
-        isGettingQuote.value = false
-        isExecuteButtonDisabled.value = true
+        isGettingQuote.value = false;
+        isExecuteButtonDisabled.value = true;
         if (e instanceof Error) {
-            transactionAlertMessage.value = e.message
-            showTransactionAlert.value = true
-            destinationTokenAmount.value = ''
+            transactionAlertMessage.value = e.message;
+            showTransactionAlert.value = true;
+            destinationTokenAmount.value = '';
         } else {
-            console.log('Unexpected error', e)
+            console.log("Unexpected error", e);
         }
     }
-}
+};
 
 /**
  * Executes and stores the transaction
@@ -495,27 +494,18 @@ const closeModalStatus = () => {
                 <div class="flex flex-col gap-6">
                     <div class="flex items-center justify-between">
                         <span class="text-3xl">Swap & Bridge</span>
-                        <ArrowCircleRightIcon
-                            v-if="!isFaqOpen"
-                            class="w-7 h-7 cursor-pointer"
-                            @click="isFaqOpen = true"
-                        />
-                        <XCircleIcon
-                            v-if="isFaqOpen"
-                            class="w-7 h-7 cursor-pointer"
-                            @click="isFaqOpen = false"
-                        />
+                        <ArrowCircleRightIcon v-if="!isFaqOpen" class="w-7 h-7 cursor-pointer"
+                            @click="isFaqOpen = true" />
+                        <XCircleIcon v-if="isFaqOpen" class="w-7 h-7 cursor-pointer" @click="isFaqOpen = false" />
                     </div>
-                    <div
-                        class="
+                    <div class="
                             flex flex-col
                             gap-8
                             px-12
                             py-6
                             rounded-3xl
                             bg-cards-background-dark-grey
-                        "
-                    >
+                        ">
                         <div class="flex flex-col w-full gap-4">
                             <span class="text-2xl">You send:</span>
                             <BridgeSwapSelectionCard v-model:value="sourceTokenAmount" :token="selectedSourceToken"
