@@ -90,6 +90,8 @@ services:
   terraform:
     image: hashicorp/terraform:1.2.3
     environment:
+      TF_VAR_domain: ${TF_DOMAIN}
+      TF_VAR_vpc_cidr: ${TF_VPC_CIDR}
       TF_VAR_region: ${TF_AWS_REGION}
       TF_VAR_environment: ${TF_ENVIRONMENT}
       TF_VAR_base_url: ${TF_BASE_URL}
