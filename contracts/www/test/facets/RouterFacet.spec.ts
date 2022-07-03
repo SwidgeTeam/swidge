@@ -11,38 +11,28 @@ import {
 import { Contract } from "ethers";
 import { smock } from "@defi-wonderland/smock";
 
-const { deployDiamond, deployFacets } = require("../../scripts/deploy");
+const Deployer = require("../../scripts/Deployer");
 
 chai.use(smock.matchers);
 
 describe("RouterFacet", function () {
   let relaterUpdater: Contract;
   let providerUpdater: Contract;
+  let router: Contract;
   let anyswap: Contract;
   let zeroEx: Contract;
-  let router: Contract;
 
   beforeEach(async () => {
-    const { owner } = await getAccounts();
-    const [diamondProxy] = await deployDiamond(ethers, owner);
-    await deployFacets(ethers, owner, diamondProxy.address);
-    relaterUpdater = await ethers.getContractAt(
-      "RelayerUpdaterFacet",
-      diamondProxy.address
-    );
-    providerUpdater = await ethers.getContractAt(
-      "ProviderUpdaterFacet",
-      diamondProxy.address
-    );
-    const Anyswap = await ethers.getContractFactory("Anyswap");
-    anyswap = await Anyswap.deploy();
-    await anyswap.deployed();
+    const { owner, relayer } = await getAccounts();
+    const deployer = new Deployer(ethers, owner, relayer);
+    await deployer.deploy();
 
-    const ZeroEx = await ethers.getContractFactory("ZeroEx");
-    zeroEx = await ZeroEx.deploy();
-    await zeroEx.deployed();
+    relaterUpdater = await deployer.interactWith("RelayerUpdaterFacet");
+    providerUpdater = await deployer.interactWith("ProviderUpdaterFacet");
+    router = await deployer.interactWith("RouterFacet");
 
-    router = await ethers.getContractAt("RouterFacet", diamondProxy.address);
+    anyswap = await deployer.deployByName("Anyswap");
+    zeroEx = await deployer.deployByName("ZeroEx");
   });
 
   describe("Swidge init process", () => {
