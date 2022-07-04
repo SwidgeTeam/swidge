@@ -1,6 +1,6 @@
 import { Fantom, Polygon } from './ChainIds';
 
 export const RpcNode = {
-  [Polygon]: 'https://rpc-mainnet.maticvigil.com',
+  [Polygon]: 'https://polygon-rpc.com',
   [Fantom]: 'https://rpcapi.fantom.network',
 };
