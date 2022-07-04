@@ -246,6 +246,7 @@ $(addprefix ud-, ${ENABLED_NETWORKS}): ud-%: # will use current address
 	@$(call CONTRACTS_LIVE_RUN,deploy-facet --facet RouterFacet,$*)
 	@$(call CONTRACTS_LIVE_RUN,deploy-facet --facet RelayerUpdaterFacet,$*)
 	@$(call CONTRACTS_LIVE_RUN,deploy-facet --facet ProviderUpdaterFacet,$*)
+	@$(call CONTRACTS_LIVE_RUN,deploy-facet --facet FeeManagerFacet,$*)
 	@$(call CONTRACTS_LIVE_RUN,deploy-facet --facet DiamondLoupeFacet,$*)
 	@$(call CONTRACTS_LIVE_RUN,deploy-bridge --bridge Anyswap,$*)
 	@$(call CONTRACTS_LIVE_RUN,deploy-dex --dex ZeroEx,$*)
