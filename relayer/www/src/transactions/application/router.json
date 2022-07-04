@@ -12,9 +12,9 @@
         "type": "address"
       },
       {
-        "internalType": "string",
+        "internalType": "bytes32",
         "name": "_originHash",
-        "type": "string"
+        "type": "bytes32"
       },
       {
         "components": [
