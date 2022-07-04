@@ -138,16 +138,11 @@ contract RouterFacet {
      */
     function finalizeSwidge(
         uint256 _amount,
-        uint256 _txFee,
         address _receiver,
         string calldata _originHash,
         SwapStep calldata _swapStep
     ) external payable {
         LibStorage.enforceIsRelayer();
-
-        // Store the amount of tokens we keep for the tx fee
-        // they will be taken to the relayer wallet on a different process
-        LibFees.addFee(_swapStep.tokenIn, _txFee);
 
         uint256 finalAmount;
         // Check if last swap is required,

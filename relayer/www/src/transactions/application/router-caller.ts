@@ -9,7 +9,6 @@ export interface FinalizeCrossParams {
   routerAddress: ContractAddress;
   receiverAddress: string;
   txHash: string;
-  fee: string;
   swap: {
     providerCode: number;
     amountIn: string;
@@ -40,7 +39,6 @@ export class RouterCaller {
     // Create transaction
     const tx = await Router.finalizeSwidge(
       params.swap.amountIn,
-      params.fee,
       params.receiverAddress,
       params.txHash,
       [
