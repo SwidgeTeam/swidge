@@ -12,6 +12,7 @@ import addressesRepositoryProvider from '../addresses/infrastructure/database/re
 import { RouterAddressFetcher } from '../addresses/application/query/RouterAddressFetcher';
 import { TransactionsModule } from '../transactions/transactions.module';
 import tokenDetailsFetcherProvider from '../shared/infrastructure/TokenDetailsFetcher.provider';
+import priceFeedConverterProvider from '../shared/infrastructure/PriceFeedConverter.provider';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import tokenDetailsFetcherProvider from '../shared/infrastructure/TokenDetailsFe
     httpClientProvider(),
     addressesRepositoryProvider(),
     tokenDetailsFetcherProvider(),
+    priceFeedConverterProvider(),
   ],
 })
 export class PathsModule {}

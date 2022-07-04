@@ -8,6 +8,7 @@ import { Fantom, Polygon } from '../../../shared/enums/ChainIds';
 import { ContractAddress } from '../../../shared/types';
 import { InsufficientLiquidity } from '../../domain/InsufficientLiquidity';
 import { AbiEncoder } from '../../../shared/domain/CallEncoder';
+import { BigNumber } from 'ethers';
 
 export class GetSwapOrder {
   constructor(
@@ -26,7 +27,7 @@ export class GetSwapOrder {
         allowanceTarget: ContractAddress;
         data: string;
         buyAmount: string;
-        estimatedGas: string;
+        gas: string;
       }>(
         `${urls[request.chainId]}/swap/v1/quote` +
           `?sellToken=${request.tokenIn.address}` +
@@ -52,7 +53,7 @@ export class GetSwapOrder {
       response.allowanceTarget,
       encodedData,
       BigInteger.fromBigNumber(response.buyAmount),
-      response.estimatedGas,
+      BigNumber.from(response.gas),
       true,
     );
   }

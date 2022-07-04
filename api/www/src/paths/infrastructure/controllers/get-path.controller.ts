@@ -46,6 +46,7 @@ export class GetPathController {
         tokenIn: this.mapTokenDetails(path.destinationSwap.tokenIn),
         tokenOut: this.mapTokenDetails(path.destinationSwap.tokenOut),
         required: path.destinationSwap.required,
+        fee: path.destinationFee.toString(),
       },
     });
   }
