@@ -307,13 +307,12 @@ describe("RouterFacet", function () {
       /** Act */
       const call = router
         .connect(anyoneElse)
-        .finalizeSwidge(1000000, RandomAddress, "txHash", [
-          1,
+        .finalizeSwidge(
+          1000000,
           RandomAddress,
-          RandomAddress,
-          "0x",
-          false,
-        ]);
+          "0x02b0672e488733a606cc52bd19e865de313c7e1e019fb6204c01a9bdcfa08cca",
+          [1, RandomAddress, RandomAddress, "0x", false]
+        );
 
       /** Assert */
       await expect(call).to.be.revertedWith("Must be relayer");
@@ -340,18 +339,20 @@ describe("RouterFacet", function () {
       /** Act */
       const call = router
         .connect(relayer)
-        .finalizeSwidge(1000000, RandomAddress, "txHash", [
-          0,
-          fakeTokenIn.address,
-          fakeTokenOut.address,
-          callData,
-          true,
-        ]);
+        .finalizeSwidge(
+          1000000,
+          RandomAddress,
+          "0x02b0672e488733a606cc52bd19e865de313c7e1e019fb6204c01a9bdcfa08cca",
+          [0, fakeTokenIn.address, fakeTokenOut.address, callData, true]
+        );
 
       /** Assert */
       await expect(call)
         .to.emit(router, "CrossFinalized")
-        .withArgs("txHash", 10);
+        .withArgs(
+          "0x02b0672e488733a606cc52bd19e865de313c7e1e019fb6204c01a9bdcfa08cca",
+          10
+        );
     });
 
     it("Should revert if the provider fails", async function () {
@@ -367,13 +368,12 @@ describe("RouterFacet", function () {
       /** Act */
       const call = router
         .connect(relayer)
-        .finalizeSwidge(1000000, RandomAddress, "txHash", [
-          0,
-          fakeTokenIn.address,
-          fakeTokenOut.address,
-          callData,
-          true,
-        ]);
+        .finalizeSwidge(
+          1000000,
+          RandomAddress,
+          "0x02b0672e488733a606cc52bd19e865de313c7e1e019fb6204c01a9bdcfa08cca",
+          [0, fakeTokenIn.address, fakeTokenOut.address, callData, true]
+        );
 
       /** Assert */
       await expect(call).to.be.reverted;
