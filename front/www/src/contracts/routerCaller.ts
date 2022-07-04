@@ -30,8 +30,6 @@ export const NATIVE_COIN_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 
 export class RouterCaller {
 
-    private static MAX_UINT256 = (2 ** 255).toLocaleString('fullwide', { useGrouping: false })
-
     static provider() {
         // Get user account
         return new ethers.providers.Web3Provider(window.ethereum)
@@ -109,12 +107,12 @@ export class RouterCaller {
 
         const allowance = await Token.allowance(window.ethereum.selectedAddress, spender)
 
-        if (allowance.toString() === this.MAX_UINT256) {
+        if (allowance.toString() === ethers.constants.MaxUint256.toString()) {
             return
         }
 
         // Create the transaction
-        const tx = await Token.approve(spender, this.MAX_UINT256)
+        const tx = await Token.approve(spender, ethers.constants.MaxUint256)
 
         // Broadcast & wait
         await tx.wait()
