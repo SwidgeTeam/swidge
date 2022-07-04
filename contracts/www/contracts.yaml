@@ -22,11 +22,12 @@ localhost:
 fantom:
   diamond: "0x1a6e1ef1d28A7d9feD016c88f4d1858367564781"
   facet:
-    RouterFacet: "0x2998030be94725BAeF48B978494fFDEcce5b5DE1"
+    RouterFacet: "0xE1E88A7C44C56fa14312cdB4101C1F40fcAcE6E0"
     RelayerUpdaterFacet: "0x323C4B3a99118669f6ac31582C85B608FfD6e34e"
     DiamondLoupeFacet: "0x2a744014Ca5354d98dd752F1a61A4Ee8110f4a6a"
-    ProviderUpdaterFacet: "0xf66579Ff926e44BD583a8455beFaBb88dECcAFfc"
+    ProviderUpdaterFacet: "0x9bD7d9cd5eF16C03A3bf011478656E2d450F6794"
     DiamondCutterFacet: "0xD9bF09fdb4242f0D64cA8B0B8ADB3D5663661546"
+    FeeManagerFacet: "0xCbbFE7283276bE0261d3A7CEFd7205Ae0aD683a1"
   bridge:
     Anyswap:
       code: 0
@@ -42,11 +43,12 @@ fantom:
 polygon:
   diamond: "0x1a6e1ef1d28A7d9feD016c88f4d1858367564781"
   facet:
-    RouterFacet: "0x02b4eE9e6cAD5C73E186b996dbF6Da810b8514bE"
+    RouterFacet: "0x0a8650B6b9a42785494f7A46e4edAc75cbB251F6"
     RelayerUpdaterFacet: "0xc446F424e1f95ea1ADf0b77fFae23f17A0569378"
     DiamondLoupeFacet: "0xF01741149641A9d03FA72447F35839C85CA1c806"
-    ProviderUpdaterFacet: "0xC1521b1880e095c44D0C4F7B3fd084103eA54E10"
+    ProviderUpdaterFacet: "0x2b881CdE037890d387a650f8ca6Ee3f6C45A2CC5"
     DiamondCutterFacet: "0xa0f5DcDD4962CEb565F98735682dcF40DE7C12Eb"
+    FeeManagerFacet: "0x704853d1939fBbc8bcD4017303B2E8337e34134D"
   bridge:
     Anyswap:
       code: 0
