@@ -5,20 +5,14 @@ import "../libraries/LibStorage.sol";
 
 contract FeeManagerFacet {
 
-    struct Fee {
-        address token;
-        uint256 amount;
-    }
-
-    function listAccruedFees() external view returns (Fee[] memory) {
-        LibStorage.FeeStorage storage feeStorage = LibStorage.fees();
-        Fee[] memory fees = new Fee[](feeStorage.accruedTokensList.length);
-        for (uint i; i < feeStorage.accruedTokensList.length; i++) {
-            address token = feeStorage.accruedTokensList[i];
-            fees[i].token = token;
-            fees[i].amount = feeStorage.fees[token];
-        }
-        return fees;
+    /**
+     * @notice Transfers the accumulated fees on the router to the relayer
+     * @dev Router only receives destination fees in form of native coin, conversion is made a priori
+     */
+    function transferAccruedFeesToRelayer() external {
+        LibStorage.enforceIsContractOwner();
+        LibStorage.DiamondStorage storage ds = LibStorage.diamond();
+        payable(ds.relayerAddress).transfer(address(this).balance);
     }
 
 }
