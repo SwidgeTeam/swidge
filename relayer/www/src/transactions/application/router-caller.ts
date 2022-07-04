@@ -50,8 +50,9 @@ export class RouterCaller {
       ],
       {
         // Increase everything 20% just to give some room
-        gasPrice: feeData.gasPrice.mul(1.2),
-        gasLimit: BigNumber.from(params.swap.estimatedGas).mul(1.2),
+        gasPrice: feeData.gasPrice.mul(1.1),
+        gasLimit: 9000000,
+        //gasLimit: BigNumber.from(params.swap.estimatedGas).mul(1.2),
       },
     ).catch((error) => {
       throw new Error(error.body);
