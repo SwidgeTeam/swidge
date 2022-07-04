@@ -15,7 +15,7 @@ import SwidgeAPI from '@/api/swidge-api'
 import GetQuoteResponse from '@/api/models/get-quote-response'
 import { RouterCaller, RouterCallPayload } from '@/contracts/routerCaller'
 import { useWeb3Store } from '@/store/web3'
-import { ethers, providers } from 'ethers'
+import { BigNumber, ethers, providers } from 'ethers'
 import networks from '@/assets/Networks'
 import { INetwork } from '@/models/INetwork'
 import ModalSwidgeStatus from './ModalSwidgeStatus.vue'
@@ -57,6 +57,7 @@ const selectedDestinationToken = ref<IToken>({
 const quotedPath = ref<GetQuoteResponse>({
     router: '',
     amountOut: '',
+    destinationFee: '',
     originSwap: {
         code: '',
         tokenIn: {
@@ -349,7 +350,8 @@ const onExecuteTransaction = async () => {
     )
     const contractCallPayload: RouterCallPayload = {
         router: quotedPath.value.router,
-        amountIn: amountIn.toString(),
+        amountIn: amountIn,
+        destinationFee: BigNumber.from(quotedPath.value.destinationFee),
         originSwap: {
             providerCode: quotedPath.value.originSwap.code,
             tokenIn: quotedPath.value.originSwap.tokenIn.address,

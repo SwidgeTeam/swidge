@@ -1,10 +1,11 @@
-import { ethers, ContractTransaction } from 'ethers'
+import { ethers, ContractTransaction, BigNumber } from 'ethers'
 import routerAbi from './router.json'
 import IERC20Abi from './IERC20.json'
 
 export interface RouterCallPayload {
     router: string
-    amountIn: string
+    amountIn: BigNumber
+    destinationFee: BigNumber
     originSwap: {
         providerCode: string
         tokenIn: string
@@ -56,9 +57,11 @@ export class RouterCaller {
 
         const feeData = await provider.getFeeData()
 
-        const valueToSend = nativeInput
-            ? params.amountIn
-            : 0
+        let valueToSend = params.destinationFee
+
+        if (nativeInput) {
+            valueToSend = valueToSend.add(params.amountIn)
+        }
 
         // Create transaction
         return Router.initSwidge(

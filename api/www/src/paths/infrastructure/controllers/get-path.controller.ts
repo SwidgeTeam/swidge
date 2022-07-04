@@ -25,6 +25,7 @@ export class GetPathController {
     return res.json({
       router: path.router,
       amountOut: path.amountOut,
+      destinationFee: path.destinationFee.toString(),
       originSwap: {
         code: path.originSwap.providerCode,
         tokenIn: this.mapTokenDetails(path.originSwap.tokenIn),
@@ -46,7 +47,6 @@ export class GetPathController {
         tokenIn: this.mapTokenDetails(path.destinationSwap.tokenIn),
         tokenOut: this.mapTokenDetails(path.destinationSwap.tokenOut),
         required: path.destinationSwap.required,
-        fee: path.destinationFee.toString(),
       },
     });
   }
