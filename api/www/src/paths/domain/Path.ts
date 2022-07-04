@@ -1,6 +1,7 @@
 import { ContractAddress } from '../../shared/types';
 import { SwapOrder } from '../../swaps/domain/SwapOrder';
 import { BridgingOrder } from '../../bridges/domain/BridgingOrder';
+import { BigNumber } from 'ethers';
 
 export class Path {
   constructor(
@@ -8,6 +9,7 @@ export class Path {
     private readonly _originSwap: SwapOrder,
     private readonly _bridging: BridgingOrder,
     private readonly _destinationSwap: SwapOrder,
+    private readonly _destinationFee: BigNumber,
   ) {}
 
   get router(): ContractAddress {
@@ -40,5 +42,9 @@ export class Path {
 
   get destinationSwap(): SwapOrder {
     return this._destinationSwap;
+  }
+
+  get destinationFee(): BigNumber {
+    return this._destinationFee;
   }
 }

@@ -1,4 +1,6 @@
 {
+  "license": "UNLICENSED",
+  "private": true,
   "name": "hardhat-project",
   "scripts": {
     "up": "hardhat node",

@@ -4,7 +4,7 @@ import { getAccounts, ZeroAddress } from "../shared";
 import { Contract } from "ethers";
 import { smock } from "@defi-wonderland/smock";
 
-const { deployDiamond, deployFacets } = require("../../scripts/deploy");
+const Deployer = require("../../scripts/Deployer");
 
 chai.use(smock.matchers);
 
@@ -12,13 +12,11 @@ describe("Update Providers", function () {
   let contract: Contract;
 
   beforeEach(async () => {
-    const { owner } = await getAccounts();
-    const [diamondProxy] = await deployDiamond(ethers, owner);
-    await deployFacets(ethers, owner, diamondProxy.address);
-    contract = await ethers.getContractAt(
-      "ProviderUpdaterFacet",
-      diamondProxy.address
-    );
+    const { owner, relayer } = await getAccounts();
+    const deployer = new Deployer(ethers, owner, relayer);
+    await deployer.deploy();
+
+    contract = await deployer.interactWith("ProviderUpdaterFacet");
   });
 
   it("Should fail if anyone else than the owner tries to update bridge providers", async function () {

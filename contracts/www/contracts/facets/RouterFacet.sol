@@ -138,7 +138,7 @@ contract RouterFacet {
     function finalizeSwidge(
         uint256 _amount,
         address _receiver,
-        string calldata _originHash,
+        bytes32 _originHash,
         SwapStep calldata _swapStep
     ) external payable {
         LibStorage.enforceIsRelayer();
@@ -211,7 +211,7 @@ contract RouterFacet {
      * @dev Emitted when a multi-chain swap is finalized
      */
     event CrossFinalized(
-        string txHash,
+        bytes32 txHash,
         uint256 amountOut
     );
 

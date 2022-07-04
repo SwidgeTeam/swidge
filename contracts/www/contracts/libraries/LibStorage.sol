@@ -12,16 +12,16 @@ library LibStorage {
         address relayerAddress;
     }
 
-    struct Facet {
-        address facetAddress;
-        uint16 selectorPosition;
-    }
-
     struct ProviderStorage {
         mapping(uint8 => Provider) bridgeProviders;
         mapping(uint8 => Provider) swapProviders;
         uint16 totalBridges;
         uint16 totalSwappers;
+    }
+
+    struct Facet {
+        address facetAddress;
+        uint16 selectorPosition;
     }
 
     struct Provider {
@@ -38,10 +38,10 @@ library LibStorage {
         }
     }
 
-    function providers() internal pure returns (ProviderStorage storage s) {
+    function providers() internal pure returns (ProviderStorage storage ps) {
         bytes32 position = PROVIDERS_STORAGE_POSITION;
         assembly {
-            s.slot := position
+            ps.slot := position
         }
     }
 

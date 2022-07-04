@@ -27,7 +27,7 @@ export class GetSwapQuoteController {
       tokenIn: order.tokenIn.address,
       tokenOut: order.tokenOut.address,
       data: order.data,
-      estimatedGas: order.estimatedGas,
+      estimatedGas: order.estimatedGas.toString(),
       required: order.required,
     });
   }

@@ -3,7 +3,7 @@ import { ethers } from "hardhat";
 import { getAccounts, ZeroAddress } from "../shared";
 import { Contract } from "ethers";
 import { smock } from "@defi-wonderland/smock";
-const { deployDiamond, deployFacets } = require("../../scripts/deploy");
+const Deployer = require("../../scripts/Deployer");
 
 chai.use(smock.matchers);
 
@@ -11,13 +11,11 @@ describe("RelayerUpdaterFacet", function () {
   let contract: Contract;
 
   beforeEach(async () => {
-    const { owner } = await getAccounts();
-    const [diamondProxy] = await deployDiamond(ethers, owner);
-    await deployFacets(ethers, owner, diamondProxy.address);
-    contract = await ethers.getContractAt(
-      "RelayerUpdaterFacet",
-      diamondProxy.address
-    );
+    const { owner, relayer } = await getAccounts();
+    const deployer = new Deployer(ethers, owner, relayer);
+    await deployer.deploy();
+
+    contract = await deployer.interactWith("RelayerUpdaterFacet");
   });
 
   describe("Update Relayer", () => {
@@ -45,7 +43,7 @@ describe("RelayerUpdaterFacet", function () {
 
     it("Should emit an event when the relayer is successfully updated", async function () {
       /** Arrange */
-      const { owner, random } = await getAccounts();
+      const { owner, random, relayer } = await getAccounts();
 
       /** Act */
       const call = contract.connect(owner).updateRelayer(random.address);
@@ -53,7 +51,7 @@ describe("RelayerUpdaterFacet", function () {
       /** Assert */
       await expect(call)
         .to.emit(contract, "UpdatedRelayer")
-        .withArgs(ZeroAddress, random.address);
+        .withArgs(relayer.address, random.address);
     });
   });
 });

@@ -1,6 +1,7 @@
 import { ContractAddress } from '../../shared/types';
 import { BigInteger } from '../../shared/domain/BigInteger';
 import { Token } from '../../shared/domain/Token';
+import { BigNumber } from 'ethers';
 
 export class SwapOrder {
   public static notRequired() {
@@ -11,13 +12,22 @@ export class SwapOrder {
       null,
       '0x',
       null,
-      null,
+      BigNumber.from(0),
       false,
     );
   }
 
   public static sameToken(token: Token) {
-    return new SwapOrder(null, token, token, null, null, null, null, false);
+    return new SwapOrder(
+      null,
+      token,
+      token,
+      null,
+      null,
+      null,
+      BigNumber.from(0),
+      false,
+    );
   }
 
   constructor(
@@ -27,7 +37,7 @@ export class SwapOrder {
     private readonly _approvalAddress: ContractAddress,
     private readonly _data: string,
     private readonly _buyAmount: BigInteger,
-    private readonly _estimatedGas: string,
+    private readonly _estimatedGas: BigNumber,
     private readonly _required: boolean,
   ) {}
 
@@ -55,7 +65,7 @@ export class SwapOrder {
     return this._buyAmount;
   }
 
-  get estimatedGas(): string {
+  get estimatedGas(): BigNumber {
     return this._estimatedGas;
   }
 

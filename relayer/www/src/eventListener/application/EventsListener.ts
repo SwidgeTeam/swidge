@@ -61,7 +61,7 @@ export class EventsListener {
         'uint256 toChain,' +
         'uint256 amountIn,' +
         'uint256 amountCross)',
-      'event CrossFinalized(string txHash, uint256 amountOut)',
+      'event CrossFinalized(bytes32 txHash, uint256 amountOut)',
     ];
 
     const contract = new Contract(routerAddress, abi, provider);

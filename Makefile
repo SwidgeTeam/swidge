@@ -250,7 +250,7 @@ $(addprefix ud-, ${ENABLED_NETWORKS}): ud-%: # will use current address
 	@$(call CONTRACTS_LIVE_RUN,deploy-bridge --bridge Anyswap,$*)
 	@$(call CONTRACTS_LIVE_RUN,deploy-dex --dex ZeroEx,$*)
 
-# Forked chain
+## Forked chain
 
 $(addprefix fork-, ${ENABLED_NETWORKS}): fork-%:
 	@$(call DOCKER_COMPOSE_RUN, \

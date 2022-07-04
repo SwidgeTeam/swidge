@@ -14,6 +14,8 @@ import { TokenDetailsFetcher } from '../../../shared/infrastructure/TokenDetails
 import { Inject } from '@nestjs/common';
 import { Class } from '../../../shared/Class';
 import { BigInteger } from '../../../shared/domain/BigInteger';
+import { BigNumber } from 'ethers';
+import { PriceFeedConverter } from '../../../shared/infrastructure/PriceFeedConverter';
 
 @QueryHandler(GetPathQuery)
 export class GetPathHandler implements IQueryHandler<GetPathQuery> {
@@ -23,6 +25,8 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
     private readonly bridgeOrderProvider: GetBridgingOrder,
     @Inject(Class.TokenDetailsFetcher)
     private readonly tokenDetailsFetcher: TokenDetailsFetcher,
+    @Inject(Class.PriceFeedConverter)
+    private readonly priceFeedConverter: PriceFeedConverter,
   ) {}
 
   async execute(query: GetPathQuery): Promise<Path> {
@@ -65,6 +69,7 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
       swapOrder,
       BridgingOrder.notRequired(),
       SwapOrder.notRequired(),
+      BigNumber.from(0),
     );
   }
 
@@ -74,6 +79,8 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
    * @private
    */
   private async multiStepPath(query: GetPathQuery): Promise<Path> {
+    /** Origin swap **/
+
     const srcToken = await this.tokenDetailsFetcher.fetch(
       query.srcToken,
       query.fromChainId,
@@ -101,6 +108,8 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
       bridgingAmount = originSwapOrder.buyAmount;
     }
 
+    /** Bridge **/
+
     const bridgeRequest = new BridgingRequest(
       query.fromChainId,
       query.toChainId,
@@ -116,12 +125,14 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
 
     const destinationReceivedAmount = bridgingOrder.amountOut;
 
+    /** Destination swap **/
+
     const dstToken = await this.tokenDetailsFetcher.fetch(
       query.dstToken,
       query.toChainId,
     );
 
-    let destinationSwapOrder;
+    let destinationSwapOrder: SwapOrder;
     if (
       dstToken.address.toLowerCase() ===
       bridgingOrder.tokenOut.address.toLowerCase()
@@ -140,6 +151,20 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
       );
     }
 
+    // Add base gas for destination swap
+    const fixDestinationGas = BigNumber.from(0);
+
+    const estimatedDestinationGas =
+      destinationSwapOrder.estimatedGas.add(fixDestinationGas);
+
+    const nativeCoinDestinationFee = await this.priceFeedConverter.fetch(
+      query.fromChainId,
+      query.toChainId,
+      estimatedDestinationGas,
+    );
+
+    /** Compose path **/
+
     const router = await this.getRouter();
 
     return new Path(
@@ -147,6 +172,7 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
       originSwapOrder,
       bridgingOrder,
       destinationSwapOrder,
+      nativeCoinDestinationFee,
     );
   }
 
