@@ -423,12 +423,12 @@ const setUpEventListener = (executedTxHash: string) => {
 
     const filter = {
         address: quotedPath.value.router,
-        topics: [ethers.utils.id('CrossFinalized(string,uint256)')],
+        topics: [ethers.utils.id('CrossFinalized(bytes32,uint256)')],
     }
 
     provider.on(filter, (event) => {
         const [txHash] = ethers.utils.defaultAbiCoder.decode(
-            ['string', 'uint256'],
+            ['bytes32', 'uint256'],
             event.data
         )
         if (executedTxHash === txHash) {
