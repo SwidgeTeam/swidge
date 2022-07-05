@@ -62,6 +62,12 @@ const config: HardhatUserConfig = {
       chainId: Number(process.env.CHAIN_ID_BSC || 56),
       gasMultiplier: 2,
     },
+    avax: {
+      url: process.env.RPC_NODE_AVAX || "https://api.avax.network/ext/bc/C/rpc",
+      accounts,
+      chainId: Number(process.env.CHAIN_ID_AVAX || 43114),
+      gasMultiplier: 2,
+    },
   },
   etherscan: {
     apiKey: {

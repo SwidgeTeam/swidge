@@ -61,3 +61,45 @@ polygon:
       enabled: true
       implementation: "0x9031DaA015C311DE595C1aFA2f805B6b497f7CBd"
       handler: "0x0000000000000000000000000000000000000000"
+bsc:
+  diamond: "0x1a6e1ef1d28A7d9feD016c88f4d1858367564781"
+  facet:
+    RouterFacet: "0x8dE40F0f62B69C35A963d5ED626da04f6c1E4AB7"
+    RelayerUpdaterFacet: "0xFFe588b6c0fC789c8ac23d7fb3AFC031C61D9227"
+    DiamondLoupeFacet: "0x56CE178868B653480cD65AaF81C01b30C005a299"
+    ProviderUpdaterFacet: "0xb5A87Cd4C9C83f75cE9a25299bf66523B7410952"
+    DiamondCutterFacet: "0xEAe85FC046F6C03f769995D2801572Ca839989a0"
+    FeeManagerFacet: "0xD79a773316b54F390702Ba962238a080f8686539"
+  bridge:
+    Anyswap:
+      code: 0
+      enabled: true
+      implementation: "0x65D246154885DBeA92Dee1EA8065A407E16D5fce"
+      handler: "0xd1c5966f9f5ee6881ff6b261bbeda45972b1b5f3"
+  dex:
+    ZeroEx:
+      code: 0
+      enabled: true
+      implementation: "0xD9bF09fdb4242f0D64cA8B0B8ADB3D5663661546"
+      handler: "0x0000000000000000000000000000000000000000"
+avax:
+  diamond: "0x1a6e1ef1d28A7d9feD016c88f4d1858367564781"
+  facet:
+    RouterFacet: "0x8dE40F0f62B69C35A963d5ED626da04f6c1E4AB7"
+    RelayerUpdaterFacet: "0xFFe588b6c0fC789c8ac23d7fb3AFC031C61D9227"
+    DiamondLoupeFacet: "0x56CE178868B653480cD65AaF81C01b30C005a299"
+    ProviderUpdaterFacet: "0xb5A87Cd4C9C83f75cE9a25299bf66523B7410952"
+    DiamondCutterFacet: "0xEAe85FC046F6C03f769995D2801572Ca839989a0"
+    FeeManagerFacet: "0xD79a773316b54F390702Ba962238a080f8686539"
+  bridge:
+    Anyswap:
+      code: 0
+      enabled: true
+      implementation: "0x65D246154885DBeA92Dee1EA8065A407E16D5fce"
+      handler: "0xb0731d50c681c45856bfc3f7539d5f61d4be81d8"
+  dex:
+    ZeroEx:
+      code: 0
+      enabled: true
+      implementation: "0x79B38753e46BD2b88170A58B403de0aBE2229D35"
+      handler: "0x0000000000000000000000000000000000000000"
