@@ -98,6 +98,7 @@ services:
       POLYGONSCAN_API_KEY: ${POLYGONSCAN_API_KEY}
       FTMSCAN_API_KEY: ${FTMSCAN_API_KEY}
       SNOWTRACE_API_KEY: ${SNOWTRACE_API_KEY}
+      BSCSCAN_API_KEY: ${BSCSCAN_API_KEY}
     volumes:
       - ./contracts/www/:/code
 

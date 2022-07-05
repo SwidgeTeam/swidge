@@ -74,6 +74,7 @@ const config: HardhatUserConfig = {
       polygon: String(process.env.POLYGONSCAN_API_KEY),
       opera: String(process.env.FTMSCAN_API_KEY),
       avalanche: String(process.env.SNOWTRACE_API_KEY),
+      bsc: String(process.env.BSCSCAN_API_KEY),
     },
   },
   gasReporter: {
