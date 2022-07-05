@@ -6,6 +6,9 @@ import Layouts from 'vite-plugin-vue-layouts';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+    test: {
+        globals: true
+    },
     plugins: [
         vue(),
         Pages(),
