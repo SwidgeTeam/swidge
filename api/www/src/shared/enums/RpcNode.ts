@@ -1,6 +1,8 @@
-import { Fantom, Polygon } from './ChainIds';
+import { Fantom, Polygon, BSC } from './ChainIds';
+import 'dotenv/config';
 
 export const RpcNode = {
-  [Polygon]: 'https://polygon-rpc.com',
-  [Fantom]: 'https://rpcapi.fantom.network',
+  [Polygon]: process.env.RPC_NODE_POLYGON,
+  [Fantom]: process.env.RPC_NODE_FANTOM,
+  [BSC]: process.env.RPC_NODE_BSC,
 };

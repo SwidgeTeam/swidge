@@ -51,7 +51,7 @@ const config: HardhatUserConfig = {
       gasMultiplier: 2,
     },
     fantom: {
-      url: process.env.RPC_NODE_FANTOM || "https://rpc.ftm.tools/",
+      url: process.env.RPC_NODE_FANTOM || "https://rpcapi.fantom.network/",
       accounts,
       chainId: Number(process.env.CHAIN_ID_FANTOM || 250),
       gasMultiplier: 2,

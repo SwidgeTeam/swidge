@@ -14,14 +14,14 @@ networks.set(POLYGON_CHAIN_ID, {
     name: 'Polygon',
     icon: 'https://res.cloudinary.com/sushi-cdn/image/fetch/f_auto,c_limit,w_64,q_auto/https://raw.githubusercontent.com/sushiswap/icons/master/network/polygon.jpg',
     tokens: polygonTokens.slice(0, 20).map(polygonRawToken => new PolygonToken(polygonRawToken)),
-    rpcUrl: 'https://polygon-rpc.com'
+    rpcUrl: `${import.meta.env.VITE_APP_RPC_NODE_POLYGON}`
 })
 networks.set(FANTOM_CHAIN_ID, {
     id: FANTOM_CHAIN_ID,
     name: 'Fantom',
     icon: 'https://res.cloudinary.com/sushi-cdn/image/fetch/f_auto,c_limit,w_64,q_auto/https://raw.githubusercontent.com/sushiswap/icons/master/network/fantom.jpg',
     tokens: fantomTokens.slice(0, 20).map(fantomRawToken => new FantomToken(fantomRawToken)),
-    rpcUrl: 'https://rpc.ftm.tools/'
+    rpcUrl: `${import.meta.env.VITE_APP_RPC_NODE_FANTOM}`
 })
 
 export default networks;

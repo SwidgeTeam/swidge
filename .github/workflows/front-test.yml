@@ -26,4 +26,7 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{secrets.TEST_AWS_ACCESS_KEY_ID}}
       AWS_SECRET_ACCESS_KEY: ${{secrets.TEST_AWS_SECRET_ACCESS_KEY}}
       DISTRIBUTION: ${{secrets.TEST_DISTRIBUTION}}
+      RPC_NODE_FANTOM: ${{ secrets.RPC_NODE_FANTOM }}
+      RPC_NODE_POLYGON: ${{ secrets.RPC_NODE_POLYGON }}
+      RPC_NODE_BSC: ${{ secrets.RPC_NODE_BSC }}
 

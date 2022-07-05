@@ -19,6 +19,9 @@ services:
     build:
       context: front/
     environment:
+      VITE_APP_RPC_NODE_POLYGON: ${polygon_RPC_NODE}
+      VITE_APP_RPC_NODE_FANTOM: ${fantom_RPC_NODE}
+      VITE_APP_RPC_NODE_BSC: ${bsc_RPC_NODE}
       VITE_APP_API_HOST: ${API_URL}
     ports:
       - ${FRONT_APP_PORT}:3000
@@ -39,6 +42,9 @@ services:
       APP_PORT: 3000
       APP_HOST_REGEX: ${API_HOST}
       API_AUTH_TOKEN: ${API_AUTH_TOKEN}
+      RPC_NODE_POLYGON: ${polygon_RPC_NODE}
+      RPC_NODE_FANTOM: ${fantom_RPC_NODE}
+      RPC_NODE_BSC: ${bsc_RPC_NODE}
     ports:
       - ${API_PORT}:3000
     volumes:
@@ -55,6 +61,9 @@ services:
       ACCESS_KEY: ${AWS_SQS_ACCESS_KEY}
       SECRET: ${AWS_SQS_SECRET}
       API_AUTH_TOKEN: ${API_AUTH_TOKEN}
+      RPC_NODE_POLYGON: ${polygon_RPC_NODE}
+      RPC_NODE_FANTOM: ${fantom_RPC_NODE}
+      RPC_NODE_BSC: ${bsc_RPC_NODE}
     network_mode: host
     volumes:
       - ./relayer/www/:/relayer/
