@@ -56,6 +56,12 @@ const config: HardhatUserConfig = {
       chainId: Number(process.env.CHAIN_ID_FANTOM || 250),
       gasMultiplier: 2,
     },
+    bsc: {
+      url: process.env.RPC_NODE_BSC || "https://bsc-dataseed1.binance.org/",
+      accounts,
+      chainId: Number(process.env.CHAIN_ID_BSC || 56),
+      gasMultiplier: 2,
+    },
   },
   etherscan: {
     apiKey: {
