@@ -4,7 +4,7 @@ import { Class } from '../../../shared/Class';
 import { SwapRequest } from '../../domain/SwapRequest';
 import { SwapOrder } from '../../domain/SwapOrder';
 import { BigInteger } from '../../../shared/domain/BigInteger';
-import { Fantom, Polygon } from '../../../shared/enums/ChainIds';
+import { BSC, Fantom, Polygon } from '../../../shared/enums/ChainIds';
 import { ContractAddress } from '../../../shared/types';
 import { InsufficientLiquidity } from '../../domain/InsufficientLiquidity';
 import { AbiEncoder } from '../../../shared/domain/CallEncoder';
@@ -19,6 +19,7 @@ export class GetSwapOrder {
     const urls = {
       [Polygon]: 'https://polygon.api.0x.org',
       [Fantom]: 'https://fantom.api.0x.org',
+      [BSC]: 'https://bsc.api.0x.org/',
     };
 
     const response = await this.httpClient
