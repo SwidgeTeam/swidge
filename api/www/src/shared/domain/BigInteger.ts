@@ -65,4 +65,17 @@ export class BigInteger {
     }
     return ethers.utils.formatUnits(this._number, decimals);
   }
+
+  public convertDecimalsFromTo(
+    fromDecimals: number,
+    toDecimals: number,
+  ): BigInteger {
+    let num;
+    if (fromDecimals < toDecimals) {
+      num = this._number.mul(10 ** (toDecimals - fromDecimals));
+    } else {
+      num = this._number.div(10 ** (fromDecimals - toDecimals));
+    }
+    return new BigInteger(num);
+  }
 }

@@ -1,4 +1,4 @@
-import { Fantom, Polygon } from './ChainIds';
+import { BSC, Fantom, Polygon } from './ChainIds';
 
 export const NATIVE_TOKEN_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
 
@@ -11,6 +11,11 @@ export const Natives = {
   [Fantom]: {
     name: 'Fantom Token',
     symbol: 'FTM',
+    decimals: 18,
+  },
+  [BSC]: {
+    name: 'BNB Token',
+    symbol: 'BNB',
     decimals: 18,
   },
 };

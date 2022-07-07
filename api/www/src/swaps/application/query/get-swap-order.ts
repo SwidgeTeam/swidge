@@ -19,7 +19,7 @@ export class GetSwapOrder {
     const urls = {
       [Polygon]: 'https://polygon.api.0x.org',
       [Fantom]: 'https://fantom.api.0x.org',
-      [BSC]: 'https://bsc.api.0x.org/',
+      [BSC]: 'https://bsc.api.0x.org',
     };
 
     const response = await this.httpClient

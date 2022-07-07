@@ -54,7 +54,9 @@ export class BridgingOrder {
 
   get amountOut(): BigInteger {
     const bridgingFee = this.finalFee(this._amountIn);
-    return this._amountIn.minus(bridgingFee);
+    return this._amountIn
+      .convertDecimalsFromTo(this._tokenIn.decimals, this._fees.decimals)
+      .minus(bridgingFee);
   }
 
   get amountOutDecimal(): string {

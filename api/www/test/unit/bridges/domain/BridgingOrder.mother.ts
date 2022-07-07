@@ -11,6 +11,7 @@ export function randomWithFees(fees: BridgingFees) {
     BigInteger.fromDecimal('0'),
     BigInteger.fromDecimal('0'),
     BigInteger.fromDecimal('0'),
+    18,
   );
   return new BridgingOrder(
     BigInteger.fromDecimal('1'),

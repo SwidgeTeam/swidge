@@ -46,37 +46,47 @@ export class GetBridgingOrder {
     );
     const tokenOutDetails = tokenInDetails.destChains[request.toChainId];
 
-    // Construct the object holding fees of the bridging process
-    const fees = new BridgingFees(
-      Number(tokenOutDetails.SwapFeeRatePerMillion),
-      BigInteger.fromDecimal(tokenOutDetails.MaximumSwapFee, tokenIn.decimals),
-      BigInteger.fromDecimal(tokenOutDetails.MinimumSwapFee, tokenIn.decimals),
-    );
-
-    // Construct the object holding the limits of the bridge
-    const limits = new BridgingLimits(
-      BigInteger.fromDecimal(tokenOutDetails.MinimumSwap, tokenIn.decimals),
-      BigInteger.fromDecimal(tokenOutDetails.MaximumSwap, tokenIn.decimals),
-      BigInteger.fromDecimal(
-        tokenOutDetails.BigValueThreshold,
-        tokenIn.decimals,
-      ),
-    );
-
-    // Check if the amount reaching the bridge is in the limits
-    if (request.amount.greaterThan(limits.maximumAmount)) {
-      throw new AmountTooBig();
-    }
-    if (request.amount.lessThan(limits.minimumAmount)) {
-      throw new AmountTooSmall();
-    }
-
     // Construct destination receiving Token
     const tokenOut = new Token(
       tokenOutDetails.underlying.name,
       tokenOutDetails.underlying.address,
       tokenOutDetails.underlying.decimals,
     );
+
+    // Construct the object holding fees of the bridging process
+    const fees = new BridgingFees(
+      Number(tokenOutDetails.SwapFeeRatePerMillion),
+      BigInteger.fromDecimal(tokenOutDetails.MaximumSwapFee, tokenOut.decimals),
+      BigInteger.fromDecimal(tokenOutDetails.MinimumSwapFee, tokenOut.decimals),
+      tokenOut.decimals,
+    );
+
+    // Construct the object holding the limits of the bridge
+    const limits = new BridgingLimits(
+      BigInteger.fromDecimal(tokenOutDetails.MinimumSwap, tokenOut.decimals),
+      BigInteger.fromDecimal(tokenOutDetails.MaximumSwap, tokenOut.decimals),
+      BigInteger.fromDecimal(
+        tokenOutDetails.BigValueThreshold,
+        tokenOut.decimals,
+      ),
+      tokenOut.decimals,
+    );
+
+    // Check if the amount reaching the bridge is in the limits
+    if (
+      request.amount
+        .convertDecimalsFromTo(tokenIn.decimals, tokenOut.decimals)
+        .greaterThan(limits.maximumAmount)
+    ) {
+      throw new AmountTooBig();
+    }
+    if (
+      request.amount
+        .convertDecimalsFromTo(tokenIn.decimals, tokenOut.decimals)
+        .lessThan(limits.minimumAmount)
+    ) {
+      throw new AmountTooSmall();
+    }
 
     // Encode the specific data needed by the bridge
     // Anyswap needs the address of their own anyToken representation

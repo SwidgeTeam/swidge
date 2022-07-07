@@ -9,6 +9,7 @@ describe('Bridging order', () => {
       10,
       BigInteger.fromDecimal('1'),
       BigInteger.fromDecimal('0'),
+      18,
     );
     const order = randomWithFees(fees);
     const amount = BigInteger.fromDecimal('100');
@@ -26,6 +27,7 @@ describe('Bridging order', () => {
       0.1,
       BigInteger.fromDecimal('1'),
       BigInteger.fromDecimal('0'),
+      18,
     );
     const order = randomWithFees(fees);
     const amount = BigInteger.fromDecimal('100');
@@ -43,6 +45,7 @@ describe('Bridging order', () => {
       10,
       BigInteger.fromDecimal('100'),
       BigInteger.fromDecimal('50'),
+      18,
     );
     const order = randomWithFees(fees);
     const amount = BigInteger.fromDecimal('100');
@@ -60,6 +63,7 @@ describe('Bridging order', () => {
       10,
       BigInteger.fromDecimal('100'),
       BigInteger.fromDecimal('0'),
+      18,
     );
     const order = randomWithFees(fees);
     const amount = BigInteger.fromDecimal('100');
