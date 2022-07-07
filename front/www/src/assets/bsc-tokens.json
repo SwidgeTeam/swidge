@@ -1,5 +1,11 @@
 [
     {
+        "id": "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "symbol": "BNB",
+        "name": "BNB",
+        "decimals": 18
+    },
+    {
         "id": "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
         "symbol": "WBNB",
         "name": "WBNB Token",

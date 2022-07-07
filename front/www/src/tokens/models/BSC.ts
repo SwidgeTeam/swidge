@@ -1,5 +1,6 @@
 import IToken from './IToken'
 import ITokenJson from '@/tokens/models/ITokenJson'
+import { ethers } from 'ethers'
 
 export default class BSCToken implements IToken {
     public static bscImg = 'https://res.cloudinary.com/sushi-cdn/image/fetch/f_auto,c_limit,w_64,q_auto/https://raw.githubusercontent.com/sushiswap/icons/master/network/bsc.jpg'
@@ -17,7 +18,8 @@ export default class BSCToken implements IToken {
     }
 
     public get img() {
-        return `https://exchange.pancakeswap.finance/images/coins/${this.address}.png`
+        const address = ethers.utils.getAddress(this.address)
+        return `https://pancakeswap.finance/images/tokens/${address}.png`
     }
 
     public replaceByDefault(e: Event) {
