@@ -60,7 +60,7 @@ const trimmedBalance = computed({
         <div class="flex flex-col flex-auto w-full">
             <div class="flex items-center w-full gap-2 text-xl">
                 <div
-                    class="flex justify-between gap-3 cursor-pointer bg-[#222129]/70 px-6 py-2 rounded-2xl hover:bg-[#222129]/100 transition duration-150 ease-out hover:ease-in"
+                    class="flex justify-between gap-3 cursor-pointer bg-[#222129]/40 px-6 py-2 rounded-2xl hover:bg-[#222129]/100 transition duration-150 ease-out hover:ease-in"
                     @click="emits('open-token-list')"
                 >
                     <div class="flex flex-col">
