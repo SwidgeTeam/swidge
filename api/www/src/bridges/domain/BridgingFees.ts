@@ -5,6 +5,7 @@ export class BridgingFees {
     private readonly _percentageFee: number,
     private readonly _maximumFee: BigInteger,
     private readonly _minimumFee: BigInteger,
+    private readonly _decimals: number,
   ) {
     if (_percentageFee < 0)
       throw new Error('Cross fee percentage should not be negative');
@@ -26,5 +27,9 @@ export class BridgingFees {
 
   get minimumFee(): BigInteger {
     return this._minimumFee;
+  }
+
+  get decimals(): number {
+    return this._decimals;
   }
 }

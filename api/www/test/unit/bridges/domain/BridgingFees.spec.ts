@@ -8,6 +8,7 @@ describe('Bridging fees', () => {
         0,
         BigInteger.fromDecimal('0'),
         BigInteger.fromDecimal('-1'),
+        18,
       );
     }).toThrowError();
 
@@ -16,6 +17,7 @@ describe('Bridging fees', () => {
         0,
         BigInteger.fromDecimal('-1'),
         BigInteger.fromDecimal('0'),
+        18,
       );
     }).toThrowError();
 
@@ -24,6 +26,7 @@ describe('Bridging fees', () => {
         -1,
         BigInteger.fromDecimal('0'),
         BigInteger.fromDecimal('0'),
+        18,
       );
     }).toThrowError();
   });
