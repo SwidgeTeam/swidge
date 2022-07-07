@@ -27,7 +27,12 @@ export class PriceFeedConverter {
     const unit = ethers.utils.parseEther('1');
 
     // Compute exchange ratio
-    const exchangeRatio = priceOriginCoin.mul(unit).div(priceDestinationCoin);
+    let exchangeRatio;
+    if (priceDestinationCoin.gt(priceOriginCoin)) {
+      exchangeRatio = priceOriginCoin.mul(unit).div(priceDestinationCoin);
+    } else {
+      exchangeRatio = priceDestinationCoin.mul(unit).div(priceOriginCoin);
+    }
 
     // Compute cost in origin Wei
     return feeInDestinationWei.mul(exchangeRatio).div(unit);
