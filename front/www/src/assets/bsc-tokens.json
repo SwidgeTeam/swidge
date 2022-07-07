@@ -1,0 +1,856 @@
+[
+    {
+        "id": "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+        "symbol": "WBNB",
+        "name": "WBNB Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c.png"
+    },
+    {
+        "id": "0xe02df9e3e622debdd69fb838bb799e3f168902c5",
+        "symbol": "BAKE",
+        "name": "Bakery Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xe02df9e3e622debdd69fb838bb799e3f168902c5.png"
+    },
+    {
+        "id": "0xe9e7cea3dedca5984780bafc599bd69add087d56",
+        "symbol": "BUSD",
+        "name": "BUSD Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xe9e7cea3dedca5984780bafc599bd69add087d56.png"
+    },
+    {
+        "id": "0x2170ed0880ac9a755fd29b2688956bd959f933f8",
+        "symbol": "ETH",
+        "name": "Ethereum Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x2170ed0880ac9a755fd29b2688956bd959f933f8.png"
+    },
+    {
+        "id": "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c",
+        "symbol": "BTCB",
+        "name": "BTCB Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c.png"
+    },
+    {
+        "id": "0xad6caeb32cd2c308980a548bd0bc5aa4306c6c18",
+        "symbol": "BAND",
+        "name": "BAND Protocol Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xad6caeb32cd2c308980a548bd0bc5aa4306c6c18.png"
+    },
+    {
+        "id": "0x56b6fb708fc5732dec1afc8d8556423a2edccbd6",
+        "symbol": "EOS",
+        "name": "EOS Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x56b6fb708fc5732dec1afc8d8556423a2edccbd6.png"
+    },
+    {
+        "id": "0x55d398326f99059ff775485246999027b3197955",
+        "symbol": "USDT",
+        "name": "Tether USD",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x55d398326f99059ff775485246999027b3197955.png"
+    },
+    {
+        "id": "0x1d2f0da169ceb9fc7b3144628db156f3f6c60dbe",
+        "symbol": "XRP",
+        "name": "XRP Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x1d2f0da169ceb9fc7b3144628db156f3f6c60dbe.png"
+    },
+    {
+        "id": "0x8ff795a6f4d97e7887c79bea79aba5cc76444adf",
+        "symbol": "BCH",
+        "name": "Bitcoin Cash Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x8ff795a6f4d97e7887c79bea79aba5cc76444adf.png"
+    },
+    {
+        "id": "0x4338665cbb7b2485a8855a139b75d5e34ab0db94",
+        "symbol": "LTC",
+        "name": "Litecoin Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x4338665cbb7b2485a8855a139b75d5e34ab0db94.png"
+    },
+    {
+        "id": "0x3ee2200efb3400fabb9aacf31297cbdd1d435d47",
+        "symbol": "ADA",
+        "name": "Cardano Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x3ee2200efb3400fabb9aacf31297cbdd1d435d47.png"
+    },
+    {
+        "id": "0x0eb3a705fc54725037cc9e008bdede697f62f335",
+        "symbol": "ATOM",
+        "name": "Cosmos Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x0eb3a705fc54725037cc9e008bdede697f62f335.png"
+    },
+    {
+        "id": "0x16939ef78684453bfdfb47825f8a5f714f12623a",
+        "symbol": "XTZ",
+        "name": "Tezos Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x16939ef78684453bfdfb47825f8a5f714f12623a.png"
+    },
+    {
+        "id": "0xfd7b3a77848f1c2d67e05e54d78d174a0c850335",
+        "symbol": "ONT",
+        "name": "Ontology Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xfd7b3a77848f1c2d67e05e54d78d174a0c850335.png"
+    },
+    {
+        "id": "0x1ba42e5193dfa8b03d15dd1b86a3113bbbef8eeb",
+        "symbol": "ZEC",
+        "name": "Zcash Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x1ba42e5193dfa8b03d15dd1b86a3113bbbef8eeb.png"
+    },
+    {
+        "id": "0x1af3f329e8be154074d8769d1ffa4ee058b1dbc3",
+        "symbol": "DAI",
+        "name": "Dai Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x1af3f329e8be154074d8769d1ffa4ee058b1dbc3.png"
+    },
+    {
+        "id": "0x7f70642d88cf1c4a3a7abb072b53b929b653eda5",
+        "symbol": "YFII",
+        "name": "YFII.finance Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x7f70642d88cf1c4a3a7abb072b53b929b653eda5.png"
+    },
+    {
+        "id": "0xd4cb328a82bdf5f03eb737f37fa6b370aef3e888",
+        "symbol": "CREAM",
+        "name": "Cream",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xd4cb328a82bdf5f03eb737f37fa6b370aef3e888.png"
+    },
+    {
+        "id": "0xaf53d56ff99f1322515e54fdde93ff8b3b7dafd5",
+        "symbol": "PROM",
+        "name": "Prometeus",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xaf53d56ff99f1322515e54fdde93ff8b3b7dafd5.png"
+    },
+    {
+        "id": "0x007ea5c0ea75a8df45d288a4debdd5bb633f9e56",
+        "symbol": "CAN",
+        "name": "CanYaCoin",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x007ea5c0ea75a8df45d288a4debdd5bb633f9e56.png"
+    },
+    {
+        "id": "0x7083609fce4d1d8dc0c979aab8c869ea2c873402",
+        "symbol": "DOT",
+        "name": "Polkadot Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x7083609fce4d1d8dc0c979aab8c869ea2c873402.png"
+    },
+    {
+        "id": "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82",
+        "symbol": "CAKE",
+        "name": "PancakeSwap Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82.png"
+    },
+    {
+        "id": "0x90df11a8cce420675e73922419e3f4f3fe13cccb",
+        "symbol": "STM",
+        "name": "Streamity",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x90df11a8cce420675e73922419e3f4f3fe13cccb.png"
+    },
+    {
+        "id": "0xf307910a4c7bbc79691fd374889b36d8531b08e3",
+        "symbol": "ANKR",
+        "name": "Ankr",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xf307910a4c7bbc79691fd374889b36d8531b08e3.png"
+    },
+    {
+        "id": "0xf8a0bf9cf54bb92f17374d9e9a321e6a111a51bd",
+        "symbol": "LINK",
+        "name": "ChainLink Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xf8a0bf9cf54bb92f17374d9e9a321e6a111a51bd.png"
+    },
+    {
+        "id": "0xae9269f27437f0fcbc232d39ec814844a51d6b8f",
+        "symbol": "BURGER",
+        "name": "Burger Swap",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xae9269f27437f0fcbc232d39ec814844a51d6b8f.png"
+    },
+    {
+        "id": "0x748ad98b14c814b28812eb42ad219c8672909879",
+        "symbol": "DICE",
+        "name": "Dice.finance Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x748ad98b14c814b28812eb42ad219c8672909879.png"
+    },
+    {
+        "id": "0x3c037c4c2296f280bb318d725d0b454b76c199b9",
+        "symbol": "JNTR/b",
+        "name": "JNTR/b",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x3c037c4c2296f280bb318d725d0b454b76c199b9.png"
+    },
+    {
+        "id": "0xe4ae305ebe1abe663f261bc00534067c80ad677c",
+        "symbol": "SPART",
+        "name": "SPARTAN PROTOCOL TOKEN",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xe4ae305ebe1abe663f261bc00534067c80ad677c.png"
+    },
+    {
+        "id": "0x4b0f1812e5df2a09796481ff14017e6005508003",
+        "symbol": "TWT",
+        "name": "Trust Wallet",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x4b0f1812e5df2a09796481ff14017e6005508003.png"
+    },
+    {
+        "id": "0xcf6bb5389c92bdda8a3747ddb454cb7a64626c63",
+        "symbol": "XVS",
+        "name": "Venus",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xcf6bb5389c92bdda8a3747ddb454cb7a64626c63.png"
+    },
+    {
+        "id": "0xbb8db5e17bbe9c90da8e3445e335b82d7cc53575",
+        "symbol": "Beer",
+        "name": "Beer Garden",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xbb8db5e17bbe9c90da8e3445e335b82d7cc53575.png"
+    },
+    {
+        "id": "0xa1faa113cbe53436df28ff0aee54275c13b40975",
+        "symbol": "ALPHA",
+        "name": "AlphaToken",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xa1faa113cbe53436df28ff0aee54275c13b40975.png"
+    },
+    {
+        "id": "0xCa3F508B8e4Dd382eE878A314789373D80A5190A",
+        "symbol": "BIFI",
+        "name": "Beefy.finance",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xCa3F508B8e4Dd382eE878A314789373D80A5190A.png"
+    },
+    {
+        "id": "0x88f1a5ae2a3bf98aeaf342d26b30a79438c9142e",
+        "symbol": "YFI",
+        "name": "yearn.finance",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x88f1a5ae2a3bf98aeaf342d26b30a79438c9142e.png"
+    },
+    {
+        "id": "0xbf5140a22578168fd562dccf235e5d43a02ce9b1",
+        "symbol": "UNI",
+        "name": "Uniswap",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xbf5140a22578168fd562dccf235e5d43a02ce9b1.png"
+    },
+    {
+        "id": "0x393B312C01048b3ed2720bF1B090084C09e408A1",
+        "symbol": "FRIES",
+        "name": "fry.world",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x393B312C01048b3ed2720bF1B090084C09e408A1.png"
+    },
+    {
+        "id": "0x0da6ed8b13214ff28e9ca979dd37439e8a88f6c4",
+        "symbol": "STAX",
+        "name": "StableXSwap",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x0da6ed8b13214ff28e9ca979dd37439e8a88f6c4.png"
+    },
+    {
+        "id": "0x0d8ce2a99bb6e3b7db580ed848240e4a0f9ae153",
+        "symbol": "FIL",
+        "name": "Filecoin",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x0d8ce2a99bb6e3b7db580ed848240e4a0f9ae153.png"
+    },
+    {
+        "id": "0x5F88AB06e8dfe89DF127B2430Bba4Af600866035",
+        "symbol": "KAVA",
+        "name": "KAVA",
+        "decimals": 6,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x5F88AB06e8dfe89DF127B2430Bba4Af600866035.png"
+    },
+    {
+        "id": "0x1203355742e76875154c0d13eb81dcd7711dc7d9",
+        "symbol": "USDX",
+        "name": "USDX",
+        "decimals": 6,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x1203355742e76875154c0d13eb81dcd7711dc7d9.png"
+    },
+    {
+        "id": "0xa2B726B1145A4773F68593CF171187d8EBe4d495",
+        "symbol": "INJ",
+        "name": "Injective Protocol",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xa2B726B1145A4773F68593CF171187d8EBe4d495.png"
+    },
+    {
+        "id": "0x47bead2563dcbf3bf2c9407fea4dc236faba485a",
+        "symbol": "SXP",
+        "name": "Swipe",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x47bead2563dcbf3bf2c9407fea4dc236faba485a.png"
+    },
+    {
+        "id": "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d",
+        "symbol": "USDC",
+        "name": "Binance-Peg USD Coin",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d.png"
+    },
+    {
+        "id": "0xa8c2b8eec3d368c0253ad3dae65a5f2bbb89c929",
+        "symbol": "CTK",
+        "name": "CertiK Token",
+        "decimals": 6,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xa8c2b8eec3d368c0253ad3dae65a5f2bbb89c929.png"
+    },
+    {
+        "id": "0xa1303e6199b319a891b79685f0537d289af1fc83",
+        "symbol": "NAR",
+        "name": "NAR Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xa1303e6199b319a891b79685f0537d289af1fc83.png"
+    },
+    {
+        "id": "0xbfa0841f7a90c4ce6643f651756ee340991f99d5",
+        "symbol": "NYA",
+        "name": "Nyanswop Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xbfa0841f7a90c4ce6643f651756ee340991f99d5.png"
+    },
+    {
+        "id": "0x0957c57c9eb7744850dcc95db5a06ed4a246236e",
+        "symbol": "DANGO",
+        "name": "DANGO",
+        "decimals": 6,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x0957c57c9eb7744850dcc95db5a06ed4a246236e.png"
+    },
+    {
+        "id": "0xf79037f6f6be66832de4e7516be52826bc3cbcc4",
+        "symbol": "HARD",
+        "name": "HARD",
+        "decimals": 6,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xf79037f6f6be66832de4e7516be52826bc3cbcc4.png"
+    },
+    {
+        "id": "0xe64f5cb844946c1f102bd25bbd87a5ab4ae89fbe",
+        "symbol": "bROOBEE",
+        "name": "ROOBEE",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xe64f5cb844946c1f102bd25bbd87a5ab4ae89fbe.png"
+    },
+    {
+        "id": "0x728C5baC3C3e370E372Fc4671f9ef6916b814d8B",
+        "symbol": "UNFI",
+        "name": "Unifi Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x728C5baC3C3e370E372Fc4671f9ef6916b814d8B.png"
+    },
+    {
+        "id": "0x63870A18B6e42b01Ef1Ad8A2302ef50B7132054F",
+        "symbol": "BLK",
+        "name": "BLINk",
+        "decimals": 6,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x63870A18B6e42b01Ef1Ad8A2302ef50B7132054F.png"
+    },
+    {
+        "id": "0xb8C540d00dd0Bf76ea12E4B4B95eFC90804f924E",
+        "symbol": "QUSD",
+        "name": "QUSD Stablecoin",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xb8C540d00dd0Bf76ea12E4B4B95eFC90804f924E.png"
+    },
+    {
+        "id": "0x1A2fb0Af670D0234c2857FaD35b789F8Cb725584",
+        "symbol": "KUN",
+        "name": "Qian Governance Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x1A2fb0Af670D0234c2857FaD35b789F8Cb725584.png"
+    },
+    {
+        "id": "0x4bd17003473389a42daf6a0a729f6fdb328bbbd7",
+        "symbol": "VAI",
+        "name": "VAI Stablecoin",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x4bd17003473389a42daf6a0a729f6fdb328bbbd7.png"
+    },
+    {
+        "id": "0xc40c9a843e1c6d01b7578284a9028854f6683b1b",
+        "symbol": "JUV",
+        "name": "Juventus",
+        "decimals": 2,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xc40c9a843e1c6d01b7578284a9028854f6683b1b.png"
+    },
+    {
+        "id": "0xbc5609612b7c44bef426de600b5fd1379db2ecf1",
+        "symbol": "PSG",
+        "name": "Paris Saint-Germain",
+        "decimals": 2,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xbc5609612b7c44bef426de600b5fd1379db2ecf1.png"
+    },
+    {
+        "id": "0x233d91A0713155003fc4DcE0AFa871b508B3B715",
+        "symbol": "DITTO",
+        "name": "Ditto",
+        "decimals": 9,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x233d91A0713155003fc4DcE0AFa871b508B3B715.png"
+    },
+    {
+        "id": "0xf218184af829cf2b0019f8e6f0b2423498a36983",
+        "symbol": "MATH",
+        "name": "Math",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xf218184af829cf2b0019f8e6f0b2423498a36983.png"
+    },
+    {
+        "id": "0x2090c8295769791ab7A3CF1CC6e0AA19F35e441A",
+        "symbol": "FUEL",
+        "name": "Fuel",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x2090c8295769791ab7A3CF1CC6e0AA19F35e441A.png"
+    },
+    {
+        "id": "0x8cd6e29d3686d24d3c2018cee54621ea0f89313b",
+        "symbol": "NULS",
+        "name": "Nuls",
+        "decimals": 8,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x8cd6e29d3686d24d3c2018cee54621ea0f89313b.png"
+    },
+    {
+        "id": "0xf0e406c49c63abf358030a299c0e00118c4c6ba5",
+        "symbol": "NVT",
+        "name": "NerveNetwork",
+        "decimals": 8,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xf0e406c49c63abf358030a299c0e00118c4c6ba5.png"
+    },
+    {
+        "id": "0xf21768ccbc73ea5b6fd3c687208a7c2def2d966e",
+        "symbol": "REEF",
+        "name": "Reef",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xf21768ccbc73ea5b6fd3c687208a7c2def2d966e.png"
+    },
+    {
+        "id": "0xf05e45ad22150677a017fbd94b84fbb63dc9b44c",
+        "symbol": "OG",
+        "name": "OG",
+        "decimals": 2,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xf05e45ad22150677a017fbd94b84fbb63dc9b44c.png"
+    },
+    {
+        "id": "0x25e9d05365c867e59c1904e7463af9f312296f9e",
+        "symbol": "ATM",
+        "name": "Atletico de Madrid",
+        "decimals": 2,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x25e9d05365c867e59c1904e7463af9f312296f9e.png"
+    },
+    {
+        "id": "0x80d5f92c2c8c682070c95495313ddb680b267320",
+        "symbol": "ASR",
+        "name": "AS Roma",
+        "decimals": 2,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x80d5f92c2c8c682070c95495313ddb680b267320.png"
+    },
+    {
+        "id": "0x72faa679e1008ad8382959ff48e392042a8b06f7",
+        "symbol": "bALBT",
+        "name": "AllianceBlock",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x72faa679e1008ad8382959ff48e392042a8b06f7.png"
+    },
+    {
+        "id": "0xdff8cb622790b7f92686c722b02cab55592f152c",
+        "symbol": "TEN",
+        "name": "Tenet",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xdff8cb622790b7f92686c722b02cab55592f152c.png"
+    },
+    {
+        "id": "0x948d2a81086a075b3130bac19e4c6dee1d2e3fe8",
+        "symbol": "Helmet",
+        "name": "Helmet.insure",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x948d2a81086a075b3130bac19e4c6dee1d2e3fe8.png"
+    },
+    {
+        "id": "0x5ac52ee5b2a633895292ff6d8a89bb9190451587",
+        "symbol": "BSCX",
+        "name": "BSCEX",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x5ac52ee5b2a633895292ff6d8a89bb9190451587.png"
+    },
+    {
+        "id": "0x78650b139471520656b9e7aa7a5e9276814a38e9",
+        "symbol": "BTCST",
+        "name": "Standard BTC Hashrate Token",
+        "decimals": 17,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x78650b139471520656b9e7aa7a5e9276814a38e9.png"
+    },
+    {
+        "id": "0x928e55daB735aa8260AF3cEDadA18B5f70C72f1b",
+        "symbol": "FRONT",
+        "name": "Frontier Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x928e55daB735aa8260AF3cEDadA18B5f70C72f1b.png"
+    },
+    {
+        "id": "0x541e619858737031a1244a5d0cd47e5ef480342c",
+        "symbol": "wSOTE",
+        "name": "Soteria",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x541e619858737031a1244a5d0cd47e5ef480342c.png"
+    },
+    {
+        "id": "0xF215A127A196e3988C09d052e16BcFD365Cd7AA3",
+        "symbol": "mTSLA",
+        "name": "Mirror TSLA Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xF215A127A196e3988C09d052e16BcFD365Cd7AA3.png"
+    },
+    {
+        "id": "0x3947B992DC0147D2D89dF0392213781b04B25075",
+        "symbol": "mAMZN",
+        "name": "Mirror AMZN Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x3947B992DC0147D2D89dF0392213781b04B25075.png"
+    },
+    {
+        "id": "0xa04F060077D90Fe2647B61e4dA4aD1F97d6649dc",
+        "symbol": "mNFLX",
+        "name": "Mirror NFLX Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xa04F060077D90Fe2647B61e4dA4aD1F97d6649dc.png"
+    },
+    {
+        "id": "0x62D71B23bF15218C7d2D7E48DBbD9e9c650B173f",
+        "symbol": "mGOOGL",
+        "name": "Mirror GOOGL Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x62D71B23bF15218C7d2D7E48DBbD9e9c650B173f.png"
+    },
+    {
+        "id": "0x23396cF899Ca06c4472205fC903bDB4de249D6fC",
+        "symbol": "UST",
+        "name": "UST Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x23396cF899Ca06c4472205fC903bDB4de249D6fC.png"
+    },
+    {
+        "id": "0x81859801b01764D4f0Fa5E64729f5a6C3b91435b",
+        "symbol": "BFI",
+        "name": "b.earnfi",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x81859801b01764D4f0Fa5E64729f5a6C3b91435b.png"
+    },
+    {
+        "id": "0x190b589cf9Fb8DDEabBFeae36a813FFb2A702454",
+        "symbol": "BDO",
+        "name": "bDollar",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x190b589cf9Fb8DDEabBFeae36a813FFb2A702454.png"
+    },
+    {
+        "id": "0x0d9319565be7f53CeFE84Ad201Be3f40feAE2740",
+        "symbol": "sBDO",
+        "name": "bDollar Share",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x0d9319565be7f53CeFE84Ad201Be3f40feAE2740.png"
+    },
+    {
+        "id": "0xbf7c81fff98bbe61b40ed186e4afd6ddd01337fe",
+        "symbol": "EGLD",
+        "name": "Elrond",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xbf7c81fff98bbe61b40ed186e4afd6ddd01337fe.png"
+    },
+    {
+        "id": "0xa184088a740c695e156f91f5cc086a06bb78b827",
+        "symbol": "AUTO",
+        "name": "AUTOv2",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xa184088a740c695e156f91f5cc086a06bb78b827.png"
+    },
+    {
+        "id": "0xC7d8D35EBA58a0935ff2D5a33Df105DD9f071731",
+        "symbol": "HGET",
+        "name": "Hedget",
+        "decimals": 6,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xC7d8D35EBA58a0935ff2D5a33Df105DD9f071731.png"
+    },
+    {
+        "id": "0xb59490ab09a0f526cc7305822ac65f2ab12f9723",
+        "symbol": "LIT",
+        "name": "Litentry",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xb59490ab09a0f526cc7305822ac65f2ab12f9723.png"
+    },
+    {
+        "id": "0x762539b45a1dcce3d36d080f74d1aed37844b878",
+        "symbol": "LINA",
+        "name": "Linear Finance",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x762539b45a1dcce3d36d080f74d1aed37844b878.png"
+    },
+    {
+        "id": "0x250632378e573c6be1ac2f97fcdf00515d0aa91b",
+        "symbol": "BETH",
+        "name": "Beacon ETH",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x250632378e573c6be1ac2f97fcdf00515d0aa91b.png"
+    },
+    {
+        "id": "0x23e8a70534308a4AAF76fb8C32ec13d17a3BD89e",
+        "symbol": "lUSD",
+        "name": "lUSD",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x23e8a70534308a4AAF76fb8C32ec13d17a3BD89e.png"
+    },
+    {
+        "id": "0xd41fdb03ba84762dd66a0af1a6c8540ff1ba5dfb",
+        "symbol": "SFP",
+        "name": "SafePal Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xd41fdb03ba84762dd66a0af1a6c8540ff1ba5dfb.png"
+    },
+    {
+        "id": "0x52ce071bd9b1c4b00a0b92d298c512478cad67e8",
+        "symbol": "COMP",
+        "name": "Compound Finance",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x52ce071bd9b1c4b00a0b92d298c512478cad67e8.png"
+    },
+    {
+        "id": "0xe40255c5d7fa7ceec5120408c78c787cecb4cfdb",
+        "symbol": "SWGb",
+        "name": "Swirge Pay",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xe40255c5d7fa7ceec5120408c78c787cecb4cfdb.png"
+    },
+    {
+        "id": "0xfCe146bF3146100cfe5dB4129cf6C82b0eF4Ad8c",
+        "symbol": "renBTC",
+        "name": "renBTC",
+        "decimals": 8,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xfCe146bF3146100cfe5dB4129cf6C82b0eF4Ad8c.png"
+    },
+    {
+        "id": "0xc3fed6eb39178a541d274e6fc748d48f0ca01cc3",
+        "symbol": "renDOGE",
+        "name": "renDOGE",
+        "decimals": 8,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xc3fed6eb39178a541d274e6fc748d48f0ca01cc3.png"
+    },
+    {
+        "id": "0x5921dee8556c4593eefcfad3ca5e2f618606483b",
+        "symbol": "anyMTLX",
+        "name": "anyMTLX",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x5921dee8556c4593eefcfad3ca5e2f618606483b.png"
+    },
+    {
+        "id": "0x44754455564474a89358b2c2265883df993b12f0",
+        "symbol": "ZEE",
+        "name": "ZeroSwapToken",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x44754455564474a89358b2c2265883df993b12f0.png"
+    },
+    {
+        "id": "0xf859Bf77cBe8699013d6Dbc7C2b926Aaf307F830",
+        "symbol": "BRY",
+        "name": "Berry",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xf859Bf77cBe8699013d6Dbc7C2b926Aaf307F830.png"
+    },
+    {
+        "id": "0x71DE20e0C4616E7fcBfDD3f875d568492cBE4739",
+        "symbol": "SWINGBY",
+        "name": "Swingby",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x71DE20e0C4616E7fcBfDD3f875d568492cBE4739.png"
+    },
+    {
+        "id": "0x67ee3cb086f8a16f34bee3ca72fad36f7db929e2",
+        "symbol": "DODO",
+        "name": "Dodo",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x67ee3cb086f8a16f34bee3ca72fad36f7db929e2.png"
+    },
+    {
+        "id": "0x947950bcc74888a40ffa2593c5798f11fc9124c4",
+        "symbol": "SUSHI",
+        "name": "Sushi",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x947950bcc74888a40ffa2593c5798f11fc9124c4.png"
+    },
+    {
+        "id": "0xF35262a9d427F96d2437379eF090db986eaE5d42",
+        "symbol": "bOPEN",
+        "name": "OPEN Governance Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xF35262a9d427F96d2437379eF090db986eaE5d42.png"
+    },
+    {
+        "id": "0x92d7756c60dcfd4c689290e8a9f4d263b3b32241",
+        "symbol": "BOR",
+        "name": "BoringDAO",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x92d7756c60dcfd4c689290e8a9f4d263b3b32241.png"
+    },
+    {
+        "id": "0x695FD30aF473F2960e81Dc9bA7cB67679d35EDb7",
+        "symbol": "renZEC",
+        "name": "renZEC",
+        "decimals": 8,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x695FD30aF473F2960e81Dc9bA7cB67679d35EDb7.png"
+    },
+    {
+        "id": "0x4131b87f74415190425ccd873048c708f8005823",
+        "symbol": "bMXX",
+        "name": "Multiplier",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x4131b87f74415190425ccd873048c708f8005823.png"
+    },
+    {
+        "id": "0x9678e42cebeb63f23197d726b29b1cb20d0064e5",
+        "symbol": "IOTX",
+        "name": "IoTeX",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x9678e42cebeb63f23197d726b29b1cb20d0064e5.png"
+    },
+    {
+        "id": "0x26a5dfab467d4f58fb266648cae769503cec9580",
+        "symbol": "xMARK",
+        "name": "xMARK",
+        "decimals": 9,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x26a5dfab467d4f58fb266648cae769503cec9580.png"
+    },
+    {
+        "id": "0xeca41281c24451168a37211f0bc2b8645af45092",
+        "symbol": "TPT",
+        "name": "TokenPocket",
+        "decimals": 4,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xeca41281c24451168a37211f0bc2b8645af45092.png"
+    },
+    {
+        "id": "0x7a9f28eb62c791422aa23ceae1da9c847cbec9b0",
+        "symbol": "WATCH",
+        "name": "Yieldwatch",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x7a9f28eb62c791422aa23ceae1da9c847cbec9b0.png"
+    },
+    {
+        "id": "0x8443f091997f06a61670b735ed92734f5628692f",
+        "symbol": "BEL",
+        "name": "Bella Protocol",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x8443f091997f06a61670b735ed92734f5628692f.png"
+    },
+    {
+        "id": "0x039cb485212f996a9dbb85a9a75d898f94d38da6",
+        "symbol": "DEXE",
+        "name": "DeXe",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x039cb485212f996a9dbb85a9a75d898f94d38da6.png"
+    },
+    {
+        "id": "0x8519ea49c997f50ceffa444d240fb655e89248aa",
+        "symbol": "RAMP",
+        "name": "Ramp DEFI",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x8519ea49c997f50ceffa444d240fb655e89248aa.png"
+    },
+    {
+        "id": "0xE0e514c71282b6f4e823703a39374Cf58dc3eA4f",
+        "symbol": "BELT",
+        "name": "Belt",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xE0e514c71282b6f4e823703a39374Cf58dc3eA4f.png"
+    },
+    {
+        "id": "0x101d82428437127bf1608f699cd651e6abf9766e",
+        "symbol": "BAT",
+        "name": "Basic Attention Token",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x101d82428437127bf1608f699cd651e6abf9766e.png"
+    },
+    {
+        "id": "0x211ffbe424b90e25a15531ca322adf1559779e45",
+        "symbol": "BUX",
+        "name": "BUX",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x211ffbe424b90e25a15531ca322adf1559779e45.png"
+    },
+    {
+        "id": "0x658A109C5900BC6d2357c87549B651670E5b0539",
+        "symbol": "FOR",
+        "name": "ForTube",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x658A109C5900BC6d2357c87549B651670E5b0539.png"
+    },
+    {
+        "id": "0xac51066d7bec65dc4589368da368b212745d63e8",
+        "symbol": "ALICE",
+        "name": "My Neigbor Alice",
+        "decimals": 6,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xac51066d7bec65dc4589368da368b212745d63e8.png"
+    },
+    {
+        "id": "0xc9849e6fdb743d08faee3e34dd2d1bc69ea11a51",
+        "symbol": "BUNNY",
+        "name": "Pancake Bunny",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0xc9849e6fdb743d08faee3e34dd2d1bc69ea11a51.png"
+    },
+    {
+        "id": "0x3fda9383a84c05ec8f7630fe10adf1fac13241cc",
+        "symbol": "DEGO",
+        "name": "Dego.Finance",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x3fda9383a84c05ec8f7630fe10adf1fac13241cc.png"
+    },
+    {
+        "id": "0x857b222fc79e1cbbf8ca5f78cb133d1b7cf34bbd",
+        "symbol": "LTO",
+        "name": "LTO Network",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x857b222fc79e1cbbf8ca5f78cb133d1b7cf34bbd.png"
+    },
+    {
+        "id": "0x96dd399f9c3afda1f194182f71600f1b65946501",
+        "symbol": "COS",
+        "name": "Contentos",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x96dd399f9c3afda1f194182f71600f1b65946501.png"
+    },
+    {
+        "id": "0x1ffd0b47127fdd4097e54521c9e2c7f0d66aafc5",
+        "symbol": "TXL",
+        "name": "Tixl",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x1ffd0b47127fdd4097e54521c9e2c7f0d66aafc5.png"
+    },
+    {
+        "id": "0x8f0528ce5ef7b51152a59745befdd91d97091d2f",
+        "symbol": "ALPACA",
+        "name": "Alpaca",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x8f0528ce5ef7b51152a59745befdd91d97091d2f.png"
+    }
+]

@@ -59,18 +59,18 @@ const filteredTokenList = (tokenList: IToken[]) => {
                     :list="filterList"/>
             </div>
             <span
-v-if="selectedNetworkId !== '' || searchTerm !== ''"
-                  class="text-sm font-extralight mt-1 ml-auto">Network</span>
+                v-if="selectedNetworkId !== '' || searchTerm !== ''"
+                class="text-sm font-extralight mt-1 ml-auto">Network</span>
         </div>
         <div class="h-80 w-full overflow-y-auto">
             <NetworkAndTokenNothingFound
                 v-if="selectedNetworkId === '' && searchTerm === ''"/>
             <ul
-v-if="selectedNetworkId !== '' || searchTerm !== ''"
+                v-if="selectedNetworkId !== '' || searchTerm !== ''"
                 class="text-base flex flex-col mt-6">
                 <template
-v-for="chain in filteredChainList(chainList)"
-                          :key="chain.id">
+                    v-for="chain in filteredChainList(chainList)"
+                    :key="chain.id">
                     <li
                         v-for="token in filteredTokenList(chain.tokens)"
                         :key="token.address"
@@ -88,8 +88,8 @@ v-for="chain in filteredChainList(chainList)"
             })"
                     >
                         <TokenDisplay
-:token="token"
-                                      :chain-name="chain.name"/>
+                            :token="token"
+                            :chain-name="chain.name"/>
                     </li>
                 </template>
             </ul>
