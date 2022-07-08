@@ -65,6 +65,7 @@ services:
       RPC_NODE_POLYGON: ${polygon_RPC_NODE}
       RPC_NODE_FANTOM: ${fantom_RPC_NODE}
       RPC_NODE_BSC: ${bsc_RPC_NODE}
+      RPC_NODE_AVALANCHE: ${avalanche_RPC_NODE}
     network_mode: host
     volumes:
       - ./relayer/www/:/relayer/
