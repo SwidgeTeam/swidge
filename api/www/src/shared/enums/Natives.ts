@@ -1,4 +1,4 @@
-import { BSC, Fantom, Polygon } from './ChainIds';
+import { Avalanche, BSC, Fantom, Polygon } from './ChainIds';
 
 export const NATIVE_TOKEN_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
 
@@ -16,6 +16,11 @@ export const Natives = {
   [BSC]: {
     name: 'BNB Token',
     symbol: 'BNB',
+    decimals: 18,
+  },
+  [Avalanche]: {
+    name: 'Avalanche',
+    symbol: 'AVAX',
     decimals: 18,
   },
 };
