@@ -4,13 +4,14 @@ import bscTokens from '../assets/bsc-tokens.json'
 import { INetwork } from '@/models/INetwork'
 import FantomToken from '@/tokens/models/Fantom'
 import PolygonToken from '@/tokens/models/Polygon'
-import BSCToken from '@/tokens/models/BSC';
+import BSCToken from '@/tokens/models/BSC'
 
 const networks = new Map<string, INetwork>()
 
 export const POLYGON_CHAIN_ID = '137'
 export const FANTOM_CHAIN_ID = '250'
 export const BSC_CHAIN_ID = '56'
+export const AVALANCHE_CHAIN_ID = '43114'
 
 networks.set(POLYGON_CHAIN_ID, {
     id: POLYGON_CHAIN_ID,
@@ -34,6 +35,14 @@ networks.set(BSC_CHAIN_ID, {
     icon: 'https://res.cloudinary.com/sushi-cdn/image/fetch/f_auto,c_limit,w_64,q_auto/https://raw.githubusercontent.com/sushiswap/icons/master/network/bsc.jpg',
     tokens: bscTokens.slice(0, 60).map(token => new BSCToken(token)),
     rpcUrl: `${import.meta.env.VITE_APP_RPC_NODE_BSC}`
+})
+
+networks.set(AVALANCHE_CHAIN_ID, {
+    id: AVALANCHE_CHAIN_ID,
+    name: 'Avalanche',
+    icon: '',
+    tokens: [],
+    rpcUrl: `${import.meta.env.VITE_APP_RPC_NODE_AVALANCHE}`
 })
 
 export default networks

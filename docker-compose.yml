@@ -22,6 +22,7 @@ services:
       VITE_APP_RPC_NODE_POLYGON: ${polygon_RPC_NODE}
       VITE_APP_RPC_NODE_FANTOM: ${fantom_RPC_NODE}
       VITE_APP_RPC_NODE_BSC: ${bsc_RPC_NODE}
+      VITE_APP_RPC_NODE_AVALANCHE: ${avalanche_RPC_NODE}
       VITE_APP_API_HOST: ${API_URL}
     ports:
       - ${FRONT_APP_PORT}:3000
@@ -90,11 +91,11 @@ services:
       RPC_NODE_FANTOM: ${fantom_RPC_NODE}
       RPC_NODE_POLYGON: ${polygon_RPC_NODE}
       RPC_NODE_BSC: ${bsc_RPC_NODE}
-      RPC_NODE_AVAX: ${avax_RPC_NODE}
+      RPC_NODE_AVALANCHE: ${avalanche_RPC_NODE}
       CHAIN_ID_FANTOM: ${fantom_CHAIN_ID}
       CHAIN_ID_POLYGON: ${polygon_CHAIN_ID}
       CHAIN_ID_BSC: ${bsc_CHAIN_ID}
-      CHAIN_ID_AVAX: ${avax_CHAIN_ID}
+      CHAIN_ID_AVAX: ${avalanche_CHAIN_ID}
       POLYGONSCAN_API_KEY: ${POLYGONSCAN_API_KEY}
       FTMSCAN_API_KEY: ${FTMSCAN_API_KEY}
       SNOWTRACE_API_KEY: ${SNOWTRACE_API_KEY}
