@@ -4,11 +4,16 @@ import { Class } from '../../../shared/Class';
 import { SwapRequest } from '../../domain/SwapRequest';
 import { SwapOrder } from '../../domain/SwapOrder';
 import { BigInteger } from '../../../shared/domain/BigInteger';
-import { BSC, Fantom, Polygon } from '../../../shared/enums/ChainIds';
 import { ContractAddress } from '../../../shared/types';
 import { InsufficientLiquidity } from '../../domain/InsufficientLiquidity';
 import { AbiEncoder } from '../../../shared/domain/CallEncoder';
 import { BigNumber } from 'ethers';
+import {
+  Avalanche,
+  BSC,
+  Fantom,
+  Polygon,
+} from '../../../shared/enums/ChainIds';
 
 export class GetSwapOrder {
   constructor(
@@ -20,6 +25,7 @@ export class GetSwapOrder {
       [Polygon]: 'https://polygon.api.0x.org',
       [Fantom]: 'https://fantom.api.0x.org',
       [BSC]: 'https://bsc.api.0x.org',
+      [Avalanche]: 'https://avalanche.api.0x.org',
     };
 
     const response = await this.httpClient

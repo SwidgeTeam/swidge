@@ -12,6 +12,7 @@ interface ImportMetaEnv {
     readonly VITE_APP_RPC_NODE_POLYGON: string
     readonly VITE_APP_RPC_NODE_FANTOM: string
     readonly VITE_APP_RPC_NODE_BSC: string
+    readonly VITE_APP_RPC_NODE_AVALANCHE: string
 }
 
 interface ImportMeta {
