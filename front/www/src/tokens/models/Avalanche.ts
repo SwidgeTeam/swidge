@@ -3,7 +3,7 @@ import ITokenJson from '@/tokens/models/ITokenJson'
 
 export default class AvalancheToken implements IToken {
 
-    public static fantomImg = 'https://res.cloudinary.com/sushi-cdn/image/fetch/f_auto,c_limit,w_48,q_auto/https://raw.githubusercontent.com/sushiswap/icons/master/network/fantom.jpg'
+    public static avaxImg = 'https://res.cloudinary.com/sushi-cdn/image/fetch/f_auto,c_limit,w_64,q_auto/https://raw.githubusercontent.com/sushiswap/icons/master/network/avalanche.jpg'
     address: string
     symbol: string
     name: string
@@ -24,6 +24,6 @@ export default class AvalancheToken implements IToken {
 
     public replaceByDefault(e: Event) {
         const imageTarget = e.target as HTMLImageElement
-        imageTarget.src = AvalancheToken.fantomImg
+        imageTarget.src = AvalancheToken.avaxImg
     }
 }
