@@ -1,4 +1,4 @@
-import { BridgingRequest } from './BridgingRequest';
+import { BridgingRequest } from './bridging-request';
 import { BridgingOrder } from './BridgingOrder';
 
 export interface Bridge {

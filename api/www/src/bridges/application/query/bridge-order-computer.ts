@@ -1,4 +1,4 @@
-import { BridgingRequest } from '../../domain/BridgingRequest';
+import { BridgingRequest } from '../../domain/bridging-request';
 import { BridgingOrder } from '../../domain/BridgingOrder';
 import { Inject } from '@nestjs/common';
 import { Class } from '../../../shared/Class';

@@ -1,5 +1,5 @@
 import { HttpClient } from '../../../shared/http/httpClient';
-import { BridgingRequest } from '../BridgingRequest';
+import { BridgingRequest } from '../bridging-request';
 import { BridgingOrder } from '../BridgingOrder';
 import { Token } from '../../../shared/domain/Token';
 import { BridgingFees } from '../BridgingFees';

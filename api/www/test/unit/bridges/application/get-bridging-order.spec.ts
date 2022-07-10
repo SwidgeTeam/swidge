@@ -1,7 +1,7 @@
 import { BridgeOrderComputer } from '../../../../src/bridges/application/query/bridge-order-computer';
 import { Token } from '../../../../src/shared/domain/Token';
 import { HttpClient } from '../../../../src/shared/http/httpClient';
-import { BridgingRequest } from '../../../../src/bridges/domain/BridgingRequest';
+import { BridgingRequest } from '../../../../src/bridges/domain/bridging-request';
 import { stub } from 'sinon';
 import { BigInteger } from '../../../../src/shared/domain/BigInteger';
 
