@@ -1,4 +1,4 @@
-import { BridgingOrder } from '../../../../src/bridges/domain/BridgingOrder';
+import { BridgingOrder } from '../../../../src/bridges/domain/bridging-order';
 import { BridgingFees } from '../../../../src/bridges/domain/BridgingFees';
 import { BridgingLimits } from '../../../../src/bridges/domain/BridgingLimits';
 import { BigInteger } from '../../../../src/shared/domain/BigInteger';

@@ -1,6 +1,6 @@
 import { HttpClient } from '../../../shared/http/httpClient';
 import { BridgingRequest } from '../bridging-request';
-import { BridgingOrder } from '../BridgingOrder';
+import { BridgingOrder } from '../bridging-order';
 import { Token } from '../../../shared/domain/Token';
 import { BridgingFees } from '../BridgingFees';
 import { BigInteger } from '../../../shared/domain/BigInteger';

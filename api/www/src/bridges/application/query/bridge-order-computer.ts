@@ -1,5 +1,5 @@
 import { BridgingRequest } from '../../domain/bridging-request';
-import { BridgingOrder } from '../../domain/BridgingOrder';
+import { BridgingOrder } from '../../domain/bridging-order';
 import { Inject } from '@nestjs/common';
 import { Class } from '../../../shared/Class';
 import { HttpClient } from '../../../shared/http/httpClient';

@@ -9,7 +9,7 @@ import { Tokens } from '../../../shared/enums/Tokens';
 import { ContractAddress } from '../../../shared/types';
 import { RouterAddressFetcher } from '../../../addresses/application/query/RouterAddressFetcher';
 import { SwapOrder } from '../../../swaps/domain/SwapOrder';
-import { BridgingOrder } from '../../../bridges/domain/BridgingOrder';
+import { BridgingOrder } from '../../../bridges/domain/bridging-order';
 import { TokenDetailsFetcher } from '../../../shared/infrastructure/TokenDetailsFetcher';
 import { Inject } from '@nestjs/common';
 import { Class } from '../../../shared/Class';
