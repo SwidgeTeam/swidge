@@ -1,6 +1,6 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { GetPathQuery } from './get-path.query';
-import { Path } from '../../domain/Path';
+import { Path } from '../../domain/path';
 import { SwapOrderComputer } from '../../../swaps/application/query/swap-order-computer';
 import { SwapRequest } from '../../../swaps/domain/SwapRequest';
 import { BridgeOrderComputer } from '../../../bridges/application/query/bridge-order-computer';

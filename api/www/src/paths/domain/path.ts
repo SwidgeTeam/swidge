@@ -1,6 +1,6 @@
 import { ContractAddress } from '../../shared/types';
 import { SwapOrder } from '../../swaps/domain/SwapOrder';
-import { BridgingOrder } from '../../bridges/domain/BridgingOrder';
+import { BridgingOrder } from '../../bridges/domain/bridging-order';
 import { BigNumber } from 'ethers';
 
 export class Path {
@@ -19,16 +19,12 @@ export class Path {
   get amountOut(): string {
     if (this._bridging.required) {
       if (this._destinationSwap.required) {
-        return this._destinationSwap.buyAmount.toDecimal(
-          this._destinationSwap.tokenOut.decimals,
-        );
+        return this._destinationSwap.buyAmount.toDecimal(this._destinationSwap.tokenOut.decimals);
       } else {
         return this.bridging.amountOutDecimal;
       }
     } else {
-      return this._originSwap.buyAmount.toDecimal(
-        this._originSwap.tokenOut.decimals,
-      );
+      return this._originSwap.buyAmount.toDecimal(this._originSwap.tokenOut.decimals);
     }
   }
 
