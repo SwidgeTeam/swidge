@@ -4,13 +4,16 @@ import { HttpClient } from '../../../../src/shared/http/httpClient';
 import { BridgingRequest } from '../../../../src/bridges/domain/bridging-request';
 import { stub } from 'sinon';
 import { BigInteger } from '../../../../src/shared/domain/BigInteger';
+import { CachedHttpClient } from '../../../../src/shared/http/cachedHttpClient';
+import { BridgeProviders } from '../../../../src/bridges/domain/providers/bridge-providers';
 
 describe('get bridging step', () => {
   it('should accept upperCase token to compare', async () => {
     // Arrange
     const myHttpClient = HttpClient.create();
-    stub(myHttpClient, 'get').resolves(responseUSDC());
-    const bridgeOrderFetcher = new BridgeOrderComputer(myHttpClient);
+    const myCachedHttpClient = CachedHttpClient.create();
+    stub(myCachedHttpClient, 'get').resolves(responseUSDC());
+    const bridgeOrderFetcher = new BridgeOrderComputer(myHttpClient, myCachedHttpClient);
     const request = new BridgingRequest(
       '137',
       '1',
@@ -19,19 +22,18 @@ describe('get bridging step', () => {
     );
 
     // Act
-    const order = await bridgeOrderFetcher.execute(request);
+    const order = await bridgeOrderFetcher.execute(BridgeProviders.Multichain, request);
 
     // Assert
-    expect(order.tokenOut.address).toEqual(
-      '0x2222222222222222222222222222222222222222',
-    );
+    expect(order.tokenOut.address).toEqual('0x2222222222222222222222222222222222222222');
   });
 
   it('should return error if amount is over allowed maximum', async () => {
     // Arrange
     const myHttpClient = HttpClient.create();
-    stub(myHttpClient, 'get').resolves(responseUSDC('10', '1'));
-    const bridgeOrderFetcher = new BridgeOrderComputer(myHttpClient);
+    const myCachedHttpClient = CachedHttpClient.create();
+    stub(myCachedHttpClient, 'get').resolves(responseUSDC('10', '1'));
+    const bridgeOrderFetcher = new BridgeOrderComputer(myHttpClient, myCachedHttpClient);
     const request = new BridgingRequest(
       '137',
       '1',
@@ -40,7 +42,7 @@ describe('get bridging step', () => {
     );
 
     // Act
-    await expect(bridgeOrderFetcher.execute(request)).rejects.toThrow(
+    await expect(bridgeOrderFetcher.execute(BridgeProviders.Multichain, request)).rejects.toThrow(
       'TOO_BIG_AMOUNT',
     );
   });
@@ -48,8 +50,9 @@ describe('get bridging step', () => {
   it('should return error if amount is minor than allowed minimum', async () => {
     // Arrange
     const myHttpClient = HttpClient.create();
-    stub(myHttpClient, 'get').resolves(responseUSDC('100', '10'));
-    const bridgeOrderFetcher = new BridgeOrderComputer(myHttpClient);
+    const myCachedHttpClient = CachedHttpClient.create();
+    stub(myCachedHttpClient, 'get').resolves(responseUSDC('100', '10'));
+    const bridgeOrderFetcher = new BridgeOrderComputer(myHttpClient, myCachedHttpClient);
     const request = new BridgingRequest(
       '137',
       '1',
@@ -58,7 +61,7 @@ describe('get bridging step', () => {
     );
 
     // Act
-    await expect(bridgeOrderFetcher.execute(request)).rejects.toThrow(
+    await expect(bridgeOrderFetcher.execute(BridgeProviders.Multichain, request)).rejects.toThrow(
       'TOO_SMALL_AMOUNT',
     );
   });

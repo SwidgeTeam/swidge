@@ -1,4 +1,3 @@
-import { HttpClient } from '../../../shared/http/httpClient';
 import { BridgingRequest } from '../bridging-request';
 import { BridgingOrder } from '../bridging-order';
 import { Token } from '../../../shared/domain/Token';
@@ -9,6 +8,7 @@ import { AmountTooBig } from '../AmountTooBig';
 import { AmountTooSmall } from '../AmountTooSmall';
 import { AbiEncoder } from '../../../shared/domain/CallEncoder';
 import { Bridge } from '../bridge';
+import { CachedHttpClient } from '../../../shared/http/cachedHttpClient';
 
 interface DestToken {
   SwapFeeRatePerMillion: number;
@@ -32,7 +32,7 @@ interface TokenDetails {
 }
 
 export class Multichain implements Bridge {
-  constructor(private readonly httpClient: HttpClient) {}
+  constructor(private readonly httpClient: CachedHttpClient) {}
 
   public async execute(request: BridgingRequest): Promise<BridgingOrder> {
     // Query and filter the details of the bridging token pair

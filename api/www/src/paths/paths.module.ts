@@ -13,6 +13,7 @@ import { RouterAddressFetcher } from '../addresses/application/query/RouterAddre
 import { TransactionsModule } from '../transactions/transactions.module';
 import tokenDetailsFetcherProvider from '../shared/infrastructure/TokenDetailsFetcher.provider';
 import priceFeedConverterProvider from '../shared/infrastructure/PriceFeedConverter.provider';
+import cachedHttpClientProvider from '../shared/http/cachedHttpClient.provider';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import priceFeedConverterProvider from '../shared/infrastructure/PriceFeedConver
     BridgeOrderComputer,
     RouterAddressFetcher,
     httpClientProvider(),
+    cachedHttpClientProvider(),
     addressesRepositoryProvider(),
     tokenDetailsFetcherProvider(),
     priceFeedConverterProvider(),
