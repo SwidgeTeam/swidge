@@ -1,10 +1,11 @@
 import axios, { Axios, AxiosError, AxiosResponse } from 'axios';
+import { IHttpClient } from './IHttpClient';
 
 export type URL = string;
 export type Headers = Record<string, string>;
 export type Parameters = Record<string, unknown>;
 
-export class HttpClient {
+export class HttpClient implements IHttpClient {
   private readonly axios: Axios;
 
   public static create(baseURL?: URL) {
@@ -35,11 +36,7 @@ export class HttpClient {
    * @param params
    * @param headers
    */
-  public post<Response>(
-    url: URL,
-    params: Parameters,
-    headers: Headers,
-  ): Promise<Response> {
+  public post<Response>(url: URL, params: Parameters, headers: Headers): Promise<Response> {
     return this.axios.post(url, params, {
       headers: headers,
     });
@@ -51,11 +48,7 @@ export class HttpClient {
    * @param params
    * @param headers
    */
-  public patch<Response>(
-    url: URL,
-    params: Parameters,
-    headers: Headers,
-  ): Promise<Response> {
+  public patch<Response>(url: URL, params: Parameters, headers: Headers): Promise<Response> {
     return this.axios.patch(url, params, {
       headers: headers,
     });
@@ -67,11 +60,7 @@ export class HttpClient {
    * @param params
    * @param headers
    */
-  public put<Response>(
-    url: URL,
-    params: Parameters,
-    headers: Headers,
-  ): Promise<Response> {
+  public put<Response>(url: URL, params: Parameters, headers: Headers): Promise<Response> {
     return this.axios.put(url, params, {
       headers: headers,
     });
@@ -83,11 +72,7 @@ export class HttpClient {
    * @param headers
    * @param params
    */
-  public delete<Response>(
-    url: URL,
-    headers: Headers,
-    params?: Parameters,
-  ): Promise<Response> {
+  public delete<Response>(url: URL, headers: Headers, params?: Parameters): Promise<Response> {
     return this.axios.delete(url, {
       headers: headers,
       data: params,
@@ -99,10 +84,7 @@ export class HttpClient {
    * @private
    */
   private initializeMiddleware() {
-    this.axios.interceptors.response.use(
-      HttpClient.extractData,
-      HttpClient.normalizeError,
-    );
+    this.axios.interceptors.response.use(HttpClient.extractData, HttpClient.normalizeError);
   }
 
   /**
