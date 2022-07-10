@@ -1,24 +1,17 @@
-import { Inject } from '@nestjs/common';
-import { HttpClient } from '../../../shared/http/httpClient';
-import { Class } from '../../../shared/Class';
-import { SwapRequest } from '../../domain/SwapRequest';
-import { SwapOrder } from '../../domain/SwapOrder';
-import { BigInteger } from '../../../shared/domain/BigInteger';
+import { SwapRequest } from '../SwapRequest';
+import { SwapOrder } from '../SwapOrder';
+import { Avalanche, BSC, Fantom, Polygon } from '../../../shared/enums/ChainIds';
 import { ContractAddress } from '../../../shared/types';
-import { InsufficientLiquidity } from '../../domain/InsufficientLiquidity';
+import { InsufficientLiquidity } from '../InsufficientLiquidity';
 import { AbiEncoder } from '../../../shared/domain/CallEncoder';
+import { BigInteger } from '../../../shared/domain/BigInteger';
 import { BigNumber } from 'ethers';
-import {
-  Avalanche,
-  BSC,
-  Fantom,
-  Polygon,
-} from '../../../shared/enums/ChainIds';
+import { Exchange } from '../exchange';
+import { HttpClient } from '../../../shared/http/httpClient';
+import { ExchangeProviders } from './exchange-providers';
 
-export class GetSwapOrder {
-  constructor(
-    @Inject(Class.HttpClient) private readonly httpClient: HttpClient,
-  ) {}
+export class ZeroEx implements Exchange {
+  constructor(private readonly httpClient: HttpClient) {}
 
   async execute(request: SwapRequest): Promise<SwapOrder> {
     const urls = {
@@ -46,15 +39,12 @@ export class GetSwapOrder {
         throw new InsufficientLiquidity();
       });
 
-    const encodedAddress = AbiEncoder.encodeFunctionArguments(
-      ['address'],
-      [response.to],
-    );
+    const encodedAddress = AbiEncoder.encodeFunctionArguments(['address'], [response.to]);
 
     const encodedData = AbiEncoder.concatBytes([encodedAddress, response.data]);
 
     return new SwapOrder(
-      0,
+      ExchangeProviders.ZeroEx,
       request.tokenIn,
       request.tokenOut,
       response.allowanceTarget,

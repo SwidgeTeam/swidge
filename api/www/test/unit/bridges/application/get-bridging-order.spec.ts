@@ -1,4 +1,4 @@
-import { GetBridgingOrder } from '../../../../src/bridges/application/query/get-bridging-order';
+import { BridgeOrderComputer } from '../../../../src/bridges/application/query/bridge-order-computer';
 import { Token } from '../../../../src/shared/domain/Token';
 import { HttpClient } from '../../../../src/shared/http/httpClient';
 import { BridgingRequest } from '../../../../src/bridges/domain/BridgingRequest';
@@ -10,7 +10,7 @@ describe('get bridging step', () => {
     // Arrange
     const myHttpClient = HttpClient.create();
     stub(myHttpClient, 'get').resolves(responseUSDC());
-    const bridgeOrderFetcher = new GetBridgingOrder(myHttpClient);
+    const bridgeOrderFetcher = new BridgeOrderComputer(myHttpClient);
     const request = new BridgingRequest(
       '137',
       '1',
@@ -31,7 +31,7 @@ describe('get bridging step', () => {
     // Arrange
     const myHttpClient = HttpClient.create();
     stub(myHttpClient, 'get').resolves(responseUSDC('10', '1'));
-    const bridgeOrderFetcher = new GetBridgingOrder(myHttpClient);
+    const bridgeOrderFetcher = new BridgeOrderComputer(myHttpClient);
     const request = new BridgingRequest(
       '137',
       '1',
@@ -49,7 +49,7 @@ describe('get bridging step', () => {
     // Arrange
     const myHttpClient = HttpClient.create();
     stub(myHttpClient, 'get').resolves(responseUSDC('100', '10'));
-    const bridgeOrderFetcher = new GetBridgingOrder(myHttpClient);
+    const bridgeOrderFetcher = new BridgeOrderComputer(myHttpClient);
     const request = new BridgingRequest(
       '137',
       '1',

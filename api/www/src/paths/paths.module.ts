@@ -3,9 +3,9 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { GetPathHandler } from './application/query/get-path.handler';
 import { GetPathController } from './infrastructure/controllers/get-path.controller';
 import { SwapsModule } from '../swaps/swaps.module';
-import { GetSwapOrder } from '../swaps/application/query/get-swap-order';
+import { SwapOrderComputer } from '../swaps/application/query/swap-order-computer';
 import { BridgesModule } from '../bridges/bridges.module';
-import { GetBridgingOrder } from '../bridges/application/query/get-bridging-order';
+import { BridgeOrderComputer } from '../bridges/application/query/bridge-order-computer';
 import httpClientProvider from '../shared/http/httpClient.provider';
 import { AddressesModule } from '../addresses/addresses.module';
 import addressesRepositoryProvider from '../addresses/infrastructure/database/repositories/addresses.repository.provider';
@@ -25,8 +25,8 @@ import priceFeedConverterProvider from '../shared/infrastructure/PriceFeedConver
   controllers: [GetPathController],
   providers: [
     GetPathHandler,
-    GetSwapOrder,
-    GetBridgingOrder,
+    SwapOrderComputer,
+    BridgeOrderComputer,
     RouterAddressFetcher,
     httpClientProvider(),
     addressesRepositoryProvider(),

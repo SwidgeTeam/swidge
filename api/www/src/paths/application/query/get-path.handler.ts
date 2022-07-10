@@ -1,9 +1,9 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { GetPathQuery } from './get-path.query';
 import { Path } from '../../domain/Path';
-import { GetSwapOrder } from '../../../swaps/application/query/get-swap-order';
+import { SwapOrderComputer } from '../../../swaps/application/query/swap-order-computer';
 import { SwapRequest } from '../../../swaps/domain/SwapRequest';
-import { GetBridgingOrder } from '../../../bridges/application/query/get-bridging-order';
+import { BridgeOrderComputer } from '../../../bridges/application/query/bridge-order-computer';
 import { BridgingRequest } from '../../../bridges/domain/BridgingRequest';
 import { Tokens } from '../../../shared/enums/Tokens';
 import { ContractAddress } from '../../../shared/types';
@@ -16,13 +16,15 @@ import { Class } from '../../../shared/Class';
 import { BigInteger } from '../../../shared/domain/BigInteger';
 import { BigNumber } from 'ethers';
 import { PriceFeedConverter } from '../../../shared/infrastructure/PriceFeedConverter';
+import { ExchangeProviders } from '../../../swaps/domain/providers/exchange-providers';
+import { BridgeProviders } from '../../../bridges/domain/providers/bridge-providers';
 
 @QueryHandler(GetPathQuery)
 export class GetPathHandler implements IQueryHandler<GetPathQuery> {
   constructor(
     private readonly routerAddressFetcher: RouterAddressFetcher,
-    private readonly swapOrderProvider: GetSwapOrder,
-    private readonly bridgeOrderProvider: GetBridgingOrder,
+    private readonly swapOrderProvider: SwapOrderComputer,
+    private readonly bridgeOrderProvider: BridgeOrderComputer,
     @Inject(Class.TokenDetailsFetcher)
     private readonly tokenDetailsFetcher: TokenDetailsFetcher,
     @Inject(Class.PriceFeedConverter)
@@ -43,24 +45,13 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
    * @private
    */
   private async singleStepPath(query: GetPathQuery): Promise<Path> {
-    const srcToken = await this.tokenDetailsFetcher.fetch(
-      query.srcToken,
-      query.fromChainId,
-    );
-    const dstToken = await this.tokenDetailsFetcher.fetch(
-      query.dstToken,
-      query.toChainId,
-    );
+    const srcToken = await this.tokenDetailsFetcher.fetch(query.srcToken, query.fromChainId);
+    const dstToken = await this.tokenDetailsFetcher.fetch(query.dstToken, query.toChainId);
     const amountIn = BigInteger.fromDecimal(query.amountIn, srcToken.decimals);
 
-    const swapRequest = new SwapRequest(
-      query.fromChainId,
-      srcToken,
-      dstToken,
-      amountIn,
-    );
+    const swapRequest = new SwapRequest(query.fromChainId, srcToken, dstToken, amountIn);
 
-    const swapOrder = await this.swapOrderProvider.execute(swapRequest);
+    const swapOrder = await this.swapOrderProvider.execute(ExchangeProviders.ZeroEx, swapRequest);
 
     const router = await this.getRouter();
 
@@ -81,20 +72,14 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
   private async multiStepPath(query: GetPathQuery): Promise<Path> {
     /** Origin swap **/
 
-    const srcToken = await this.tokenDetailsFetcher.fetch(
-      query.srcToken,
-      query.fromChainId,
-    );
+    const srcToken = await this.tokenDetailsFetcher.fetch(query.srcToken, query.fromChainId);
     const originBridgingToken = Tokens.USDC[query.fromChainId];
     const amountIn = BigInteger.fromDecimal(query.amountIn, srcToken.decimals);
 
     let originSwapOrder;
     let bridgingAmount;
 
-    if (
-      srcToken.address.toLowerCase() ===
-      originBridgingToken.address.toLowerCase()
-    ) {
+    if (srcToken.address.toLowerCase() === originBridgingToken.address.toLowerCase()) {
       originSwapOrder = SwapOrder.notRequired();
       bridgingAmount = amountIn;
     } else {
@@ -104,7 +89,10 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
         originBridgingToken,
         amountIn,
       );
-      originSwapOrder = await this.swapOrderProvider.execute(originSwapRequest);
+      originSwapOrder = await this.swapOrderProvider.execute(
+        ExchangeProviders.ZeroEx,
+        originSwapRequest,
+      );
       bridgingAmount = originSwapOrder.buyAmount;
     }
 
@@ -117,7 +105,10 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
       bridgingAmount,
     );
 
-    const bridgingOrder = await this.bridgeOrderProvider.execute(bridgeRequest);
+    const bridgingOrder = await this.bridgeOrderProvider.execute(
+      BridgeProviders.Multichain,
+      bridgeRequest,
+    );
 
     if (bridgingAmount.greaterThan(bridgingOrder.bigAmountThreshold)) {
       // TODO : It can be done, but alert it can take very long
@@ -127,16 +118,10 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
 
     /** Destination swap **/
 
-    const dstToken = await this.tokenDetailsFetcher.fetch(
-      query.dstToken,
-      query.toChainId,
-    );
+    const dstToken = await this.tokenDetailsFetcher.fetch(query.dstToken, query.toChainId);
 
     let destinationSwapOrder: SwapOrder;
-    if (
-      dstToken.address.toLowerCase() ===
-      bridgingOrder.tokenOut.address.toLowerCase()
-    ) {
+    if (dstToken.address.toLowerCase() === bridgingOrder.tokenOut.address.toLowerCase()) {
       destinationSwapOrder = SwapOrder.sameToken(dstToken);
     } else {
       const destinationSwapRequest = new SwapRequest(
@@ -147,6 +132,7 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
       );
 
       destinationSwapOrder = await this.swapOrderProvider.execute(
+        ExchangeProviders.ZeroEx,
         destinationSwapRequest,
       );
     }
@@ -154,8 +140,7 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
     // Add base gas for destination swap
     const fixDestinationGas = BigNumber.from(0);
 
-    const estimatedDestinationGas =
-      destinationSwapOrder.estimatedGas.add(fixDestinationGas);
+    const estimatedDestinationGas = destinationSwapOrder.estimatedGas.add(fixDestinationGas);
 
     const nativeCoinDestinationFee = await this.priceFeedConverter.fetch(
       query.fromChainId,
