@@ -7,6 +7,7 @@ import FantomToken from '@/tokens/models/Fantom'
 import PolygonToken from '@/tokens/models/Polygon'
 import BSCToken from '@/tokens/models/BSC'
 import AvalancheToken from '@/tokens/models/Avalanche'
+import OptimismToken from '@/tokens/models/Optimism'
 
 const networks = new Map<string, INetwork>()
 
@@ -14,6 +15,7 @@ export const POLYGON_CHAIN_ID = '137'
 export const FANTOM_CHAIN_ID = '250'
 export const BSC_CHAIN_ID = '56'
 export const AVALANCHE_CHAIN_ID = '43114'
+export const OPTIMISM_CHAIN_ID = '10'
 
 const MAX_TOKENS = 60
 
@@ -47,6 +49,14 @@ networks.set(AVALANCHE_CHAIN_ID, {
     icon: 'https://res.cloudinary.com/sushi-cdn/image/fetch/f_auto,c_limit,w_64,q_auto/https://raw.githubusercontent.com/sushiswap/icons/master/network/avalanche.jpg',
     tokens: avalancheTokens.slice(0, MAX_TOKENS).map(token => new AvalancheToken(token)),
     rpcUrl: `${import.meta.env.VITE_APP_RPC_NODE_AVALANCHE}`
+})
+
+networks.set(OPTIMISM_CHAIN_ID, {
+    id: OPTIMISM_CHAIN_ID,
+    name: 'Optimism',
+    icon: 'https://res.cloudinary.com/sushi-cdn/image/fetch/f_auto,c_limit,w_64,q_auto/https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/optimism.jpg',
+    tokens: optimismTokens.slice(0, MAX_TOKENS).map(token => new OptimismToken(token)),
+    rpcUrl: `${import.meta.env.VITE_APP_RPC_NODE_Optimism}`
 })
 
 export default networks
