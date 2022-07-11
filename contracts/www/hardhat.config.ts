@@ -68,6 +68,18 @@ const config: HardhatUserConfig = {
       chainId: Number(process.env.CHAIN_ID_AVAX || 43114),
       gasMultiplier: 2,
     },
+    optimism: {
+      url: process.env.RPC_NODE_OPTIMISM || "https://mainnet.optimism.io",
+      accounts,
+      chainId: Number(process.env.CHAIN_ID_OPTIMISM || 10),
+      gasMultiplier: 2,
+    },
+    celo: {
+      url: process.env.RPC_NODE_CELO || "https://forno.celo.org",
+      accounts,
+      chainId: Number(process.env.CHAIN_ID_CELO || 42220),
+      gasMultiplier: 2,
+    },
   },
   etherscan: {
     apiKey: {
