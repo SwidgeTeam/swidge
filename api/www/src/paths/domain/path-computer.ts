@@ -30,8 +30,8 @@ export class PathComputer {
   private toChain: string;
   private amountIn: BigInteger;
   /** Result */
-  private possiblePaths: PossiblePath[]; // Initial incomplete paths
-  private candidatePaths: CandidatePath[]; // Final candidate paths
+  private readonly possiblePaths: PossiblePath[]; // Initial incomplete paths
+  private readonly candidatePaths: CandidatePath[]; // Final candidate paths
 
   constructor(
     _swapOrderProvider: SwapOrderComputer,
@@ -44,6 +44,8 @@ export class PathComputer {
     this.tokenDetailsFetcher = _tokenDetailsFetcher;
     this.priceFeedConverter = _priceFeedConverter;
     this.bridgingAssets = [USDC];
+    this.possiblePaths = [];
+    this.candidatePaths = [];
   }
 
   /**
@@ -125,7 +127,7 @@ export class PathComputer {
           bridgeAmountIn = this.amountIn;
         }
         const bridgeOrder = await this.getBridgeStep(bridgeId, path.bridgingAsset, bridgeAmountIn);
-        path.withBridge(bridgeId, bridgeOrder);
+        path.withBridge(bridgeOrder);
       }
     }
   }
@@ -141,8 +143,8 @@ export class PathComputer {
       // and every possible path
       for (const path of this.possiblePaths) {
         // check each combination (exchange+bridge)
-        path.forEachBridge(async (originSwap: SwapOrder, bridgeOrder: BridgingOrder) => {
-          // in order to compute the destination swap
+        // in order to compute the destination swap
+        for (const bridgeOrder of path.bridgeSteps) {
           let destinationSwap;
           // if the bridge already gave us what we want...
           if (bridgeOrder.tokenOut.equals(this.dstToken)) {
@@ -159,8 +161,9 @@ export class PathComputer {
             destinationSwap = await this.swapOrderProvider.execute(swapperId, swapRequest);
           }
           // store the final combination
-          this.candidatePaths.push(new CandidatePath(originSwap, bridgeOrder, destinationSwap));
-        });
+          const candidate = new CandidatePath(path.originSwap, bridgeOrder, destinationSwap);
+          this.candidatePaths.push(candidate);
+        }
       }
     }
   }
@@ -228,7 +231,7 @@ export class PathComputer {
     asset: string,
     swapAmountOut: BigInteger,
   ): Promise<BridgingOrder> {
-    const bridgeTokenIn = Tokens[asset][this.toChain];
+    const bridgeTokenIn = Tokens[asset][this.fromChain];
     const bridgeRequest = new BridgingRequest(
       this.fromChain,
       this.toChain,
