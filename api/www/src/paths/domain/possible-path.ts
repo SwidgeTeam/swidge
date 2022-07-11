@@ -17,6 +17,10 @@ export class PossiblePath {
     return this._bridgingAsset;
   }
 
+  get originSwapRequired(): boolean {
+    return this._originStep.required;
+  }
+
   get originSwapAmountOut(): BigInteger {
     return this._originStep.buyAmount;
   }

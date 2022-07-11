@@ -85,13 +85,21 @@ export class PathComputer {
       for (const bridgingAsset of this.bridgingAssets) {
         // and create a possible path
         const bridgeTokenIn = Tokens[bridgingAsset][this.fromChain];
-        const swapRequest = new SwapRequest(
-          this.fromChain,
-          this.srcToken,
-          bridgeTokenIn,
-          this.amountIn,
-        );
-        const swapOrder = await this.swapOrderProvider.execute(exchangeId, swapRequest);
+        let swapOrder;
+        // if the origin asset is the same that we bridge...
+        if (this.srcToken.equals(bridgeTokenIn)) {
+          // no need to swap
+          swapOrder = SwapOrder.notRequired();
+        } else {
+          // otherwise compute origin swap
+          const swapRequest = new SwapRequest(
+            this.fromChain,
+            this.srcToken,
+            bridgeTokenIn,
+            this.amountIn,
+          );
+          swapOrder = await this.swapOrderProvider.execute(exchangeId, swapRequest);
+        }
         const possiblePath = new PossiblePath(bridgingAsset, swapOrder);
         // store it
         this.possiblePaths.push(possiblePath);
@@ -109,9 +117,14 @@ export class PathComputer {
       // and every possible path
       for (const path of this.possiblePaths) {
         // add the possible bridge order
-        const bridgingAsset = path.bridgingAsset;
-        const swapAmountOut = path.originSwapAmountOut;
-        const bridgeOrder = await this.getBridgeStep(bridgeId, bridgingAsset, swapAmountOut);
+        let bridgeAmountIn;
+        // check the amount that should input the bridge
+        if (path.originSwapRequired) {
+          bridgeAmountIn = path.originSwapAmountOut;
+        } else {
+          bridgeAmountIn = this.amountIn;
+        }
+        const bridgeOrder = await this.getBridgeStep(bridgeId, path.bridgingAsset, bridgeAmountIn);
         path.withBridge(bridgeId, bridgeOrder);
       }
     }
@@ -130,13 +143,21 @@ export class PathComputer {
         // check each combination (exchange+bridge)
         path.forEachBridge(async (originSwap: SwapOrder, bridgeOrder: BridgingOrder) => {
           // in order to compute the destination swap
-          const swapRequest = new SwapRequest(
-            this.toChain,
-            bridgeOrder.tokenOut,
-            this.dstToken,
-            bridgeOrder.amountOut,
-          );
-          const destinationSwap = await this.swapOrderProvider.execute(swapperId, swapRequest);
+          let destinationSwap;
+          // if the bridge already gave us what we want...
+          if (bridgeOrder.tokenOut.equals(this.dstToken)) {
+            // no need to swap
+            destinationSwap = SwapOrder.sameToken(this.dstToken);
+          } else {
+            // otherwise compute required swap
+            const swapRequest = new SwapRequest(
+              this.toChain,
+              bridgeOrder.tokenOut,
+              this.dstToken,
+              bridgeOrder.amountOut,
+            );
+            destinationSwap = await this.swapOrderProvider.execute(swapperId, swapRequest);
+          }
           // store the final combination
           this.candidatePaths.push(new CandidatePath(originSwap, bridgeOrder, destinationSwap));
         });
