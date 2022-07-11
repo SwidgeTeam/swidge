@@ -9,6 +9,7 @@ import { AmountTooSmall } from '../AmountTooSmall';
 import { AbiEncoder } from '../../../shared/domain/CallEncoder';
 import { Bridge } from '../bridge';
 import { CachedHttpClient } from '../../../shared/http/cachedHttpClient';
+import { Avalanche, BSC, Fantom, Mainnet, Polygon } from '../../../shared/enums/ChainIds';
 
 interface DestToken {
   SwapFeeRatePerMillion: number;
@@ -32,7 +33,15 @@ interface TokenDetails {
 }
 
 export class Multichain implements Bridge {
-  constructor(private readonly httpClient: CachedHttpClient) {}
+  private enabledChains;
+
+  constructor(private readonly httpClient: CachedHttpClient) {
+    this.enabledChains = [Mainnet, Polygon, Fantom, BSC, Avalanche];
+  }
+
+  public isEnabledOn(fromChainId: string, toChainId: string): boolean {
+    return this.enabledChains.includes(fromChainId) && this.enabledChains.includes(toChainId);
+  }
 
   public async execute(request: BridgingRequest): Promise<BridgingOrder> {
     // Query and filter the details of the bridging token pair

@@ -141,7 +141,7 @@ export class PathComputer {
    * @private
    */
   private getPossibleBridges(): string[] {
-    return [];
+    return this.bridgeOrderProvider.getEnabledBridges(this.fromChain, this.toChain);
   }
 
   /**

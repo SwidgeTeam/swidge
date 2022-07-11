@@ -9,20 +9,32 @@ import { BridgeProviders } from '../../domain/providers/bridge-providers';
 import { CachedHttpClient } from '../../../shared/http/cachedHttpClient';
 
 export class BridgeOrderComputer {
+  private readonly multichain: Multichain;
+
   constructor(
     @Inject(Class.HttpClient) private readonly httpClient: HttpClient,
     @Inject(Class.CachedHttpClient) private readonly cachedHttpClient: CachedHttpClient,
-  ) {}
+  ) {
+    this.multichain = new Multichain(this.cachedHttpClient);
+  }
 
   public async execute(bridgeId: string, request: BridgingRequest): Promise<BridgingOrder> {
     let bridge: Bridge;
     switch (bridgeId) {
       case BridgeProviders.Multichain:
-        bridge = new Multichain(this.cachedHttpClient);
+        bridge = this.multichain;
         break;
       default:
         throw new Error('unrecognized bridge');
     }
     return await bridge.execute(request);
+  }
+
+  public getEnabledBridges(fromChain: string, toChain: string): string[] {
+    const enabled = [];
+    if (this.multichain.isEnabledOn(fromChain, toChain)) {
+      enabled.push(BridgeProviders.Multichain);
+    }
+    return enabled;
   }
 }
