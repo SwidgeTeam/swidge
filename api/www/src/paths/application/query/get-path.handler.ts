@@ -79,7 +79,7 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
     let originSwapOrder;
     let bridgingAmount;
 
-    if (srcToken.address.toLowerCase() === originBridgingToken.address.toLowerCase()) {
+    if (srcToken.equals(originBridgingToken)) {
       originSwapOrder = SwapOrder.notRequired();
       bridgingAmount = amountIn;
     } else {
@@ -121,7 +121,7 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
     const dstToken = await this.tokenDetailsFetcher.fetch(query.dstToken, query.toChainId);
 
     let destinationSwapOrder: SwapOrder;
-    if (dstToken.address.toLowerCase() === bridgingOrder.tokenOut.address.toLowerCase()) {
+    if (dstToken.equals(bridgingOrder.tokenOut)) {
       destinationSwapOrder = SwapOrder.sameToken(dstToken);
     } else {
       const destinationSwapRequest = new SwapRequest(

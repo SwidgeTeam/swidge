@@ -22,4 +22,8 @@ export class Token {
   get decimals(): number {
     return this._decimals;
   }
+
+  public equals(other: Token): boolean {
+    return this._address.toLowerCase() === other.address.toLowerCase();
+  }
 }
