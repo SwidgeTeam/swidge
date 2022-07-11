@@ -12,12 +12,16 @@ import { TokenDetailsFetcher } from '../../shared/infrastructure/TokenDetailsFet
 import { BridgeOrderComputer } from '../../bridges/application/query/bridge-order-computer';
 import { SwapOrderComputer } from '../../swaps/application/query/swap-order-computer';
 import { BridgingRequest } from '../../bridges/domain/bridging-request';
+import { Path } from './path';
+import { BigNumber } from 'ethers';
+import { PriceFeedConverter } from '../../shared/infrastructure/PriceFeedConverter';
 
 export class PathComputer {
   /** Providers */
   private readonly swapOrderProvider: SwapOrderComputer;
   private readonly bridgeOrderProvider: BridgeOrderComputer;
   private readonly tokenDetailsFetcher: TokenDetailsFetcher;
+  private readonly priceFeedConverter: PriceFeedConverter;
   /** Details */
   private readonly bridgingAssets;
   private srcToken: Token;
@@ -33,10 +37,12 @@ export class PathComputer {
     _swapOrderProvider: SwapOrderComputer,
     _bridgeOrderProvider: BridgeOrderComputer,
     _tokenDetailsFetcher: TokenDetailsFetcher,
+    _priceFeedConverter: PriceFeedConverter,
   ) {
     this.swapOrderProvider = _swapOrderProvider;
     this.bridgeOrderProvider = _bridgeOrderProvider;
     this.tokenDetailsFetcher = _tokenDetailsFetcher;
+    this.priceFeedConverter = _priceFeedConverter;
     this.bridgingAssets = [USDC];
   }
 
@@ -54,6 +60,18 @@ export class PathComputer {
     await this.originSwap();
     await this.bridge();
     await this.destinationSwap();
+
+    const candidate = await this.getBestCandidate();
+
+    const nativeWei = await this.convertDestinationGasIntoOriginNative(candidate.destinationStep);
+
+    return new Path(
+      '',
+      candidate.originStep,
+      candidate.bridgeStep,
+      candidate.destinationStep,
+      nativeWei,
+    );
   }
 
   /**
@@ -125,6 +143,40 @@ export class PathComputer {
         });
       }
     }
+  }
+
+  /**
+   * Checks all the candidates to select the most optimal path
+   * @private
+   */
+  private async getBestCandidate(): Promise<CandidatePath> {
+    let currentMax = BigInteger.zero();
+    let bestPath: CandidatePath;
+    for (const candidate of this.candidatePaths) {
+      if (candidate.amountOut.greaterThan(currentMax)) {
+        currentMax = candidate.amountOut;
+        bestPath = candidate;
+      }
+    }
+    return bestPath;
+  }
+
+  /**
+   *
+   * @private
+   */
+  private async convertDestinationGasIntoOriginNative(
+    destinationSwap: SwapOrder,
+  ): Promise<BigNumber> {
+    const fixDestinationGas = BigNumber.from(0);
+
+    const estimatedDestinationGas = destinationSwap.estimatedGas.add(fixDestinationGas);
+
+    return await this.priceFeedConverter.fetch(
+      this.fromChain,
+      this.toChain,
+      estimatedDestinationGas,
+    );
   }
 
   /**

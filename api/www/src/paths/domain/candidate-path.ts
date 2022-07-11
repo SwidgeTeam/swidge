@@ -1,14 +1,31 @@
 import { SwapOrder } from '../../swaps/domain/SwapOrder';
 import { BridgingOrder } from '../../bridges/domain/bridging-order';
+import { BigInteger } from '../../shared/domain/BigInteger';
 
 export class CandidatePath {
-  private readonly originStep;
-  private readonly bridgeStep;
-  private readonly destinationStep;
+  private readonly _originStep: SwapOrder;
+  private readonly _bridgeStep: BridgingOrder;
+  private readonly _destinationStep: SwapOrder;
 
   constructor(_originStep: SwapOrder, _bridgeStep: BridgingOrder, _destinationStep: SwapOrder) {
-    this.originStep = _originStep;
-    this.bridgeStep = _bridgeStep;
-    this.destinationStep = _destinationStep;
+    this._originStep = _originStep;
+    this._bridgeStep = _bridgeStep;
+    this._destinationStep = _destinationStep;
+  }
+
+  get originStep(): SwapOrder {
+    return this._originStep;
+  }
+
+  get bridgeStep(): BridgingOrder {
+    return this._bridgeStep;
+  }
+
+  get destinationStep(): SwapOrder {
+    return this._destinationStep;
+  }
+
+  get amountOut(): BigInteger {
+    return this._destinationStep.buyAmount;
   }
 }
