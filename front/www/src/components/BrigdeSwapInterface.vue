@@ -13,7 +13,7 @@ import IToken from '@/tokens/models/IToken'
 import BridgeSwapInteractiveButton from './BridgeSwapInteractiveButton.vue'
 import SwidgeAPI from '@/api/swidge-api'
 import GetQuoteResponse from '@/api/models/get-quote-response'
-import { RouterCaller, RouterCallPayload } from '@/contracts/routerCaller'
+import { ROUTER_ADDRESS, RouterCaller, RouterCallPayload } from '@/contracts/routerCaller'
 import { useWeb3Store } from '@/store/web3'
 import { BigNumber, ethers, providers } from 'ethers'
 import networks from '@/assets/Networks'
@@ -55,7 +55,6 @@ const selectedDestinationToken = ref<IToken>({
     symbol: '',
 })
 const quotedPath = ref<GetQuoteResponse>({
-    router: '',
     amountOut: '',
     destinationFee: '',
     originSwap: {
@@ -349,7 +348,6 @@ const onExecuteTransaction = async () => {
         selectedSourceToken.value.decimals
     )
     const contractCallPayload: RouterCallPayload = {
-        router: quotedPath.value.router,
         amountIn: amountIn,
         destinationFee: BigNumber.from(quotedPath.value.destinationFee),
         originSwap: {
@@ -422,7 +420,7 @@ const setUpEventListener = (executedTxHash: string) => {
     const provider = getChainProvider(quotedPath.value.bridge.toChainId)
 
     const filter = {
-        address: quotedPath.value.router,
+        address: ROUTER_ADDRESS,
         topics: [ethers.utils.id('CrossFinalized(bytes32,uint256)')],
     }
 

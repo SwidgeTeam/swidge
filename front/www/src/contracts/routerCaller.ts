@@ -3,7 +3,6 @@ import routerAbi from './router.json'
 import IERC20Abi from './IERC20.json'
 
 export interface RouterCallPayload {
-    router: string
     amountIn: BigNumber
     destinationFee: BigNumber
     originSwap: {
@@ -28,6 +27,8 @@ export interface RouterCallPayload {
 
 export const NATIVE_COIN_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 
+export const ROUTER_ADDRESS = '0x1a6e1ef1d28A7d9feD016c88f4d1858367564781'
+
 export class RouterCaller {
 
     static provider() {
@@ -41,7 +42,7 @@ export class RouterCaller {
 
         // Get Router contract instance
         const Router = new ethers.Contract(
-            params.router,
+            ROUTER_ADDRESS,
             routerAbi,
             provider.getSigner()
         )
@@ -50,7 +51,7 @@ export class RouterCaller {
             const tokenIn = params.originSwap.required
                 ? params.originSwap.tokenIn
                 : params.bridge.tokenIn
-            await RouterCaller.approveIfRequired(tokenIn, params.router)
+            await RouterCaller.approveIfRequired(tokenIn)
         }
 
         const feeData = await provider.getFeeData()
@@ -92,9 +93,8 @@ export class RouterCaller {
     /**
      * Approves amount of tokens to be taken by spender address
      * @param tokenAddress
-     * @param spender
      */
-    static async approveIfRequired(tokenAddress: string, spender: string) {
+    static async approveIfRequired(tokenAddress: string) {
         const provider = this.provider()
         const signer = provider.getSigner()
 
@@ -105,14 +105,14 @@ export class RouterCaller {
             signer
         )
 
-        const allowance = await Token.allowance(window.ethereum.selectedAddress, spender)
+        const allowance = await Token.allowance(window.ethereum.selectedAddress, ROUTER_ADDRESS)
 
         if (allowance.toString() === ethers.constants.MaxUint256.toString()) {
             return
         }
 
         // Create the transaction
-        const tx = await Token.approve(spender, ethers.constants.MaxUint256)
+        const tx = await Token.approve(ROUTER_ADDRESS, ethers.constants.MaxUint256)
 
         // Broadcast & wait
         await tx.wait()
