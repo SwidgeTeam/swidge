@@ -133,7 +133,7 @@ export class PathComputer {
    * @private
    */
   private getPossibleExchanges(chainId: string): string[] {
-    return [];
+    return this.swapOrderProvider.getEnabledExchanged(chainId);
   }
 
   /**

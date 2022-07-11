@@ -1,6 +1,6 @@
 import { SwapRequest } from '../SwapRequest';
 import { SwapOrder } from '../SwapOrder';
-import { Avalanche, BSC, Fantom, Polygon } from '../../../shared/enums/ChainIds';
+import { Avalanche, BSC, Fantom, Mainnet, Polygon } from '../../../shared/enums/ChainIds';
 import { ContractAddress } from '../../../shared/types';
 import { InsufficientLiquidity } from '../InsufficientLiquidity';
 import { AbiEncoder } from '../../../shared/domain/CallEncoder';
@@ -11,7 +11,15 @@ import { HttpClient } from '../../../shared/http/httpClient';
 import { ExchangeProviders } from './exchange-providers';
 
 export class ZeroEx implements Exchange {
-  constructor(private readonly httpClient: HttpClient) {}
+  private readonly enabledChains: string[];
+
+  constructor(private readonly httpClient: HttpClient) {
+    this.enabledChains = [Mainnet, Polygon, Fantom, BSC, Avalanche];
+  }
+
+  public isEnabledOn(chainId: string): boolean {
+    return this.enabledChains.includes(chainId);
+  }
 
   async execute(request: SwapRequest): Promise<SwapOrder> {
     const urls = {
