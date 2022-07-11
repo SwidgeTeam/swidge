@@ -29,6 +29,9 @@ on:
       RPC_NODE_BSC:
         description: 'RPC node for BSC'
         required: true
+      RPC_NODE_OPTIMISM:
+        description: 'RPC node for Optimism'
+        required: true
 
 env:
   VITE_APP_API_HOST: ${{inputs.api-url}}
