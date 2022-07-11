@@ -102,11 +102,11 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: 'us-east-1'
-          SOURCE_DIR: ''${{ env.root-path }}/dist'
+          SOURCE_DIR: '${{ env.root-path }}/dist'
 
       - uses: chetan/invalidate-cloudfront-action@v2
         env:
-          PATHS: ''/*'
+          PATHS: '/*'
           AWS_REGION: 'us-east-1'
           DISTRIBUTION: ${{ secrets.DISTRIBUTION }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
