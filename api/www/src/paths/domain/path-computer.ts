@@ -66,7 +66,6 @@ export class PathComputer {
     const nativeWei = await this.convertDestinationGasIntoOriginNative(candidate.destinationStep);
 
     return new Path(
-      '',
       candidate.originStep,
       candidate.bridgeStep,
       candidate.destinationStep,

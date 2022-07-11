@@ -7,9 +7,7 @@ import { SwapOrderComputer } from '../swaps/application/query/swap-order-compute
 import { BridgesModule } from '../bridges/bridges.module';
 import { BridgeOrderComputer } from '../bridges/application/query/bridge-order-computer';
 import httpClientProvider from '../shared/http/httpClient.provider';
-import { AddressesModule } from '../addresses/addresses.module';
 import addressesRepositoryProvider from '../addresses/infrastructure/database/repositories/addresses.repository.provider';
-import { RouterAddressFetcher } from '../addresses/application/query/RouterAddressFetcher';
 import { TransactionsModule } from '../transactions/transactions.module';
 import tokenDetailsFetcherProvider from '../shared/infrastructure/TokenDetailsFetcher.provider';
 import priceFeedConverterProvider from '../shared/infrastructure/PriceFeedConverter.provider';
@@ -20,7 +18,6 @@ import cachedHttpClientProvider from '../shared/http/cachedHttpClient.provider';
     CqrsModule,
     SwapsModule,
     BridgesModule,
-    AddressesModule,
     TransactionsModule,
   ],
   controllers: [GetPathController],
@@ -28,7 +25,6 @@ import cachedHttpClientProvider from '../shared/http/cachedHttpClient.provider';
     GetPathHandler,
     SwapOrderComputer,
     BridgeOrderComputer,
-    RouterAddressFetcher,
     httpClientProvider(),
     cachedHttpClientProvider(),
     addressesRepositoryProvider(),

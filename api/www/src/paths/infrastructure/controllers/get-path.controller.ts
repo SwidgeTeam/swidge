@@ -23,7 +23,6 @@ export class GetPathController {
     const path = await this.queryBus.execute<GetPathQuery, Path>(query);
 
     return res.json({
-      router: path.router,
       amountOut: path.amountOut,
       destinationFee: path.destinationFee.toString(),
       originSwap: {

@@ -22,7 +22,6 @@ import { BridgeProviders } from '../../../bridges/domain/providers/bridge-provid
 @QueryHandler(GetPathQuery)
 export class GetPathHandler implements IQueryHandler<GetPathQuery> {
   constructor(
-    private readonly routerAddressFetcher: RouterAddressFetcher,
     private readonly swapOrderProvider: SwapOrderComputer,
     private readonly bridgeOrderProvider: BridgeOrderComputer,
     @Inject(Class.TokenDetailsFetcher)
@@ -53,10 +52,7 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
 
     const swapOrder = await this.swapOrderProvider.execute(ExchangeProviders.ZeroEx, swapRequest);
 
-    const router = await this.getRouter();
-
     return new Path(
-      router,
       swapOrder,
       BridgingOrder.notRequired(),
       SwapOrder.notRequired(),
@@ -150,18 +146,6 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
 
     /** Compose path **/
 
-    const router = await this.getRouter();
-
-    return new Path(
-      router,
-      originSwapOrder,
-      bridgingOrder,
-      destinationSwapOrder,
-      nativeCoinDestinationFee,
-    );
-  }
-
-  private async getRouter(): Promise<ContractAddress> {
-    return await this.routerAddressFetcher.getAddress();
+    return new Path(originSwapOrder, bridgingOrder, destinationSwapOrder, nativeCoinDestinationFee);
   }
 }
