@@ -85,25 +85,26 @@ const trimmedBalance = computed({
                                     v-if="chainInfo && chainInfo.name !== ''"
                                 >   
                                     {{ chainInfo.name }}:
+                                <div class="flex items-center w-full gap-2 text-xl">
+                                    <div class="flex gap-2 items-center">
+                                        <img
+                                            v-if="token && token.img !== ''"
+                                            :src="token.img"
+                                            width="32"                                    
+                                            class="rounded-full"
+                                            height="32"
+                                            @error="onFallbackImgHandler"
+                                         />
+                                        <span class="flex py-2 min-w-[rem]">{{
+                                            token ? token.symbol : 'Select Token'
+                                        }}</span>
+                                    </div>
+                            </div>
                                 </div>
                                 <div v-else class="flex flex-align-center w-30 select-network-button">Select Network</div>
                             </div>
                         </div>
-                        <div class="flex items-center w-full gap-2 text-xl">
-                            <div class="flex gap-2 items-center">
-                                <img
-                                    v-if="token && token.img !== ''"
-                                    :src="token.img"
-                                    width="32"                                    
-                                    class="rounded-full"
-                                    height="32"
-                                    @error="onFallbackImgHandler"
-                                />
-                                <span class="flex py-2 min-w-[rem]">{{
-                                    token ? token.symbol : 'Select Token'
-                                }}</span>
-                            </div>
-                        </div>
+                        
                     </div>
 
                     <div class="flex items-center gap-2 text-xl">
