@@ -5,29 +5,29 @@ on:
     inputs:
       api-url:
         required: true
-        description: 'URL of the API'
+        description: "URL of the API"
         type: string
     secrets:
       AWS_S3_BUCKET:
-        description: 'Bucket name where the build will be deployed'
+        description: "Bucket name where the build will be deployed"
         required: true
       AWS_ACCESS_KEY_ID:
-        description: 'Access key ID of the account with rights'
+        description: "Access key ID of the account with rights"
         required: true
       AWS_SECRET_ACCESS_KEY:
-        description: 'Secret key of the account with rights'
+        description: "Secret key of the account with rights"
         required: true
       DISTRIBUTION:
-        description: 'AWS distribution name that needs to be invalidated'
+        description: "AWS distribution name that needs to be invalidated"
         required: true
       RPC_NODE_POLYGON:
-        description: 'RPC node for Polygon'
+        description: "RPC node for Polygon"
         required: true
       RPC_NODE_FANTOM:
-        description: 'RPC node for Fantom'
+        description: "RPC node for Fantom"
         required: true
       RPC_NODE_BSC:
-        description: 'RPC node for BSC'
+        description: "RPC node for BSC"
         required: true
 
 env:
@@ -36,6 +36,7 @@ env:
   VITE_APP_RPC_NODE_FANTOM: ${{secrets.RPC_NODE_FANTOM}}
   VITE_APP_RPC_NODE_BSC: ${{secrets.RPC_NODE_BSC}}
   VITE_APP_RPC_NODE_AVALANCHE: ${{secrets.RPC_NODE_AVALANCHE}}
+  VITE_APP_RPC_NODE_OPTIMISM: ${{secrets.RPC_NODE_OPTIMISM}}
   root-path: front/www
 
 jobs:
@@ -43,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [ 16.x ]
+        node-version: [16.x]
       fail-fast: false
 
     defaults:
@@ -97,13 +98,13 @@ jobs:
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: 'us-east-1'
-          SOURCE_DIR: '${{ env.root-path }}/dist'
+          AWS_REGION: "us-east-1"
+          SOURCE_DIR: "${{ env.root-path }}/dist"
 
       - uses: chetan/invalidate-cloudfront-action@v2
         env:
-          PATHS: '/*'
-          AWS_REGION: 'us-east-1'
+          PATHS: "/*"
+          AWS_REGION: "us-east-1"
           DISTRIBUTION: ${{ secrets.DISTRIBUTION }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
