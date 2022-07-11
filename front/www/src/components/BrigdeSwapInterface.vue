@@ -490,7 +490,7 @@ const closeModalStatus = () => {
     <div class="flex flex-col flex-grow bg-background-main-dark">
         <Header class="py-2" @switch-network="handleGlobalNetworkSwitched($event)" />
         <main class="flex items-center justify-center mt-20">
-            <div class="flex gap-40">
+            <div class="flex gap-[4rem]">
                 <div class="flex flex-col gap-6">
                     <div class="flex items-center justify-between">
                         <span class="text-3xl">Swap & Bridge</span>

@@ -60,7 +60,7 @@ const trimmedBalance = computed({
         <div class="flex flex-col flex-auto w-full">
             <div class="flex items-center w-full gap-2 text-xl">
                 <div
-                    class="flex justify-between gap-3 cursor-pointer bg-[#222129]/40 px-6 py-2 rounded-2xl hover:bg-[#222129]/100 transition duration-150 ease-out hover:ease-in"
+                    class="flex justify-between gap-2 cursor-pointer bg-[#222129]/40 px-4 py-2 rounded-2xl hover:bg-[#222129]/100 transition duration-150 ease-out hover:ease-in"
                     @click="emits('open-token-list')"
                 >
                     <div class="flex flex-col">
@@ -81,12 +81,12 @@ const trimmedBalance = computed({
                             }}
                                 </div> -->
                                 <div
-                                    class="text-sm"
+                                    class="text-sm"                                    
                                     v-if="chainInfo && chainInfo.name !== ''"
-                                >
+                                >   
                                     {{ chainInfo.name }}:
                                 </div>
-                                <div v-else class="w-30">Select Network</div>
+                                <div v-else class="flex flex-align-center w-30 select-network-button">Select Network</div>
                             </div>
                         </div>
                         <div class="flex items-center w-full gap-2 text-xl">
@@ -94,12 +94,12 @@ const trimmedBalance = computed({
                                 <img
                                     v-if="token && token.img !== ''"
                                     :src="token.img"
-                                    width="32"
+                                    width="32"                                    
                                     class="rounded-full"
                                     height="32"
                                     @error="onFallbackImgHandler"
                                 />
-                                <span class="min-w-[rem]">{{
+                                <span class="flex py-2 min-w-[rem]">{{
                                     token ? token.symbol : 'Select Token'
                                 }}</span>
                             </div>
