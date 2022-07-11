@@ -13,6 +13,7 @@ import {
   BSC,
   Fantom,
   Polygon,
+  Optimism,
 } from '../../../shared/enums/ChainIds';
 
 export class GetSwapOrder {
@@ -26,6 +27,7 @@ export class GetSwapOrder {
       [Fantom]: 'https://fantom.api.0x.org',
       [BSC]: 'https://bsc.api.0x.org',
       [Avalanche]: 'https://avalanche.api.0x.org',
+      [Optimism]: 'https://optimism.api.0x.org',
     };
 
     const response = await this.httpClient
