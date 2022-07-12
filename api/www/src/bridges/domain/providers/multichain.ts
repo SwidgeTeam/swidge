@@ -22,6 +22,7 @@ interface DestToken {
     address: string;
     name: string;
     decimals: number;
+    symbol: number;
   };
 }
 
@@ -58,6 +59,7 @@ export class Multichain implements Bridge {
       tokenOutDetails.underlying.name,
       tokenOutDetails.underlying.address,
       tokenOutDetails.underlying.decimals,
+      tokenOutDetails.underlying.symbol,
     );
 
     // Construct the object holding fees of the bridging process

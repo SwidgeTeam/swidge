@@ -17,7 +17,7 @@ describe('get bridging step', () => {
     const request = new BridgingRequest(
       '137',
       '1',
-      new Token('137', '0xEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE', 18),
+      new Token('137', '0xEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE', 18, 'MATIC'),
       BigInteger.fromDecimal('1'),
     );
 
@@ -37,7 +37,7 @@ describe('get bridging step', () => {
     const request = new BridgingRequest(
       '137',
       '1',
-      new Token('137', '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', 18),
+      new Token('137', '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', 18, 'MATIC'),
       BigInteger.fromDecimal('20'),
     );
 
@@ -56,7 +56,7 @@ describe('get bridging step', () => {
     const request = new BridgingRequest(
       '137',
       '1',
-      new Token('137', '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', 18),
+      new Token('137', '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', 18, 'MATIC'),
       BigInteger.fromDecimal('5'),
     );
 
