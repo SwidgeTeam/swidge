@@ -1,14 +1,3 @@
-import {
-  Token,
-  CurrencyAmount,
-  ChainId,
-  JSBI,
-  Trade,
-  Pair,
-  Router,
-  Percent,
-  Route,
-} from '@sushiswap/sdk';
 import { Contract, ethers } from 'ethers';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const sushiFactoryAbi = require('./factoryAbi.json');
