@@ -6,8 +6,6 @@ import { SwapRequest } from '../../../swaps/domain/SwapRequest';
 import { BridgeOrderComputer } from '../../../bridges/application/query/bridge-order-computer';
 import { BridgingRequest } from '../../../bridges/domain/bridging-request';
 import { Tokens } from '../../../shared/enums/Tokens';
-import { ContractAddress } from '../../../shared/types';
-import { RouterAddressFetcher } from '../../../addresses/application/query/RouterAddressFetcher';
 import { SwapOrder } from '../../../swaps/domain/SwapOrder';
 import { BridgingOrder } from '../../../bridges/domain/bridging-order';
 import { TokenDetailsFetcher } from '../../../shared/infrastructure/TokenDetailsFetcher';
