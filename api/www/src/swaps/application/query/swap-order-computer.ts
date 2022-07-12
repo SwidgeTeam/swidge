@@ -11,7 +11,7 @@ export class SwapOrderComputer {
   private readonly zeroEx: ZeroEx;
 
   constructor(@Inject(Class.HttpClient) private readonly httpClient: HttpClient) {
-    this.zeroEx = new ZeroEx(this.httpClient);
+    this.zeroEx = ZeroEx.create(this.httpClient);
   }
 
   async execute(exchangeId: string, request: SwapRequest): Promise<SwapOrder> {

@@ -35,6 +35,10 @@ interface TokenDetails {
 export class Multichain implements Bridge {
   private enabledChains;
 
+  static create(cachedHttpClient: CachedHttpClient) {
+    return new Multichain(cachedHttpClient);
+  }
+
   constructor(private readonly httpClient: CachedHttpClient) {
     this.enabledChains = [Mainnet, Polygon, Fantom, BSC, Avalanche];
   }

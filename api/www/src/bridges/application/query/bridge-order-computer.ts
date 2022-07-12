@@ -15,7 +15,7 @@ export class BridgeOrderComputer {
     @Inject(Class.HttpClient) private readonly httpClient: HttpClient,
     @Inject(Class.CachedHttpClient) private readonly cachedHttpClient: CachedHttpClient,
   ) {
-    this.multichain = new Multichain(this.cachedHttpClient);
+    this.multichain = Multichain.create(this.cachedHttpClient);
   }
 
   public async execute(bridgeId: string, request: BridgingRequest): Promise<BridgingOrder> {
