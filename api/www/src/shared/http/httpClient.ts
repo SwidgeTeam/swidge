@@ -36,7 +36,7 @@ export class HttpClient implements IHttpClient {
    * @param params
    * @param headers
    */
-  public post<Response>(url: URL, params: Parameters, headers: Headers): Promise<Response> {
+  public post<Response>(url: URL, params: Parameters, headers?: Headers): Promise<Response> {
     return this.axios.post(url, params, {
       headers: headers,
     });
