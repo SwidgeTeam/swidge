@@ -26,6 +26,9 @@ export class CandidatePath {
   }
 
   get amountOut(): BigInteger {
-    return this._destinationStep.buyAmount;
+    if (this._destinationStep.required) {
+      return this._destinationStep.buyAmount;
+    }
+    return this._bridgeStep.amountOut;
   }
 }

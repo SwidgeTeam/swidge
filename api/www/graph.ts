@@ -12,6 +12,7 @@ import {
 } from '@sushiswap/sdk';
 import { ethers } from 'ethers';
 import { RpcNode } from './src/shared/enums/RpcNode';
+import { BSC, Mainnet, Polygon, Fantom } from './src/shared/enums/ChainIds';
 
 interface GraphPair {
   name: string;
@@ -38,7 +39,7 @@ async function main() {
     data: {
       pairs: GraphPair[];
     };
-  }>('https://sushi.graph.t.hmny.io/subgraphs/name/sushiswap/harmony-exchange', {
+  }>('https://api.thegraph.com/subgraphs/name/sushiswap/matic-exchange', {
     query: `
     {
       pairs(
@@ -66,10 +67,6 @@ async function main() {
   });
 
   const pairs = [];
-
-  console.log(result.data.pairs);
-
-  return;
 
   for (const data of result.data.pairs) {
     const t0 = data.token0;
@@ -114,25 +111,27 @@ async function main() {
 
   const trade = Trade.bestTradeExactIn(pairs, usdcAmount, YFI);
 
+  console.log(trade[0].outputAmount.numerator.toString());
+
   const call = Router.swapCallParameters(trade[0], {
     ttl: 3600 * 24,
     recipient: '0x0000000000000000000000000000000000000004',
     allowedSlippage: new Percent('1', '100'),
   });
 
-  const provider = new ethers.providers.JsonRpcProvider('https://polygon-rpc.com/');
-  const abiInterface = new ethers.utils.Interface([
-    'function swapExactETHForTokens(uint256 amountOutMin, address[] path, address to, uint256 deadline) external payable returns (uint[] memory amounts)',
-  ]);
-  const contract = new ethers.Contract(
-    '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506',
-    abiInterface,
-    provider,
-  );
-  const gas = await contract.estimateGas.swapExactETHForTokens(...call.args, {
-    value: ethers.utils.parseUnits('1', 18),
-  });
-  console.log(gas.toString());
+  //const provider = new ethers.providers.JsonRpcProvider('https://polygon-rpc.com/');
+  //const abiInterface = new ethers.utils.Interface([
+  //  'function swapExactETHForTokens(uint256 amountOutMin, address[] path, address to, uint256 deadline) external payable returns (uint[] memory amounts)',
+  //]);
+  //const contract = new ethers.Contract(
+  //  '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506',
+  //  abiInterface,
+  //  provider,
+  //);
+  //const gas = await contract.estimateGas.swapExactETHForTokens(...call.args, {
+  //  value: ethers.utils.parseUnits('1', 18),
+  //});
+  //console.log(gas.toString());
 }
 
 main();

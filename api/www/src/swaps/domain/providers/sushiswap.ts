@@ -27,10 +27,10 @@ interface GraphPair {
 }
 
 const theGraphEndpoints = {
-  [Mainnet]: 'https://thegraph.com/explorer/subgraph/sushiswap/exchange',
-  [BSC]: 'https://thegraph.com/explorer/subgraph/sushiswap/bsc-exchange',
+  [Mainnet]: 'https://api.thegraph.com/subgraphs/name/sushiswap/exchange',
+  [BSC]: 'https://api.thegraph.com/subgraphs/name/sushiswap/bsc-exchange',
   [Polygon]: 'https://api.thegraph.com/subgraphs/name/sushiswap/matic-exchange',
-  [Fantom]: 'https://thegraph.com/explorer/subgraph/sushiswap/fantom-exchange',
+  [Fantom]: 'https://api.thegraph.com/subgraphs/name/sushiswap/fantom-exchange',
   //https://q.hg.network/okex-exchange/oec (okex)
   //https://thegraph.com/explorer/subgraph/sushiswap/xdai-exchange (xdai)
   //https://q.hg.network/heco-exchange/heco (heco)
@@ -96,7 +96,7 @@ export class Sushiswap implements Exchange {
       '',
       '',
       BigInteger.fromBigNumber(trade[0].outputAmount.numerator.toString()),
-      BigNumber.from(''),
+      BigNumber.from('0'),
       true,
     );
   }
