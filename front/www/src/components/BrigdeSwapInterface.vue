@@ -105,6 +105,7 @@ const sourceChainInfo = reactive<INetwork>({
     id: '',
     tokens: [],
     rpcUrl: '',
+    live: '',
 })
 const destinationChainInfo = reactive<INetwork>({
     name: '',
@@ -112,6 +113,7 @@ const destinationChainInfo = reactive<INetwork>({
     id: '',
     tokens: [],
     rpcUrl: '',
+    live: '',
 })
 
 const steps = ref<TransactionSteps>({
@@ -198,11 +200,16 @@ const handleOpenTokenList = (isSource: boolean) => {
     isModalTokensOpen.value = true
 }
 
+
 /**
  * Returns an array with the accepted networks
  */
+
 const getNetworks = () => {
-    return Array.from(networks.values())
+    return Array.from(networks.values()).filter(network => {
+        return network.live
+    })
+    
 }
 
 /**
