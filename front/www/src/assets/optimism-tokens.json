@@ -1,4 +1,4 @@
-{
+[
    
       {
         
@@ -1248,14 +1248,14 @@
         "symbol": "TUSD",
         "decimals": 18,
         "logo": "https://ethereum-optimism.github.io/logos/TUSD.png",
-        
-      },
+          },
       {
         "id": "0xFa956eB0c4b3E692aD5a6B2f08170aDE55999ACa",
         "name": "TrueUSD",
         "symbol": "TUSD",
         "decimals": 18,
         "logo": "https://ethereum-optimism.github.io/logos/TUSD.png",
-        
       }
+        
+]
     
