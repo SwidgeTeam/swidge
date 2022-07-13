@@ -34,7 +34,7 @@ export class CachedHttpClient implements IHttpClient {
    * @param params
    * @param headers
    */
-  public post<Response>(url: URL, params: Parameters, headers: Headers): Promise<Response> {
+  public post<Response>(url: URL, params: Parameters, headers?: Headers): Promise<Response> {
     if (this.isCached(url)) {
       return this.cachedResponse(url);
     }
@@ -49,7 +49,7 @@ export class CachedHttpClient implements IHttpClient {
    * @param params
    * @param headers
    */
-  public patch<Response>(url: URL, params: Parameters, headers: Headers): Promise<Response> {
+  public patch<Response>(url: URL, params: Parameters, headers?: Headers): Promise<Response> {
     if (this.isCached(url)) {
       return this.cachedResponse(url);
     }
@@ -64,7 +64,7 @@ export class CachedHttpClient implements IHttpClient {
    * @param params
    * @param headers
    */
-  public put<Response>(url: URL, params: Parameters, headers: Headers): Promise<Response> {
+  public put<Response>(url: URL, params: Parameters, headers?: Headers): Promise<Response> {
     if (this.isCached(url)) {
       return this.cachedResponse(url);
     }
@@ -79,7 +79,7 @@ export class CachedHttpClient implements IHttpClient {
    * @param headers
    * @param params
    */
-  public delete<Response>(url: URL, headers: Headers, params?: Parameters): Promise<Response> {
+  public delete<Response>(url: URL, headers?: Headers, params?: Parameters): Promise<Response> {
     if (this.isCached(url)) {
       return this.cachedResponse(url);
     }
