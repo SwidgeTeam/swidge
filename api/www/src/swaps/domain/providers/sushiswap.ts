@@ -36,9 +36,10 @@ const theGraphEndpoints = {
   //https://thegraph.com/explorer/subgraph/sushiswap/celo-exchange (celo)
   //https://thegraph.com/explorer/subgraph/sushiswap/avalanche-exchange (avalanche)
   //https://thegraph.com/hosted-service/subgraph/sushiswap/moonriver-exchange (moonriver)
-  //https://q.hg.network/okex-exchange/oec (okex)
-  //https://q.hg.network/heco-exchange/heco (heco)
-  //https://sushi.graph.t.hmny.io/subgraphs/name/sushiswap/harmony-exchange (harmony)
+};
+
+const gasEstimations = {
+  [Polygon]: 145244,
 };
 
 export class Sushiswap implements Exchange {
@@ -98,7 +99,7 @@ export class Sushiswap implements Exchange {
       '',
       '',
       BigInteger.fromBigNumber(trade[0].outputAmount.numerator.toString()),
-      BigNumber.from('0'),
+      BigNumber.from(gasEstimations[chainId]),
       true,
     );
   }
@@ -116,6 +117,7 @@ export class Sushiswap implements Exchange {
             orderDirection: desc
             first: 10
           ) {
+            name
             token0 {
               id
               name
@@ -137,6 +139,7 @@ export class Sushiswap implements Exchange {
     const pairs = [];
 
     for (const data of result.data.pairs) {
+      console.log(data.name);
       const t0 = data.token0;
       const t1 = data.token1;
       const token0 = new Token(
@@ -165,4 +168,5 @@ export class Sushiswap implements Exchange {
 
     return pairs;
   }
+
 }
