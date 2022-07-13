@@ -5,7 +5,7 @@ RUN apk add curl && \
 
 WORKDIR /front_app
 
-COPY www/. /front_app/
+COPY www /front_app
 
 RUN pnpm install
 
