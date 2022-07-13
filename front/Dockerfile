@@ -5,11 +5,9 @@ RUN apk add curl && \
 
 WORKDIR /front_app
 
-COPY www/package.json www/pnpm-lock.yaml /front_app/
+COPY www/. /front_app/
 
 RUN pnpm install
-
-COPY www/. /front_app/
 
 VOLUME [ "/front_app/node_modules" ]
 
