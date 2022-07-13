@@ -3,7 +3,7 @@ import ITokenJson from '@/tokens/models/ITokenJson'
 
 export default class OptimismToken implements IToken {
 
-    public static fantomImg = 'https://res.cloudinary.com/sushi-cdn/image/fetch/f_auto,c_limit,w_64,q_auto/https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/optimism.jpg'
+    public static optimismImg = 'https://res.cloudinary.com/sushi-cdn/image/fetch/f_auto,c_limit,w_64,q_auto/https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/optimism.jpg'
     address: string
     symbol: string
     name: string
@@ -24,6 +24,6 @@ export default class OptimismToken implements IToken {
 
     public replaceByDefault(e: Event) {
         const imageTarget = e.target as HTMLImageElement
-        imageTarget.src = OptimismToken.fantomImg
+        imageTarget.src = OptimismToken.optimismImg
     }
 }
