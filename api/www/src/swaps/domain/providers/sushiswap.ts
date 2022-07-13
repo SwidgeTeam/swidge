@@ -4,9 +4,9 @@ import { Avalanche, BSC, Fantom, Mainnet, Polygon } from '../../../shared/enums/
 import { BigInteger } from '../../../shared/domain/BigInteger';
 import { BigNumber, ethers } from 'ethers';
 import { Exchange } from '../exchange';
-import { HttpClient } from '../../../shared/http/httpClient';
+import { IHttpClient } from '../../../shared/http/IHttpClient';
 import { ExchangeProviders } from './exchange-providers';
-import { CurrencyAmount, JSBI, NATIVE, Pair, Token, Trade, WNATIVE } from '@sushiswap/sdk';
+import { CurrencyAmount, JSBI, Pair, Token, Trade, WNATIVE } from '@sushiswap/sdk';
 
 interface GraphPair {
   name: string;
@@ -31,24 +31,24 @@ const theGraphEndpoints = {
   [BSC]: 'https://api.thegraph.com/subgraphs/name/sushiswap/bsc-exchange',
   [Polygon]: 'https://api.thegraph.com/subgraphs/name/sushiswap/matic-exchange',
   [Fantom]: 'https://api.thegraph.com/subgraphs/name/sushiswap/fantom-exchange',
-  //https://q.hg.network/okex-exchange/oec (okex)
   //https://thegraph.com/explorer/subgraph/sushiswap/xdai-exchange (xdai)
-  //https://q.hg.network/heco-exchange/heco (heco)
   //https://thegraph.com/explorer/subgraph/sushiswap/arbitrum-exchange (arbitrum)
   //https://thegraph.com/explorer/subgraph/sushiswap/celo-exchange (celo)
   //https://thegraph.com/explorer/subgraph/sushiswap/avalanche-exchange (avalanche)
-  //https://sushi.graph.t.hmny.io/subgraphs/name/sushiswap/harmony-exchange (harmony)
   //https://thegraph.com/hosted-service/subgraph/sushiswap/moonriver-exchange (moonriver)
+  //https://q.hg.network/okex-exchange/oec (okex)
+  //https://q.hg.network/heco-exchange/heco (heco)
+  //https://sushi.graph.t.hmny.io/subgraphs/name/sushiswap/harmony-exchange (harmony)
 };
 
 export class Sushiswap implements Exchange {
   private readonly enabledChains: string[];
 
-  public static create(httpClient: HttpClient) {
+  public static create(httpClient: IHttpClient) {
     return new Sushiswap(httpClient);
   }
 
-  constructor(private readonly httpClient: HttpClient) {
+  constructor(private readonly httpClient: IHttpClient) {
     this.enabledChains = [Mainnet, Polygon, Fantom, BSC, Avalanche];
   }
 
@@ -64,7 +64,7 @@ export class Sushiswap implements Exchange {
       ? WNATIVE[chainId]
       : new Token(
           chainId,
-          request.tokenIn.address,
+          ethers.utils.getAddress(request.tokenIn.address),
           request.tokenIn.decimals,
           request.tokenIn.symbol,
           request.tokenIn.name,
@@ -75,13 +75,15 @@ export class Sushiswap implements Exchange {
       JSBI.BigInt(request.amountIn.toString()),
     );
 
-    const tokenOut = new Token(
-      chainId,
-      request.tokenOut.address,
-      request.tokenOut.decimals,
-      request.tokenOut.symbol,
-      request.tokenOut.name,
-    );
+    const tokenOut = request.tokenOut.isNative()
+      ? WNATIVE[chainId]
+      : new Token(
+          chainId,
+          ethers.utils.getAddress(request.tokenOut.address),
+          request.tokenOut.decimals,
+          request.tokenOut.symbol,
+          request.tokenOut.name,
+        );
 
     const trade = Trade.bestTradeExactIn(pairs, tokenInAmount, tokenOut);
 

@@ -5,6 +5,7 @@ import { GetSwapQuoteController } from './infrastructure/controllers/get-swap-qu
 import { CqrsModule } from '@nestjs/cqrs';
 import { GetQuoteSwapHandler } from './application/query/get-quote-swap.handler';
 import tokenDetailsFetcherProvider from '../shared/infrastructure/TokenDetailsFetcher.provider';
+import cachedHttpClientProvider from '../shared/http/cachedHttpClient.provider';
 
 @Module({
   imports: [CqrsModule],
@@ -13,6 +14,7 @@ import tokenDetailsFetcherProvider from '../shared/infrastructure/TokenDetailsFe
     SwapOrderComputer,
     GetQuoteSwapHandler,
     httpClientProvider(),
+    cachedHttpClientProvider(),
     tokenDetailsFetcherProvider(),
   ],
   exports: [SwapOrderComputer],

@@ -30,8 +30,8 @@ export class PathComputer {
   private toChain: string;
   private amountIn: BigInteger;
   /** Result */
-  private readonly possiblePaths: PossiblePath[]; // Initial incomplete paths
-  private readonly candidatePaths: CandidatePath[]; // Final candidate paths
+  private possiblePaths: PossiblePath[]; // Initial incomplete paths
+  private candidatePaths: CandidatePath[]; // Final candidate paths
 
   constructor(
     _swapOrderProvider: SwapOrderComputer,
@@ -44,8 +44,6 @@ export class PathComputer {
     this.tokenDetailsFetcher = _tokenDetailsFetcher;
     this.priceFeedConverter = _priceFeedConverter;
     this.bridgingAssets = [USDC];
-    this.possiblePaths = [];
-    this.candidatePaths = [];
   }
 
   /**
@@ -53,6 +51,8 @@ export class PathComputer {
    * @param query
    */
   public async compute(query: GetPathQuery) {
+    this.possiblePaths = [];
+    this.candidatePaths = [];
     this.fromChain = query.fromChainId;
     this.toChain = query.toChainId;
     this.srcToken = await this.tokenDetailsFetcher.fetch(query.srcToken, this.fromChain);

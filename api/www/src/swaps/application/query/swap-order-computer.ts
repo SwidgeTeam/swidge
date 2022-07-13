@@ -7,14 +7,18 @@ import { Exchange } from '../../domain/exchange';
 import { ExchangeProviders } from '../../domain/providers/exchange-providers';
 import { ZeroEx } from '../../domain/providers/zero-ex';
 import { Sushiswap } from '../../domain/providers/sushiswap';
+import { CachedHttpClient } from '../../../shared/http/cachedHttpClient';
 
 export class SwapOrderComputer {
   private readonly zeroEx: ZeroEx;
   private readonly sushi: Sushiswap;
 
-  constructor(@Inject(Class.HttpClient) private readonly httpClient: HttpClient) {
+  constructor(
+    @Inject(Class.HttpClient) private readonly httpClient: HttpClient,
+    @Inject(Class.CachedHttpClient) private readonly cachedHttpClient: CachedHttpClient,
+  ) {
     this.zeroEx = ZeroEx.create(this.httpClient);
-    this.sushi = Sushiswap.create(this.httpClient);
+    this.sushi = Sushiswap.create(this.cachedHttpClient);
   }
 
   async execute(exchangeId: string, request: SwapRequest): Promise<SwapOrder> {
