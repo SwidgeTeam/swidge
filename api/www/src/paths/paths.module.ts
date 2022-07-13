@@ -12,6 +12,7 @@ import { TransactionsModule } from '../transactions/transactions.module';
 import tokenDetailsFetcherProvider from '../shared/infrastructure/TokenDetailsFetcher.provider';
 import priceFeedConverterProvider from '../shared/infrastructure/PriceFeedConverter.provider';
 import cachedHttpClientProvider from '../shared/http/cachedHttpClient.provider';
+import sushiPairsRepositoryProvider from '../swaps/infrastructure/database/repositories/sushi-pairs.repository.provider';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import cachedHttpClientProvider from '../shared/http/cachedHttpClient.provider';
     addressesRepositoryProvider(),
     tokenDetailsFetcherProvider(),
     priceFeedConverterProvider(),
+    sushiPairsRepositoryProvider(),
   ],
 })
 export class PathsModule {}

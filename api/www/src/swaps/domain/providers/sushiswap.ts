@@ -7,6 +7,7 @@ import { Exchange } from '../exchange';
 import { IHttpClient } from '../../../shared/http/IHttpClient';
 import { ExchangeProviders } from './exchange-providers';
 import { CurrencyAmount, JSBI, Pair, Token, Trade, WNATIVE } from '@sushiswap/sdk';
+import { SushiPairsRepository } from '../sushi-pairs-repository';
 
 interface GraphPair {
   name: string;
@@ -45,11 +46,14 @@ const gasEstimations = {
 export class Sushiswap implements Exchange {
   private readonly enabledChains: string[];
 
-  public static create(httpClient: IHttpClient) {
-    return new Sushiswap(httpClient);
+  public static create(httpClient: IHttpClient, repository: SushiPairsRepository) {
+    return new Sushiswap(httpClient, repository);
   }
 
-  constructor(private readonly httpClient: IHttpClient) {
+  constructor(
+    private readonly httpClient: IHttpClient,
+    private readonly repository: SushiPairsRepository,
+  ) {
     this.enabledChains = [Mainnet, Polygon, Fantom, BSC, Avalanche];
   }
 

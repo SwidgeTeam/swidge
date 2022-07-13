@@ -3,6 +3,7 @@ export class Class {
   public static ChainsRepository = 'ChainsRepository';
   public static AddressesRepository = 'AddressesRepository';
   public static TransactionRepository = 'TransactionRepository';
+  public static SushiPairsRepository = 'SushiPairsRepository';
 
   /* Libraries */
   public static HttpClient = 'httpClient';

@@ -6,6 +6,7 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { GetQuoteSwapHandler } from './application/query/get-quote-swap.handler';
 import tokenDetailsFetcherProvider from '../shared/infrastructure/TokenDetailsFetcher.provider';
 import cachedHttpClientProvider from '../shared/http/cachedHttpClient.provider';
+import sushiPairsRepositoryProvider from './infrastructure/database/repositories/sushi-pairs.repository.provider';
 
 @Module({
   imports: [CqrsModule],
@@ -16,6 +17,7 @@ import cachedHttpClientProvider from '../shared/http/cachedHttpClient.provider';
     httpClientProvider(),
     cachedHttpClientProvider(),
     tokenDetailsFetcherProvider(),
+    sushiPairsRepositoryProvider(),
   ],
   exports: [SwapOrderComputer],
 })
