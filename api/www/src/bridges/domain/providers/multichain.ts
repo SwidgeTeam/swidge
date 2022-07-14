@@ -1,15 +1,15 @@
-import { BridgingRequest } from '../../domain/BridgingRequest';
-import { BridgingOrder } from '../../domain/BridgingOrder';
-import { Inject } from '@nestjs/common';
-import { Class } from '../../../shared/Class';
-import { HttpClient } from '../../../shared/http/httpClient';
-import { BridgingFees } from '../../domain/BridgingFees';
-import { BridgingLimits } from '../../domain/BridgingLimits';
+import { BridgingRequest } from '../bridging-request';
+import { BridgingOrder } from '../bridging-order';
 import { Token } from '../../../shared/domain/Token';
+import { BridgingFees } from '../BridgingFees';
 import { BigInteger } from '../../../shared/domain/BigInteger';
+import { BridgingLimits } from '../BridgingLimits';
+import { AmountTooBig } from '../AmountTooBig';
+import { AmountTooSmall } from '../AmountTooSmall';
 import { AbiEncoder } from '../../../shared/domain/CallEncoder';
-import { AmountTooBig } from '../../domain/AmountTooBig';
-import { AmountTooSmall } from '../../domain/AmountTooSmall';
+import { Bridge } from '../bridge';
+import { CachedHttpClient } from '../../../shared/http/cachedHttpClient';
+import { Avalanche, BSC, Fantom, Mainnet, Polygon } from '../../../shared/enums/ChainIds';
 
 interface DestToken {
   SwapFeeRatePerMillion: number;
@@ -32,18 +32,25 @@ interface TokenDetails {
   destChains: DestToken[];
 }
 
-export class GetBridgingOrder {
-  constructor(
-    @Inject(Class.HttpClient) private readonly httpClient: HttpClient,
-  ) {}
+export class Multichain implements Bridge {
+  private enabledChains;
+
+  static create(cachedHttpClient: CachedHttpClient) {
+    return new Multichain(cachedHttpClient);
+  }
+
+  constructor(private readonly httpClient: CachedHttpClient) {
+    this.enabledChains = [Mainnet, Polygon, Fantom, BSC, Avalanche];
+  }
+
+  public isEnabledOn(fromChainId: string, toChainId: string): boolean {
+    return this.enabledChains.includes(fromChainId) && this.enabledChains.includes(toChainId);
+  }
 
   public async execute(request: BridgingRequest): Promise<BridgingOrder> {
     // Query and filter the details of the bridging token pair
     const tokenIn = request.tokenIn;
-    const tokenInDetails = await this.getTokenDetails(
-      request.fromChainId,
-      tokenIn,
-    );
+    const tokenInDetails = await this.getTokenDetails(request.fromChainId, tokenIn);
     const tokenOutDetails = tokenInDetails.destChains[request.toChainId];
 
     // Construct destination receiving Token
@@ -65,10 +72,7 @@ export class GetBridgingOrder {
     const limits = new BridgingLimits(
       BigInteger.fromDecimal(tokenOutDetails.MinimumSwap, tokenOut.decimals),
       BigInteger.fromDecimal(tokenOutDetails.MaximumSwap, tokenOut.decimals),
-      BigInteger.fromDecimal(
-        tokenOutDetails.BigValueThreshold,
-        tokenOut.decimals,
-      ),
+      BigInteger.fromDecimal(tokenOutDetails.BigValueThreshold, tokenOut.decimals),
       tokenOut.decimals,
     );
 
@@ -91,10 +95,7 @@ export class GetBridgingOrder {
     // Encode the specific data needed by the bridge
     // Anyswap needs the address of their own anyToken representation
     const anyTokenAddress = tokenInDetails.anyToken.address;
-    const encodedData = AbiEncoder.encodeFunctionArguments(
-      ['address'],
-      [anyTokenAddress],
-    );
+    const encodedData = AbiEncoder.encodeFunctionArguments(['address'], [anyTokenAddress]);
 
     // Construct the order
     return new BridgingOrder(
@@ -109,10 +110,7 @@ export class GetBridgingOrder {
     );
   }
 
-  private async getTokenDetails(
-    fromChainId: string,
-    sourceToken: Token,
-  ): Promise<TokenDetails> {
+  private async getTokenDetails(fromChainId: string, sourceToken: Token): Promise<TokenDetails> {
     // Obtain full list of tokens available to swap on this chain
     const tokenList = await this.httpClient.get(
       `https://bridgeapi.anyswap.exchange/v3/serverinfoV3?chainId=${fromChainId}&version=STABLEV3`,

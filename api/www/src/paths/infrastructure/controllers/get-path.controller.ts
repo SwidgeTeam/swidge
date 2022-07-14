@@ -2,7 +2,7 @@ import { Controller, Get, Query, Res } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
 import { Response } from 'express';
 import { GetPathQuery } from '../../application/query/get-path.query';
-import { Path } from '../../domain/Path';
+import { Path } from '../../domain/path';
 import { GetPathDto } from './GetPathDto';
 import { Token } from '../../../shared/domain/Token';
 
@@ -23,7 +23,6 @@ export class GetPathController {
     const path = await this.queryBus.execute<GetPathQuery, Path>(query);
 
     return res.json({
-      router: path.router,
       amountOut: path.amountOut,
       destinationFee: path.destinationFee.toString(),
       originSwap: {

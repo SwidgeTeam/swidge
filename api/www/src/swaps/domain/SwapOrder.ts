@@ -6,7 +6,7 @@ import { BigNumber } from 'ethers';
 export class SwapOrder {
   public static notRequired() {
     return new SwapOrder(
-      0,
+      null,
       Token.null(),
       Token.null(),
       null,
@@ -31,7 +31,7 @@ export class SwapOrder {
   }
 
   constructor(
-    private readonly _providerCode: number,
+    private readonly _providerCode: string,
     private readonly _tokenIn: Token,
     private readonly _tokenOut: Token,
     private readonly _approvalAddress: ContractAddress,
@@ -41,7 +41,7 @@ export class SwapOrder {
     private readonly _required: boolean,
   ) {}
 
-  get providerCode(): number {
+  get providerCode(): string {
     return this._providerCode;
   }
 

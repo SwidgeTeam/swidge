@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { GetSwapOrder } from './application/query/get-swap-order';
+import { SwapOrderComputer } from './application/query/swap-order-computer';
 import httpClientProvider from '../shared/http/httpClient.provider';
 import { GetSwapQuoteController } from './infrastructure/controllers/get-swap-quote.controller';
 import { CqrsModule } from '@nestjs/cqrs';
@@ -10,11 +10,11 @@ import tokenDetailsFetcherProvider from '../shared/infrastructure/TokenDetailsFe
   imports: [CqrsModule],
   controllers: [GetSwapQuoteController],
   providers: [
-    GetSwapOrder,
+    SwapOrderComputer,
     GetQuoteSwapHandler,
     httpClientProvider(),
     tokenDetailsFetcherProvider(),
   ],
-  exports: [GetSwapOrder],
+  exports: [SwapOrderComputer],
 })
 export class SwapsModule {}

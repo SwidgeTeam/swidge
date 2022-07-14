@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
-import { GetBridgingOrder } from './application/query/get-bridging-order';
+import { BridgeOrderComputer } from './application/query/bridge-order-computer';
 import httpClientProvider from '../shared/http/httpClient.provider';
+import cachedHttpClientProvider from '../shared/http/cachedHttpClient.provider';
 
 @Module({
-  providers: [GetBridgingOrder, httpClientProvider()],
-  exports: [GetBridgingOrder],
+  providers: [BridgeOrderComputer, httpClientProvider(), cachedHttpClientProvider()],
+  exports: [BridgeOrderComputer],
 })
 export class BridgesModule {}

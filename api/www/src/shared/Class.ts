@@ -6,6 +6,7 @@ export class Class {
 
   /* Libraries */
   public static HttpClient = 'httpClient';
+  public static CachedHttpClient = 'CachedHttpClient';
   public static TokenDetailsFetcher = 'TokenDetailsFetcher';
   public static PriceFeedConverter = 'PriceFeedConverter';
 }
