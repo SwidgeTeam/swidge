@@ -49,8 +49,8 @@ export class SushiPairsRepositoryMysql implements SushiPairsRepository {
         row.token1_symbol,
       );
 
-      const reserve0 = BigInteger.fromDecimal(row.reserve0, token0.decimals);
-      const reserve1 = BigInteger.fromDecimal(row.reserve1, token1.decimals);
+      const reserve0 = BigInteger.fromBigNumber(row.reserve0);
+      const reserve1 = BigInteger.fromBigNumber(row.reserve1);
 
       return new SushiPair(row.id, row.chainId, token0, token1, reserve0, reserve1);
     });
