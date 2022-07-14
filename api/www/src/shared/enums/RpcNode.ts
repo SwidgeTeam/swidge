@@ -1,4 +1,4 @@
-import { Fantom, Polygon, BSC, Avalanche } from './ChainIds';
+import { Fantom, Polygon, BSC, Avalanche, Optimism } from './ChainIds';
 import 'dotenv/config';
 
 export const RpcNode = {
@@ -6,4 +6,5 @@ export const RpcNode = {
   [Fantom]: process.env.RPC_NODE_FANTOM,
   [BSC]: process.env.RPC_NODE_BSC,
   [Avalanche]: process.env.RPC_NODE_AVALANCHE,
+  [Optimism]: process.env.RPC_NODE_OPTIMISM,
 };

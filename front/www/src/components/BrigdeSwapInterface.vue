@@ -104,6 +104,7 @@ const sourceChainInfo = reactive<INetwork>({
     id: '',
     tokens: [],
     rpcUrl: '',
+    live: false,
 })
 const destinationChainInfo = reactive<INetwork>({
     name: '',
@@ -111,6 +112,7 @@ const destinationChainInfo = reactive<INetwork>({
     id: '',
     tokens: [],
     rpcUrl: '',
+    live: false,
 })
 
 const steps = ref<TransactionSteps>({
@@ -197,11 +199,16 @@ const handleOpenTokenList = (isSource: boolean) => {
     isModalTokensOpen.value = true
 }
 
+
 /**
  * Returns an array with the accepted networks
  */
+
 const getNetworks = () => {
-    return Array.from(networks.values())
+    return Array.from(networks.values()).filter(network => {
+        return network.live
+    })
+
 }
 
 /**
@@ -490,7 +497,7 @@ const closeModalStatus = () => {
     <div class="flex flex-col flex-grow bg-background-main-dark">
         <Header class="py-2" @switch-network="handleGlobalNetworkSwitched($event)" />
         <main class="flex items-center justify-center mt-20">
-            <div class="flex gap-40">
+            <div class="flex gap-[2rem]">
                 <div class="flex flex-col gap-6">
                     <div class="flex items-center justify-between">
                         <span class="text-3xl">Swap & Bridge</span>

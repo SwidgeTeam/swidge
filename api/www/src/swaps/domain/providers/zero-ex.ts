@@ -1,6 +1,6 @@
 import { SwapRequest } from '../SwapRequest';
 import { SwapOrder } from '../SwapOrder';
-import { Avalanche, BSC, Fantom, Mainnet, Polygon } from '../../../shared/enums/ChainIds';
+import { Avalanche, BSC, Fantom, Mainnet, Polygon, Optimism } from '../../../shared/enums/ChainIds';
 import { ContractAddress } from '../../../shared/types';
 import { InsufficientLiquidity } from '../InsufficientLiquidity';
 import { AbiEncoder } from '../../../shared/domain/CallEncoder';
@@ -31,6 +31,7 @@ export class ZeroEx implements Exchange {
       [Fantom]: 'https://fantom.api.0x.org',
       [BSC]: 'https://bsc.api.0x.org',
       [Avalanche]: 'https://avalanche.api.0x.org',
+      [Optimism]: 'https://optimism.api.0x.org',
     };
 
     const response = await this.httpClient

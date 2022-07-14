@@ -47,7 +47,7 @@
     }
 
     .header-button {
-        @apply px-4 py-2 gradient-border-header-main font-roboto
+        @apply px-4 py-2 gradient-border-header-main font-roboto font-light
     }
 
     .network-button-styles {
@@ -58,6 +58,10 @@
 
     .network-button {
         @apply px-4 py-2 gradient-border-header-main font-roboto network-button-styles
+    }
+
+    .select-network-button {
+        @apply py-2 text-center font-roboto font-light 
     }
 
     .network-button > img {

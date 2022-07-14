@@ -9,9 +9,7 @@ import { HardhatUserConfig } from "hardhat/types";
 import * as process from "process";
 
 const accounts = {
-  mnemonic:
-    process.env.MNEMONIC ||
-    "test test test test test test test test test test test junk",
+  mnemonic: process.env.MNEMONIC || "test test test test test test test test test test test junk",
 };
 
 const forking = process.env.FORKING === "true";

@@ -29,6 +29,9 @@ on:
       RPC_NODE_BSC:
         description: 'RPC node for BSC'
         required: true
+      RPC_NODE_OPTIMISM:
+        description: 'RPC node for Optimism'
+        required: true
 
 env:
   VITE_APP_API_HOST: ${{inputs.api-url}}
@@ -36,6 +39,7 @@ env:
   VITE_APP_RPC_NODE_FANTOM: ${{secrets.RPC_NODE_FANTOM}}
   VITE_APP_RPC_NODE_BSC: ${{secrets.RPC_NODE_BSC}}
   VITE_APP_RPC_NODE_AVALANCHE: ${{secrets.RPC_NODE_AVALANCHE}}
+  VITE_APP_RPC_NODE_OPTIMISM: ${{secrets.RPC_NODE_OPTIMISM}}
   root-path: front/www
 
 jobs:
@@ -63,7 +67,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           registry-url: https://registry.npmjs.org/
-          cache: "pnpm"
+          cache: 'pnpm'
           cache-dependency-path: ${{ env.root-path }}/pnpm-lock.yaml
 
       - name: Install dependencies

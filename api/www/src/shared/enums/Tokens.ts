@@ -1,4 +1,4 @@
-import { Mainnet, Polygon, Fantom, BSC, Avalanche } from './ChainIds';
+import { Mainnet, Polygon, Fantom, BSC, Avalanche, Optimism } from './ChainIds';
 import { USDC } from './TokenSymbols';
 import { Token } from '../domain/Token';
 
@@ -9,5 +9,6 @@ export const Tokens = {
     [Fantom]: new Token('USDCoin', '0x04068DA6C83AFCFA0e13ba15A6696662335D5B75', 6),
     [BSC]: new Token('USDCoin', '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d', 18),
     [Avalanche]: new Token('USD Coin', '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E', 6),
+    [Optimism]: new Token('USD Coin', '0x7f5c764cbc14f9669b88837ca1490cca17c31607', 6),
   },
 };
