@@ -46,7 +46,7 @@ const theGraphEndpoints = {
 
 async function main() {
   const client = new HttpClient();
-  const chain = 137;
+  const chain = 250;
 
   const result = await client.post<{
     data: {
@@ -56,31 +56,28 @@ async function main() {
     query: `
     {
       pairs(
+        where: {
+          token0: "0x049d68029688eabf473097a2fc38ef61633a3c7a"
+        }
         orderBy: volumeUSD
         orderDirection: desc
-        first: 10
+        first: 20
       ) {
         name
         token0 {
           id
-          name
-          decimals
-          symbol
         }
         token1 {
           id
-          name
-          decimals
-          symbol
         }
-        reserve0
-        reserve1
       }
     }`,
   });
 
   const pairs = [];
 
+  console.log(result.data.pairs);
+  return;
 
   for (const data of result.data.pairs) {
     const t0 = data.token0;
@@ -122,6 +119,8 @@ async function main() {
     'TITAN',
     'Titan',
   );
+
+  console.log(WETH9[chain]);
 
   const trade = Trade.bestTradeExactIn(pairs, usdcAmount, YFI);
 

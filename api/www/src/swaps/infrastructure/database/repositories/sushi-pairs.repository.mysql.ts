@@ -8,8 +8,7 @@ import { SushiPair } from '../../../domain/sushi-pair';
 
 @EntityRepository(SushiPairsEntity)
 export class SushiPairsRepositoryMysql implements SushiPairsRepository {
-  constructor(private readonly manager: EntityManager) {
-  }
+  constructor(private readonly manager: EntityManager) {}
 
   /**
    * Returns all the stored pairs of a specific chain
@@ -68,9 +67,30 @@ export class SushiPairsRepositoryMysql implements SushiPairsRepository {
         id: pair.id,
       },
       {
-        reserve0: pair.reserve0.toString,
+        reserve0: pair.reserve0.toString(),
         reserve1: pair.reserve1.toString(),
       },
     );
+  }
+
+  /**
+   * Stores a new pair
+   * @param pair
+   */
+  async save(pair: SushiPair): Promise<void> {
+    await this.manager.save(SushiPairsEntity, {
+      id: pair.id,
+      chainId: pair.chainId,
+      token0_id: pair.token0.address,
+      token0_name: pair.token0.name,
+      token0_symbol: pair.token0.symbol,
+      token0_decimals: pair.token0.decimals,
+      token1_id: pair.token1.address,
+      token1_name: pair.token1.name,
+      token1_symbol: pair.token1.symbol,
+      token1_decimals: pair.token1.decimals,
+      reserve0: pair.reserve0.toString(),
+      reserve1: pair.reserve1.toString(),
+    });
   }
 }
