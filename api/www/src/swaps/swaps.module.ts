@@ -7,13 +7,16 @@ import { GetQuoteSwapHandler } from './application/query/get-quote-swap.handler'
 import tokenDetailsFetcherProvider from '../shared/infrastructure/TokenDetailsFetcher.provider';
 import cachedHttpClientProvider from '../shared/http/cachedHttpClient.provider';
 import sushiPairsRepositoryProvider from './infrastructure/database/repositories/sushi-pairs.repository.provider';
+import { UpdateSushiPairsController } from './infrastructure/controllers/update-sushi-pairs.controller';
+import { UpdateSushiPairsHandler } from './application/command/update-sushi-pairs.handler';
 
 @Module({
   imports: [CqrsModule],
-  controllers: [GetSwapQuoteController],
+  controllers: [GetSwapQuoteController, UpdateSushiPairsController],
   providers: [
     SwapOrderComputer,
     GetQuoteSwapHandler,
+    UpdateSushiPairsHandler,
     httpClientProvider(),
     cachedHttpClientProvider(),
     tokenDetailsFetcherProvider(),
