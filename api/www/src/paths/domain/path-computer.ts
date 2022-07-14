@@ -15,6 +15,7 @@ import { BridgingRequest } from '../../bridges/domain/bridging-request';
 import { Path } from './path';
 import { BigNumber } from 'ethers';
 import { PriceFeedConverter } from '../../shared/infrastructure/PriceFeedConverter';
+import { PathNotFound } from './path-not-found';
 
 export class PathComputer {
   /** Providers */
@@ -63,7 +64,11 @@ export class PathComputer {
     await this.bridge();
     await this.destinationSwap();
 
-    const candidate = await this.getBestCandidate();
+    const candidate = this.getBestCandidate();
+
+    if (!candidate) {
+      throw new PathNotFound();
+    }
 
     const nativeWei = await this.convertDestinationGasIntoOriginNative(candidate.destinationStep);
 
@@ -172,7 +177,7 @@ export class PathComputer {
    * Checks all the candidates to select the most optimal path
    * @private
    */
-  private async getBestCandidate(): Promise<CandidatePath> {
+  private getBestCandidate(): CandidatePath {
     let currentMax = BigInteger.zero();
     let bestPath: CandidatePath;
     for (const candidate of this.candidatePaths) {
