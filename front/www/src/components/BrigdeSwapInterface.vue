@@ -104,7 +104,7 @@ const sourceChainInfo = reactive<INetwork>({
     id: '',
     tokens: [],
     rpcUrl: '',
-    live: '',
+    live: false,
 })
 const destinationChainInfo = reactive<INetwork>({
     name: '',
@@ -112,7 +112,7 @@ const destinationChainInfo = reactive<INetwork>({
     id: '',
     tokens: [],
     rpcUrl: '',
-    live: '',
+    live: false,
 })
 
 const steps = ref<TransactionSteps>({
@@ -208,7 +208,7 @@ const getNetworks = () => {
     return Array.from(networks.values()).filter(network => {
         return network.live
     })
-    
+
 }
 
 /**

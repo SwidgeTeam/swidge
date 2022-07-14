@@ -4,5 +4,5 @@ export interface INetwork {
     icon: string
     tokens: any[]
     rpcUrl: string
-    live: string
+    live: boolean
 }
