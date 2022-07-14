@@ -125,8 +125,10 @@ export class PathComputer {
         } else {
           bridgeAmountIn = this.amountIn;
         }
-        const bridgeOrder = await this.getBridgeStep(bridgeId, path.bridgingAsset, bridgeAmountIn);
-        path.withBridge(bridgeOrder);
+        const bridgeOrder = await this.getBridgeOrder(bridgeId, path.bridgingAsset, bridgeAmountIn);
+        if (bridgeOrder) {
+          path.withBridge(bridgeOrder);
+        }
       }
     }
   }
@@ -195,6 +197,32 @@ export class PathComputer {
   }
 
   /**
+   * Returns a possible bridge order
+   * @param providerId ID of bridge provider to use
+   * @param asset The asset that we want to send across the bridge
+   * @param swapAmountOut The amount that we want to cross
+   * @private
+   */
+  private async getBridgeOrder(
+    providerId: string,
+    asset: string,
+    swapAmountOut: BigInteger,
+  ): Promise<BridgingOrder> {
+    const bridgeTokenIn = Tokens[asset][this.fromChain];
+    const bridgeRequest = new BridgingRequest(
+      this.fromChain,
+      this.toChain,
+      bridgeTokenIn,
+      swapAmountOut,
+    );
+    try {
+      return await this.bridgeOrderProvider.execute(providerId, bridgeRequest);
+    } catch (e) {
+      // not possible, nothing to do..
+    }
+  }
+
+  /**
    * Checks all the candidates to select the most optimal path
    * @private
    */
@@ -243,27 +271,5 @@ export class PathComputer {
    */
   private getPossibleBridges(): string[] {
     return this.bridgeOrderProvider.getEnabledBridges(this.fromChain, this.toChain);
-  }
-
-  /**
-   * Returns a possible bridge order
-   * @param providerId ID of bridge provider to use
-   * @param asset The asset that we want to send across the bridge
-   * @param swapAmountOut The amount that we want to cross
-   * @private
-   */
-  private async getBridgeStep(
-    providerId: string,
-    asset: string,
-    swapAmountOut: BigInteger,
-  ): Promise<BridgingOrder> {
-    const bridgeTokenIn = Tokens[asset][this.fromChain];
-    const bridgeRequest = new BridgingRequest(
-      this.fromChain,
-      this.toChain,
-      bridgeTokenIn,
-      swapAmountOut,
-    );
-    return await this.bridgeOrderProvider.execute(providerId, bridgeRequest);
   }
 }
