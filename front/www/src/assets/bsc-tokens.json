@@ -6,6 +6,13 @@
         "decimals": 18
     },
     {
+        "id": "0x4ee438be38f8682abb089f2bfea48851c5e71eaf",
+        "symbol": "YAE",
+        "name": "Cryptonovae",
+        "decimals": 18,
+        "logo": "https://exchange.pancakeswap.finance/images/coins/0x4ee438be38f8682abb089f2bfea48851c5e71eaf.png"
+    },
+    {
         "id": "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
         "symbol": "WBNB",
         "name": "WBNB Token",
