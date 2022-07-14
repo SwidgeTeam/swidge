@@ -6,8 +6,9 @@ import { BigNumber, ethers } from 'ethers';
 import { Exchange } from '../exchange';
 import { IHttpClient } from '../../../shared/http/IHttpClient';
 import { ExchangeProviders } from './exchange-providers';
-import { CurrencyAmount, JSBI, Pair, Token, Trade, WNATIVE } from '@sushiswap/sdk';
+import { CurrencyAmount, JSBI, NATIVE, Pair, Token, Trade } from '@sushiswap/sdk';
 import { SushiPairsRepository } from '../sushi-pairs-repository';
+import { SushiPair } from '../sushi-pair';
 
 export interface GraphPair {
   name: string;
@@ -64,10 +65,11 @@ export class Sushiswap implements Exchange {
 
   public async execute(request: SwapRequest): Promise<SwapOrder> {
     const chainId = Number(request.chainId);
-    const pairs = await this.getPairs(chainId);
+    const sushiPairs = await this.repository.getPairs(request.chainId);
+    const pairs = this.convertToNativePairs(sushiPairs);
 
     const tokenIn = request.tokenIn.isNative()
-      ? WNATIVE[chainId]
+      ? NATIVE[chainId]
       : new Token(
           chainId,
           ethers.utils.getAddress(request.tokenIn.address),
@@ -82,7 +84,7 @@ export class Sushiswap implements Exchange {
     );
 
     const tokenOut = request.tokenOut.isNative()
-      ? WNATIVE[chainId]
+      ? NATIVE[chainId]
       : new Token(
           chainId,
           ethers.utils.getAddress(request.tokenOut.address),
@@ -108,67 +110,30 @@ export class Sushiswap implements Exchange {
     );
   }
 
-  private async getPairs(chainId: number): Promise<Pair[]> {
-    const result = await this.httpClient.post<{
-      data: {
-        pairs: GraphPair[];
-      };
-    }>(theGraphEndpoints[chainId], {
-      query: `
-        {
-          pairs(
-            orderBy: volumeUSD
-            orderDirection: desc
-            first: 10
-          ) {
-            name
-            token0 {
-              id
-              name
-              decimals
-              symbol
-            }
-            token1 {
-              id
-              name
-              decimals
-              symbol
-            }
-            reserve0
-            reserve1
-          }
-        }`,
-    });
-
-    const pairs = [];
-
-    for (const data of result.data.pairs) {
-      const t0 = data.token0;
-      const t1 = data.token1;
+  private convertToNativePairs(pairs: SushiPair[]): Pair[] {
+    return pairs.map((sushiPair) => {
       const token0 = new Token(
-        chainId,
-        ethers.utils.getAddress(t0.id),
-        Number(t0.decimals),
-        t0.symbol,
-        t0.name,
+        Number(sushiPair.chainId),
+        ethers.utils.getAddress(sushiPair.token0.address),
+        Number(sushiPair.token0.decimals),
+        sushiPair.token0.symbol,
+        sushiPair.token0.name,
       );
       const token1 = new Token(
-        chainId,
-        ethers.utils.getAddress(t1.id),
-        Number(t1.decimals),
-        t1.symbol,
-        t1.name,
+        Number(sushiPair.chainId),
+        ethers.utils.getAddress(sushiPair.token1.address),
+        Number(sushiPair.token1.decimals),
+        sushiPair.token1.symbol,
+        sushiPair.token1.name,
       );
 
-      const reserve0 = ethers.utils.parseUnits(data.reserve0, token0.decimals).toString();
-      const reserve1 = ethers.utils.parseUnits(data.reserve1, token1.decimals).toString();
+      const reserve0 = sushiPair.reserve0.toString();
+      const reserve1 = sushiPair.reserve1.toString();
 
       const token0Amount = CurrencyAmount.fromRawAmount(token0, JSBI.BigInt(reserve0));
       const token1Amount = CurrencyAmount.fromRawAmount(token1, JSBI.BigInt(reserve1));
 
-      pairs.push(new Pair(token0Amount, token1Amount));
-    }
-
-    return pairs;
+      return new Pair(token0Amount, token1Amount);
+    });
   }
 }
