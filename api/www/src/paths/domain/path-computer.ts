@@ -92,24 +92,18 @@ export class PathComputer {
       for (const bridgingAsset of this.bridgingAssets) {
         // and create a possible path
         const bridgeTokenIn = Tokens[bridgingAsset][this.fromChain];
-        let swapOrder;
-        // if the origin asset is the same that we bridge...
-        if (this.srcToken.equals(bridgeTokenIn)) {
-          // no need to swap
-          swapOrder = SwapOrder.notRequired();
-        } else {
-          // otherwise compute origin swap
-          const swapRequest = new SwapRequest(
-            this.fromChain,
-            this.srcToken,
-            bridgeTokenIn,
-            this.amountIn,
-          );
-          swapOrder = await this.swapOrderProvider.execute(exchangeId, swapRequest);
+        const swapOrder = await this.getSwapOrder(
+          exchangeId,
+          this.fromChain,
+          this.srcToken,
+          bridgeTokenIn,
+          this.amountIn,
+        );
+        if (swapOrder) {
+          const possiblePath = new PossiblePath(bridgingAsset, swapOrder);
+          // store it
+          this.possiblePaths.push(possiblePath);
         }
-        const possiblePath = new PossiblePath(bridgingAsset, swapOrder);
-        // store it
-        this.possiblePaths.push(possiblePath);
       }
     }
   }
@@ -144,33 +138,60 @@ export class PathComputer {
    */
   private async destinationSwap() {
     // for every enabled exchange on the destination chain
-    for (const swapperId of this.getPossibleExchanges(this.toChain)) {
+    for (const exchangeId of this.getPossibleExchanges(this.toChain)) {
       // and every possible path
       for (const path of this.possiblePaths) {
         // check each combination (exchange+bridge)
         // in order to compute the destination swap
         for (const bridgeOrder of path.bridgeSteps) {
-          let destinationSwap;
-          // if the bridge already gave us what we want...
-          if (bridgeOrder.tokenOut.equals(this.dstToken)) {
-            // no need to swap
-            destinationSwap = SwapOrder.sameToken(this.dstToken);
-          } else {
-            // otherwise compute required swap
-            const swapRequest = new SwapRequest(
-              this.toChain,
-              bridgeOrder.tokenOut,
-              this.dstToken,
-              bridgeOrder.amountOut,
-            );
-            destinationSwap = await this.swapOrderProvider.execute(swapperId, swapRequest);
+          const swapOrder = await this.getSwapOrder(
+            exchangeId,
+            this.toChain,
+            bridgeOrder.tokenOut,
+            this.dstToken,
+            bridgeOrder.amountOut,
+          );
+          if (swapOrder) {
+            // store the final combination
+            const candidate = new CandidatePath(path.originSwap, bridgeOrder, swapOrder);
+            this.candidatePaths.push(candidate);
           }
-          // store the final combination
-          const candidate = new CandidatePath(path.originSwap, bridgeOrder, destinationSwap);
-          this.candidatePaths.push(candidate);
         }
       }
     }
+  }
+
+  /**
+   * Creates a SwapOrder given the details
+   * @param exchangeId ID of exchange to use
+   * @param chainId ID of chain
+   * @param tokenIn Token that goes in
+   * @param tokenOut Token that goes out
+   * @param amount Amount to swap
+   * @private
+   */
+  private async getSwapOrder(
+    exchangeId: string,
+    chainId: string,
+    tokenIn: Token,
+    tokenOut: Token,
+    amount: BigInteger,
+  ): Promise<SwapOrder> {
+    let swapOrder;
+    // if the input and output asset are the same...
+    if (tokenIn.equals(tokenOut)) {
+      // no need to swap
+      swapOrder = SwapOrder.sameToken(tokenIn);
+    } else {
+      // otherwise compute swap
+      const swapRequest = new SwapRequest(chainId, tokenIn, tokenOut, amount);
+      try {
+        swapOrder = await this.swapOrderProvider.execute(exchangeId, swapRequest);
+      } catch (e) {
+        // no possible path, nothing to do ..
+      }
+    }
+    return swapOrder;
   }
 
   /**
