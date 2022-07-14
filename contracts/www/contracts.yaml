@@ -104,23 +104,23 @@ avax:
       implementation: "0x79B38753e46BD2b88170A58B403de0aBE2229D35"
       handler: "0x0000000000000000000000000000000000000000"
 optimism:
-  diamond: ""
+  diamond: "0x1a6e1ef1d28a7d9fed016c88f4d1858367564781"
   facet:
-    RouterFacet: ""
-    RelayerUpdaterFacet: ""
-    DiamondLoupeFacet: ""
-    ProviderUpdaterFacet: ""
-    DiamondCutterFacet: ""
+    RouterFacet: "0x8dE40F0f62B69C35A963d5ED626da04f6c1E4AB7"
+    RelayerUpdaterFacet: "0xFFe588b6c0fC789c8ac23d7fb3AFC031C61D9227"
+    DiamondLoupeFacet: "0x56CE178868B653480cD65AaF81C01b30C005a299"
+    ProviderUpdaterFacet: "0xb5A87Cd4C9C83f75cE9a25299bf66523B7410952"
+    DiamondCutterFacet: "0xEAe85FC046F6C03f769995D2801572Ca839989a0"
     FeeManagerFacet: ""
   bridge:
     Anyswap:
       code: 0
       enabled: true
-      implementation: ""
+      implementation: "0x65D246154885DBeA92Dee1EA8065A407E16D5fce"
       handler: "0xdc42728b0ea910349ed3c6e1c9dc06b5fb591f98"
   dex:
     ZeroEx:
       code: 0
       enabled: true
-      implementation: ""
+      implementation: "0x79B38753e46BD2b88170A58B403de0aBE2229D35"
       handler: "0x0000000000000000000000000000000000000000"
