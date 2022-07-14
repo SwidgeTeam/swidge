@@ -11,7 +11,7 @@ import { GraphPair, theGraphEndpoints } from '../../domain/providers/sushiswap';
 @CommandHandler(UpdateSushiPairsCommand)
 export class UpdateSushiPairsHandler implements ICommandHandler<UpdateSushiPairsCommand> {
   constructor(
-    private readonly repository: SushiPairsRepository,
+    @Inject(Class.SushiPairsRepository) private readonly repository: SushiPairsRepository,
     @Inject(Class.HttpClient) private readonly httpClient: HttpClient,
   ) {}
 
