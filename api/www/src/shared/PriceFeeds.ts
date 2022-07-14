@@ -1,4 +1,4 @@
-import { Avalanche, BSC, Fantom, Polygon } from './enums/ChainIds';
+import { Avalanche, BSC, Fantom, Optimism, Polygon } from './enums/ChainIds';
 
 /**
  * These PriceFees are always from the native coin of the chain into USD,
@@ -9,4 +9,5 @@ export const PriceFeeds = {
   [Fantom]: '0xf4766552D15AE4d256Ad41B6cf2933482B0680dc',
   [BSC]: '0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE',
   [Avalanche]: '0x0A77230d17318075983913bC2145DB16C7366156',
+  [Optimism]: '0x13e3Ee699D1909E989722E753853AE30b17e08c5',
 };
