@@ -18,7 +18,7 @@ export class ZeroEx implements Exchange {
   }
 
   constructor(private readonly httpClient: HttpClient) {
-    this.enabledChains = [];
+    this.enabledChains = [Mainnet, Polygon, Fantom, BSC, Avalanche];
   }
 
   public isEnabledOn(chainId: string): boolean {
