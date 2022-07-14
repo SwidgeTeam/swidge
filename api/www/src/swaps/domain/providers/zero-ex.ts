@@ -64,7 +64,6 @@ export class ZeroEx implements Exchange {
       encodedData,
       BigInteger.fromBigNumber(response.buyAmount),
       BigNumber.from(response.gas),
-      true,
     );
   }
 }

@@ -49,7 +49,6 @@ describe('path-computer', () => {
           '',
           BigInteger.fromDecimal('2', srcToken.decimals),
           BigNumber.from('0'),
-          true,
         ),
       )
       .onCall(1)
@@ -62,7 +61,6 @@ describe('path-computer', () => {
           '',
           BigInteger.fromDecimal('2', srcToken.decimals),
           BigNumber.from('0'),
-          true,
         ),
       );
     stub(zeroEx, 'isEnabledOn').returns(true);

@@ -105,7 +105,6 @@ export class Sushiswap implements Exchange {
       '',
       BigInteger.fromBigNumber(trade[0].outputAmount.numerator.toString()),
       BigNumber.from(gasEstimations[chainId]),
-      true,
     );
   }
 
