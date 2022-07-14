@@ -30,6 +30,7 @@
 		"prettier": "prettier --check 'src/**/*.vue'"
 	},
 	"dependencies": {
+		"@gtm-support/vue-gtm": "^1.6.0",
 		"@headlessui/vue": "^1.5.0",
 		"@heroicons/vue": "^1.0.6",
 		"@tailwindcss/aspect-ratio": "^0.4.0",
