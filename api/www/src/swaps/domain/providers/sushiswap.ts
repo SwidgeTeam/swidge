@@ -9,7 +9,7 @@ import { ExchangeProviders } from './exchange-providers';
 import { CurrencyAmount, JSBI, Pair, Token, Trade, WNATIVE } from '@sushiswap/sdk';
 import { SushiPairsRepository } from '../sushi-pairs-repository';
 
-interface GraphPair {
+export interface GraphPair {
   name: string;
   token0: {
     id: string;
@@ -27,7 +27,7 @@ interface GraphPair {
   reserve1: string;
 }
 
-const theGraphEndpoints = {
+export const theGraphEndpoints = {
   [Mainnet]: 'https://api.thegraph.com/subgraphs/name/sushiswap/exchange',
   [BSC]: 'https://api.thegraph.com/subgraphs/name/sushiswap/bsc-exchange',
   [Polygon]: 'https://api.thegraph.com/subgraphs/name/sushiswap/matic-exchange',
@@ -41,6 +41,7 @@ const theGraphEndpoints = {
 
 const gasEstimations = {
   [Polygon]: 145244,
+  [Fantom]: 145244,
 };
 
 export class Sushiswap implements Exchange {
@@ -143,7 +144,6 @@ export class Sushiswap implements Exchange {
     const pairs = [];
 
     for (const data of result.data.pairs) {
-      console.log(data.name);
       const t0 = data.token0;
       const t1 = data.token1;
       const token0 = new Token(
@@ -172,5 +172,4 @@ export class Sushiswap implements Exchange {
 
     return pairs;
   }
-
 }
