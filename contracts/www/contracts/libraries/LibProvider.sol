@@ -20,6 +20,11 @@ library LibProvider {
         return address(0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE);
     }
 
+    /**
+     * Sends `amount` of `token` to `toChainId` using the bridge identified with `code`
+     *
+     * @dev If a non-existent code is given, the default value for enabled is false
+     */
     function bridge(
         uint8 _code,
         address _token,
@@ -46,6 +51,13 @@ library LibProvider {
         }
     }
 
+    /**
+     * Swaps `amount` of `tokenIn` for `tokenOut` using the exchange provider
+     * identified with `code`
+     *
+     * @return The total amount of bought `tokenOut`
+     * @dev If a non-existent code is given, the default value for enabled is false
+     */
     function swap(
         uint8 _code,
         address _tokenIn,
