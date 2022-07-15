@@ -40,6 +40,11 @@ fantom:
       enabled: true
       implementation: "0x6106fcf1AbC3f125B34A5675400791bfcfAcb168"
       handler: "0x0000000000000000000000000000000000000000"
+    Sushi:
+      code: 1
+      enabled: true
+      implementation: ""
+      handler: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506"
 polygon:
   diamond: "0x1a6e1ef1d28A7d9feD016c88f4d1858367564781"
   facet:
@@ -61,6 +66,11 @@ polygon:
       enabled: true
       implementation: "0x9031DaA015C311DE595C1aFA2f805B6b497f7CBd"
       handler: "0x0000000000000000000000000000000000000000"
+    Sushi:
+      code: 1
+      enabled: true
+      implementation: ""
+      handler: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506"
 bsc:
   diamond: "0x1a6e1ef1d28A7d9feD016c88f4d1858367564781"
   facet:
