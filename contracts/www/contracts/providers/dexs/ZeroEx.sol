@@ -5,6 +5,7 @@ import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../../libraries/LibProvider.sol";
 import "../../libraries/LibBytes.sol";
+import "../../libraries/LibTreasury.sol";
 import "../../interfaces/IDEX.sol";
 
 contract ZeroEx is IDEX {
@@ -34,16 +35,8 @@ contract ZeroEx is IDEX {
             TransferHelper.safeApprove(_tokenIn, callAddress, _amountIn);
         }
 
-        bool isNativeOut = _tokenOut == LibProvider.nativeToken();
-        // Depending if its native coin OR token,
-        // we compute the boughtAmount different
-        uint256 boughtAmount;
-        if (isNativeOut) {
-            boughtAmount = address(this).balance;
-        }
-        else {
-            boughtAmount = IERC20(_tokenOut).balanceOf(address(this));
-        }
+        // get the current amount
+        uint256 boughtAmount = LibTreasury.getBalance(_tokenOut);
 
         // Execute swap with ZeroEx and compute final `boughtAmount`
         (bool success,bytes memory data) = callAddress.call{value : valueToSend}(callData);
@@ -53,12 +46,8 @@ contract ZeroEx is IDEX {
             revert(string(abi.encodePacked("ZeroEx failed: ", _revertMsg)));
         }
 
-        if (isNativeOut) {
-            boughtAmount = address(this).balance - boughtAmount;
-        }
-        else {
-            boughtAmount = IERC20(_tokenOut).balanceOf(address(this)) - boughtAmount;
-        }
+        // subtract the previously existing amount to get the boughtAmount
+        boughtAmount = LibTreasury.getBalance(_tokenOut) - boughtAmount;
 
         return boughtAmount;
     }
