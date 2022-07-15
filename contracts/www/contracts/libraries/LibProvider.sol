@@ -62,7 +62,7 @@ library LibProvider {
         (bool success, bytes memory data) = _swapper.implementation.delegatecall(
             abi.encodeWithSelector(
                 IDEX.swap.selector,
-                _tokenIn, _tokenOut, _amountIn, _data
+                _swapper.handler, _tokenIn, _tokenOut, _amountIn, _data
             )
         );
 

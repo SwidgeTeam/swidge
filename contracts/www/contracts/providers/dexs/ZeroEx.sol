@@ -10,6 +10,7 @@ import "../../interfaces/IDEX.sol";
 
 contract ZeroEx is IDEX {
     function swap(
+        address, /*_handler*/
         address _tokenIn,
         address _tokenOut,
         uint256 _amountIn,
