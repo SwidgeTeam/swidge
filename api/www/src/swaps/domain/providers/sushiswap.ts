@@ -1,14 +1,25 @@
 import { SwapRequest } from '../SwapRequest';
 import { SwapOrder } from '../SwapOrder';
-import { Avalanche, BSC, Fantom, Mainnet, Polygon } from '../../../shared/enums/ChainIds';
+import { BSC, Fantom, Mainnet, Polygon } from '../../../shared/enums/ChainIds';
 import { BigInteger } from '../../../shared/domain/BigInteger';
 import { BigNumber, ethers } from 'ethers';
 import { Exchange } from '../exchange';
 import { IHttpClient } from '../../../shared/http/IHttpClient';
 import { ExchangeProviders } from './exchange-providers';
-import { CurrencyAmount, JSBI, NATIVE, Pair, Token, Trade } from '@sushiswap/sdk';
+import {
+  CurrencyAmount,
+  JSBI,
+  NATIVE,
+  Pair,
+  Percent,
+  Router,
+  SwapParameters,
+  Token,
+  Trade,
+} from '@sushiswap/sdk';
 import { SushiPairsRepository } from '../sushi-pairs-repository';
 import { SushiPair } from '../sushi-pair';
+import { AbiEncoder } from '../../../shared/domain/CallEncoder';
 
 export interface GraphPair {
   name: string;
@@ -41,8 +52,8 @@ export const theGraphEndpoints = {
 };
 
 const gasEstimations = {
-  [Polygon]: 145244,
-  [Fantom]: 145244,
+  [Polygon]: 150000,
+  [Fantom]: 150000,
 };
 
 export class Sushiswap implements Exchange {
@@ -56,7 +67,7 @@ export class Sushiswap implements Exchange {
     private readonly httpClient: IHttpClient,
     private readonly repository: SushiPairsRepository,
   ) {
-    this.enabledChains = [Mainnet, Polygon, Fantom, BSC, Avalanche];
+    this.enabledChains = [Polygon, Fantom];
   }
 
   public isEnabledOn(chainId: string): boolean {
@@ -99,12 +110,20 @@ export class Sushiswap implements Exchange {
       throw new Error('NO_PATH');
     }
 
+    const call = Router.swapCallParameters(trade[0], {
+      ttl: 3600 * 24,
+      recipient: ethers.constants.AddressZero,
+      allowedSlippage: new Percent('1', '100'),
+    });
+
+    const callData = this.encodeCallData(call);
+
     return new SwapOrder(
       ExchangeProviders.Sushi,
       request.tokenIn,
       request.tokenOut,
       '',
-      '',
+      callData,
       BigInteger.fromBigNumber(trade[0].outputAmount.numerator.toString()),
       BigNumber.from(gasEstimations[chainId]),
     );
@@ -135,5 +154,40 @@ export class Sushiswap implements Exchange {
 
       return new Pair(token0Amount, token1Amount);
     });
+  }
+
+  private encodeCallData(call: SwapParameters): string {
+    let selector, encodedArguments;
+
+    switch (call.methodName) {
+      case 'swapExactETHForTokens':
+        //bytes4(keccak256(bytes(swapExactETHForTokens(uint256,address[],address,uint256))))
+        selector = '0x7ff36ab5';
+        encodedArguments = AbiEncoder.encodeFunctionArguments(
+          ['uint256', 'address[]', 'address', 'uint256'],
+          <string[]>call.args,
+        );
+        break;
+      case 'swapExactTokensForTokens':
+        //bytes4(keccak256(bytes(swapExactTokensForTokens(uint256,uint256,address[],address,uint256))))
+        selector = '0x38ed1739';
+        encodedArguments = AbiEncoder.encodeFunctionArguments(
+          ['uint256', 'uint256', 'address[]', 'address', 'uint256'],
+          <string[]>call.args,
+        );
+        break;
+      case 'swapExactTokensForETH':
+        //bytes4(keccak256(bytes(swapExactTokensForETH(uint256,uint256,address[],address,uint256))))
+        selector = '0x18cbafe5';
+        encodedArguments = AbiEncoder.encodeFunctionArguments(
+          ['uint256', 'uint256', 'address[]', 'address', 'uint256'],
+          <string[]>call.args,
+        );
+        break;
+      default:
+        throw new Error('Sushiswap: unrecognized method name');
+    }
+
+    return AbiEncoder.concatBytes([selector, encodedArguments]);
   }
 }

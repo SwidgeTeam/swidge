@@ -10,10 +10,7 @@ export class AbiEncoder {
     return abiInterface.getSighash(functionSignature);
   }
 
-  public static encodeFunctionArguments(
-    types: string[],
-    values: string[],
-  ): string {
+  public static encodeFunctionArguments(types: string[], values: string[]): string {
     return ethers.utils.defaultAbiCoder.encode(types, values);
   }
 
