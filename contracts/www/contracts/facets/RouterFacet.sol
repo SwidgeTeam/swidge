@@ -78,13 +78,18 @@ contract RouterFacet {
         // depending on the step to take
         if (_swapStep.required) {
             // Execute the swap
-            finalAmount = LibProvider.swap(
+            bool success;
+            string memory revertMsg;
+            (success, finalAmount, revertMsg) = LibProvider.swap(
                 _swapStep.providerCode,
                 _swapStep.tokenIn,
                 _swapStep.tokenOut,
                 _amount,
                 _swapStep.data
             );
+            if (!success) {
+                revert(revertMsg);
+            }
         }
         else {
             // If swap is not required the amount going
@@ -149,10 +154,11 @@ contract RouterFacet {
         LibStorage.enforceIsRelayer();
 
         uint256 finalAmount;
+        bool swapSuccess;
         // Check if last swap is required,
         // and store user's receiving amount
         if (_swapStep.required) {
-            finalAmount = LibProvider.swap(
+            (swapSuccess, finalAmount,) = LibProvider.swap(
                 _swapStep.providerCode,
                 _swapStep.tokenIn,
                 _swapStep.tokenOut,
@@ -162,6 +168,11 @@ contract RouterFacet {
         }
         else {
             finalAmount = _amount;
+        }
+
+        if (_swapStep.required && !swapSuccess) {
+            // TODO : send tokens to user
+            return;
         }
 
         if (_swapStep.tokenOut == nativeToken()) {
