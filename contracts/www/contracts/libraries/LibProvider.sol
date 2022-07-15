@@ -47,7 +47,7 @@ library LibProvider {
 
         if (!success) {
             string memory _revertMsg = LibBytes.getRevertMsg(data);
-            revert(string(abi.encodePacked("Bridge failed: ", _revertMsg)));
+            revert(_revertMsg);
         }
     }
 
@@ -80,7 +80,7 @@ library LibProvider {
 
         if (!success) {
             string memory _revertMsg = LibBytes.getRevertMsg(data);
-            revert(string(abi.encodePacked("Swap failed: ", _revertMsg)));
+            revert(_revertMsg);
         }
 
         (uint256 boughtAmount) = abi.decode(data, (uint256));
