@@ -9,7 +9,7 @@ import {
   zeroExEncodedCalldata,
 } from "../shared";
 import { Contract } from "ethers";
-import { smock } from "@defi-wonderland/smock";
+import { FakeContract, smock } from "@defi-wonderland/smock";
 
 const Deployer = require("../../scripts/Deployer");
 
@@ -17,7 +17,6 @@ chai.use(smock.matchers);
 
 describe("RouterFacet", function () {
   let providerUpdater: Contract;
-  let feeManager: Contract;
   let router: Contract;
   let anyswap: Contract;
   let zeroEx: Contract;
@@ -28,7 +27,6 @@ describe("RouterFacet", function () {
     await deployer.deploy();
 
     providerUpdater = await deployer.interactWith("ProviderUpdaterFacet");
-    feeManager = await deployer.interactWith("FeeManagerFacet");
     router = await deployer.interactWith("RouterFacet");
 
     anyswap = await deployer.deployByName("Anyswap");
@@ -130,9 +128,7 @@ describe("RouterFacet", function () {
         );
 
       /** Assert */
-      await expect(call).to.be.revertedWith(
-        "Bridge failed: Provider has no code"
-      );
+      await expect(call).to.be.revertedWith("Anyswap handler has no code");
     });
 
     it("Should only execute bridge if no swapping step is required", async function () {
@@ -150,8 +146,7 @@ describe("RouterFacet", function () {
       const providerSwapCode = 0;
       const providerBridgeCode = 0;
 
-      // : deploy a provider handler compliant with the interface
-      const anyswapMock = await anyswapRouterMock();
+      const anyswapMock = await fakeAnyswapRouter();
 
       await providerUpdater
         .connect(owner)
@@ -213,7 +208,7 @@ describe("RouterFacet", function () {
         .connect(owner)
         .updateSwapper([providerSwapCode, true, zeroEx.address, ZeroAddress]);
 
-      const anyswapMock = await anyswapRouterMock();
+      const anyswapMock = await fakeAnyswapRouter();
       await providerUpdater
         .connect(owner)
         .updateBridge([
@@ -404,12 +399,9 @@ describe("RouterFacet", function () {
   });
 });
 
-async function anyswapRouterMock(): Promise<Contract> {
-  // : deploy a provider handler compliant with the interface
-  const AnyswapV4RouterMock = await ethers.getContractFactory(
-    "AnyswapV4RouterMock"
-  );
-  const anyswapMock = await AnyswapV4RouterMock.deploy();
-  await anyswapMock.deployed();
-  return anyswapMock;
+async function fakeAnyswapRouter(): Promise<FakeContract> {
+  const tokenAbi = [
+    "function anySwapOutUnderlying(address token, address to, uint amount, uint toChainID) external",
+  ];
+  return await smock.fake(tokenAbi);
 }

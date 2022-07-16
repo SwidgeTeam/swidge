@@ -14,7 +14,7 @@ contract Anyswap is IBridge {
         uint256 _toChainId,
         bytes calldata _data
     ) external payable override returns (bool){
-        LibStorage.enforceHasContractCode(_handler, "Provider has no code");
+        LibStorage.enforceHasContractCode(_handler, "Anyswap handler has no code");
 
         // Approve tokens for the bridge to take
         TransferHelper.safeApprove(_token, _handler, _amount);
