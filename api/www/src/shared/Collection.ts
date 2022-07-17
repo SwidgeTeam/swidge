@@ -27,4 +27,8 @@ export abstract class Collection {
   public map<T>(callback): T {
     return this._items.map(callback);
   }
+
+  public forEach<T>(callback): T {
+    return this._items.forEach(callback);
+  }
 }
