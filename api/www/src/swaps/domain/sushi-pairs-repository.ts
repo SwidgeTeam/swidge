@@ -1,9 +1,10 @@
 import { SushiPair } from './sushi-pair';
+import { SushiPairs } from './sushi-pairs';
 
 export interface SushiPairsRepository {
-  getPairs(chainId: string): Promise<SushiPair[]>;
+  getPairs(chainId: string): Promise<SushiPairs>;
 
-  getAllPairs(): Promise<SushiPair[]>;
+  getAllPairs(): Promise<SushiPairs>;
 
   update(pair: SushiPair): void;
 

@@ -18,7 +18,7 @@ export class UpdateSushiPairsHandler implements ICommandHandler<UpdateSushiPairs
   async execute(): Promise<void> {
     const pairs = await this.repository.getAllPairs();
 
-    for (const pair of pairs) {
+    for (const pair of pairs.items<SushiPair[]>()) {
       await this.updateReserves(pair);
     }
   }

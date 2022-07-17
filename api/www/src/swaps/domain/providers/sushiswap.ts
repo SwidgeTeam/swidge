@@ -18,9 +18,9 @@ import {
   Trade,
 } from '@sushiswap/sdk';
 import { SushiPairsRepository } from '../sushi-pairs-repository';
-import { SushiPair } from '../sushi-pair';
 import { AbiEncoder } from '../../../shared/domain/CallEncoder';
 import { DeployedAddresses } from '../../../shared/DeployedAddresses';
+import { SushiPairs } from '../sushi-pairs';
 
 export interface GraphPair {
   name: string;
@@ -75,6 +75,12 @@ export class Sushiswap implements Exchange {
     return this.enabledChains.includes(chainId);
   }
 
+  /**
+   * Entrypoint
+   * @param request
+   * @return The best possible path given the request
+   * @throws Exception if no path is found
+   */
   public async execute(request: SwapRequest): Promise<SwapOrder> {
     const chainId = Number(request.chainId);
     const sushiPairs = await this.repository.getPairs(request.chainId);
@@ -130,8 +136,14 @@ export class Sushiswap implements Exchange {
     );
   }
 
-  private convertToNativePairs(pairs: SushiPair[]): Pair[] {
-    return pairs.map((sushiPair) => {
+  /**
+   * Give our domain specific SushiPair's, create the required Pair's
+   * for the sushiswap-sdk to use
+   * @param pairs
+   * @private
+   */
+  private convertToNativePairs(pairs: SushiPairs): Pair[] {
+    return pairs.map<Pair[]>((sushiPair) => {
       const token0 = new Token(
         Number(sushiPair.chainId),
         ethers.utils.getAddress(sushiPair.token0.address),
@@ -157,6 +169,12 @@ export class Sushiswap implements Exchange {
     });
   }
 
+  /**
+   * Given the swap parameters for the Sushi router
+   * this encodes all of it into calldata
+   * @param call
+   * @private
+   */
   private encodeCallData(call: SwapParameters): string {
     let selector, encodedArguments;
 

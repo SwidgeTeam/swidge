@@ -5,6 +5,7 @@ import { ethers } from 'ethers';
 import { Token } from '../../../../shared/domain/Token';
 import { BigInteger } from '../../../../shared/domain/BigInteger';
 import { SushiPair } from '../../../domain/sushi-pair';
+import { SushiPairs } from '../../../domain/sushi-pairs';
 
 @EntityRepository(SushiPairsEntity)
 export class SushiPairsRepositoryMysql implements SushiPairsRepository {
@@ -14,7 +15,7 @@ export class SushiPairsRepositoryMysql implements SushiPairsRepository {
    * Returns all the stored pairs of a specific chain
    * @param chainId
    */
-  public async getPairs(chainId: string): Promise<SushiPair[]> {
+  public async getPairs(chainId: string): Promise<SushiPairs> {
     const result = await this.manager.find(SushiPairsEntity, {
       chainId: chainId,
     });
@@ -24,7 +25,7 @@ export class SushiPairsRepositoryMysql implements SushiPairsRepository {
   /**
    * Returns all the stored pairs
    */
-  public async getAllPairs(): Promise<SushiPair[]> {
+  public async getAllPairs(): Promise<SushiPairs> {
     const result = await this.manager.find(SushiPairsEntity);
     return this.constructPairs(result);
   }
@@ -35,7 +36,7 @@ export class SushiPairsRepositoryMysql implements SushiPairsRepository {
    * @private
    */
   private constructPairs(result) {
-    return result.map((row) => {
+    const items = result.map((row) => {
       const token0 = new Token(
         row.token0_name,
         ethers.utils.getAddress(row.token0_id),
@@ -54,6 +55,7 @@ export class SushiPairsRepositoryMysql implements SushiPairsRepository {
 
       return new SushiPair(row.id, row.chainId, token0, token1, reserve0, reserve1);
     });
+    return new SushiPairs(items);
   }
 
   /**
