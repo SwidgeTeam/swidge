@@ -38,8 +38,8 @@ export class UpdateSushiPairsHandler implements ICommandHandler<UpdateSushiPairs
         {
           pairs(
             where: {
-              token0: "${pair.token0.address}"
-              token1: "${pair.token1.address}"
+              token0: "${pair.token0.address.toLowerCase()}"
+              token1: "${pair.token1.address.toLowerCase()}"
             }
           ) {
             reserve0
@@ -48,7 +48,7 @@ export class UpdateSushiPairsHandler implements ICommandHandler<UpdateSushiPairs
         }`,
     });
 
-    const data = result[0];
+    const data = result.data.pairs[0];
 
     const reserve0 = BigInteger.fromDecimal(data.reserve0, pair.token0.decimals);
     const reserve1 = BigInteger.fromDecimal(data.reserve1, pair.token1.decimals);
