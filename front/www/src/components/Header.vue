@@ -8,14 +8,9 @@ import ModalNetworks from '@/components/ModalNetworks.vue'
 import { computed, ref } from 'vue'
 import ConnectButton from '@/components/Buttons/ConnectButton.vue'
 import networks from '@/assets/Networks'
-import { INetwork } from '@/models/INetwork'
 
 const emits = defineEmits<{
-    (event: 'switch-network', chainId: string): void,
-}>()
-
-defineProps<{
-    networks: INetwork[]
+    (event: 'switch-network', chainId: string): void
 }>()
 
 const web3Store = useWeb3Store()
