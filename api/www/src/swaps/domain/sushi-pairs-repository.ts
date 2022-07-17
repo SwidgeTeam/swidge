@@ -6,7 +6,5 @@ export interface SushiPairsRepository {
 
   getAllPairs(): Promise<SushiPairs>;
 
-  update(pair: SushiPair): void;
-
   save(pair: SushiPair): void;
 }

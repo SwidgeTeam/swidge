@@ -59,27 +59,30 @@ export class SushiPairsRepositoryMysql implements SushiPairsRepository {
   }
 
   /**
-   * Updates the reserves on the pair
-   * @param pair
-   */
-  async update(pair: SushiPair): Promise<void> {
-    await this.manager.update(
-      SushiPairsEntity,
-      {
-        id: pair.id,
-      },
-      {
-        reserve0: pair.reserve0.toString(),
-        reserve1: pair.reserve1.toString(),
-      },
-    );
-  }
-
-  /**
-   * Stores a new pair
+   * Saves the given pair
    * @param pair
    */
   async save(pair: SushiPair): Promise<void> {
+    const [, count] = await this.manager.findAndCount(SushiPairsEntity, {
+      where: {
+        chainId: pair.chainId,
+        token0_id: pair.token0.address,
+        token1_id: pair.token1.address,
+      },
+    });
+
+    if (count > 0) {
+      await this.update(pair);
+    } else {
+      await this.insert(pair);
+    }
+  }
+
+  /**
+   * Creates a new pair
+   * @param pair
+   */
+  private async insert(pair: SushiPair): Promise<void> {
     await this.manager.save(SushiPairsEntity, {
       id: pair.id,
       chainId: pair.chainId,
@@ -94,5 +97,22 @@ export class SushiPairsRepositoryMysql implements SushiPairsRepository {
       reserve0: pair.reserve0.toString(),
       reserve1: pair.reserve1.toString(),
     });
+  }
+
+  /**
+   * Updates the reserves on the pair
+   * @param pair
+   */
+  private async update(pair: SushiPair): Promise<void> {
+    await this.manager.update(
+      SushiPairsEntity,
+      {
+        id: pair.id,
+      },
+      {
+        reserve0: pair.reserve0.toString(),
+        reserve1: pair.reserve1.toString(),
+      },
+    );
   }
 }
