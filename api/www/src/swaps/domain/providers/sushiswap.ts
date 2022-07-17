@@ -20,6 +20,7 @@ import {
 import { SushiPairsRepository } from '../sushi-pairs-repository';
 import { SushiPair } from '../sushi-pair';
 import { AbiEncoder } from '../../../shared/domain/CallEncoder';
+import { DeployedAddresses } from '../../../shared/DeployedAddresses';
 
 export interface GraphPair {
   name: string;
@@ -111,8 +112,8 @@ export class Sushiswap implements Exchange {
     }
 
     const call = Router.swapCallParameters(trade[0], {
-      ttl: 3600 * 24,
-      recipient: ethers.constants.AddressZero,
+      ttl: 3600 * 24, // 1 day
+      recipient: DeployedAddresses.Router,
       allowedSlippage: new Percent('1', '100'),
     });
 

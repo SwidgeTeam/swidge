@@ -5,6 +5,7 @@ import { GetPathQuery } from '../../application/query/get-path.query';
 import { Path } from '../../domain/path';
 import { GetPathDto } from './GetPathDto';
 import { Token } from '../../../shared/domain/Token';
+import { DeployedAddresses } from '../../../shared/DeployedAddresses';
 
 @Controller()
 export class GetPathController {
@@ -23,6 +24,7 @@ export class GetPathController {
     const path = await this.queryBus.execute<GetPathQuery, Path>(query);
 
     return res.json({
+      router: DeployedAddresses.Router,
       amountOut: path.amountOut,
       destinationFee: path.destinationFee.toString(),
       originSwap: {
