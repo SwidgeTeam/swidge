@@ -20,6 +20,10 @@ export abstract class Collection {
     return this._items.length;
   }
 
+  public empty(): boolean {
+    return this._items.length === 0;
+  }
+
   public map<T>(callback): T {
     return this._items.map(callback);
   }
