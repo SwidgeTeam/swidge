@@ -6,15 +6,13 @@ import { Class } from '../../../shared/Class';
 import { ContractAddress } from '../../../shared/types';
 
 @QueryHandler(GetRouterAddressQuery)
-export class GetRouterAddressHandler
-  implements IQueryHandler<GetRouterAddressQuery>
-{
+export class GetRouterAddressHandler implements IQueryHandler<GetRouterAddressQuery> {
   constructor(
     @Inject(Class.AddressesRepository)
     private readonly addressRepository: AddressesRepository,
   ) {}
 
-  execute(query: GetRouterAddressQuery): Promise<ContractAddress> {
+  execute(): Promise<ContractAddress> {
     return this.addressRepository.getRouter();
   }
 }

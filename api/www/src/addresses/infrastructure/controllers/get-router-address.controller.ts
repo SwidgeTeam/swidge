@@ -12,9 +12,7 @@ export class GetRouterAddressController extends CustomController {
 
   @Get('/address/router')
   public async getAddresses(@Res() res: Response) {
-    const routerAddress = await this.queryBus.execute(
-      new GetRouterAddressQuery(),
-    );
+    const routerAddress = await this.queryBus.execute(new GetRouterAddressQuery());
 
     return res.json({
       address: routerAddress,
