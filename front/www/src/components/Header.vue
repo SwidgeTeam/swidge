@@ -8,9 +8,14 @@ import ModalNetworks from '@/components/ModalNetworks.vue'
 import { computed, ref } from 'vue'
 import ConnectButton from '@/components/Buttons/ConnectButton.vue'
 import networks from '@/assets/Networks'
+import { INetwork } from '@/models/INetwork'
 
 const emits = defineEmits<{
-    (event: 'switch-network', chainId: string): void
+    (event: 'switch-network', chainId: string): void,
+}>()
+
+defineProps<{
+    networks: INetwork[]
 }>()
 
 const web3Store = useWeb3Store()
@@ -72,6 +77,7 @@ const chainIcon = computed({
     </nav>
     <ModalNetworks
         :is-modal-open="isModalOpen"
+        :networks="networks"
         @close-modal="isModalOpen = false"
         @set-chain="changeNetwork($event)"
     />

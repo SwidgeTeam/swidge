@@ -1,10 +1,11 @@
 <script setup lang='ts'>
 import {Dialog, DialogOverlay, TransitionChild, TransitionRoot} from '@headlessui/vue'
 import {XIcon} from '@heroicons/vue/solid'
-import networks from '@/assets/Networks'
+import { INetwork } from '@/models/INetwork'
 
 defineProps<{
-  isModalOpen: boolean
+    isModalOpen: boolean,
+    networks: INetwork[]
 }>()
 
 const emits = defineEmits<{
@@ -19,11 +20,6 @@ const onCloseModal = () => {
 const selectChain = (chain: string) => {
     emits('set-chain', chain)
 }
-
-const getNetworks = () => {
-    return Array.from(networks.values())
-}
-
 
 </script>
 
@@ -67,7 +63,7 @@ const getNetworks = () => {
               @click="onCloseModal()"
             />
             <button
-              v-for="chain in getNetworks()"
+              v-for="chain in networks"
               :key="chain.id"
               class="flex items-center gap-2 tracking-wide network-button"
               @click="selectChain(chain.id)"
