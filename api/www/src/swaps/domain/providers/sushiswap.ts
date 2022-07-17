@@ -21,6 +21,10 @@ import { SushiPairsRepository } from '../sushi-pairs-repository';
 import { AbiEncoder } from '../../../shared/domain/CallEncoder';
 import { DeployedAddresses } from '../../../shared/DeployedAddresses';
 import { SushiPairs } from '../sushi-pairs';
+import { SushiPair } from '../sushi-pair';
+import { randomUUID } from 'crypto';
+import { Token as OwnToken } from '../../../shared/domain/Token';
+import { TokenAddresses } from '../../../shared/enums/TokenAddresses';
 
 export interface GraphPair {
   name: string;
@@ -83,7 +87,17 @@ export class Sushiswap implements Exchange {
    */
   public async execute(request: SwapRequest): Promise<SwapOrder> {
     const chainId = Number(request.chainId);
-    const sushiPairs = await this.repository.getPairs(request.chainId);
+    let sushiPairs = await this.repository.getPairs(request.chainId);
+
+    if (!sushiPairs.contains(request.tokenIn)) {
+      const extraPairs = await this.getExtraPairs(request.chainId, request.tokenIn);
+      sushiPairs = sushiPairs.add(extraPairs);
+    }
+    if (!sushiPairs.contains(request.tokenOut)) {
+      const extraPairs = await this.getExtraPairs(request.chainId, request.tokenOut);
+      sushiPairs = sushiPairs.add(extraPairs);
+    }
+
     const pairs = this.convertToNativePairs(sushiPairs);
 
     const tokenIn = request.tokenIn.isNative()
@@ -134,6 +148,112 @@ export class Sushiswap implements Exchange {
       BigInteger.fromBigNumber(trade[0].outputAmount.numerator.toString()),
       BigNumber.from(gasEstimations[chainId]),
     );
+  }
+
+  /**
+   * Fetches any pair that allows to swap from the given `token`
+   * to any of the liquid assets on that chain
+   * @param chainId Chain ID where we want to look
+   * @param token Token that we want to swap
+   * @return An object SushiPairs with the existing pairs, if any
+   * @private
+   */
+  private async getExtraPairs(chainId: string, token: OwnToken): Promise<SushiPairs> {
+    const liquidTokens = Object.values<string>(TokenAddresses[chainId]);
+
+    let pairs = await this.getPairsOf(chainId, [token.address], liquidTokens);
+
+    if (!pairs.empty()) {
+      return pairs;
+    }
+
+    pairs = await this.getPairsOf(chainId, liquidTokens, [token.address]);
+
+    return pairs;
+  }
+
+  /**
+   * Fetches any existing pair that crosses any of the tokens on the list `tokens0`
+   * with any of the tokens on the list `tokens1`
+   * @param chainId Chain ID where we want to look
+   * @param tokens0 Set of token addresses
+   * @param tokens1 Set of token addresses
+   * @return An object SushiPairs with the existing pairs, if any
+   * @private
+   */
+  private async getPairsOf(
+    chainId: string,
+    tokens0: string[],
+    tokens1: string[],
+  ): Promise<SushiPairs> {
+    let str_token0 = '',
+      str_token1 = '';
+
+    tokens0.forEach((token) => {
+      str_token0 += '"' + token + '",';
+    });
+    tokens1.forEach((token) => {
+      str_token1 += '"' + token + '",';
+    });
+
+    const result = await this.httpClient.post<{
+      data: {
+        pairs: GraphPair[];
+      };
+    }>(theGraphEndpoints[chainId], {
+      query: `
+        {
+          pairs(
+            where: {
+              token0_in: [
+                ${str_token0}
+              ]
+              token1_in: [
+                ${str_token1}
+              ]
+            }
+          ) {
+            token0 {
+              id
+              name
+              decimals
+              symbol
+            }
+            token1 {
+              id
+              name
+              decimals
+              symbol
+            }
+            reserve0
+            reserve1
+          }
+        }`,
+    });
+
+    const items = [];
+
+    for (const row of result.data.pairs) {
+      const t0 = new OwnToken(
+        row.token0.name,
+        ethers.utils.getAddress(row.token0.id),
+        Number(row.token0.decimals),
+        row.token0.symbol,
+      );
+      const t1 = new OwnToken(
+        row.token1.name,
+        ethers.utils.getAddress(row.token1.id),
+        Number(row.token1.decimals),
+        row.token1.symbol,
+      );
+
+      const reserve0 = BigInteger.fromDecimal(row.reserve0, t0.decimals);
+      const reserve1 = BigInteger.fromDecimal(row.reserve1, t1.decimals);
+
+      items.push(new SushiPair(randomUUID(), chainId, t0, t1, reserve0, reserve1));
+    }
+
+    return new SushiPairs(items);
   }
 
   /**
