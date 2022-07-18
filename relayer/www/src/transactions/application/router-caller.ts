@@ -51,7 +51,7 @@ export class RouterCaller {
       {
         // Increase everything 20% just to give some room
         gasPrice: feeData.gasPrice,
-        gasLimit: 9000000,
+        gasLimit: 5000000,
         //gasLimit: BigNumber.from(params.swap.estimatedGas).mul(1.2),
       },
     ).catch((error) => {
