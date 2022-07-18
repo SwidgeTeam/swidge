@@ -338,6 +338,12 @@ relayer-consumer:
 
 TERRAFORM = $(call DOCKER_COMPOSE_RUN,--rm ${DOCKER_TERRAFORM_SERVICE} $(1))
 
+tf-init:
+	@$(call TERRAFORM,init \
+		 -backend-config="access_key=${CREATOR_AWS_ACCESS_KEY}" \
+		 -backend-config="secret_key=${CREATOR_AWS_SECRET_KEY}" \
+	)
+
 tf-apply:
 	@$(call TERRAFORM,apply)
 
@@ -346,3 +352,6 @@ tf-plan:
 
 tf-destroy:
 	@$(call TERRAFORM,destroy)
+
+tf-import:
+	@$(call TERRAFORM,import)

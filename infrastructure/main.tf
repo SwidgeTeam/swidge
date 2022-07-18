@@ -7,6 +7,12 @@ terraform {
       version = "4.19.0"
     }
   }
+
+  backend "s3" {
+    bucket = "swidge-terraform-backend"
+    key = "terraform.tfstate"
+    region = "us-east-1"
+  }
 }
 
 provider "aws" {
@@ -168,6 +174,7 @@ resource "aws_iam_user_policy" "create_invalidations" {
 /** DNZ zone & records **/
 
 // must be imported before `apply` on a clean Terraform setup
+// import aws_route53_zone.dns_zone Z035081727G7V4QRJYNVI
 resource "aws_route53_zone" "dns_zone" {
   name = var.domain
 }
