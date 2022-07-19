@@ -4,7 +4,6 @@ import { SwapRequest } from '../../swaps/domain/SwapRequest';
 import { Tokens } from '../../shared/enums/Tokens';
 import { Token } from '../../shared/domain/Token';
 import { BigInteger } from '../../shared/domain/BigInteger';
-import { PossiblePath } from './possible-path';
 import { SwapOrder } from '../../swaps/domain/SwapOrder';
 import { BridgingOrder } from '../../bridges/domain/bridging-order';
 import { CandidatePath } from './candidate-path';
@@ -16,6 +15,7 @@ import { Path } from './path';
 import { BigNumber } from 'ethers';
 import { PriceFeedConverter } from '../../shared/infrastructure/PriceFeedConverter';
 import { PathNotFound } from './path-not-found';
+import { flatten } from 'lodash';
 
 export class PathComputer {
   /** Providers */
@@ -31,7 +31,6 @@ export class PathComputer {
   private toChain: string;
   private amountIn: BigInteger;
   /** Result */
-  private possiblePaths: PossiblePath[]; // Initial incomplete paths
   private candidatePaths: CandidatePath[]; // Final candidate paths
 
   constructor(
@@ -52,17 +51,13 @@ export class PathComputer {
    * @param query
    */
   public async compute(query: GetPathQuery) {
-    this.possiblePaths = [];
-    this.candidatePaths = [];
     this.fromChain = query.fromChainId;
     this.toChain = query.toChainId;
     this.srcToken = await this.tokenDetailsFetcher.fetch(query.srcToken, this.fromChain);
     this.dstToken = await this.tokenDetailsFetcher.fetch(query.dstToken, this.toChain);
     this.amountIn = BigInteger.fromDecimal(query.amountIn, this.srcToken.decimals);
 
-    await this.originSwap();
-    await this.bridge();
-    await this.destinationSwap();
+    this.candidatePaths = await this.originSwap();
 
     const candidate = this.getBestCandidate();
 
@@ -85,52 +80,62 @@ export class PathComputer {
    * to the different bridgeable assets on all the possible exchanges
    * @private
    */
-  private async originSwap() {
+  private async originSwap(): Promise<CandidatePath[]> {
+    const promises = [];
     // for every enabled exchange on the origin chain
     for (const exchangeId of this.getPossibleExchanges(this.fromChain)) {
       // check every enabled bridgeable asset
       for (const bridgingAsset of this.bridgingAssets) {
         // and create a possible path
         const bridgeTokenIn = Tokens[bridgingAsset][this.fromChain];
-        const swapOrder = await this.getSwapOrder(
+        const swapOrderPromise = this.getSwapOrder(
           exchangeId,
           this.fromChain,
           this.srcToken,
           bridgeTokenIn,
           this.amountIn,
         );
-        if (swapOrder) {
-          const possiblePath = new PossiblePath(bridgingAsset, swapOrder);
-          // store it
-          this.possiblePaths.push(possiblePath);
-        }
+        // get the promise of the candidates for this path
+        const candidatesPromise = this.bridge(bridgingAsset, swapOrderPromise);
+        // aggregate promises
+        promises.push(candidatesPromise);
       }
     }
+    // resolve promises and flatten results
+    return flatten(await Promise.all(promises));
   }
 
   /**
    * Adds the bridge step to the computed possible paths
    * @private
    */
-  private async bridge() {
-    // for every usable bridge
-    for (const bridgeId of this.getPossibleBridges()) {
-      // and every possible path
-      for (const path of this.possiblePaths) {
+  private async bridge(
+    bridgingAsset: string,
+    swapOrderPromise: Promise<SwapOrder>,
+  ): Promise<CandidatePath[]> {
+    let promises = [];
+    const originSwap = await swapOrderPromise;
+    if (originSwap) {
+      // for every usable bridge
+      for (const bridgeId of this.getPossibleBridges()) {
         // add the possible bridge order
         let bridgeAmountIn;
         // check the amount that should input the bridge
-        if (path.originSwapRequired) {
-          bridgeAmountIn = path.originSwapAmountOut;
+        if (originSwap.required) {
+          bridgeAmountIn = originSwap.buyAmount;
         } else {
           bridgeAmountIn = this.amountIn;
         }
-        const bridgeOrder = await this.getBridgeOrder(bridgeId, path.bridgingAsset, bridgeAmountIn);
-        if (bridgeOrder) {
-          path.withBridge(bridgeOrder);
-        }
+        // get the promise of the bridge order
+        const bridgeOrderPromise = this.getBridgeOrder(bridgeId, bridgingAsset, bridgeAmountIn);
+        // get the promise of the candidates for this path
+        const candidatesPromise = this.destinationSwap(originSwap, bridgeOrderPromise);
+        // aggregate promises
+        promises = promises.concat(candidatesPromise);
       }
     }
+    // resolve promises and flatten results
+    return flatten(await Promise.all(promises));
   }
 
   /**
@@ -138,29 +143,31 @@ export class PathComputer {
    * all the possible destination swaps
    * @private
    */
-  private async destinationSwap() {
+  private async destinationSwap(
+    originSwap: SwapOrder,
+    bridgeOrderPromise: Promise<BridgingOrder>,
+  ): Promise<CandidatePath[]> {
+    const promises = [];
+    // wait for the given order bridge to complete
+    const bridgeOrder = await bridgeOrderPromise;
     // for every enabled exchange on the destination chain
     for (const exchangeId of this.getPossibleExchanges(this.toChain)) {
-      // and every possible path
-      for (const path of this.possiblePaths) {
-        // check each combination (exchange+bridge)
-        // in order to compute the destination swap
-        for (const bridgeOrder of path.bridgeSteps) {
-          const swapOrder = await this.getSwapOrder(
-            exchangeId,
-            this.toChain,
-            bridgeOrder.tokenOut,
-            this.dstToken,
-            bridgeOrder.amountOut,
-          );
-          if (swapOrder) {
-            // store the final combination
-            const candidate = new CandidatePath(path.originSwap, bridgeOrder, swapOrder);
-            this.candidatePaths.push(candidate);
-          }
-        }
-      }
+      // check each combination (exchange+bridge)
+      // in order to compute the destination swap
+      const swapOrderPromise = this.getSwapOrder(
+        exchangeId,
+        this.toChain,
+        bridgeOrder.tokenOut,
+        this.dstToken,
+        bridgeOrder.amountOut,
+      );
+      // save the promise
+      promises.push(swapOrderPromise);
     }
+    // resolve all promises in order to create the candidates
+    return (await Promise.all(promises)).map(
+      (order) => new CandidatePath(originSwap, bridgeOrder, order),
+    );
   }
 
   /**
