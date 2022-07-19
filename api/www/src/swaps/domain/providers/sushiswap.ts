@@ -25,6 +25,7 @@ import { SushiPair } from '../sushi-pair';
 import { randomUUID } from 'crypto';
 import { Token as OwnToken } from '../../../shared/domain/Token';
 import { TokenAddresses } from '../../../shared/enums/TokenAddresses';
+import { InsufficientLiquidity } from '../InsufficientLiquidity';
 
 export interface GraphPair {
   name: string;
@@ -128,7 +129,7 @@ export class Sushiswap implements Exchange {
     const trade = Trade.bestTradeExactIn(pairs, tokenInAmount, tokenOut);
 
     if (trade.length === 0) {
-      throw new Error('NO_PATH');
+      throw new InsufficientLiquidity();
     }
 
     const call = Router.swapCallParameters(trade[0], {
