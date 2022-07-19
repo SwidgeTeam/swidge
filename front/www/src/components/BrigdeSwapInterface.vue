@@ -496,7 +496,7 @@ const closeModalStatus = () => {
 </script>
 
 <template>
-    <div class="flex flex-col flex-grow bg-background-main-dark">
+    <div class="flex flex-col flex-grow bg-radial-gradient-pink">
         <Header class="py-2" @switch-network="handleGlobalNetworkSwitched($event)" />
         <main class="flex items-center justify-center mt-20">
             <div class="flex gap-[2rem]">
