@@ -7,6 +7,7 @@ import {
   AUTH_GUARD_CONFIG,
   AuthGuardConfig,
 } from '../../../shared/infrastructure/AuthGuard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller()
 export class PutTransactionController extends CustomController {
@@ -15,6 +16,7 @@ export class PutTransactionController extends CustomController {
   }
 
   @Put('/transaction/:hash')
+  @ApiBearerAuth()
   @SetMetadata(AUTH_GUARD_CONFIG, { protected: true } as AuthGuardConfig)
   async postTransaction(
     @Param('hash') txHash,
