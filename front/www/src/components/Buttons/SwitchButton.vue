@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ArrowDownIcon } from '@heroicons/vue/outline';
 
-const hover = false
+var hover = false
 const emits = defineEmits<{
     (event: 'switch'): void
 }>();
