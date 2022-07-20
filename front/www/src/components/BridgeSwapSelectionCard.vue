@@ -2,7 +2,8 @@
 import IToken from '@/tokens/models/IToken'
 import { ChevronDownIcon } from '@heroicons/vue/outline'
 import { INetwork } from '@/models/INetwork'
-import { computed } from 'vue'
+import { computed, StyleValue } from 'vue'
+import { hexValue } from '@ethersproject/bytes'
 
 const props = defineProps<{
     value: string
@@ -146,7 +147,7 @@ const trimmedBalance = computed({
                 inputmode="decimal"
                 pattern="^[0-9]*[.,]?[0-9]*$"
                 @change="emits('input-changed')"
-                @input="onChange"
+                @input="onChange"               
             />
         </div>
     </div>

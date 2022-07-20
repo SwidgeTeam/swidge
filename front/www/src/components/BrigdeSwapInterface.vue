@@ -324,7 +324,6 @@ const switchTokenHandler = (token: IToken) => {
         decimals: 0,
         img: '',
         name: '',
-        replaceByDefault(): void {},
         symbol: '',
     })
    
@@ -345,6 +344,9 @@ const switchTokenHandler = (token: IToken) => {
     selectedDestinationToken.value.img = switchTokenSource.value.img
     selectedDestinationToken.value.name = switchTokenSource.value.name
     selectedDestinationToken.value.symbol = switchTokenSource.value.symbol
+
+    sourceTokenAmount.value = ''
+    destinationTokenAmount.value = ''
 
 }
 
