@@ -14,7 +14,7 @@ const emits = defineEmits<{
 <template> 
 <div class="flex items-center justify-center w-full">
     <button 
-    class="flex items-center justify-center w-full standardArrow"
+    class="flex items-center justify-center w-full standardArrow slowTransition"
     :class="{'arrow-hover': hover}"
     @click="emits('switch')"
     @mouseenter="hover = true"

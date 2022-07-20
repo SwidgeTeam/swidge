@@ -327,24 +327,10 @@ const switchTokenHandler = (token: IToken) => {
         symbol: '',
     })
    
-    switchTokenSource.value.address = selectedSourceToken.value.address
-    switchTokenSource.value.decimals = selectedSourceToken.value.decimals
-    switchTokenSource.value.img = selectedSourceToken.value.img
-    switchTokenSource.value.name = selectedSourceToken.value.name
-    switchTokenSource.value.symbol = selectedSourceToken.value.symbol
+    switchTokenSource.value = selectedSourceToken.value 
+    selectedSourceToken.value = selectedDestinationToken.value
+    selectedDestinationToken.value = switchTokenSource.value
     
-    selectedSourceToken.value.address = selectedDestinationToken.value.address
-    selectedSourceToken.value.decimals = selectedDestinationToken.value.decimals
-    selectedSourceToken.value.img = selectedDestinationToken.value.img
-    selectedSourceToken.value.name = selectedDestinationToken.value.name
-    selectedSourceToken.value.symbol = selectedDestinationToken.value.symbol
-    
-    selectedDestinationToken.value.address = switchTokenSource.value.address
-    selectedDestinationToken.value.decimals = switchTokenSource.value.decimals
-    selectedDestinationToken.value.img = switchTokenSource.value.img
-    selectedDestinationToken.value.name = switchTokenSource.value.name
-    selectedDestinationToken.value.symbol = switchTokenSource.value.symbol
-
     sourceTokenAmount.value = ''
     destinationTokenAmount.value = ''
 
@@ -354,7 +340,7 @@ const switchTokenHandler = (token: IToken) => {
  * Sets the transition variable switchDestinationChain to Current source Chain info
  * @param chain 
  */
-const switchHandlerFunction = (chainId: INetwork) => {
+const switchHandlerFunction = () => {
     switchChainInfo.id = sourceChainInfo.id
     switchChainInfo.icon = sourceChainInfo.icon
     switchChainInfo.name = sourceChainInfo.name
