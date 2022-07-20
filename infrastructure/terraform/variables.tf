@@ -59,12 +59,7 @@ variable "transactions_queue" {
   description = "Name of the queue for the processed transactions"
 }
 
-variable "relayer-key" {
+variable "instances_key" {
   type        = string
-  description = "Public key of the key-pair for access to relayer instance"
-}
-
-variable "api-key" {
-  type        = string
-  description = "Public key of the key-pair for access to API instance"
+  description = "Public key of the key-pair to access the EC2 instances"
 }

@@ -129,8 +129,7 @@ services:
       TF_VAR_api_instance_type: ${TF_API_INSTANCE_TYPE}
       TF_VAR_relayer_instance_type: ${TF_RELAYER_INSTANCE_TYPE}
       TF_VAR_transactions_queue: ${AWS_SQS_QUEUE_NAME}
-      TF_VAR_relayer-key: ${TF_RELAYER_KEY}
-      TF_VAR_api-key: ${TF_API_KEY}
+      TF_VAR_instances_key: ${TF_INSTANCES_KEY}
     volumes:
       - ./infrastructure/terraform:/code
     working_dir: /code
