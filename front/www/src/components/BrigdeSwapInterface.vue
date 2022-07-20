@@ -318,7 +318,8 @@ const updateDestinationChainInfo = (chain: INetwork) => {
 /**
 * Tokens Switch
 */
-const switchTokenHandler = (token: IToken) => {
+
+const switchTokenHandler = () => {
     const switchTokenSource = ref<IToken>({
         address: '',
         decimals: 0,
@@ -330,7 +331,9 @@ const switchTokenHandler = (token: IToken) => {
     switchTokenSource.value = selectedSourceToken.value 
     selectedSourceToken.value = selectedDestinationToken.value
     selectedDestinationToken.value = switchTokenSource.value
-    
+    /**
+ * Reset Input Values on Switch of Network+Token
+ */    
     sourceTokenAmount.value = ''
     destinationTokenAmount.value = ''
 
@@ -441,7 +444,7 @@ const onExecuteTransaction = async () => {
 
     await contractCall
         .wait()
-        .then(async (receipt) => {
+        .then(async (receipt: { transactionHash: string }) => {
             steps.value.origin.completed = true
             if (isCrossTransaction()) {
                 setUpEventListener(receipt.transactionHash)
@@ -487,7 +490,7 @@ const setUpEventListener = (executedTxHash: string) => {
         topics: [ethers.utils.id('CrossFinalized(bytes32,uint256)')],
     }
 
-    provider.on(filter, (event) => {
+    provider.on(filter, (event: { data: ethers.utils.BytesLike }) => {
         const [txHash] = ethers.utils.defaultAbiCoder.decode(
             ['bytes32', 'uint256'],
             event.data

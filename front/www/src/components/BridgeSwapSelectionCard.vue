@@ -2,8 +2,8 @@
 import IToken from '@/tokens/models/IToken'
 import { ChevronDownIcon } from '@heroicons/vue/outline'
 import { INetwork } from '@/models/INetwork'
-import { computed, StyleValue } from 'vue'
-import { hexValue } from '@ethersproject/bytes'
+import { computed } from 'vue'
+
 
 const props = defineProps<{
     value: string
