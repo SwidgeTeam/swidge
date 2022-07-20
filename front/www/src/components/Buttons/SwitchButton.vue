@@ -2,6 +2,7 @@
 import { ArrowDownIcon } from '@heroicons/vue/outline';
 
 var hover = false
+
 const emits = defineEmits<{
     (event: 'switch'): void
 }>();
@@ -10,11 +11,12 @@ const emits = defineEmits<{
 
 <template> 
 <div class="flex items-center justify-center w-full">
-    <button class="flex items-center justify-center w-full standardArrow"
+    <button 
+    class="flex items-center justify-center w-full standardArrow"
+    :class="{'arrow-hover': hover}"
     @click="emits('switch')"
     @mouseenter="hover = true"
     @mouseleave="hover = false"
-    :class="{'arrow-hover': hover}"
     ><ArrowDownIcon class="flex h-7" />
         
     </button>

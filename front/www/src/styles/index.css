@@ -85,13 +85,16 @@
     }
     
     .standardArrow {
-        width: 34px;
-        height: 34px;
+        width: 44px;
+        height: 44px;
+        padding: 0;
         border-radius: 100%;
+        background: rgba(34,33,41,0.4);
     }   
 
     .standardArrow:hover {
         transform: rotate(180deg);
+        background: #222129;
     }
     
 #app {

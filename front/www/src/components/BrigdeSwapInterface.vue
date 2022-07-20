@@ -46,7 +46,18 @@ const selectedSourceToken = ref<IToken>({
     replaceByDefault(): void {},
     symbol: '',
 })
+
+
 const selectedDestinationToken = ref<IToken>({
+    address: '',
+    decimals: 0,
+    img: '',
+    name: '',
+    replaceByDefault(): void {},
+    symbol: '',
+})
+
+const switchToken = ref<IToken>({
     address: '',
     decimals: 0,
     img: '',
@@ -108,6 +119,14 @@ const sourceChainInfo = reactive<INetwork>({
     live: false,
 })
 const destinationChainInfo = reactive<INetwork>({
+    name: '',
+    icon: '',
+    id: '',
+    tokens: [],
+    rpcUrl: '',
+    live: false,
+})
+const switchChainInfo = reactive<INetwork>({
     name: '',
     icon: '',
     id: '',
@@ -268,6 +287,7 @@ const updateOriginChainInfo = (chain: INetwork) => {
     sourceChainInfo.tokens = chain.tokens
 }
 
+
 /**
  * Updates the selected origin token
  * @param token
@@ -301,6 +321,49 @@ const updateDestinationChainInfo = (chain: INetwork) => {
     destinationChainInfo.icon = chain.icon
     destinationChainInfo.name = chain.name
     destinationChainInfo.tokens = chain.tokens
+}
+/**
+ * Sets the transition variable switchDestinationChain to Current source Chain info
+ * @param chain 
+ */
+const switchHandlerFunction = (chain: INetwork) => {
+    switchChainInfo.id = sourceChainInfo.id
+    switchChainInfo.icon = sourceChainInfo.icon
+    switchChainInfo.name = sourceChainInfo.name
+    switchChainInfo.tokens = sourceChainInfo.tokens
+
+    sourceChainInfo.id = destinationChainInfo.id
+    sourceChainInfo.icon = destinationChainInfo.icon
+    sourceChainInfo.name = destinationChainInfo.name
+    sourceChainInfo.tokens = destinationChainInfo.tokens  
+
+    destinationChainInfo.id = switchChainInfo.id
+    destinationChainInfo.icon = switchChainInfo.icon
+    destinationChainInfo.name = switchChainInfo.name
+    destinationChainInfo.tokens = switchChainInfo.tokens
+}
+/**
+* Tokens Switch
+*/
+const switchTokenHandler = (token: IToken) => {
+    selectedSourceToken.value.address = switchToken.value.address
+    selectedSourceToken.value.decimals = switchToken.value.decimals
+    selectedSourceToken.value.img = switchToken.value.img
+    selectedSourceToken.value.name = switchToken.value.name
+    selectedSourceToken.value.symbol = switchToken.value.symbol
+
+    selectedSourceToken.value.address = selectedDestinationToken.value.address
+    selectedSourceToken.value.decimals = selectedDestinationToken.value.decimals
+    selectedSourceToken.value.img = selectedDestinationToken.value.img
+    selectedSourceToken.value.name = selectedDestinationToken.value.name
+    selectedSourceToken.value.symbol = selectedDestinationToken.value.symbol
+    
+    selectedDestinationToken.value.address = switchToken.value.address
+    selectedDestinationToken.value.decimals = switchToken.value.decimals
+    selectedDestinationToken.value.img = switchToken.value.img
+    selectedDestinationToken.value.name = switchToken.value.name
+    selectedDestinationToken.value.symbol = switchToken.value.symbol
+
 }
 
 /**
@@ -497,7 +560,7 @@ const closeModalStatus = () => {
 
 <template>
     <div class="flex flex-col flex-grow bg-radial-gradient-pink">
-        <Header class="py-2" @switch-network="handleGlobalNetworkSwitched($event)" />
+        <Header class="py-2" @switch-network="handleGlobalNetworkSwitched($event)"></Header>
         <main class="flex items-center justify-center mt-20">
             <div class="flex gap-[2rem]">
                 <div class="flex flex-col gap-6">
@@ -515,7 +578,7 @@ const closeModalStatus = () => {
                     <div
                         class="
                             flex flex-col
-                            gap-8
+                            gap-6
                             px-12
                             py-6
                             rounded-3xl
@@ -534,7 +597,9 @@ const closeModalStatus = () => {
                                 @open-token-list="() => handleOpenTokenList(true)" />
                         </div>
                         <div>
-                            <SwitchButton                                                   
+                            <SwitchButton 
+                            @click="switchTokenHandler"                             
+                            @switch="switchHandlerFunction"
                         /> </div>
                         <div class="flex flex-col w-full gap-4">
                             <span class="text-2xl">You receive:</span>
@@ -544,6 +609,9 @@ const closeModalStatus = () => {
                                 :disabled-input="true"
                                 :token="selectedDestinationToken"
                                 @open-token-list="() => handleOpenTokenList(false)" />
+
+                                <div class="text-1.5xl gap-8">Place Holder Quoting Info</div>
+
                         </div>
                         <BridgeSwapInteractiveButton
                             :text="buttonLabel"
@@ -557,6 +625,7 @@ const closeModalStatus = () => {
                         :is-origin="isSourceChainToken"
                         @close-modal="isModalTokensOpen = false"
                         @update-token="handleUpdateTokenFromModal($event)" />
+                        
                     <ModalSwidgeStatus
                         :steps="steps"
                         :show="isModalStatusOpen"
