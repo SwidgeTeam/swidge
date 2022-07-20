@@ -21,6 +21,7 @@ import ModalSwidgeStatus from './ModalSwidgeStatus.vue'
 import { TransactionSteps } from '@/models/TransactionSteps'
 import SwitchButton from './Buttons/SwitchButton.vue'
 
+
 const web3Store = useWeb3Store()
 const { switchToNetwork, getChainProvider, getBalance } = web3Store
 
@@ -47,7 +48,6 @@ const selectedSourceToken = ref<IToken>({
     symbol: '',
 })
 
-
 const selectedDestinationToken = ref<IToken>({
     address: '',
     decimals: 0,
@@ -57,14 +57,6 @@ const selectedDestinationToken = ref<IToken>({
     symbol: '',
 })
 
-const switchToken = ref<IToken>({
-    address: '',
-    decimals: 0,
-    img: '',
-    name: '',
-    replaceByDefault(): void {},
-    symbol: '',
-})
 const quotedPath = ref<GetQuoteResponse>({
     router: '',
     amountOut: '',
@@ -322,11 +314,45 @@ const updateDestinationChainInfo = (chain: INetwork) => {
     destinationChainInfo.name = chain.name
     destinationChainInfo.tokens = chain.tokens
 }
+
+/**
+* Tokens Switch
+*/
+const switchTokenHandler = (token: IToken) => {
+    const switchTokenSource = ref<IToken>({
+        address: '',
+        decimals: 0,
+        img: '',
+        name: '',
+        replaceByDefault(): void {},
+        symbol: '',
+    })
+   
+    switchTokenSource.value.address = selectedSourceToken.value.address
+    switchTokenSource.value.decimals = selectedSourceToken.value.decimals
+    switchTokenSource.value.img = selectedSourceToken.value.img
+    switchTokenSource.value.name = selectedSourceToken.value.name
+    switchTokenSource.value.symbol = selectedSourceToken.value.symbol
+    
+    selectedSourceToken.value.address = selectedDestinationToken.value.address
+    selectedSourceToken.value.decimals = selectedDestinationToken.value.decimals
+    selectedSourceToken.value.img = selectedDestinationToken.value.img
+    selectedSourceToken.value.name = selectedDestinationToken.value.name
+    selectedSourceToken.value.symbol = selectedDestinationToken.value.symbol
+    
+    selectedDestinationToken.value.address = switchTokenSource.value.address
+    selectedDestinationToken.value.decimals = switchTokenSource.value.decimals
+    selectedDestinationToken.value.img = switchTokenSource.value.img
+    selectedDestinationToken.value.name = switchTokenSource.value.name
+    selectedDestinationToken.value.symbol = switchTokenSource.value.symbol
+
+}
+
 /**
  * Sets the transition variable switchDestinationChain to Current source Chain info
  * @param chain 
  */
-const switchHandlerFunction = (chain: INetwork) => {
+const switchHandlerFunction = (chainId: INetwork) => {
     switchChainInfo.id = sourceChainInfo.id
     switchChainInfo.icon = sourceChainInfo.icon
     switchChainInfo.name = sourceChainInfo.name
@@ -341,29 +367,6 @@ const switchHandlerFunction = (chain: INetwork) => {
     destinationChainInfo.icon = switchChainInfo.icon
     destinationChainInfo.name = switchChainInfo.name
     destinationChainInfo.tokens = switchChainInfo.tokens
-}
-/**
-* Tokens Switch
-*/
-const switchTokenHandler = (token: IToken) => {
-    selectedSourceToken.value.address = switchToken.value.address
-    selectedSourceToken.value.decimals = switchToken.value.decimals
-    selectedSourceToken.value.img = switchToken.value.img
-    selectedSourceToken.value.name = switchToken.value.name
-    selectedSourceToken.value.symbol = switchToken.value.symbol
-
-    selectedSourceToken.value.address = selectedDestinationToken.value.address
-    selectedSourceToken.value.decimals = selectedDestinationToken.value.decimals
-    selectedSourceToken.value.img = selectedDestinationToken.value.img
-    selectedSourceToken.value.name = selectedDestinationToken.value.name
-    selectedSourceToken.value.symbol = selectedDestinationToken.value.symbol
-    
-    selectedDestinationToken.value.address = switchToken.value.address
-    selectedDestinationToken.value.decimals = switchToken.value.decimals
-    selectedDestinationToken.value.img = switchToken.value.img
-    selectedDestinationToken.value.name = switchToken.value.name
-    selectedDestinationToken.value.symbol = switchToken.value.symbol
-
 }
 
 /**
