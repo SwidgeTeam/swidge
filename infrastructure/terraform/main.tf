@@ -152,11 +152,11 @@ module "database" {
 /** Accounts **/
 
 resource "aws_iam_user" "deployer" {
-  name = "github-deployer"
+  name = "github-deployer-${var.environment}"
 }
 
 resource "aws_iam_user" "relayer" {
-  name = "relayer-queuer"
+  name = "relayer-queuer-${var.environment}"
 }
 
 resource "aws_iam_user_policy" "create_invalidations" {
