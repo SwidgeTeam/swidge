@@ -83,8 +83,18 @@
         width: 24px;
         border-radius: 50%;
     }
-}
+    
+    .standardArrow {
+        width: 34px;
+        height: 34px;
+        border-radius: 100%;
+    }   
 
+    .standardArrow:hover {
+        transform: rotate(180deg);
+    }
+    
 #app {
     @apply flex flex-grow
+}
 }

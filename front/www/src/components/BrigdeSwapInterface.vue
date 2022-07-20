@@ -1,6 +1,5 @@
 <script setup lang='ts'>
 import {
-    ArrowDownIcon,
     ArrowCircleRightIcon,
     XCircleIcon,
 } from '@heroicons/vue/outline'
@@ -20,6 +19,7 @@ import networks from '@/assets/Networks'
 import { INetwork } from '@/models/INetwork'
 import ModalSwidgeStatus from './ModalSwidgeStatus.vue'
 import { TransactionSteps } from '@/models/TransactionSteps'
+import SwitchButton from './Buttons/SwitchButton.vue'
 
 const web3Store = useWeb3Store()
 const { switchToNetwork, getChainProvider, getBalance } = web3Store
@@ -502,7 +502,7 @@ const closeModalStatus = () => {
             <div class="flex gap-[2rem]">
                 <div class="flex flex-col gap-6">
                     <div class="flex items-center justify-between">
-                        <span class="text-3xl">Swap & Bridge</span>
+                        <span class="text-3xl ">Swap & Bridge</span>
                         <ArrowCircleRightIcon
                             v-if="!isFaqOpen"
                             class="w-7 h-7 cursor-pointer"
@@ -533,9 +533,9 @@ const closeModalStatus = () => {
                                 @on-click-max-amount="handleSourceInputChanged()"
                                 @open-token-list="() => handleOpenTokenList(true)" />
                         </div>
-                        <div class="flex items-center justify-center w-full">
-                            <ArrowDownIcon class="h-6" />
-                        </div>
+                        <div>
+                            <SwitchButton                                                   
+                        /> </div>
                         <div class="flex flex-col w-full gap-4">
                             <span class="text-2xl">You receive:</span>
                             <BridgeSwapSelectionCard
