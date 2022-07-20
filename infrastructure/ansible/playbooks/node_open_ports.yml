@@ -1,0 +1,18 @@
+
+- name: Allow node bin to open ports
+  hosts: "{{ nodes }}"
+  vars:
+    - node_version: v16.14.2
+    - user: admin
+  tasks:
+    - name: Install necessary package
+      become: yes
+      become_user: root
+      shell: >
+        apt-get install libcap2-bin
+
+    - name: Enable node bin
+      become: yes
+      become_user: root
+      shell: >
+        setcap cap_net_bind_service=+ep /home/{{ user }}/.nvm/versions/node/{{ node_version }}/bin/node
