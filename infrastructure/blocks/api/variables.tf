@@ -37,3 +37,8 @@ variable "instance_type" {
   type        = string
   description = "Instance type to be used"
 }
+
+variable "key_name" {
+  type        = string
+  description = "Name of the keypair to use"
+}

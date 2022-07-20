@@ -39,3 +39,8 @@ variable "relayer_account_arn" {
   type        = string
   description = "ARN of the account used to produce/consume transactions"
 }
+
+variable "key_name" {
+  type        = string
+  description = "Name of the keypair to use"
+}

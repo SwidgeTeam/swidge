@@ -10,7 +10,7 @@ terraform {
 
   backend "s3" {
     bucket = "swidge-terraform-backend"
-    key = "terraform.tfstate"
+    key    = "terraform.tfstate"
     region = "us-east-1"
   }
 }
@@ -45,10 +45,12 @@ locals {
   availability_zones = [
     "${var.region}a",
     "${var.region}b",
-    "${var.region}c",
+    "${var.region}c", // maybe remove on creation?
   ]
   front_service_url = "app.${var.base_url}"
   api_service_url   = "api.${var.base_url}"
+  api_key_name      = "api-key"
+  relayer_key_name  = "relayer-key"
 }
 
 /** VPC **/
@@ -106,6 +108,7 @@ module "api" {
   internet_gateway_id = aws_internet_gateway.igw.id
   certificate_arn     = module.regional_cert.arn
   instance_type       = var.api_instance_type
+  key_name            = local.api_key_name
 }
 
 module "relayer" {
@@ -120,6 +123,7 @@ module "relayer" {
   instance_type       = var.relayer_instance_type
   transactions_queue  = var.transactions_queue
   relayer_account_arn = aws_iam_user.relayer.arn
+  key_name            = local.relayer_key_name
 }
 
 module "front" {
@@ -201,4 +205,15 @@ resource "aws_route53_record" "front_distribution" {
     zone_id                = module.front.distribution.hosted_zone_id
     evaluate_target_health = false
   }
+}
+
+/** Security */
+
+resource "aws_key_pair" "relayer" {
+  key_name   = local.relayer_key_name
+  public_key = var.relayer-key
+}
+resource "aws_key_pair" "api" {
+  key_name   = local.api_key_name
+  public_key = var.api-key
 }

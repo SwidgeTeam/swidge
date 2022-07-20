@@ -17,6 +17,7 @@ resource "aws_instance" "instance" {
   ami           = module.ami.ami_id
   instance_type = var.instance_type
   count         = length(var.subnets)
+  key_name      = var.key_name
 
   network_interface {
     network_interface_id = element(aws_network_interface.net_interface.*.id, count.index)

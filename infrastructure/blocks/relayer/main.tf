@@ -22,6 +22,7 @@ module "relayer-instance" {
   environment       = var.environment
   subnets           = [element(module.relayer-subnets.public_subnets, 1)]
   security_group_id = aws_security_group.relayer-sg.id
+  key_name          = var.key_name
 }
 
 resource "aws_sqs_queue" "transactions" {
@@ -39,7 +40,7 @@ resource "aws_sqs_queue" "transactions" {
 
 resource "aws_sqs_queue_policy" "transactions" {
   queue_url = aws_sqs_queue.transactions.id
-  policy = <<EOP
+  policy    = <<EOP
     {
       "Version": "2008-10-17",
       "Id": "__default_policy_ID",

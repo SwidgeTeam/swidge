@@ -22,6 +22,7 @@ module "api-instance" {
   environment       = var.environment
   subnets           = [element(module.api-subnets.public_subnets, 1)]
   security_group_id = aws_security_group.api_http_ssh.id
+  key_name          = var.key_name
 }
 
 module "application_load_balancer" {

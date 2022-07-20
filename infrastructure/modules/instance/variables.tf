@@ -21,3 +21,8 @@ variable "security_group_id" {
   type = string
   description = "Security group ID to attach to the instance"
 }
+
+variable "key_name" {
+  type        = string
+  description = "Name of the keypair to use"
+}
