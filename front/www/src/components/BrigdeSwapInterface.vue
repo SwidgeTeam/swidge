@@ -326,14 +326,15 @@ const switchTokenHandler = () => {
         img: '',
         name: '',
         symbol: '',
+        replaceByDefault(): void {}
     })
-   
-    switchTokenSource.value = selectedSourceToken.value 
+
+    switchTokenSource.value = selectedSourceToken.value
     selectedSourceToken.value = selectedDestinationToken.value
     selectedDestinationToken.value = switchTokenSource.value
     /**
  * Reset Input Values on Switch of Network+Token
- */    
+ */
     sourceTokenAmount.value = ''
     destinationTokenAmount.value = ''
 
@@ -341,7 +342,6 @@ const switchTokenHandler = () => {
 
 /**
  * Sets the transition variable switchDestinationChain to Current source Chain info
- * @param chain 
  */
 const switchHandlerFunction = () => {
     switchChainInfo.id = sourceChainInfo.id
@@ -352,7 +352,7 @@ const switchHandlerFunction = () => {
     sourceChainInfo.id = destinationChainInfo.id
     sourceChainInfo.icon = destinationChainInfo.icon
     sourceChainInfo.name = destinationChainInfo.name
-    sourceChainInfo.tokens = destinationChainInfo.tokens  
+    sourceChainInfo.tokens = destinationChainInfo.tokens
 
     destinationChainInfo.id = switchChainInfo.id
     destinationChainInfo.icon = switchChainInfo.icon
@@ -591,8 +591,8 @@ const closeModalStatus = () => {
                                 @open-token-list="() => handleOpenTokenList(true)" />
                         </div>
                         <div>
-                            <SwitchButton 
-                            @click="switchTokenHandler"                             
+                            <SwitchButton
+                            @click="switchTokenHandler"
                             @switch="switchHandlerFunction"
                         /> </div>
                         <div class="flex flex-col w-full gap-4">
@@ -619,7 +619,7 @@ const closeModalStatus = () => {
                         :is-origin="isSourceChainToken"
                         @close-modal="isModalTokensOpen = false"
                         @update-token="handleUpdateTokenFromModal($event)" />
-                        
+
                     <ModalSwidgeStatus
                         :steps="steps"
                         :show="isModalStatusOpen"
