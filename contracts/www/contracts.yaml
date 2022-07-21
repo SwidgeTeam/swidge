@@ -92,7 +92,7 @@ bsc:
       enabled: true
       implementation: "0xD9bF09fdb4242f0D64cA8B0B8ADB3D5663661546"
       handler: "0x0000000000000000000000000000000000000000"
-avax:
+avalanche:
   diamond: "0x1a6e1ef1d28A7d9feD016c88f4d1858367564781"
   facet:
     RouterFacet: "0x8dE40F0f62B69C35A963d5ED626da04f6c1E4AB7"
