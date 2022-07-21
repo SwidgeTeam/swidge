@@ -43,7 +43,7 @@ fantom:
     Sushi:
       code: 1
       enabled: true
-      implementation: ""
+      implementation: "0xEC3c47f1112Dd9BC9ec20Ce89BB1CB3913eef643"
       handler: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506"
 polygon:
   diamond: "0x1a6e1ef1d28A7d9feD016c88f4d1858367564781"
@@ -69,7 +69,7 @@ polygon:
     Sushi:
       code: 1
       enabled: true
-      implementation: ""
+      implementation: "0xb7eC24Db81399c615AfBbE545953c6Ac22C6a127"
       handler: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506"
 bsc:
   diamond: "0x1a6e1ef1d28A7d9feD016c88f4d1858367564781"
@@ -92,6 +92,11 @@ bsc:
       enabled: true
       implementation: "0xF01741149641A9d03FA72447F35839C85CA1c806"
       handler: "0x0000000000000000000000000000000000000000"
+    Sushi:
+      code: 1
+      enabled: true
+      implementation: "0x9a86e6459AD5Fe3e3535E1aeb4461aCEB6BA67Ca"
+      handler: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506"
 avalanche:
   diamond: "0x1a6e1ef1d28A7d9feD016c88f4d1858367564781"
   facet:
@@ -113,6 +118,11 @@ avalanche:
       enabled: true
       implementation: "0xf66579Ff926e44BD583a8455beFaBb88dECcAFfc"
       handler: "0x0000000000000000000000000000000000000000"
+    Sushi:
+      code: 1
+      enabled: true
+      implementation: "0x2a744014Ca5354d98dd752F1a61A4Ee8110f4a6a"
+      handler: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506"
 optimism:
   diamond: "0x1a6e1ef1d28a7d9fed016c88f4d1858367564781"
   facet:
