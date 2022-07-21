@@ -14,13 +14,14 @@ describe('get path', () => {
     // Arrange
     const mockSwapProvider = createMock<SwapOrderComputer>({
       execute: () => Promise.reject(new InsufficientLiquidity()),
+      getEnabledExchanged: () => [1],
     });
     const mockBridgeProvider = createMock<BridgeOrderComputer>({
       execute: () => null,
     });
     const mockTokenDetailsFetcher = createMock<TokenDetailsFetcher>({
       fetch: () => {
-        return Promise.resolve(new Token('', '', 6));
+        return Promise.resolve(new Token('', '', 6, 'SYMB'));
       },
     });
     const mockPriceFeedConverter = createMock<PriceFeedConverter>({
@@ -39,8 +40,6 @@ describe('get path', () => {
     const query = new GetPathQuery('137', '250', '0xtokenA', '0xtokenB', '10');
 
     // Assert
-    await expect(handler.execute(query)).rejects.toThrow(
-      'INSUFFICIENT_LIQUIDITY',
-    );
+    await expect(handler.execute(query)).rejects.toThrow('PATH_NOT_FOUND');
   });
 });

@@ -19,6 +19,9 @@ import { BridgingFees } from '../../../../src/bridges/domain/BridgingFees';
 import { BridgingLimits } from '../../../../src/bridges/domain/BridgingLimits';
 import { Tokens } from '../../../../src/shared/enums/Tokens';
 import { Fantom, Polygon } from '../../../../src/shared/enums/ChainIds';
+import { createMock } from 'ts-auto-mock';
+import { InsufficientLiquidity } from '../../../../src/swaps/domain/InsufficientLiquidity';
+import { SushiPairsRepository } from '../../../../src/swaps/domain/sushi-pairs-repository';
 
 describe('path-computer', () => {
   it('should compute a single path', async () => {
@@ -95,8 +98,16 @@ describe('path-computer', () => {
     const priceFeedConverter = new PriceFeedConverter();
     stub(priceFeedConverter, 'fetch').resolves(BigNumber.from('101010'));
 
+    const mockSushiRepository = createMock<SushiPairsRepository>({
+      getPairs: (chainId) => Promise.reject([]),
+    });
+
     // instantiate dependencies
-    const swapOrderComputer = new SwapOrderComputer(myHttpClient);
+    const swapOrderComputer = new SwapOrderComputer(
+      myHttpClient,
+      myCachedHttpClient,
+      mockSushiRepository,
+    );
     const bridgeOrderComputer = new BridgeOrderComputer(myHttpClient, myCachedHttpClient);
 
     // create computer
