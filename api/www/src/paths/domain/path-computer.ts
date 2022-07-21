@@ -150,24 +150,31 @@ export class PathComputer {
     const promises = [];
     // wait for the given order bridge to complete
     const bridgeOrder = await bridgeOrderPromise;
-    // for every enabled exchange on the destination chain
-    for (const exchangeId of this.getPossibleExchanges(this.toChain)) {
-      // check each combination (exchange+bridge)
-      // in order to compute the destination swap
-      const swapOrderPromise = this.getSwapOrder(
-        exchangeId,
-        this.toChain,
-        bridgeOrder.tokenOut,
-        this.dstToken,
-        bridgeOrder.amountOut,
-      );
-      // save the promise
-      promises.push(swapOrderPromise);
+    if (bridgeOrder) {
+      // for every enabled exchange on the destination chain
+      for (const exchangeId of this.getPossibleExchanges(this.toChain)) {
+        // check each combination (exchange+bridge)
+        // in order to compute the destination swap
+        const swapOrderPromise = this.getSwapOrder(
+          exchangeId,
+          this.toChain,
+          bridgeOrder.tokenOut,
+          this.dstToken,
+          bridgeOrder.amountOut,
+        );
+        // save the promise
+        promises.push(swapOrderPromise);
+      }
     }
     // resolve all promises in order to create the candidates
-    return (await Promise.all(promises)).map(
-      (order) => new CandidatePath(originSwap, bridgeOrder, order),
-    );
+    return (await Promise.all(promises))
+      .map((order) => {
+        // in case no possible swap
+        if (order) {
+          return new CandidatePath(originSwap, bridgeOrder, order);
+        }
+      })
+      .filter((candidate) => candidate !== undefined);
   }
 
   /**
