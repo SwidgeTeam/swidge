@@ -38,7 +38,7 @@ fantom:
     ZeroEx:
       code: 0
       enabled: true
-      implementation: "0x6106fcf1AbC3f125B34A5675400791bfcfAcb168"
+      implementation: "0x8823123F8b47189124863803DeA2F81CeFE77e3E"
       handler: "0x0000000000000000000000000000000000000000"
     Sushi:
       code: 1
@@ -64,7 +64,7 @@ polygon:
     ZeroEx:
       code: 0
       enabled: true
-      implementation: "0x9031DaA015C311DE595C1aFA2f805B6b497f7CBd"
+      implementation: "0x2d066017f95B97AA4BafcC4D59169005469Cc0b5"
       handler: "0x0000000000000000000000000000000000000000"
     Sushi:
       code: 1
@@ -90,7 +90,7 @@ bsc:
     ZeroEx:
       code: 0
       enabled: true
-      implementation: "0xD9bF09fdb4242f0D64cA8B0B8ADB3D5663661546"
+      implementation: "0xF01741149641A9d03FA72447F35839C85CA1c806"
       handler: "0x0000000000000000000000000000000000000000"
 avalanche:
   diamond: "0x1a6e1ef1d28A7d9feD016c88f4d1858367564781"
@@ -111,7 +111,7 @@ avalanche:
     ZeroEx:
       code: 0
       enabled: true
-      implementation: "0x79B38753e46BD2b88170A58B403de0aBE2229D35"
+      implementation: "0xf66579Ff926e44BD583a8455beFaBb88dECcAFfc"
       handler: "0x0000000000000000000000000000000000000000"
 optimism:
   diamond: "0x1a6e1ef1d28a7d9fed016c88f4d1858367564781"
@@ -132,5 +132,5 @@ optimism:
     ZeroEx:
       code: 0
       enabled: true
-      implementation: "0x79B38753e46BD2b88170A58B403de0aBE2229D35"
+      implementation: "0xf66579Ff926e44BD583a8455beFaBb88dECcAFfc"
       handler: "0x0000000000000000000000000000000000000000"
