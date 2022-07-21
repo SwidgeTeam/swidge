@@ -32,11 +32,12 @@ contract ProviderUpdaterFacet {
         LibStorage.enforceIsContractOwner();
         require(_provider.implementation != address(0), 'ZeroAddress not allowed for bridge');
         LibStorage.ProviderStorage storage ps = LibStorage.providers();
-        address oldAddress = ps.bridgeProviders[_provider.code].implementation;
+        // check if this provider was already set
         if (ps.bridgeProviders[_provider.code].implementation == address(0)) {
             // only increment if the bridge didn't exist
             ps.totalBridges++;
         }
+        address oldAddress = ps.bridgeProviders[_provider.code].implementation;
         ps.bridgeProviders[_provider.code] = _provider;
         emit UpdatedBridgeProvider(_provider.code, _provider.enabled, oldAddress, _provider.implementation);
     }
@@ -48,11 +49,12 @@ contract ProviderUpdaterFacet {
         LibStorage.enforceIsContractOwner();
         require(_provider.implementation != address(0), 'ZeroAddress not allowed for bridge');
         LibStorage.ProviderStorage storage ps = LibStorage.providers();
-        address oldAddress = ps.swapProviders[_provider.code].implementation;
+        // check if this provider was already set
         if (ps.swapProviders[_provider.code].implementation == address(0)) {
             // only increment if the swapper didn't exist
             ps.totalSwappers++;
         }
+        address oldAddress = ps.swapProviders[_provider.code].implementation;
         ps.swapProviders[_provider.code] = _provider;
         emit UpdatedSwapProvider(_provider.code, _provider.enabled, oldAddress, _provider.implementation);
     }

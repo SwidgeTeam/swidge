@@ -36,7 +36,7 @@ export class HttpClient implements IHttpClient {
    * @param params
    * @param headers
    */
-  public post<Response>(url: URL, params: Parameters, headers: Headers): Promise<Response> {
+  public post<Response>(url: URL, params: Parameters, headers?: Headers): Promise<Response> {
     return this.axios.post(url, params, {
       headers: headers,
     });
@@ -48,7 +48,7 @@ export class HttpClient implements IHttpClient {
    * @param params
    * @param headers
    */
-  public patch<Response>(url: URL, params: Parameters, headers: Headers): Promise<Response> {
+  public patch<Response>(url: URL, params: Parameters, headers?: Headers): Promise<Response> {
     return this.axios.patch(url, params, {
       headers: headers,
     });
@@ -60,7 +60,7 @@ export class HttpClient implements IHttpClient {
    * @param params
    * @param headers
    */
-  public put<Response>(url: URL, params: Parameters, headers: Headers): Promise<Response> {
+  public put<Response>(url: URL, params: Parameters, headers?: Headers): Promise<Response> {
     return this.axios.put(url, params, {
       headers: headers,
     });
@@ -72,7 +72,7 @@ export class HttpClient implements IHttpClient {
    * @param headers
    * @param params
    */
-  public delete<Response>(url: URL, headers: Headers, params?: Parameters): Promise<Response> {
+  public delete<Response>(url: URL, headers?: Headers, params?: Parameters): Promise<Response> {
     return this.axios.delete(url, {
       headers: headers,
       data: params,

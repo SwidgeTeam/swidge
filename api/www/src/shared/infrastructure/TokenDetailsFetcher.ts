@@ -5,13 +5,10 @@ import { RpcNode } from '../enums/RpcNode';
 import { NATIVE_TOKEN_ADDRESS, Natives } from '../enums/Natives';
 
 export class TokenDetailsFetcher {
-  public async fetch(
-    address: ContractAddress,
-    chainId: string,
-  ): Promise<Token> {
+  public async fetch(address: ContractAddress, chainId: string): Promise<Token> {
     if (address.toLowerCase() === NATIVE_TOKEN_ADDRESS.toLowerCase()) {
       const details = Natives[chainId];
-      return new Token(details.name, address, details.decimals);
+      return new Token(details.name, address, details.decimals, details.symbol);
     }
 
     const provider = ethers.providers.getDefaultProvider(RpcNode[chainId]);
@@ -25,11 +22,12 @@ export class TokenDetailsFetcher {
 
     const name = await token.functions.name();
     const decimals = await token.functions.decimals();
+    const symbol = await token.functions.symbol();
 
     if (name.length == 0) {
       // TODO : check with web2 API
     }
 
-    return new Token(name[0], address, decimals[0]);
+    return new Token(name[0], address, decimals[0], symbol[0]);
   }
 }

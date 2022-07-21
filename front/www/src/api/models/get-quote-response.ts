@@ -4,6 +4,7 @@ interface TokenDetails {
 }
 
 export default interface GetQuoteResponse {
+    router: string,
     amountOut: string,
     destinationFee: string,
     originSwap: {

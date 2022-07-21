@@ -4,6 +4,8 @@ import { IHttpClient } from './IHttpClient';
 export class CachedHttpClient implements IHttpClient {
   private readonly httpClient: HttpClient;
   private readonly cache: Map<string, any>;
+  private readonly deadline: Map<string, number>;
+  private readonly CACHE_TIME = 60 * 60 * 1000;
 
   public static create(baseURL?: URL) {
     return new CachedHttpClient(baseURL);
@@ -12,6 +14,7 @@ export class CachedHttpClient implements IHttpClient {
   public constructor(baseURL?: URL) {
     this.httpClient = HttpClient.create(baseURL);
     this.cache = new Map<string, any>();
+    this.deadline = new Map<string, number>();
   }
 
   /**
@@ -19,12 +22,12 @@ export class CachedHttpClient implements IHttpClient {
    * @param url
    * @param headers
    */
-  public get<Response>(url: URL, headers?: Headers): Promise<Response> {
+  public async get<Response>(url: URL, headers?: Headers): Promise<Response> {
     if (this.isCached(url)) {
       return this.cachedResponse(url);
     }
-    const response = this.httpClient.get<Response>(url, headers);
-    this.cache.set(url, response);
+    const response = await this.httpClient.get<Response>(url, headers);
+    this.setCache(url, response);
     return response;
   }
 
@@ -34,12 +37,12 @@ export class CachedHttpClient implements IHttpClient {
    * @param params
    * @param headers
    */
-  public post<Response>(url: URL, params: Parameters, headers: Headers): Promise<Response> {
+  public async post<Response>(url: URL, params: Parameters, headers?: Headers): Promise<Response> {
     if (this.isCached(url)) {
       return this.cachedResponse(url);
     }
-    const response = this.httpClient.post<Response>(url, params, headers);
-    this.cache.set(url, response);
+    const response = await this.httpClient.post<Response>(url, params, headers);
+    this.setCache(url, response);
     return response;
   }
 
@@ -49,12 +52,12 @@ export class CachedHttpClient implements IHttpClient {
    * @param params
    * @param headers
    */
-  public patch<Response>(url: URL, params: Parameters, headers: Headers): Promise<Response> {
+  public async patch<Response>(url: URL, params: Parameters, headers?: Headers): Promise<Response> {
     if (this.isCached(url)) {
       return this.cachedResponse(url);
     }
-    const response = this.httpClient.patch<Response>(url, params, headers);
-    this.cache.set(url, response);
+    const response = await this.httpClient.patch<Response>(url, params, headers);
+    this.setCache(url, response);
     return response;
   }
 
@@ -64,12 +67,12 @@ export class CachedHttpClient implements IHttpClient {
    * @param params
    * @param headers
    */
-  public put<Response>(url: URL, params: Parameters, headers: Headers): Promise<Response> {
+  public async put<Response>(url: URL, params: Parameters, headers?: Headers): Promise<Response> {
     if (this.isCached(url)) {
       return this.cachedResponse(url);
     }
-    const response = this.httpClient.put<Response>(url, params, headers);
-    this.cache.set(url, response);
+    const response = await this.httpClient.put<Response>(url, params, headers);
+    this.setCache(url, response);
     return response;
   }
 
@@ -79,19 +82,56 @@ export class CachedHttpClient implements IHttpClient {
    * @param headers
    * @param params
    */
-  public delete<Response>(url: URL, headers: Headers, params?: Parameters): Promise<Response> {
+  public async delete<Response>(
+    url: URL,
+    headers?: Headers,
+    params?: Parameters,
+  ): Promise<Response> {
     if (this.isCached(url)) {
       return this.cachedResponse(url);
     }
-    const response = this.httpClient.delete<Response>(url, headers, params);
-    this.cache.set(url, response);
+    const response = await this.httpClient.delete<Response>(url, headers, params);
+    this.setCache(url, response);
     return response;
   }
 
+  /**
+   * Checks if the request is elegible to use the cache data
+   * @param url
+   * @private
+   */
   private isCached(url: URL): boolean {
-    return this.cache.has(url);
+    const exists = this.cache.has(url);
+    if (!exists) {
+      return false;
+    }
+    return new Date().getTime() < this.deadline.get(url);
   }
 
+  /**
+   * Stores a response to a given URL
+   * @param url
+   * @param response
+   * @private
+   */
+  private setCache(url: string, response: any) {
+    this.cache.set(url, response);
+    this.deadline.set(url, this.getDeadline());
+  }
+
+  /**
+   * Computes the deadline given the current time
+   * @private
+   */
+  private getDeadline(): number {
+    return new Date().getTime() + this.CACHE_TIME;
+  }
+
+  /**
+   * Returns the cached response of a URL
+   * @param url
+   * @private
+   */
   private cachedResponse(url: URL): any {
     return this.cache.get(url);
   }

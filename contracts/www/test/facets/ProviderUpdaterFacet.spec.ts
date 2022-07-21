@@ -1,12 +1,9 @@
-import chai, { expect } from "chai";
+import { expect } from "chai";
 import { ethers } from "hardhat";
 import { getAccounts, ZeroAddress } from "../shared";
 import { Contract } from "ethers";
-import { smock } from "@defi-wonderland/smock";
 
 const Deployer = require("../../scripts/Deployer");
-
-chai.use(smock.matchers);
 
 describe("Update Providers", function () {
   let contract: Contract;

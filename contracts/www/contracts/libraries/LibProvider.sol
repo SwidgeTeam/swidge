@@ -20,6 +20,11 @@ library LibProvider {
         return address(0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE);
     }
 
+    /**
+     * Sends `amount` of `token` to `toChainId` using the bridge identified with `code`
+     *
+     * @dev If a non-existent code is given, the default value for enabled is false
+     */
     function bridge(
         uint8 _code,
         address _token,
@@ -42,10 +47,17 @@ library LibProvider {
 
         if (!success) {
             string memory _revertMsg = LibBytes.getRevertMsg(data);
-            revert(string(abi.encodePacked("Bridge failed: ", _revertMsg)));
+            revert(_revertMsg);
         }
     }
 
+    /**
+     * Swaps `amount` of `tokenIn` for `tokenOut` using the exchange provider
+     * identified with `code`
+     *
+     * @return The total amount of bought `tokenOut`
+     * @dev If a non-existent code is given, the default value for enabled is false
+     */
     function swap(
         uint8 _code,
         address _tokenIn,
@@ -62,13 +74,13 @@ library LibProvider {
         (bool success, bytes memory data) = _swapper.implementation.delegatecall(
             abi.encodeWithSelector(
                 IDEX.swap.selector,
-                _tokenIn, _tokenOut, _amountIn, _data
+                _swapper.handler, _tokenIn, _tokenOut, _amountIn, _data
             )
         );
 
         if (!success) {
             string memory _revertMsg = LibBytes.getRevertMsg(data);
-            revert(string(abi.encodePacked("Swap failed: ", _revertMsg)));
+            revert(_revertMsg);
         }
 
         (uint256 boughtAmount) = abi.decode(data, (uint256));

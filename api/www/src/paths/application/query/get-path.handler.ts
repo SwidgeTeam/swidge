@@ -4,8 +4,6 @@ import { Path } from '../../domain/path';
 import { SwapOrderComputer } from '../../../swaps/application/query/swap-order-computer';
 import { SwapRequest } from '../../../swaps/domain/SwapRequest';
 import { BridgeOrderComputer } from '../../../bridges/application/query/bridge-order-computer';
-import { BridgingRequest } from '../../../bridges/domain/bridging-request';
-import { Tokens } from '../../../shared/enums/Tokens';
 import { SwapOrder } from '../../../swaps/domain/SwapOrder';
 import { BridgingOrder } from '../../../bridges/domain/bridging-order';
 import { TokenDetailsFetcher } from '../../../shared/infrastructure/TokenDetailsFetcher';
@@ -15,10 +13,12 @@ import { BigInteger } from '../../../shared/domain/BigInteger';
 import { BigNumber } from 'ethers';
 import { PriceFeedConverter } from '../../../shared/infrastructure/PriceFeedConverter';
 import { ExchangeProviders } from '../../../swaps/domain/providers/exchange-providers';
-import { BridgeProviders } from '../../../bridges/domain/providers/bridge-providers';
+import { PathComputer } from '../../domain/path-computer';
 
 @QueryHandler(GetPathQuery)
 export class GetPathHandler implements IQueryHandler<GetPathQuery> {
+  private pathComputer: PathComputer;
+
   constructor(
     private readonly swapOrderProvider: SwapOrderComputer,
     private readonly bridgeOrderProvider: BridgeOrderComputer,
@@ -26,7 +26,14 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
     private readonly tokenDetailsFetcher: TokenDetailsFetcher,
     @Inject(Class.PriceFeedConverter)
     private readonly priceFeedConverter: PriceFeedConverter,
-  ) {}
+  ) {
+    this.pathComputer = new PathComputer(
+      swapOrderProvider,
+      bridgeOrderProvider,
+      tokenDetailsFetcher,
+      priceFeedConverter,
+    );
+  }
 
   async execute(query: GetPathQuery): Promise<Path> {
     if (query.isMonoChain) {
@@ -64,86 +71,6 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
    * @private
    */
   private async multiStepPath(query: GetPathQuery): Promise<Path> {
-    /** Origin swap **/
-
-    const srcToken = await this.tokenDetailsFetcher.fetch(query.srcToken, query.fromChainId);
-    const originBridgingToken = Tokens.USDC[query.fromChainId];
-    const amountIn = BigInteger.fromDecimal(query.amountIn, srcToken.decimals);
-
-    let originSwapOrder;
-    let bridgingAmount;
-
-    if (srcToken.equals(originBridgingToken)) {
-      originSwapOrder = SwapOrder.notRequired();
-      bridgingAmount = amountIn;
-    } else {
-      const originSwapRequest = new SwapRequest(
-        query.fromChainId,
-        srcToken,
-        originBridgingToken,
-        amountIn,
-      );
-      originSwapOrder = await this.swapOrderProvider.execute(
-        ExchangeProviders.ZeroEx,
-        originSwapRequest,
-      );
-      bridgingAmount = originSwapOrder.buyAmount;
-    }
-
-    /** Bridge **/
-
-    const bridgeRequest = new BridgingRequest(
-      query.fromChainId,
-      query.toChainId,
-      Tokens.USDC[query.fromChainId],
-      bridgingAmount,
-    );
-
-    const bridgingOrder = await this.bridgeOrderProvider.execute(
-      BridgeProviders.Multichain,
-      bridgeRequest,
-    );
-
-    if (bridgingAmount.greaterThan(bridgingOrder.bigAmountThreshold)) {
-      // TODO : It can be done, but alert it can take very long
-    }
-
-    const destinationReceivedAmount = bridgingOrder.amountOut;
-
-    /** Destination swap **/
-
-    const dstToken = await this.tokenDetailsFetcher.fetch(query.dstToken, query.toChainId);
-
-    let destinationSwapOrder: SwapOrder;
-    if (dstToken.equals(bridgingOrder.tokenOut)) {
-      destinationSwapOrder = SwapOrder.sameToken(dstToken);
-    } else {
-      const destinationSwapRequest = new SwapRequest(
-        query.toChainId,
-        bridgingOrder.tokenOut,
-        dstToken,
-        destinationReceivedAmount,
-      );
-
-      destinationSwapOrder = await this.swapOrderProvider.execute(
-        ExchangeProviders.ZeroEx,
-        destinationSwapRequest,
-      );
-    }
-
-    // Add base gas for destination swap
-    const fixDestinationGas = BigNumber.from(0);
-
-    const estimatedDestinationGas = destinationSwapOrder.estimatedGas.add(fixDestinationGas);
-
-    const nativeCoinDestinationFee = await this.priceFeedConverter.fetch(
-      query.fromChainId,
-      query.toChainId,
-      estimatedDestinationGas,
-    );
-
-    /** Compose path **/
-
-    return new Path(originSwapOrder, bridgingOrder, destinationSwapOrder, nativeCoinDestinationFee);
+    return this.pathComputer.compute(query);
   }
 }

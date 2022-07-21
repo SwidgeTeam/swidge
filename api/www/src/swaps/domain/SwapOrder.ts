@@ -38,7 +38,7 @@ export class SwapOrder {
     private readonly _data: string,
     private readonly _buyAmount: BigInteger,
     private readonly _estimatedGas: BigNumber,
-    private readonly _required: boolean,
+    private readonly _required = true,
   ) {}
 
   get providerCode(): string {

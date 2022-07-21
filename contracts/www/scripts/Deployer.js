@@ -67,7 +67,11 @@ module.exports = class Deployer {
       "IDiamondCutter",
       this.diamond.address
     );
-    await (await diamondCutter.connect(this.deployer).diamondCut(cuts)).wait();
+    await (
+      await diamondCutter
+        .connect(this.deployer)
+        .diamondCut(cuts, this.ethers.constants.AddressZero, "0x")
+    ).wait();
   }
 
   /**
