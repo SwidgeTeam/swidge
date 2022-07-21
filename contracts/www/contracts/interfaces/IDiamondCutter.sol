@@ -17,5 +17,5 @@ interface IDiamondCutter {
 
     /// @notice Add/replace/remove any number of functions
     /// @param _diamondCut Contains the facet addresses and function selectors
-    function diamondCut(FacetCut[] calldata _diamondCut) external;
+    function diamondCut(FacetCut[] calldata _diamondCut, address _init, bytes calldata _calldata) external;
 }

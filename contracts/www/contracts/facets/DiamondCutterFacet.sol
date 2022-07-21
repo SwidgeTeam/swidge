@@ -17,7 +17,9 @@ contract DiamondCutterFacet is IDiamondCutter {
     /// @notice Add/replace/remove any number of functions
     /// @param _diamondCut Contains the facet addresses and function selectors
     function diamondCut(
-        FacetCut[] calldata _diamondCut
+        FacetCut[] calldata _diamondCut,
+        address _init,
+        bytes calldata _calldata
     ) external override {
         LibStorage.enforceIsContractOwner();
         for (uint256 facetIndex; facetIndex < _diamondCut.length; facetIndex++) {
@@ -33,6 +35,7 @@ contract DiamondCutterFacet is IDiamondCutter {
             }
         }
         emit DiamondCut(_diamondCut);
+        initializeCut(_init, _calldata);
     }
 
     event DiamondCut(IDiamondCutter.FacetCut[] _diamondCut);
@@ -91,6 +94,26 @@ contract DiamondCutterFacet is IDiamondCutter {
             // delete last selector
             ds.selectors.pop();
             delete ds.facets[selector];
+        }
+    }
+
+    function initializeCut(address _init, bytes memory _calldata) internal {
+        if (_init == address(0)) {
+            require(_calldata.length == 0, "Cutter: _init is address(0) but_calldata is not empty");
+        } else {
+            require(_calldata.length > 0, "Cutter: _calldata is empty but _init is not address(0)");
+            if (_init != address(this)) {
+                LibStorage.enforceHasContractCode(_init, "Cutter: _init address has no code");
+            }
+            (bool success, bytes memory error) = _init.delegatecall(_calldata);
+            if (!success) {
+                if (error.length > 0) {
+                    // bubble up the error
+                    revert(string(error));
+                } else {
+                    revert("Cutter: _init function reverted");
+                }
+            }
         }
     }
 }
