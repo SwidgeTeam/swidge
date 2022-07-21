@@ -48,14 +48,37 @@ module.exports = async function (taskArguments, hre, runSuper) {
     functionSelectors: getSelectors(facet),
   });
 
+  console.log("Cuts: ", cuts);
+
   // get cutter handler
   const diamondCutter = await hre.ethers.getContractAt(
     "IDiamondCutter",
     addresses.diamond
   );
 
+  // init cut
+  const init = false;
+  let initAddress, initCalldata;
+  if (init) {
+    // deploy init code
+    const InitContract = await hre.ethers.getContractFactory("Init");
+    const initContract = await InitContract.connect(deployer).deploy();
+    await initContract.deployed();
+    initAddress = initContract.address;
+    const ABI = ["function init() external"];
+    const abiInterface = new hre.ethers.utils.Interface(ABI);
+    initCalldata = abiInterface.getSighash("init");
+  } else {
+    initAddress = hre.ethers.constants.AddressZero;
+    initCalldata = "0x";
+  }
+
   // cut diamont
-  (await diamondCutter.connect(deployer).diamondCut(cuts)).wait();
+  (
+    await diamondCutter
+      .connect(deployer)
+      .diamondCut(cuts, initAddress, initCalldata)
+  ).wait();
 
   // save new facet address
   allAddresses[chain].facet[facetName] = facet.address;
