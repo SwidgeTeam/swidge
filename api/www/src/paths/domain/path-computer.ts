@@ -113,26 +113,27 @@ export class PathComputer {
     bridgingAsset: string,
     swapOrderPromise: Promise<SwapOrder>,
   ): Promise<CandidatePath[]> {
-    let promises = [];
     const originSwap = await swapOrderPromise;
-    if (originSwap) {
-      // for every usable bridge
-      for (const bridgeId of this.getPossibleBridges()) {
-        // add the possible bridge order
-        let bridgeAmountIn;
-        // check the amount that should input the bridge
-        if (originSwap.required) {
-          bridgeAmountIn = originSwap.buyAmount;
-        } else {
-          bridgeAmountIn = this.amountIn;
-        }
-        // get the promise of the bridge order
-        const bridgeOrderPromise = this.getBridgeOrder(bridgeId, bridgingAsset, bridgeAmountIn);
-        // get the promise of the candidates for this path
-        const candidatesPromise = this.destinationSwap(originSwap, bridgeOrderPromise);
-        // aggregate promises
-        promises = promises.concat(candidatesPromise);
+    if (!originSwap) {
+      return [];
+    }
+    let promises = [];
+    // for every usable bridge
+    for (const bridgeId of this.getPossibleBridges()) {
+      // add the possible bridge order
+      let bridgeAmountIn;
+      // check the amount that should input the bridge
+      if (originSwap.required) {
+        bridgeAmountIn = originSwap.buyAmount;
+      } else {
+        bridgeAmountIn = this.amountIn;
       }
+      // get the promise of the bridge order
+      const bridgeOrderPromise = this.getBridgeOrder(bridgeId, bridgingAsset, bridgeAmountIn);
+      // get the promise of the candidates for this path
+      const candidatesPromise = this.destinationSwap(originSwap, bridgeOrderPromise);
+      // aggregate promises
+      promises = promises.concat(candidatesPromise);
     }
     // resolve promises and flatten results
     return flatten(await Promise.all(promises));
@@ -147,24 +148,25 @@ export class PathComputer {
     originSwap: SwapOrder,
     bridgeOrderPromise: Promise<BridgingOrder>,
   ): Promise<CandidatePath[]> {
-    const promises = [];
     // wait for the given order bridge to complete
     const bridgeOrder = await bridgeOrderPromise;
-    if (bridgeOrder) {
-      // for every enabled exchange on the destination chain
-      for (const exchangeId of this.getPossibleExchanges(this.toChain)) {
-        // check each combination (exchange+bridge)
-        // in order to compute the destination swap
-        const swapOrderPromise = this.getSwapOrder(
-          exchangeId,
-          this.toChain,
-          bridgeOrder.tokenOut,
-          this.dstToken,
-          bridgeOrder.amountOut,
-        );
-        // save the promise
-        promises.push(swapOrderPromise);
-      }
+    if (!bridgeOrder) {
+      return [];
+    }
+    const promises = [];
+    // for every enabled exchange on the destination chain
+    for (const exchangeId of this.getPossibleExchanges(this.toChain)) {
+      // check each combination (exchange+bridge)
+      // in order to compute the destination swap
+      const swapOrderPromise = this.getSwapOrder(
+        exchangeId,
+        this.toChain,
+        bridgeOrder.tokenOut,
+        this.dstToken,
+        bridgeOrder.amountOut,
+      );
+      // save the promise
+      promises.push(swapOrderPromise);
     }
     // resolve all promises in order to create the candidates
     return (await Promise.all(promises))
