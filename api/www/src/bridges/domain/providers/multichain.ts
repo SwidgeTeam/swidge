@@ -9,7 +9,7 @@ import { AmountTooSmall } from '../AmountTooSmall';
 import { AbiEncoder } from '../../../shared/domain/CallEncoder';
 import { Bridge } from '../bridge';
 import { CachedHttpClient } from '../../../shared/http/cachedHttpClient';
-import { Avalanche, BSC, Fantom, Mainnet, Polygon } from '../../../shared/enums/ChainIds';
+import { Avalanche, BSC, Fantom, Mainnet, Optimism, Polygon } from '../../../shared/enums/ChainIds';
 
 interface DestToken {
   SwapFeeRatePerMillion: number;
@@ -41,7 +41,7 @@ export class Multichain implements Bridge {
   }
 
   constructor(private readonly httpClient: CachedHttpClient) {
-    this.enabledChains = [Mainnet, Polygon, Fantom, BSC, Avalanche];
+    this.enabledChains = [Mainnet, Polygon, Fantom, BSC, Avalanche, Optimism];
   }
 
   public isEnabledOn(fromChainId: string, toChainId: string): boolean {

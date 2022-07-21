@@ -62,7 +62,7 @@ networks.set(OPTIMISM_CHAIN_ID, {
     icon: 'https://res.cloudinary.com/sushi-cdn/image/fetch/f_auto,c_limit,w_64,q_auto/https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/optimism.jpg',
     tokens: optimismTokens.slice(0, MAX_TOKENS).map(token => new OptimismToken(token)),
     rpcUrl: `${import.meta.env.VITE_APP_RPC_NODE_OPTIMISM}`,
-    live: false
+    live: true
 })
 
 export default networks
