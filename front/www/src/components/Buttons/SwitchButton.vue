@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { ArrowDownIcon } from '@heroicons/vue/outline'
-
+// eslint-disable-next-line vue/no-export-in-script-setup
 
 var hover = false
-
 
 const emits = defineEmits<{
     (event: 'switch'): void
@@ -14,7 +13,7 @@ const emits = defineEmits<{
 <template> 
 <div class="flex items-center justify-center w-full">
     <button 
-    class="flex items-center justify-center w-full standardArrow slowTransition"
+    class="flex items-center justify-center w-full standardArrow"
     :class="{'arrow-hover': hover}"
     @click="emits('switch')"
     @mouseenter="hover = true"

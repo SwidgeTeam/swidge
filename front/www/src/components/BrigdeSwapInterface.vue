@@ -20,6 +20,7 @@ import { INetwork } from '@/models/INetwork'
 import ModalSwidgeStatus from './ModalSwidgeStatus.vue'
 import { TransactionSteps } from '@/models/TransactionSteps'
 import SwitchButton from './Buttons/SwitchButton.vue'
+import TransactionSettings from './TransactionSettings.vue'
 
 
 const web3Store = useWeb3Store()
@@ -39,12 +40,15 @@ const showTransactionAlert = ref(false)
 const transactionAlertMessage = ref<string>('')
 const isExecutingTransaction = ref<boolean>(false)
 
+
 const selectedSourceToken = ref<IToken>({
     address: '',
     decimals: 0,
     img: '',
     name: '',
-    replaceByDefault(): void {},
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    replaceByDefault(): void {
+    },
     symbol: '',
 })
 
@@ -53,7 +57,9 @@ const selectedDestinationToken = ref<IToken>({
     decimals: 0,
     img: '',
     name: '',
-    replaceByDefault(): void {},
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    replaceByDefault(): void {
+    },
     symbol: '',
 })
 
@@ -163,8 +169,7 @@ const buttonLabel = computed({
             return transactionAlertMessage.value
         } else if (isExecutingTransaction.value) {
             return 'Executing'
-        }
-        else {
+        } else {
             return 'Swidge'
         }
     },
@@ -316,8 +321,8 @@ const updateDestinationChainInfo = (chain: INetwork) => {
 }
 
 /**
-* Tokens Switch
-*/
+ * Tokens Switch
+ */
 
 const switchTokenHandler = () => {
     const switchTokenSource = ref<IToken>({
@@ -326,7 +331,9 @@ const switchTokenHandler = () => {
         img: '',
         name: '',
         symbol: '',
-        replaceByDefault(): void {}
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        replaceByDefault(): void {
+        }
     })
 
     switchTokenSource.value = selectedSourceToken.value
@@ -539,7 +546,13 @@ const openTransactionStatusModal = () => {
 
     isModalStatusOpen.value = true
 }
-
+/**
+ * Passes variables to TransactionSettingCoponent to display the calculated
+ * Slippage, Fees and arriving Value.
+ */
+const slippage = '0.5%'
+const bridgeFee = '2%'
+const nativeValue = '5%'
 /**
  * Closes the transaction status modal,
  * closing also all the listeners set on the providers
@@ -564,11 +577,11 @@ const closeModalStatus = () => {
                         <ArrowCircleRightIcon
                             v-if="!isFaqOpen"
                             class="w-7 h-7 cursor-pointer"
-                            @click="isFaqOpen = true" />
+                            @click="isFaqOpen = true"/>
                         <XCircleIcon
                             v-if="isFaqOpen"
                             class="w-7 h-7 cursor-pointer"
-                            @click="isFaqOpen = false" />
+                            @click="isFaqOpen = false"/>
                     </div>
                     <div
                         class="
@@ -589,13 +602,14 @@ const closeModalStatus = () => {
                                 :disabled-input="false"
                                 @input-changed="handleSourceInputChanged()"
                                 @on-click-max-amount="handleSourceInputChanged()"
-                                @open-token-list="() => handleOpenTokenList(true)" />
+                                @open-token-list="() => handleOpenTokenList(true)"/>
                         </div>
                         <div>
                             <SwitchButton
-                            @click="switchTokenHandler"
-                            @switch="switchHandlerFunction"
-                        /> </div>
+                                @click="switchTokenHandler"
+                                @switch="switchHandlerFunction"
+                            />
+                        </div>
                         <div class="flex flex-col w-full gap-4">
                             <span class="text-2xl">You receive:</span>
                             <BridgeSwapSelectionCard
@@ -603,29 +617,35 @@ const closeModalStatus = () => {
                                 :chain-info="destinationChainInfo"
                                 :disabled-input="true"
                                 :token="selectedDestinationToken"
-                                @open-token-list="() => handleOpenTokenList(false)" />
+                                @open-token-list="() => handleOpenTokenList(false)"/>
+                            <div>Placeholder</div>
+                            <TransactionSettings
+                                :slippage-value="slippage"
+                                :native-value="nativeValue"
+                                :bridge-fee-value="bridgeFee">
+                            </TransactionSettings>
                         </div>
                         <BridgeSwapInteractiveButton
                             :text="buttonLabel"
                             :is-loading="isGettingQuote"
                             :disabled="isExecuteButtonDisabled"
-                            :on-click="onExecuteTransaction" />
+                            :on-click="onExecuteTransaction"/>
                     </div>
                     <ModalNetworkAndTokenSelect
                         :is-modal-open="isModalTokensOpen"
                         :networks="getNetworks()"
                         :is-origin="isSourceChainToken"
                         @close-modal="isModalTokensOpen = false"
-                        @update-token="handleUpdateTokenFromModal($event)" />
+                        @update-token="handleUpdateTokenFromModal($event)"/>
 
                     <ModalSwidgeStatus
                         :steps="steps"
                         :show="isModalStatusOpen"
                         :source-chain="sourceChainInfo.name"
                         :destination-chain="destinationChainInfo.name"
-                        @close-modal="closeModalStatus" />
+                        @close-modal="closeModalStatus"/>
                 </div>
-                <FAQCard v-if="isFaqOpen" />
+                <FAQCard v-if="isFaqOpen"/>
             </div>
         </main>
     </div>
