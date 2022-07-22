@@ -1,4 +1,4 @@
 .idea
 /data
-.env
+/.env
 /*.sh
