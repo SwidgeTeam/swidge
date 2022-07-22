@@ -550,9 +550,9 @@ const openTransactionStatusModal = () => {
  * Passes variables to TransactionSettingCoponent to display the calculated
  * Slippage, Fees and arriving Value.
  */
-const slippage = '0.5%'
+const slippage = '3%'
 const bridgeFee = '2%'
-const nativeValue = '5%'
+const waitingTime ='10 min'
 /**
  * Closes the transaction status modal,
  * closing also all the listeners set on the providers
@@ -617,11 +617,11 @@ const closeModalStatus = () => {
                                 :chain-info="destinationChainInfo"
                                 :disabled-input="true"
                                 :token="selectedDestinationToken"
-                                @open-token-list="() => handleOpenTokenList(false)"/>
-                            <div>Placeholder</div>
-                            <TransactionSettings
+                                @open-token-list="() => handleOpenTokenList(false)" />
+
+                                <TransactionSettings
                                 :slippage-value="slippage"
-                                :native-value="nativeValue"
+                                :waiting-time="waitingTime"
                                 :bridge-fee-value="bridgeFee">
                             </TransactionSettings>
                         </div>
