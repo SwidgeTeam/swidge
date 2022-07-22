@@ -72,34 +72,34 @@ create:
 logs:
 	@$(call DOCKER_COMPOSE, logs --follow)
 
-$(addprefix build-, ${MAKE_DOCKER_IMAGES}): build-%:
+$(addprefix build-, ${MAKE_SERVICES}): build-%:
 	@$(call DOCKER_COMPOSE, build $*)
 
-$(addprefix create-, ${MAKE_APP_SERVICES}): create-%:
+$(addprefix create-, ${MAKE_SERVICES}): create-%:
 	@$(call DOCKER_COMPOSE, up --no-start $*)
 
-$(addprefix start-, ${MAKE_APP_SERVICES}): start-%:
+$(addprefix start-, ${MAKE_SERVICES}): start-%:
 	@$(call DOCKER_COMPOSE, up -d $*)
 
-$(addprefix stop-, ${MAKE_APP_SERVICES}): stop-%:
+$(addprefix stop-, ${MAKE_SERVICES}): stop-%:
 	@$(call DOCKER_COMPOSE, stop $*)
 
-$(addprefix kill-, ${MAKE_APP_SERVICES}): kill-%:
+$(addprefix kill-, ${MAKE_SERVICES}): kill-%:
 	@$(call DOCKER_COMPOSE, kill $*)
 
-$(addprefix restart-, ${MAKE_APP_SERVICES}): restart-%:
+$(addprefix restart-, ${MAKE_SERVICES}): restart-%:
 	@$(call DOCKER_COMPOSE, restart $*)
 
-$(addprefix rm-, ${MAKE_APP_SERVICES}): rm-%:
+$(addprefix rm-, ${MAKE_SERVICES}): rm-%:
 	@$(call DOCKER_COMPOSE, rm --force -v $*)
 
-$(addprefix fuck-, ${MAKE_APP_SERVICES}): fuck-%: \
+$(addprefix fuck-, ${MAKE_SERVICES}): fuck-%: \
 	stop-% rm-% build-% create-% start-%
 
-$(addsuffix -sh, ${MAKE_APP_SERVICES}): %-sh:
+$(addsuffix -sh, ${MAKE_SERVICES}): %-sh:
 	@$(call DOCKER_COMPOSE, exec $* sh)
 
-$(addsuffix -logs, ${MAKE_APP_SERVICES}): %-logs:
+$(addsuffix -logs, ${MAKE_SERVICES}): %-logs:
 	@$(call DOCKER_COMPOSE, logs --follow $*)
 
 setup: db-migrate
@@ -356,3 +356,15 @@ tf-apply:
 tf-destroy:
 	@$(call TERRAFORM_SWITCH)
 	@$(call TERRAFORM,destroy)
+
+### Grafana
+
+
+grafana-setup:
+	@docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions
+
+grafana-up:
+	@$(call DOCKER_COMPOSE, up --detach ${MAKE_GRAFANA_SERVICES})
+
+grafana-down:
+	@$(call DOCKER_COMPOSE, stop ${MAKE_GRAFANA_SERVICES})

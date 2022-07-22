@@ -134,6 +134,39 @@ services:
       - ./infrastructure/terraform:/code
     working_dir: /code
 
+  grafana:
+    image: grafana/grafana:latest
+    volumes:
+      - grafana:/var/lib/grafana
+    ports:
+      - "4090:3000"
+
+  loki:
+    image: grafana/loki:2.6.1
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://loki:3100/loki/api/v1/push"
+        loki-batch-size: "400"
+    volumes:
+      - loki:/loki
+      - ./loki:/etc/loki
+    command: -config.file=/etc/loki/loki-config.yml
+    ports:
+      - "3100:3100"
+
+  promtail:
+    image: grafana/promtail:2.4.0
+    command: -config.file=/etc/promtail/promtail-config.yml
+    volumes:
+      - /var/log:/var/log
+      - ./promtail:/etc/promtail
+
+volumes:
+  grafana:
+  promtail:
+  loki:
+
 networks:
   default:
     name: ${DOCKER_NETWORK_NAME}
