@@ -212,3 +212,13 @@ resource "aws_key_pair" "instances" {
   key_name   = local.instances_key_name
   public_key = var.instances_key
 }
+
+/** Outputs */
+
+output "api_public_ip" {
+  value = module.api.api_public_ip
+}
+
+output "relayer_public_ip" {
+  value = module.relayer.relayer_public_ip
+}

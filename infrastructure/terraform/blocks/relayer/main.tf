@@ -96,3 +96,7 @@ resource "aws_security_group" "relayer-sg" {
     Name = "allow_ssh"
   }
 }
+
+output "relayer_public_ip" {
+  value = module.relayer-instance.instances_ip
+}
