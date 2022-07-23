@@ -1,6 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+
+</script>
 
 <template>
+
   <svg
 xmlns="http://www.w3.org/2000/svg"
     xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -68,8 +71,10 @@ width="570"
         </g>
       </g>
     </g>
+    @click="goHome"
   </svg>
-</template>
+  
+ </template>
 
 <style scoped>
 .cls-1 {

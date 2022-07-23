@@ -249,19 +249,32 @@ const handleUpdateTokenFromModal = (info: {
     if (isSourceChainToken.value) {
         // If the origin network is being chosen
         if (sourceChainInfo.id != info.chain.id) {
-            // If we changed origin network, inform wallet
-            switchToNetwork(info.chain.id).then(() => {
-                updateOriginChainInfo(info.chain)
-                updateOriginToken(info.token)
-            })
+            // If network and token of source and destination are the same, switch inputs instead of setting new ones.
+
+            if (((info.chain.id == destinationChainInfo.id) || (info.chain.id == sourceChainInfo.id)) &&
+                (info.token == selectedDestinationToken.value || selectedSourceToken.value)) {
+                switchHandlerFunction()
+
+            } else {
+                // If we changed origin network, inform wallet
+                switchToNetwork(info.chain.id).then(() => {
+                    updateOriginChainInfo(info.chain)
+                    updateOriginToken(info.token)
+                })
+            }
         } else {
             updateOriginToken(info.token)
         }
     } else {
-        // If the destination network is being chosen
-        updateDestinationChainInfo(info.chain)
-        // Update token details
-        selectedDestinationToken.value = info.token
+        if (((info.chain.id == destinationChainInfo.id) || (info.chain.id == sourceChainInfo.id)) &&
+            (info.token == selectedDestinationToken.value || selectedSourceToken.value)) {
+            switchHandlerFunction()
+        } else {
+            // If the destination network is being chosen
+            updateDestinationChainInfo(info.chain)
+            // Update token details
+            selectedDestinationToken.value = info.token
+        }
     }
 
     // Check if we can quote
@@ -321,34 +334,6 @@ const updateDestinationChainInfo = (chain: INetwork) => {
 }
 
 /**
- * Tokens Switch
- */
-
-const switchTokenHandler = () => {
-    const switchTokenSource = ref<IToken>({
-        address: '',
-        decimals: 0,
-        img: '',
-        name: '',
-        symbol: '',
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        replaceByDefault(): void {
-        }
-    })
-
-    switchTokenSource.value = selectedSourceToken.value
-    selectedSourceToken.value = selectedDestinationToken.value
-    selectedDestinationToken.value = switchTokenSource.value
-
-    // Reset Input Values on Switch of Network+Token
-    sourceTokenAmount.value = ''
-    destinationTokenAmount.value = ''
-
-    // Clean alert message in case there is
-    transactionAlertMessage.value = 'Swidge'
-}
-
-/**
  * Sets the transition variable switchDestinationChain to Current source Chain info
  */
 const switchHandlerFunction = () => {
@@ -366,7 +351,36 @@ const switchHandlerFunction = () => {
     destinationChainInfo.icon = switchChainInfo.icon
     destinationChainInfo.name = switchChainInfo.name
     destinationChainInfo.tokens = switchChainInfo.tokens
+
+    // Switch Temp variable
+    const switchTokenSource = ref<IToken>({
+        address: '',
+        decimals: 0,
+        img: '',
+        name: '',
+        symbol: '',
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        replaceByDefault(): void {
+        }
+    })
+
+    switchTokenSource.value = selectedSourceToken.value
+    selectedSourceToken.value = selectedDestinationToken.value
+    selectedDestinationToken.value = switchTokenSource.value
+
+    //Reset Input Values on Switch of Network+Token
+    sourceTokenAmount.value = ''
+    destinationTokenAmount.value = ''
+
+    // Clean alert message in case there is
+    transactionAlertMessage.value = 'Swidge'
 }
+
+/**
+ * Switch input/output field based on the users input.
+ * If Input Token + Network == Output Token + Network --> Switch Fields.
+ */
+
 
 /**
  * Quotes the possible path for a given pair and amount
@@ -552,7 +566,7 @@ const openTransactionStatusModal = () => {
  */
 const slippage = '3%'
 const bridgeFee = '2%'
-const waitingTime ='10 min'
+const waitingTime = '10 min'
 /**
  * Closes the transaction status modal,
  * closing also all the listeners set on the providers
@@ -606,7 +620,6 @@ const closeModalStatus = () => {
                         </div>
                         <div>
                             <SwitchButton
-                                @click="switchTokenHandler"
                                 @switch="switchHandlerFunction"
                             />
                         </div>
@@ -617,9 +630,9 @@ const closeModalStatus = () => {
                                 :chain-info="destinationChainInfo"
                                 :disabled-input="true"
                                 :token="selectedDestinationToken"
-                                @open-token-list="() => handleOpenTokenList(false)" />
+                                @open-token-list="() => handleOpenTokenList(false)"/>
 
-                                <TransactionSettings
+                            <TransactionSettings
                                 :slippage-value="slippage"
                                 :waiting-time="waitingTime"
                                 :bridge-fee-value="bridgeFee">
