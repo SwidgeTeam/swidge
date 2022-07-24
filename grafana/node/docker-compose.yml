@@ -1,0 +1,23 @@
+version: "3.5"
+
+services:
+
+  grafana:
+    image: grafana/grafana:latest
+    volumes:
+      - grafana:/var/lib/grafana
+    ports:
+      - "80:3000"
+
+  loki:
+    image: grafana/loki:2.6.1
+    volumes:
+      - loki:/loki
+      - ./loki:/etc/loki
+    command: -config.file=/etc/loki/loki-config.yml
+    ports:
+      - "3000:3000"
+
+volumes:
+  grafana:
+  loki:

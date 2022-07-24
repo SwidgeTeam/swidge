@@ -5,5 +5,5 @@
   tasks:
     - name: Copy node content
       copy:
-        src: node/
+        src: ../../../{{ service }}/node/
         dest: /home/{{ user }}/

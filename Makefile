@@ -359,12 +359,17 @@ tf-destroy:
 
 ### Ansible
 
+PLAYBOOKS_PATH = infrastructure/ansible/playbooks
+
 RUN_PLAYBOOK = ansible-playbook -i infrastructure/ansible/inventory.ini -e "nodes=$(1)" $(2)
+RUN_PLAYBOOK_GLOBAL = $(call RUN_PLAYBOOK,$(1),${PLAYBOOKS_PATH}/$(2))
+RUN_PLAYBOOK_ON_SERVICE = $(call RUN_PLAYBOOK,$(2)_$(1),-e "service=$(2)" ${PLAYBOOKS_PATH}/$(3))
 
 $(addprefix setup-instances-, test prod): setup-instances-%:
-	@$(call RUN_PLAYBOOK,$*,infrastructure/ansible/playbooks/docker.yml)
-	@$(call RUN_PLAYBOOK,api_$*,api/setup.yml)
-	@$(call RUN_PLAYBOOK,relayer_$*,relayer/setup.yml)
+	@$(call RUN_PLAYBOOK_GLOBAL,$*,docker.yml)
+	@$(call RUN_PLAYBOOK_ON_SERVICE,$*,api,setup_node_files.yml)
+	@$(call RUN_PLAYBOOK_ON_SERVICE,$*,relayer,setup_node_files.yml)
+	@$(call RUN_PLAYBOOK_ON_SERVICE,$*,grafana,setup_node_files.yml)
 
 ### Grafana
 
