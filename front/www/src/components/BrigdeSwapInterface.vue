@@ -603,9 +603,6 @@ const closeModalStatus = () => {
                                 :disabled-input="true"
                                 :token="selectedDestinationToken"
                                 @open-token-list="() => handleOpenTokenList(false)" />
-
-                                <div class="text-1.5xl gap-8">Place Holder Quoting Info</div>
-
                         </div>
                         <BridgeSwapInteractiveButton
                             :text="buttonLabel"
