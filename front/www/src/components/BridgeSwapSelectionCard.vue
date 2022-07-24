@@ -4,6 +4,7 @@ import { ChevronDownIcon } from '@heroicons/vue/outline'
 import { INetwork } from '@/models/INetwork'
 import { computed } from 'vue'
 
+
 const props = defineProps<{
     value: string
     balance?: string
@@ -146,7 +147,7 @@ const trimmedBalance = computed({
                 inputmode="decimal"
                 pattern="^[0-9]*[.,]?[0-9]*$"
                 @change="emits('input-changed')"
-                @input="onChange"
+                @input="onChange"               
             />
         </div>
     </div>

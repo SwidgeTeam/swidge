@@ -1,6 +1,5 @@
 <script setup lang='ts'>
 import {
-    ArrowDownIcon,
     ArrowCircleRightIcon,
     XCircleIcon,
 } from '@heroicons/vue/outline'
@@ -20,6 +19,8 @@ import networks from '@/assets/Networks'
 import { INetwork } from '@/models/INetwork'
 import ModalSwidgeStatus from './ModalSwidgeStatus.vue'
 import { TransactionSteps } from '@/models/TransactionSteps'
+import SwitchButton from './Buttons/SwitchButton.vue'
+
 
 const web3Store = useWeb3Store()
 const { switchToNetwork, getChainProvider, getBalance } = web3Store
@@ -46,6 +47,7 @@ const selectedSourceToken = ref<IToken>({
     replaceByDefault(): void {},
     symbol: '',
 })
+
 const selectedDestinationToken = ref<IToken>({
     address: '',
     decimals: 0,
@@ -54,6 +56,7 @@ const selectedDestinationToken = ref<IToken>({
     replaceByDefault(): void {},
     symbol: '',
 })
+
 const quotedPath = ref<GetQuoteResponse>({
     router: '',
     amountOut: '',
@@ -108,6 +111,14 @@ const sourceChainInfo = reactive<INetwork>({
     live: false,
 })
 const destinationChainInfo = reactive<INetwork>({
+    name: '',
+    icon: '',
+    id: '',
+    tokens: [],
+    rpcUrl: '',
+    live: false,
+})
+const switchChainInfo = reactive<INetwork>({
     name: '',
     icon: '',
     id: '',
@@ -268,6 +279,7 @@ const updateOriginChainInfo = (chain: INetwork) => {
     sourceChainInfo.tokens = chain.tokens
 }
 
+
 /**
  * Updates the selected origin token
  * @param token
@@ -301,6 +313,52 @@ const updateDestinationChainInfo = (chain: INetwork) => {
     destinationChainInfo.icon = chain.icon
     destinationChainInfo.name = chain.name
     destinationChainInfo.tokens = chain.tokens
+}
+
+/**
+* Tokens Switch
+*/
+
+const switchTokenHandler = () => {
+    const switchTokenSource = ref<IToken>({
+        address: '',
+        decimals: 0,
+        img: '',
+        name: '',
+        symbol: '',
+        replaceByDefault(): void {}
+    })
+
+    switchTokenSource.value = selectedSourceToken.value
+    selectedSourceToken.value = selectedDestinationToken.value
+    selectedDestinationToken.value = switchTokenSource.value
+
+    // Reset Input Values on Switch of Network+Token
+    sourceTokenAmount.value = ''
+    destinationTokenAmount.value = ''
+
+    // Clean alert message in case there is
+    transactionAlertMessage.value = 'Swidge'
+}
+
+/**
+ * Sets the transition variable switchDestinationChain to Current source Chain info
+ */
+const switchHandlerFunction = () => {
+    switchChainInfo.id = sourceChainInfo.id
+    switchChainInfo.icon = sourceChainInfo.icon
+    switchChainInfo.name = sourceChainInfo.name
+    switchChainInfo.tokens = sourceChainInfo.tokens
+
+    sourceChainInfo.id = destinationChainInfo.id
+    sourceChainInfo.icon = destinationChainInfo.icon
+    sourceChainInfo.name = destinationChainInfo.name
+    sourceChainInfo.tokens = destinationChainInfo.tokens
+
+    destinationChainInfo.id = switchChainInfo.id
+    destinationChainInfo.icon = switchChainInfo.icon
+    destinationChainInfo.name = switchChainInfo.name
+    destinationChainInfo.tokens = switchChainInfo.tokens
 }
 
 /**
@@ -387,7 +445,7 @@ const onExecuteTransaction = async () => {
 
     await contractCall
         .wait()
-        .then(async (receipt) => {
+        .then(async (receipt: { transactionHash: string }) => {
             steps.value.origin.completed = true
             if (isCrossTransaction()) {
                 setUpEventListener(receipt.transactionHash)
@@ -433,7 +491,7 @@ const setUpEventListener = (executedTxHash: string) => {
         topics: [ethers.utils.id('CrossFinalized(bytes32,uint256)')],
     }
 
-    provider.on(filter, (event) => {
+    provider.on(filter, (event: { data: ethers.utils.BytesLike }) => {
         const [txHash] = ethers.utils.defaultAbiCoder.decode(
             ['bytes32', 'uint256'],
             event.data
@@ -497,12 +555,12 @@ const closeModalStatus = () => {
 
 <template>
     <div class="flex flex-col flex-grow bg-radial-gradient-pink">
-        <Header class="py-2" @switch-network="handleGlobalNetworkSwitched($event)" />
+        <Header class="py-2" @switch-network="handleGlobalNetworkSwitched($event)"></Header>
         <main class="flex items-center justify-center mt-20">
             <div class="flex gap-[2rem]">
                 <div class="flex flex-col gap-6">
                     <div class="flex items-center justify-between">
-                        <span class="text-3xl">Swap & Bridge</span>
+                        <span class="text-3xl ">Swap & Bridge</span>
                         <ArrowCircleRightIcon
                             v-if="!isFaqOpen"
                             class="w-7 h-7 cursor-pointer"
@@ -515,7 +573,7 @@ const closeModalStatus = () => {
                     <div
                         class="
                             flex flex-col
-                            gap-8
+                            gap-6
                             px-12
                             py-6
                             rounded-3xl
@@ -533,9 +591,11 @@ const closeModalStatus = () => {
                                 @on-click-max-amount="handleSourceInputChanged()"
                                 @open-token-list="() => handleOpenTokenList(true)" />
                         </div>
-                        <div class="flex items-center justify-center w-full">
-                            <ArrowDownIcon class="h-6" />
-                        </div>
+                        <div>
+                            <SwitchButton
+                            @click="switchTokenHandler"
+                            @switch="switchHandlerFunction"
+                        /> </div>
                         <div class="flex flex-col w-full gap-4">
                             <span class="text-2xl">You receive:</span>
                             <BridgeSwapSelectionCard
@@ -557,6 +617,7 @@ const closeModalStatus = () => {
                         :is-origin="isSourceChainToken"
                         @close-modal="isModalTokensOpen = false"
                         @update-token="handleUpdateTokenFromModal($event)" />
+
                     <ModalSwidgeStatus
                         :steps="steps"
                         :show="isModalStatusOpen"

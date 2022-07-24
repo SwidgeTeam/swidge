@@ -83,8 +83,28 @@
         width: 24px;
         border-radius: 50%;
     }
-}
+    
+    .standardArrow {
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        -webkit-transition: -webkit-transform 0.4s ease-in;
+        transition: transform 0.4s ease-in;
+        -o-transition: -o-transform 0.4s ease-in;
+        border-radius: 100%;
+        background: rgba(34,33,41,0.4);
+    }   
 
+    .standardArrow:hover {
+        transform: rotate(-180deg);
+        transition-delay: 0.15s;
+        -webkit-transition: -webkit-transform 0.4s ease-in;
+        transition: transform 0.4s ease-in;
+        -o-transition: -o-transform 0.4s ease-in;
+        background: #222129;
+    }
+    
 #app {
     @apply flex flex-grow
+}
 }
