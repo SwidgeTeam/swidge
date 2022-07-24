@@ -357,8 +357,16 @@ tf-destroy:
 	@$(call TERRAFORM_SWITCH)
 	@$(call TERRAFORM,destroy)
 
-### Grafana
+### Ansible
 
+RUN_PLAYBOOK = ansible-playbook -i infrastructure/ansible/inventory.ini -e "nodes=$(1)" $(2)
+
+$(addprefix setup-instances-, test prod): setup-instances-%:
+	@$(call RUN_PLAYBOOK,$*,infrastructure/ansible/playbooks/docker.yml)
+	@$(call RUN_PLAYBOOK,api_$*,api/setup.yml)
+	@$(call RUN_PLAYBOOK,relayer_$*,relayer/setup.yml)
+
+### Grafana
 
 grafana-setup:
 	@docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions
