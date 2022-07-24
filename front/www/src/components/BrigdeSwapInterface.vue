@@ -332,12 +332,13 @@ const switchTokenHandler = () => {
     switchTokenSource.value = selectedSourceToken.value
     selectedSourceToken.value = selectedDestinationToken.value
     selectedDestinationToken.value = switchTokenSource.value
-    /**
- * Reset Input Values on Switch of Network+Token
- */
+
+    // Reset Input Values on Switch of Network+Token
     sourceTokenAmount.value = ''
     destinationTokenAmount.value = ''
 
+    // Clean alert message in case there is
+    transactionAlertMessage.value = 'Swidge'
 }
 
 /**
