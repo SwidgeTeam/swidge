@@ -51,8 +51,8 @@ resource "aws_security_group" "grafana_sg" {
 
 resource "aws_security_group_rule" "ingress_loki" {
   type                     = "ingress"
-  from_port                = 3000
-  to_port                  = 3000
+  from_port                = 3100
+  to_port                  = 3100
   protocol                 = "tcp"
   security_group_id        = aws_security_group.grafana_sg.id
   count                    = length(var.allowed_security_group_ids)
