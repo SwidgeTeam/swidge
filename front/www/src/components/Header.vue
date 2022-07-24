@@ -52,9 +52,13 @@ const chainIcon = computed({
 
 <template>
     <nav class="flex items-center justify-between w-full px-24">
-        <div class="flex items-center justify-center w-40">
-            <SwidgeLogo/>
-        </div>
+        <a class="flex items-center justify-center w-40" href="https://www.swidge.xyz/">
+          
+          
+          <SwidgeLogo />
+          
+            
+        </a>
         <div v-if="isConnected" class="flex gap-4 font-extralight">
             <ChainButton
                 :chain-name="chainName"
