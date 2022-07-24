@@ -151,7 +151,7 @@ services:
         loki-batch-size: "400"
     volumes:
       - loki:/loki
-      - ./loki:/etc/loki
+      - ./grafana/local:/etc/loki
     command: -config.file=/etc/loki/loki-config.yml
     ports:
       - "3100:3100"
@@ -161,7 +161,7 @@ services:
     command: -config.file=/etc/promtail/promtail-config.yml
     volumes:
       - /var/log:/var/log
-      - ./promtail:/etc/promtail
+      - ./grafana/local:/etc/promtail
 
 volumes:
   grafana:
