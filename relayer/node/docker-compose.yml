@@ -9,6 +9,7 @@ services:
       - logs/:/root/.pm2/logs
     network_mode: host
     command: pm2-runtime start ecosystem.config.js
+    restart: unless-stopped
     working_dir: /code
 
   promtail:
@@ -17,6 +18,7 @@ services:
       - -config.file=/etc/promtail/promtail-config.yml
       - -config.expand-env=true
     network_mode: host
+    restart: unless-stopped
     volumes:
       - logs/:/var/log
       - ./promtail:/etc/promtail
