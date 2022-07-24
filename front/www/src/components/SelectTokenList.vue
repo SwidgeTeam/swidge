@@ -1,6 +1,4 @@
 <script setup lang='ts'>
-import { ref } from 'vue'
-import ButtonSelect from './ButtonSelect.vue'
 import TokenDisplay from './TokenDisplay.vue'
 import NetworkAndTokenNothingFound from './NetworkAndTokenNothingFound.vue'
 import IToken from '@/tokens/models/IToken'
@@ -17,13 +15,13 @@ const emits = defineEmits<{
     (event: 'set-token', { token, chain }: { token: IToken, chain: INetwork }): void
 }>()
 
-const filterList = [
+/* const filterList = [
     'Popular',
     'Alphabetical',
     'Recent'
 ]
 
-const selectedFilter = ref('Popular')
+const selectedFilter = ref('Popular') */
 
 const filteredChainList = (list: any) => {
     if (props.selectedNetworkId === '' && props.chainList.find((el: INetwork) => el.name.toLowerCase().includes(props.searchTerm))) {
@@ -52,12 +50,13 @@ const filteredTokenList = (tokenList: IToken[]) => {
     <div class="text-lg font-roboto">
         <div class="flex gap-6 items-center">
             <span>Select Token:</span>
+            <!-- FILTER FUNCTION IN TOKEN LIST
             <div class="flex gap-2 items-center">
                 <span class="font-extralight text-sm mt-1">Filter</span>
                 <ButtonSelect
                     v-model:selected="selectedFilter"
                     :list="filterList"/>
-            </div>
+            </div> -->
             <span
                 v-if="selectedNetworkId !== '' || searchTerm !== ''"
                 class="text-sm font-extralight mt-1 ml-auto">Network</span>
