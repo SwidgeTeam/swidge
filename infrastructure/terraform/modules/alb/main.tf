@@ -56,7 +56,7 @@ resource "aws_lb_listener" "https-alb-listener" {
 
 // security group for alb
 resource "aws_security_group" "http_https" {
-  name        = "allow_http_https"
+  name        = "allow_http_https_${var.name}"
   description = "Allow HTTP & HTTPS inbound connections"
   vpc_id      = var.vpc_id
 
@@ -85,7 +85,7 @@ resource "aws_security_group" "http_https" {
   }
 
   tags = {
-    Name = "allow_http_https"
+    Name = "allow_http_https_${var.name}"
   }
 }
 

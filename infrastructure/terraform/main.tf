@@ -42,14 +42,19 @@ locals {
     cidrsubnet(var.vpc_cidr, 4, 4),
     cidrsubnet(var.vpc_cidr, 4, 5),
   ]
+  grafana_public_subnets_cidr = [
+    cidrsubnet(var.vpc_cidr, 4, 6),
+    cidrsubnet(var.vpc_cidr, 4, 7),
+  ]
   availability_zones = [
     "${var.region}a",
     "${var.region}b",
     "${var.region}c", // maybe remove on creation?
   ]
-  front_service_url  = "app.${var.base_url}"
-  api_service_url    = "api.${var.base_url}"
-  instances_key_name = "instances-key-pair"
+  front_service_url   = "app.${var.base_url}"
+  api_service_url     = "api.${var.base_url}"
+  grafana_service_url = "logs.${var.base_url}"
+  instances_key_name  = "instances-key-pair"
 }
 
 /** VPC **/
@@ -125,6 +130,24 @@ module "relayer" {
   key_name            = local.instances_key_name
 }
 
+module "grafana" {
+  source = "./blocks/grafana"
+
+  region                     = var.region
+  environment                = var.environment
+  vpc_id                     = module.my_vpc.vpc_id
+  public_subnets_cidr        = local.grafana_public_subnets_cidr
+  availability_zones         = local.availability_zones
+  internet_gateway_id        = aws_internet_gateway.igw.id
+  certificate_arn            = module.regional_cert.arn
+  instance_type              = var.grafana_instance_type
+  key_name                   = local.instances_key_name
+  allowed_security_group_ids = [
+    module.api.api_security_group_id,
+    module.relayer.security_group_id,
+  ]
+}
+
 module "front" {
   source = "./blocks/front"
 
@@ -194,6 +217,18 @@ resource "aws_route53_record" "api_balancer" {
   }
 }
 
+resource "aws_route53_record" "grafana_balancer" {
+  zone_id = aws_route53_zone.dns_zone.id
+  name    = local.grafana_service_url
+  type    = "A"
+
+  alias {
+    name                   = module.grafana.balancer.dns_name
+    zone_id                = module.grafana.balancer.zone_id
+    evaluate_target_health = false
+  }
+}
+
 resource "aws_route53_record" "front_distribution" {
   zone_id = aws_route53_zone.dns_zone.id
   name    = local.front_service_url
@@ -221,4 +256,8 @@ output "api_public_ip" {
 
 output "relayer_public_ip" {
   value = module.relayer.relayer_public_ip
+}
+
+output "grafana_public_ip" {
+  value = module.grafana.public_ip
 }
