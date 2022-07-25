@@ -6,7 +6,7 @@ services:
     image: keymetrics/pm2:16-alpine
     volumes:
       - ./code/:/code/
-      - logs/:/root/.pm2/logs
+      - logs:/root/.pm2/logs
     network_mode: host
     command: pm2-runtime start ecosystem.config.js
     restart: unless-stopped
@@ -22,7 +22,7 @@ services:
     env_file:
       - .env
     volumes:
-      - logs/:/var/log
+      - logs:/var/log
       - ./promtail:/etc/promtail
 
 volumes:
