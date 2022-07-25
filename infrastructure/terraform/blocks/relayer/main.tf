@@ -32,6 +32,7 @@ resource "aws_sqs_queue" "transactions" {
   delay_seconds               = 0
   message_retention_seconds   = 345600
   receive_wait_time_seconds   = 10
+  visibility_timeout_seconds  = 60
 
   tags = {
     Environment = var.environment
@@ -101,6 +102,6 @@ output "security_group_id" {
   value = aws_security_group.relayer-sg.id
 }
 
-output "relayer_public_ip" {
+output "public_ip" {
   value = module.relayer-instance.instances_ip
 }
