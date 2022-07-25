@@ -19,6 +19,8 @@ services:
       - -config.expand-env=true
     network_mode: host
     restart: unless-stopped
+    env_file:
+      - .env
     volumes:
       - logs:/var/log
       - ./promtail:/etc/promtail
