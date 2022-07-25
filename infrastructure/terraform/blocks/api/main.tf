@@ -79,6 +79,6 @@ output "balancer" {
   value = module.application_load_balancer.balancer
 }
 
-output "api_public_ip" {
+output "public_ip" {
   value = module.api-instance.instances_ip
 }

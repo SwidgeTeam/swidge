@@ -251,11 +251,11 @@ resource "aws_key_pair" "instances" {
 /** Outputs */
 
 output "api_public_ip" {
-  value = module.api.api_public_ip
+  value = module.api.public_ip
 }
 
 output "relayer_public_ip" {
-  value = module.relayer.relayer_public_ip
+  value = module.relayer.public_ip
 }
 
 output "grafana_public_ip" {
