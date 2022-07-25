@@ -20,7 +20,7 @@ import { INetwork } from '@/models/INetwork'
 import ModalSwidgeStatus from './ModalSwidgeStatus.vue'
 import { TransactionSteps } from '@/models/TransactionSteps'
 import SwitchButton from './Buttons/SwitchButton.vue'
-import TransactionSettings from './TransactionSettings.vue'
+// import TransactionSettings from './TransactionSettings.vue'
 
 
 const web3Store = useWeb3Store()
@@ -259,7 +259,7 @@ const handleUpdateTokenFromModal = (info: {
                 // If we changed origin network, inform wallet
                 switchToNetwork(info.chain.id).then(() => {
                     updateOriginChainInfo(info.chain)
-                    updateOriginToken(info.token)
+                    updateOriginToken(info.token)                
                 })
             }
         } else {
@@ -269,6 +269,7 @@ const handleUpdateTokenFromModal = (info: {
         if (((info.chain.id == destinationChainInfo.id) || (info.chain.id == sourceChainInfo.id)) &&
             (info.token == selectedDestinationToken.value || selectedSourceToken.value)) {
             switchHandlerFunction()
+            
         } else {
             // If the destination network is being chosen
             updateDestinationChainInfo(info.chain)
@@ -374,6 +375,7 @@ const switchHandlerFunction = () => {
 
     // Clean alert message in case there is
     transactionAlertMessage.value = 'Swidge'
+    isExecuteButtonDisabled.value = true
 }
 
 /**
@@ -564,9 +566,9 @@ const openTransactionStatusModal = () => {
  * Passes variables to TransactionSettingCoponent to display the calculated
  * Slippage, Fees and arriving Value.
  */
-const slippage = '3%'
-const bridgeFee = '2%'
-const waitingTime = '10 min'
+// const slippage = '3%'
+// const bridgeFee = '2%'
+// const waitingTime = '10 min'
 /**
  * Closes the transaction status modal,
  * closing also all the listeners set on the providers
@@ -632,11 +634,11 @@ const closeModalStatus = () => {
                                 :token="selectedDestinationToken"
                                 @open-token-list="() => handleOpenTokenList(false)"/>
 
-                            <TransactionSettings
+                            <!-- <TransactionSettings
                                 :slippage-value="slippage"
                                 :waiting-time="waitingTime"
                                 :bridge-fee-value="bridgeFee">
-                            </TransactionSettings>
+                            </TransactionSettings> -->
                         </div>
                         <BridgeSwapInteractiveButton
                             :text="buttonLabel"
