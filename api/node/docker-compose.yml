@@ -11,6 +11,13 @@ services:
     command: pm2-runtime start ecosystem.config.js
     restart: unless-stopped
     working_dir: /code
+    env_file:
+      - .env
+    logging:
+      driver: loki
+      options:
+        loki-url: "${LOKI_HOST}:${LOKI_PORT}/loki/api/v1/push"
+        loki-batch-size: "400"
 
   promtail:
     image: grafana/promtail:2.4.0
