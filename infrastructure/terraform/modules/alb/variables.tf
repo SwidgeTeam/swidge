@@ -30,3 +30,8 @@ variable "certificate_arn" {
   type        = string
   description = "ARN of the certificate to use when SSL is needed"
 }
+
+variable "health_check_path" {
+  type        = string
+  description = "Path to check health status of service"
+}

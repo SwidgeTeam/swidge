@@ -28,13 +28,14 @@ module "api-instance" {
 module "application_load_balancer" {
   source = "../../modules/alb"
 
-  name            = local.name
-  region          = var.region
-  vpc_id          = var.vpc_id
-  certificate_arn = var.certificate_arn
-  environment     = var.environment
-  instances_id    = [element(module.api-instance.instances_id, 1)]
-  subnets         = module.api-subnets.public_subnets
+  name              = local.name
+  region            = var.region
+  vpc_id            = var.vpc_id
+  certificate_arn   = var.certificate_arn
+  environment       = var.environment
+  instances_id      = [element(module.api-instance.instances_id, 1)]
+  subnets           = module.api-subnets.public_subnets
+  health_check_path = "/health"
 }
 
 resource "aws_security_group" "api_http_ssh" {
