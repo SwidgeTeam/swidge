@@ -43,7 +43,7 @@ variable "key_name" {
   description = "Name of the keypair to use"
 }
 
-variable "allowed_security_group_ids" {
+variable "allowed_ips" {
   type        = list(string)
-  description = "IDs of the security groups allowed to connect to Loki"
+  description = "IPs of the allowed instances to connect to Loki"
 }

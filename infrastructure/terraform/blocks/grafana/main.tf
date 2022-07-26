@@ -49,14 +49,16 @@ resource "aws_security_group" "grafana_sg" {
   }
 }
 
-resource "aws_security_group_rule" "ingress_loki" {
-  type                     = "ingress"
-  from_port                = 3100
-  to_port                  = 3100
-  protocol                 = "tcp"
-  security_group_id        = aws_security_group.grafana_sg.id
-  count                    = length(var.allowed_security_group_ids)
-  source_security_group_id = element(var.allowed_security_group_ids, count.index)
+resource "aws_security_group_rule" "ingress_nodes" {
+  type              = "ingress"
+  from_port         = 3100
+  to_port           = 3100
+  protocol          = "tcp"
+  security_group_id = aws_security_group.grafana_sg.id
+  cidr_blocks       = concat(
+    [for ip in var.allowed_ips : "${ip}/32"],
+    [for ip in module.grafana-instance.instances_ip : "${ip}/32"]
+  )
 }
 
 resource "aws_security_group_rule" "ingress_http" {

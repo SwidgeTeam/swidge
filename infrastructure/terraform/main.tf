@@ -133,19 +133,19 @@ module "relayer" {
 module "grafana" {
   source = "./blocks/grafana"
 
-  region                     = var.region
-  environment                = var.environment
-  vpc_id                     = module.my_vpc.vpc_id
-  public_subnets_cidr        = local.grafana_public_subnets_cidr
-  availability_zones         = local.availability_zones
-  internet_gateway_id        = aws_internet_gateway.igw.id
-  certificate_arn            = module.regional_cert.arn
-  instance_type              = var.grafana_instance_type
-  key_name                   = local.instances_key_name
-  allowed_security_group_ids = [
-    module.api.api_security_group_id,
-    module.relayer.security_group_id,
-  ]
+  region              = var.region
+  environment         = var.environment
+  vpc_id              = module.my_vpc.vpc_id
+  public_subnets_cidr = local.grafana_public_subnets_cidr
+  availability_zones  = local.availability_zones
+  internet_gateway_id = aws_internet_gateway.igw.id
+  certificate_arn     = module.regional_cert.arn
+  instance_type       = var.grafana_instance_type
+  key_name            = local.instances_key_name
+  allowed_ips         = concat(
+    module.api.public_ip,
+    module.relayer.public_ip
+  )
 }
 
 module "front" {
