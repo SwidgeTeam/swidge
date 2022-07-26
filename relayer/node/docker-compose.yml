@@ -1,0 +1,30 @@
+version: "3.5"
+
+services:
+
+  relayer:
+    image: keymetrics/pm2:16-alpine
+    volumes:
+      - ./code/:/code/
+      - logs:/root/.pm2/logs
+    network_mode: host
+    command: pm2-runtime start ecosystem.config.js
+    restart: unless-stopped
+    working_dir: /code
+
+  promtail:
+    image: grafana/promtail:2.4.0
+    command:
+      - -config.file=/etc/promtail/promtail-config.yml
+      - -config.expand-env=true
+    network_mode: host
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - logs:/var/log
+      - ./promtail:/etc/promtail
+
+volumes:
+  promtail:
+  logs:

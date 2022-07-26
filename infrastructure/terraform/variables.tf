@@ -39,6 +39,11 @@ variable "relayer_instance_type" {
   description = "Relayer instance type"
 }
 
+variable "grafana_instance_type" {
+  type        = string
+  description = "Grafana instance type"
+}
+
 variable "database_name" {
   type        = string
   description = "The database name"

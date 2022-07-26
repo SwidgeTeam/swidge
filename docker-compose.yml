@@ -128,11 +128,45 @@ services:
       TF_VAR_database_password: ${AURORA_MASTER_PASSWORD}
       TF_VAR_api_instance_type: ${TF_API_INSTANCE_TYPE}
       TF_VAR_relayer_instance_type: ${TF_RELAYER_INSTANCE_TYPE}
+      TF_VAR_grafana_instance_type: ${TF_GRAFANA_INSTANCE_TYPE}
       TF_VAR_transactions_queue: ${AWS_SQS_QUEUE_NAME}
       TF_VAR_instances_key: ${TF_INSTANCES_KEY}
     volumes:
       - ./infrastructure/terraform:/code
     working_dir: /code
+
+  grafana:
+    image: grafana/grafana:latest
+    volumes:
+      - grafana:/var/lib/grafana
+    ports:
+      - "4090:3000"
+
+  loki:
+    image: grafana/loki:2.6.1
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://loki:3100/loki/api/v1/push"
+        loki-batch-size: "400"
+    volumes:
+      - loki:/loki
+      - ./grafana/local:/etc/loki
+    command: -config.file=/etc/loki/loki-config.yml
+    ports:
+      - "3100:3100"
+
+  promtail:
+    image: grafana/promtail:2.4.0
+    command: -config.file=/etc/promtail/promtail-config.yml
+    volumes:
+      - /var/log:/var/log
+      - ./grafana/local:/etc/promtail
+
+volumes:
+  grafana:
+  promtail:
+  loki:
 
 networks:
   default:

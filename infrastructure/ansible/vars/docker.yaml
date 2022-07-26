@@ -1,0 +1,13 @@
+admin_user: admin
+docker_required_packages:
+  - "ca-certificates"
+  - "curl"
+  - "gnupg"
+  - "lsb-release"
+docker_gpg_url: https://download.docker.com/linux/debian/gpg
+docker_repo: deb https://download.docker.com/linux/debian bullseye stable
+docker_packges:
+  - "docker-ce"
+  - "docker-ce-cli"
+  - "containerd.io"
+docker_compose_url: https://github.com/docker/compose/releases/download/v2.7.0/docker-compose-Linux-x86_64

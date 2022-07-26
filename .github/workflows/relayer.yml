@@ -46,7 +46,7 @@ jobs:
           KEY: ${{ secrets.PROD_EC2_SSH_KEY_RELAYER }}
           HOST: ${{ secrets.PROD_EC2_HOST_RELAYER }}
           USER: admin
-          TARGET: /home/admin/relayer
+          TARGET: /home/admin/code/www
           VERBOSE: true
           ARGS: -az --delete-after --include=dist/*** --include=node_modules/*** --exclude=*
           SOURCE: ./${{ env.root-path }}/

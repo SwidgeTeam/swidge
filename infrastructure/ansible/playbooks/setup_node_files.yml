@@ -1,0 +1,9 @@
+- name: Copy node's file structure
+  hosts: "{{ nodes }}"
+  vars:
+    - user: admin
+  tasks:
+    - name: Copy node content
+      copy:
+        src: ../../../{{ service }}/node/
+        dest: /home/{{ user }}/

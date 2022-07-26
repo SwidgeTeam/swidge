@@ -78,3 +78,7 @@ output "api_security_group_id" {
 output "balancer" {
   value = module.application_load_balancer.balancer
 }
+
+output "public_ip" {
+  value = module.api-instance.instances_ip
+}

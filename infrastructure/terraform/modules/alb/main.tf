@@ -34,8 +34,13 @@ resource "aws_alb_listener" "http-alb-listener" {
   protocol          = "HTTP"
 
   default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.target-group.arn
+    type = "redirect"
+
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
   }
 }
 
@@ -56,7 +61,7 @@ resource "aws_lb_listener" "https-alb-listener" {
 
 // security group for alb
 resource "aws_security_group" "http_https" {
-  name        = "allow_http_https"
+  name        = "allow_http_https_${var.name}"
   description = "Allow HTTP & HTTPS inbound connections"
   vpc_id      = var.vpc_id
 
@@ -85,7 +90,7 @@ resource "aws_security_group" "http_https" {
   }
 
   tags = {
-    Name = "allow_http_https"
+    Name = "allow_http_https_${var.name}"
   }
 }
 

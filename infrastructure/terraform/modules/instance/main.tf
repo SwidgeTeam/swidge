@@ -33,3 +33,7 @@ resource "aws_instance" "instance" {
 output "instances_id" {
   value = aws_instance.instance.*.id
 }
+
+output "instances_ip" {
+  value = aws_instance.instance.*.public_ip
+}

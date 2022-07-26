@@ -49,7 +49,7 @@ jobs:
           KEY: ${{ secrets.EC2_SSH_KEY_API }}
           HOST: ${{ secrets.EC2_HOST_API }}
           USER: admin
-          TARGET: /home/admin/api
+          TARGET: /home/admin/code/www
           VERBOSE: true
           ARGS: -az --delete-after --include=dist/*** --include=migrations/*** --include=node_modules/*** --exclude=*
           SOURCE: ./${{ env.root-path }}/
