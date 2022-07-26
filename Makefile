@@ -367,6 +367,7 @@ RUN_PLAYBOOK_ON_SERVICE = $(call RUN_PLAYBOOK,$(2)_$(1),-e "service=$(2)" ${PLAY
 
 $(addprefix setup-instances-, test prod): setup-instances-%:
 	@$(call RUN_PLAYBOOK_GLOBAL,$*,docker.yml)
+	@$(call RUN_PLAYBOOK_GLOBAL,$*,profile.yml)
 	@$(call RUN_PLAYBOOK_ON_SERVICE,$*,api,setup_node_files.yml)
 	@$(call RUN_PLAYBOOK_ON_SERVICE,$*,relayer,setup_node_files.yml)
 	@$(call RUN_PLAYBOOK_ON_SERVICE,$*,grafana,setup_node_files.yml)

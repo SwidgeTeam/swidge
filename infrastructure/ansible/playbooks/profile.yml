@@ -1,0 +1,13 @@
+- name: Add alias & prompt
+  hosts: "{{ nodes }}"
+  become: yes
+  vars:
+    - user: admin
+  tasks:
+    - name: Add alias & prompt
+      blockinfile:
+        path: /home/{{ user }}/.bashrc
+        state: present
+        block: |
+          alias ll='ls -la'
+          alias dc='docker-compose'
