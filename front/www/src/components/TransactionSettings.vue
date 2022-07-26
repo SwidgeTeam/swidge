@@ -1,20 +1,30 @@
 <script setup lang='ts'>
 import TransactionSettingsComponent from './TransactionSettingsComponent.vue'
+
+defineProps <{
+ slippageValue: string,
+ waitingTime: string,
+ bridgeFeeValue: string,
+
+}> ()
+
+
+
 </script>
 
 <template>
   <div>
-    <span class="text-2xl">Transaction Settings:</span>
+    <span class="text-2xl">Transaction Details</span>
     <div class="w-full flex flex-col gap-1.5 mt-3.5">
       <TransactionSettingsComponent
         text="Slippage Tolerance"
-        value="3.00%" />
+        :value = slippageValue />
       <TransactionSettingsComponent
-        text="Native Token"
-        value="1.00% = 1.43 MATIC" />
+        text="Est. Waiting Time"
+        :value= waitingTime />
       <TransactionSettingsComponent
         text="Bridge Fee"
-        value="USDC 0.25" />
+        :value= bridgeFeeValue />
     </div>
-  </div>
+    </div>
 </template>
