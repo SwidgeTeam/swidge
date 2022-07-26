@@ -49,6 +49,8 @@ services:
       RPC_NODE_BSC: ${bsc_RPC_NODE}
       RPC_NODE_AVALANCHE: ${avalanche_RPC_NODE}
       RPC_NODE_OPTIMISM: ${optimism_RPC_NODE}
+      SWAGGER_USER: ${SWAGGER_USER}
+      SWAGGER_PASS: ${SWAGGER_PASS}
     ports:
       - ${API_PORT}:3000
     volumes:

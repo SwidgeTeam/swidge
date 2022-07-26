@@ -32,6 +32,7 @@
       "@nestjs/core": "^8.0.0",
       "@nestjs/cqrs": "^8.0.2",
       "@nestjs/platform-express": "^8.0.0",
+      "@nestjs/swagger": "^6.0.4",
       "@nestjs/typeorm": "^8.0.3",
       "@sushiswap/sdk": "^5.0.0-canary.116",
       "axios": "^0.26.1",
@@ -42,9 +43,11 @@
       "lodash": "^4.17.21",
       "mysql": "^2.14.1",
       "mysql2": "^2.3.3",
+      "prom-client": "^14.0.1",
       "reflect-metadata": "^0.1.13",
       "rimraf": "^3.0.2",
       "rxjs": "^7.2.0",
+      "swagger-stats": "^0.99.2",
       "typeorm": "0.2.43"
    },
    "devDependencies": {
