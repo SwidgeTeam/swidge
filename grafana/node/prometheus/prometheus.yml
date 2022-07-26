@@ -29,3 +29,11 @@ scrape_configs:
     static_configs:
       - targets: [ '%API_HOST%' ]
 
+  - job_name: api-pm2-metrics
+    scrape_interval: 10s
+    scrape_timeout: 10s
+    metrics_path: /metrics
+    scheme: http
+    static_configs:
+      - targets:
+          - %API_HOST%:9209

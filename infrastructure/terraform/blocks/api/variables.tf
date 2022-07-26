@@ -42,3 +42,8 @@ variable "key_name" {
   type        = string
   description = "Name of the keypair to use"
 }
+
+variable "scrapper_ips" {
+  type        = list(string)
+  description = "IPs allowed to scrape the metrics"
+}

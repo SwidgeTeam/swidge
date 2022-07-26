@@ -113,6 +113,7 @@ module "api" {
   certificate_arn     = module.regional_cert.arn
   instance_type       = var.api_instance_type
   key_name            = local.instances_key_name
+  scrapper_ips        = module.grafana.public_ip
 }
 
 module "relayer" {
