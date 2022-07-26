@@ -129,6 +129,7 @@ module "relayer" {
   transactions_queue  = var.transactions_queue
   relayer_account_arn = aws_iam_user.relayer.arn
   key_name            = local.instances_key_name
+  scrapper_ips        = module.grafana.public_ip
 }
 
 module "grafana" {

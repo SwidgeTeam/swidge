@@ -3,7 +3,7 @@ version: "3.5"
 services:
 
   relayer:
-    image: keymetrics/pm2:16-alpine
+    build: .
     volumes:
       - ./code/:/code/
       - logs:/root/.pm2/logs

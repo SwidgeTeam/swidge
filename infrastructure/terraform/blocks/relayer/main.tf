@@ -86,6 +86,14 @@ resource "aws_security_group" "relayer-sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    description = "Metrics for Prometheus"
+    from_port   = 9209
+    to_port     = 9209
+    protocol    = "tcp"
+    cidr_blocks = [for ip in var.scrapper_ips : "${ip}/32"]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
