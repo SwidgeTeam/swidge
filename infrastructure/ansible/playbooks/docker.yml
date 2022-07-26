@@ -23,7 +23,7 @@
     - name: Install Docker
       apt: name={{ docker_packges }} state=latest update_cache=yes
 
-    - name: Add adminstrator to docker group
+    - name: Add admin to docker group
       user:
         name: "{{ admin_user }}"
         groups: docker
@@ -34,3 +34,7 @@
         url: "{{ docker_compose_url }}"
         dest: /usr/local/bin/docker-compose
         mode: u+x,g+x,o+x
+
+    - name: Install Loki logging driver
+      shell: >
+        docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions
