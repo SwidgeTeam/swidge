@@ -4,7 +4,7 @@ import { ethers } from "hardhat";
 import {
   deployByName,
   fakeTokenContract,
-  getAccounts,
+  getAccounts, NativeToken,
   RandomAddress,
 } from "../../shared";
 import { BigNumber, Contract } from "ethers";
@@ -64,7 +64,37 @@ describe("Sushi provider", () => {
     await expect(call).to.be.revertedWith("Sushi failed: Reverted silently");
   });
 
-  it("should not approve if native token in", async () => {});
+  it("should send value if native token in", async () => {
+    /*
+    // Arrange
+    const { owner } = await getAccounts();
+    const sushiHandler = await fakeSushiSwapRouter();
+    const tokenIn = NativeToken;
+    const tokenOut = await fakeTokenContract();
+    const amountIn = BigNumber.from("10");
+    const callData = generateSwapExactTokensForTokensCallData([
+      100,
+      10,
+      [RandomAddress, RandomAddress],
+      RandomAddress,
+      100,
+    ]);
+
+    // Act
+    await contract
+      .connect(owner)
+      .swap(
+        sushiHandler.address,
+        tokenIn,
+        tokenOut.address,
+        amountIn,
+        callData
+      );
+
+    // Assert
+    expect(sushiHandler.swapExactTokensForTokens).to.have.been.calledWithValue(10);
+     */
+  });
 
   it("should approve handler if non-native token in", async () => {
     // Arrange
