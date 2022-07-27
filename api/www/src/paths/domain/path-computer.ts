@@ -216,20 +216,20 @@ export class PathComputer {
    * Returns a possible bridge order
    * @param providerId ID of bridge provider to use
    * @param asset The asset that we want to send across the bridge
-   * @param swapAmountOut The amount that we want to cross
+   * @param bridgeAmountIn The amount that we want to cross
    * @private
    */
   private async getBridgeOrder(
     providerId: string,
     asset: string,
-    swapAmountOut: BigInteger,
+    bridgeAmountIn: BigInteger,
   ): Promise<BridgingOrder> {
     const bridgeTokenIn = Tokens[asset][this.fromChain];
     const bridgeRequest = new BridgingRequest(
       this.fromChain,
       this.toChain,
       bridgeTokenIn,
-      swapAmountOut,
+      bridgeAmountIn,
     );
     try {
       return await this.bridgeOrderProvider.execute(providerId, bridgeRequest);
