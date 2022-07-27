@@ -4,7 +4,7 @@
         "symbol": "Optimism ETH",
         "name": "OETH",
         "decimals": 18,
-        "logo": ""
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/f_auto,c_limit,w_64,q_auto/https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/optimism.jpg"
     },
     {
         "id": "0xF98dCd95217E15E05d8638da4c91125E59590B07",
