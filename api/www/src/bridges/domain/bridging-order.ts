@@ -69,7 +69,15 @@ export class BridgingOrder {
     }
   }
 
-  public finalFee(crossAmount: BigInteger): BigInteger {
+  get fee(): BigInteger {
+    const convertedAmount = this._amountIn.convertDecimalsFromTo(
+      this._tokenIn.decimals,
+      this._fees.decimals,
+    );
+    return this.finalFee(convertedAmount);
+  }
+
+  private finalFee(crossAmount: BigInteger): BigInteger {
     // Compute the given percentage
     let fee = crossAmount.times(this._fees.percentageFee * 100).div(100 * 100);
     if (fee.lessThan(this._fees.minimumFee)) {
