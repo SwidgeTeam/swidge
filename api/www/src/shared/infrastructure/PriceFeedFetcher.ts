@@ -129,7 +129,7 @@ export class PriceFeedFetcher {
 
     const decimals = await priceFeed.decimals();
     const lastRound = await priceFeed.latestRoundData();
-    const lastPrice = BigInteger.fromString(lastRound.answer.toString());
+    const lastPrice = BigInteger.fromBigNumber(lastRound.answer);
 
     return new PriceFeed(lastPrice, decimals);
   }
