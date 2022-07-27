@@ -19,8 +19,12 @@
 - Set the frontend Cloudfront distribution ID into GitHub secrets.
 - Copy the API/relayer IP into GitHub secrets.
 - Copy the API/relayer SSH private key into GitHub secrets. Needed to connect to instance and push changes.
+
+
 - Add the instances IPs to the Ansible inventory.
 - Add the keyfile paths to the Ansible inventory.
-- Run Ansible playbooks.
+- Run Ansible playbooks (`setup-instances-${ENV}`).
 - Set `.env` files on API and relayer with the required variables.
+- Set required parameters on the `prometheus.yml` config file on API and relayer instances.
+- Set user/password on Prometheus scraper(Grafana instance) to access the API metrics endpoint.
 - Force deploy of all projects to new environment.
