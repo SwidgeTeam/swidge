@@ -4,349 +4,349 @@
         "symbol": "MATIC",
         "name": "Polygon",
         "decimals": 18,
-        "volumeUSD": 11116396988.0854091644
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/logos/main/token/polygon.jpg"
     },
     {
         "id": "0x2791bca1f2de4661ed88a30c99a7a9449aa84174",
         "symbol": "USDC",
         "name": "USD Coin (PoS)",
         "decimals": 6,
-        "volumeUSD": 10597165384.1293792725
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x2791bca1f2de4661ed88a30c99a7a9449aa84174/logo.png"
     },
     {
         "id": "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
         "symbol": "WMATIC",
         "name": "Wrapped Matic",
         "decimals": 18,
-        "volumeUSD": 6071048465.7863845825
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270/logo.png"
     },
     {
         "id": "0x2f800db0fdb5223b3c3f354886d907a671414a7f",
         "symbol": "BCT",
         "name": "Toucan Protocol: Base Carbon Tonne",
         "decimals": 18,
-        "volumeUSD": 1874533598.4867329597
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x2f800db0fdb5223b3c3f354886d907a671414a7f/logo.png"
     },
     {
         "id": "0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
         "symbol": "USDT",
         "name": "(PoS) Tether USD",
         "decimals": 6,
-        "volumeUSD": 1798585781.2297914028
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0xc2132d05d31c914a87c6611c10748aeb04b58e8f/logo.png"
     },
     {
         "id": "0xd86b5923f3ad7b585ed81b448170ae026c65ae9a",
         "symbol": "IRON",
         "name": "IRON Stablecoin",
         "decimals": 18,
-        "volumeUSD": 1461289777.6416118145
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0xd86b5923f3ad7b585ed81b448170ae026c65ae9a/logo.png"
     },
     {
         "id": "0x8f3cf7ad23cd3cadbd9735aff958023239c6a063",
         "symbol": "DAI",
         "name": "(PoS) Dai Stablecoin",
         "decimals": 18,
-        "volumeUSD": 1188254725.1962833405
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x8f3cf7ad23cd3cadbd9735aff958023239c6a063/logo.png"
     },
     {
         "id": "0xaaa5b9e6c589642f98a1cda99b9d024b8407285a",
         "symbol": "TITAN",
         "name": "IRON Titanium Token",
         "decimals": 18,
-        "volumeUSD": 1091697446.3676538467
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0xaaa5b9e6c589642f98a1cda99b9d024b8407285a/logo.png"
     },
     {
         "id": "0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6",
         "symbol": "WBTC",
         "name": "(PoS) Wrapped BTC",
         "decimals": 8,
-        "volumeUSD": 910238114.4294611216
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6/logo.png"
     },
     {
         "id": "0xd6df932a45c0f255f85145f286ea0b292b21c90b",
         "symbol": "AAVE",
         "name": "Aave (PoS)",
         "decimals": 18,
-        "volumeUSD": 415464247.656502068
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0xd6df932a45c0f255f85145f286ea0b292b21c90b/logo.png"
     },
     {
         "id": "0xaa9654becca45b5bdfa5ac646c939c62b527d394",
         "symbol": "DINO",
         "name": "DinoSwap (PoS)",
         "decimals": 18,
-        "volumeUSD": 325681520.7108881474
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0xaa9654becca45b5bdfa5ac646c939c62b527d394/logo.png"
     },
     {
         "id": "0x53e0bca35ec356bd5dddfebbd1fc0fd03fabad39",
         "symbol": "LINK",
         "name": "ChainLink Token",
         "decimals": 18,
-        "volumeUSD": 248751918.9554080665
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x53e0bca35ec356bd5dddfebbd1fc0fd03fabad39/logo.png"
     },
     {
         "id": "0xcd7361ac3307d1c5a46b63086a90742ff44c63b3",
         "symbol": "RAIDER",
         "name": "RaiderToken",
         "decimals": 18,
-        "volumeUSD": 217183065.8923549056
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0xcd7361ac3307d1c5a46b63086a90742ff44c63b3/logo.png"
     },
     {
         "id": "0x4e78011ce80ee02d2c3e649fb657e45898257815",
         "symbol": "KLIMA",
         "name": "Klima DAO",
         "decimals": 9,
-        "volumeUSD": 189924478.6138846278
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x4e78011ce80ee02d2c3e649fb657e45898257815/logo.png"
     },
     {
         "id": "0x172370d5cd63279efa6d502dab29171933a610af",
         "symbol": "CRV",
         "name": "CRV (PoS)",
         "decimals": 18,
-        "volumeUSD": 161954095.450414896
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x172370d5cd63279efa6d502dab29171933a610af/logo.png"
     },
     {
         "id": "0x0b3f868e0be5597d5db7feb59e1cadbb0fdda50a",
         "symbol": "SUSHI",
         "name": "SushiToken (PoS)",
         "decimals": 18,
-        "volumeUSD": 156273648.5485961735
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x0b3f868e0be5597d5db7feb59e1cadbb0fdda50a/logo.png"
     },
     {
         "id": "0x3a3df212b7aa91aa0402b9035b098891d276572b",
         "symbol": "FISH",
         "name": "Fish",
         "decimals": 18,
-        "volumeUSD": 141393639.3886715174
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x3a3df212b7aa91aa0402b9035b098891d276572b/logo.png"
     },
     {
         "id": "0x34d4ab47bee066f361fa52d792e69ac7bd05ee23",
         "symbol": "AURUM",
         "name": "RaiderAurum",
         "decimals": 18,
-        "volumeUSD": 97255892.5338455886
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x34d4ab47bee066f361fa52d792e69ac7bd05ee23/logo.png"
     },
     {
         "id": "0x104592a158490a9228070e0a8e5343b499e125d0",
         "symbol": "FRAX",
         "name": "Frax (PoS)",
         "decimals": 18,
-        "volumeUSD": 82939174.9588227868
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x104592a158490a9228070e0a8e5343b499e125d0/logo.png"
     },
     {
         "id": "0x45c32fa6df82ead1e2ef74d17b76547eddfaff89",
         "symbol": "FRAX",
         "name": "Frax",
         "decimals": 18,
-        "volumeUSD": 78334094.2035727799
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x45c32fa6df82ead1e2ef74d17b76547eddfaff89/logo.png"
     },
     {
         "id": "0x9af3b7dc29d3c4b1a5731408b6a9656fa7ac3b72",
         "symbol": "PUSD",
         "name": "PUSD",
         "decimals": 18,
-        "volumeUSD": 61056998.2236624509
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x9af3b7dc29d3c4b1a5731408b6a9656fa7ac3b72/logo.png"
     },
     {
         "id": "0x2c89bbc92bd86f8075d1decc58c7f4e0107f286b",
         "symbol": "AVAX",
         "name": "Avalanche Token",
         "decimals": 18,
-        "volumeUSD": 57776485.4165361971
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x2c89bbc92bd86f8075d1decc58c7f4e0107f286b/logo.png"
     },
     {
         "id": "0x5fe2b58c013d7601147dcdd68c143a77499f5531",
         "symbol": "GRT",
         "name": "Graph Token (PoS)",
         "decimals": 18,
-        "volumeUSD": 57656618.4153381512
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x5fe2b58c013d7601147dcdd68c143a77499f5531/logo.png"
     },
     {
         "id": "0xc17b109e146934d36c33e55fade9cbda791b0366",
         "symbol": "KRL",
         "name": "Kart Racing League",
         "decimals": 18,
-        "volumeUSD": 54958347.1967937201
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0xc17b109e146934d36c33e55fade9cbda791b0366/logo.png"
     },
     {
         "id": "0xa1c57f48f0deb89f569dfbe6e2b7f46d33606fd4",
         "symbol": "MANA",
         "name": "(PoS) Decentraland MANA",
         "decimals": 18,
-        "volumeUSD": 44184814.4768132195
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0xa1c57f48f0deb89f569dfbe6e2b7f46d33606fd4/logo.png"
     },
     {
         "id": "0x2ab4f9ac80f33071211729e45cfc346c1f8446d5",
         "symbol": "CGG",
         "name": "ChainGuardians Governance Token (PoS)",
         "decimals": 18,
-        "volumeUSD": 41514954.9378171861
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x2ab4f9ac80f33071211729e45cfc346c1f8446d5/logo.png"
     },
     {
         "id": "0xee800b277a96b0f490a1a732e1d6395fad960a26",
         "symbol": "ARPA",
         "name": "ARPA Token (PoS)",
         "decimals": 18,
-        "volumeUSD": 38949649.5437200665
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0xee800b277a96b0f490a1a732e1d6395fad960a26/logo.png"
     },
     {
         "id": "0x4e1581f01046efdd7a1a2cdb0f82cdd7f71f2e59",
         "symbol": "ICE",
         "name": "IceToken",
         "decimals": 18,
-        "volumeUSD": 36894267.0707471669
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x4e1581f01046efdd7a1a2cdb0f82cdd7f71f2e59/logo.png"
     },
     {
         "id": "0xcd966b72cff52dc349089b6b6f5865b5743b4e08",
         "symbol": "TOMI",
         "name": "TOMI",
         "decimals": 18,
-        "volumeUSD": 36546425.2098691165
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0xcd966b72cff52dc349089b6b6f5865b5743b4e08/logo.png"
     },
     {
         "id": "0x50b728d8d964fd00c2d0aad81718b71311fef68a",
         "symbol": "SNX",
         "name": "Synthetix Network Token (PoS)",
         "decimals": 18,
-        "volumeUSD": 36366078.1478958726
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x50b728d8d964fd00c2d0aad81718b71311fef68a/logo.png"
     },
     {
         "id": "0x1a3acf6d19267e2d3e7f898f42803e90c9219062",
         "symbol": "FXS",
         "name": "Frax Share",
         "decimals": 18,
-        "volumeUSD": 32899163.6404191852
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x1a3acf6d19267e2d3e7f898f42803e90c9219062/logo.png"
     },
     {
         "id": "0x385eeac5cb85a38a9a07a70c73e0a3271cfb54a7",
         "symbol": "GHST",
         "name": "Aavegotchi GHST Token (PoS)",
         "decimals": 18,
-        "volumeUSD": 32133929.833208628
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x385eeac5cb85a38a9a07a70c73e0a3271cfb54a7/logo.png"
     },
     {
         "id": "0xd8ca34fd379d9ca3c6ee3b3905678320f5b45195",
         "symbol": "gOHM",
         "name": "Governance OHM",
         "decimals": 18,
-        "volumeUSD": 31231390.0300978944
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0xd8ca34fd379d9ca3c6ee3b3905678320f5b45195/logo.png"
     },
     {
         "id": "0x228b5c21ac00155cf62c57bcc704c0da8187950b",
         "symbol": "NXD",
         "name": "Nexus Dubai",
         "decimals": 18,
-        "volumeUSD": 29846894.4133014902
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x228b5c21ac00155cf62c57bcc704c0da8187950b/logo.png"
     },
     {
         "id": "0x29f1e986fca02b7e54138c04c4f503dddd250558",
         "symbol": "VSQ",
         "name": "VSQ",
         "decimals": 9,
-        "volumeUSD": 26385433.9773191288
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x29f1e986fca02b7e54138c04c4f503dddd250558/logo.png"
     },
     {
         "id": "0xd4945a3d0de9923035521687d4bf18cc9b0c7c2a",
         "symbol": "LUXY",
         "name": "LUXY",
         "decimals": 18,
-        "volumeUSD": 25657879.0677823797
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0xd4945a3d0de9923035521687d4bf18cc9b0c7c2a/logo.png"
     },
     {
         "id": "0xf5ea626334037a2cf0155d49ea6462fddc6eff19",
         "symbol": "SPADE",
         "name": "PolygonFarm Finance",
         "decimals": 18,
-        "volumeUSD": 23221796.9466843866
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0xf5ea626334037a2cf0155d49ea6462fddc6eff19/logo.png"
     },
     {
         "id": "0x3e121107f6f22da4911079845a470757af4e1a1b",
         "symbol": "FXS",
         "name": "Frax Share (PoS)",
         "decimals": 18,
-        "volumeUSD": 21584644.0764820874
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x3e121107f6f22da4911079845a470757af4e1a1b/logo.png"
     },
     {
         "id": "0x057e0bd9b797f9eeeb8307b35dbc8c12e534c41e",
         "symbol": "GURU",
         "name": "Guru",
         "decimals": 9,
-        "volumeUSD": 20152246.8737095334
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x057e0bd9b797f9eeeb8307b35dbc8c12e534c41e/logo.png"
     },
     {
         "id": "0xd0f3121a190d85de0ab6131f2bcecdbfcfb38891",
         "symbol": "YELD",
         "name": "PolyYeld Token",
         "decimals": 18,
-        "volumeUSD": 20050645.9824687317
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0xd0f3121a190d85de0ab6131f2bcecdbfcfb38891/logo.png"
     },
     {
         "id": "0xe06bd4f5aac8d0aa337d13ec88db6defc6eaeefe",
         "symbol": "IXT",
         "name": "PlanetIX",
         "decimals": 18,
-        "volumeUSD": 19954162.369394891
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0xe06bd4f5aac8d0aa337d13ec88db6defc6eaeefe/logo.png"
     },
     {
         "id": "0x76e63a3e7ba1e2e61d3da86a87479f983de89a7e",
         "symbol": "OMEN",
         "name": "Augury Finance",
         "decimals": 18,
-        "volumeUSD": 18062324.0894871168
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x76e63a3e7ba1e2e61d3da86a87479f983de89a7e/logo.png"
     },
     {
         "id": "0x5a3064cbdccf428ae907796cf6ad5a664cd7f3d8",
         "symbol": "PYQ",
         "name": "PYQ",
         "decimals": 18,
-        "volumeUSD": 18004818.7814694382
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x5a3064cbdccf428ae907796cf6ad5a664cd7f3d8/logo.png"
     },
     {
         "id": "0xc68e83a305b0fad69e264a1769a0a070f190d2d6",
         "symbol": "ROLL",
         "name": "Polyroll Token",
         "decimals": 18,
-        "volumeUSD": 17548336.9278039932
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0xc68e83a305b0fad69e264a1769a0a070f190d2d6/logo.png"
     },
     {
         "id": "0x840195888db4d6a99ed9f73fcd3b225bb3cb1a79",
         "symbol": "SX",
         "name": "SportX (PoS)",
         "decimals": 18,
-        "volumeUSD": 17503380.0027456209
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x840195888db4d6a99ed9f73fcd3b225bb3cb1a79/logo.png"
     },
     {
         "id": "0x4eac4c4e9050464067d673102f8e24b2fcceb350",
         "symbol": "ibBTC",
         "name": "Interest-Bearing BTC",
         "decimals": 18,
-        "volumeUSD": 15157093.3713539876
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x4eac4c4e9050464067d673102f8e24b2fcceb350/logo.png"
     },
     {
         "id": "0x3ad707da309f3845cd602059901e39c4dcd66473",
         "symbol": "ETH2x-FLI-P",
         "name": "ETH 2x Flexible Leverage Index",
         "decimals": 18,
-        "volumeUSD": 13998156.4717413969
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x3ad707da309f3845cd602059901e39c4dcd66473/logo.png"
     },
     {
         "id": "0xfbdd194376de19a88118e84e279b977f165d01b8",
         "symbol": "BIFI",
         "name": "beefy.finance",
         "decimals": 18,
-        "volumeUSD": 13855944.0729375314
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0xfbdd194376de19a88118e84e279b977f165d01b8/logo.png"
     },
     {
         "id": "0x7f426f6dc648e50464a0392e60e1bb465a67e9cf",
         "symbol": "PAUTO",
         "name": "Orbit Bridge Polygon AUTOv2",
         "decimals": 18,
-        "volumeUSD": 13847258.8072614241
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x7f426f6dc648e50464a0392e60e1bb465a67e9cf/logo.png"
     },
     {
         "id": "0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6",
         "symbol": "ALGB",
         "name": "Algebra",
         "decimals": 18,
-        "volumeUSD": 13719193.0004632659
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x0169ec1f8f639b32eec6d923e24c2a2ff45b9dd6/logo.png"
     }
 ]

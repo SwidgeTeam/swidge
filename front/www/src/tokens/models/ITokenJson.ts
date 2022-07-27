@@ -3,4 +3,5 @@ export default interface ITokenJson {
     symbol: string
     name: string
     decimals: number
+    logo: string
 }
