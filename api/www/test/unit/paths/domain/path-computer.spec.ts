@@ -6,7 +6,6 @@ import { HttpClient } from '../../../../src/shared/infrastructure/http/httpClien
 import { CachedHttpClient } from '../../../../src/shared/infrastructure/http/cachedHttpClient';
 import { BridgeOrderComputer } from '../../../../src/bridges/application/query/bridge-order-computer';
 import { TokenDetailsFetcher } from '../../../../src/shared/infrastructure/TokenDetailsFetcher';
-import { PriceFeedConverter } from '../../../../src/shared/infrastructure/PriceFeedConverter';
 import { GetPathQuery } from '../../../../src/paths/application/query/get-path.query';
 import { TokenMother } from '../../shared/domain/Token.mother';
 import { SwapOrder } from '../../../../src/swaps/domain/SwapOrder';
@@ -23,6 +22,7 @@ import { createMock } from 'ts-auto-mock';
 import { SushiPairsRepository } from '../../../../src/swaps/domain/sushi-pairs-repository';
 import { PriceFeedFetcher } from '../../../../src/shared/infrastructure/PriceFeedFetcher';
 import { GasPriceFetcher } from '../../../../src/shared/infrastructure/GasPriceFetcher';
+import { GasConverter } from '../../../../src/shared/domain/GasConverter';
 
 describe('path-computer', () => {
   it('should compute a single path', async () => {
@@ -103,10 +103,6 @@ describe('path-computer', () => {
     const priceFeedFetcher = new PriceFeedFetcher();
     stub(priceFeedFetcher, 'fetch').resolves(BigNumber.from('101010'));
 
-    // mock Chainlink's PriceFeedConverter
-    const priceFeedConverter = new PriceFeedConverter();
-    stub(priceFeedConverter, 'fetch').resolves(BigNumber.from('101010'));
-
     const mockSushiRepository = createMock<SushiPairsRepository>({
       getPairs: (chainId) => Promise.reject([]),
     });
@@ -124,7 +120,6 @@ describe('path-computer', () => {
       swapOrderComputer,
       bridgeOrderComputer,
       fetcher,
-      priceFeedConverter,
       priceFeedFetcher,
       gasPriceFetcher,
     );

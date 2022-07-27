@@ -13,20 +13,20 @@ import { SwapOrderComputer } from '../../swaps/application/query/swap-order-comp
 import { BridgingRequest } from '../../bridges/domain/bridging-request';
 import { Path } from './path';
 import { BigNumber } from 'ethers';
-import { PriceFeedConverter } from '../../shared/infrastructure/PriceFeedConverter';
 import { PathNotFound } from './path-not-found';
 import { flatten } from 'lodash';
 import { PriceFeedFetcher } from '../../shared/infrastructure/PriceFeedFetcher';
 import { GasPriceFetcher } from '../../shared/infrastructure/GasPriceFetcher';
+import { GasConverter } from '../../shared/domain/GasConverter';
 
 export class PathComputer {
   /** Providers */
   private readonly swapOrderProvider: SwapOrderComputer;
   private readonly bridgeOrderProvider: BridgeOrderComputer;
   private readonly tokenDetailsFetcher: TokenDetailsFetcher;
-  private readonly priceFeedConverter: PriceFeedConverter;
   private readonly priceFeedFetcher: PriceFeedFetcher;
   private readonly gasPriceFetcher: GasPriceFetcher;
+  private readonly gasConverter: GasConverter;
   /** Details */
   private readonly bridgingAssets;
   private srcToken: Token;
@@ -43,16 +43,15 @@ export class PathComputer {
     _swapOrderProvider: SwapOrderComputer,
     _bridgeOrderProvider: BridgeOrderComputer,
     _tokenDetailsFetcher: TokenDetailsFetcher,
-    _priceFeedConverter: PriceFeedConverter,
     _priceFeedFetcher: PriceFeedFetcher,
     _gasPriceFetcher: GasPriceFetcher,
   ) {
     this.swapOrderProvider = _swapOrderProvider;
     this.bridgeOrderProvider = _bridgeOrderProvider;
     this.tokenDetailsFetcher = _tokenDetailsFetcher;
-    this.priceFeedConverter = _priceFeedConverter;
     this.priceFeedFetcher = _priceFeedFetcher;
     this.gasPriceFetcher = _gasPriceFetcher;
+    this.gasConverter = new GasConverter();
     this.bridgingAssets = [USDC];
   }
 
@@ -281,7 +280,7 @@ export class PathComputer {
 
     const destinationGasPrice = await this.gasPriceFetcher.fetch(this.toChain);
 
-    return await this.priceFeedConverter.fetch(
+    return await this.gasConverter.convert(
       destinationEstimatedGas,
       destinationGasPrice,
       this.priceOriginCoin,

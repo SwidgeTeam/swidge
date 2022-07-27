@@ -10,7 +10,6 @@ import httpClientProvider from '../shared/infrastructure/http/httpClient.provide
 import addressesRepositoryProvider from '../addresses/infrastructure/database/repositories/addresses.repository.provider';
 import { TransactionsModule } from '../transactions/transactions.module';
 import tokenDetailsFetcherProvider from '../shared/infrastructure/TokenDetailsFetcher.provider';
-import priceFeedConverterProvider from '../shared/infrastructure/PriceFeedConverter.provider';
 import cachedHttpClientProvider from '../shared/infrastructure/http/cachedHttpClient.provider';
 import sushiPairsRepositoryProvider from '../swaps/infrastructure/database/repositories/sushi-pairs.repository.provider';
 import priceFeedFetcherProvider from '../shared/infrastructure/PriceFeedFetcher.provider';
@@ -32,7 +31,6 @@ import gasPriceFetcherProvider from '../shared/infrastructure/GasPriceFetcher.pr
     cachedHttpClientProvider(),
     addressesRepositoryProvider(),
     tokenDetailsFetcherProvider(),
-    priceFeedConverterProvider(),
     priceFeedFetcherProvider(),
     gasPriceFetcherProvider(),
     sushiPairsRepositoryProvider(),

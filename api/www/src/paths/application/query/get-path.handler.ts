@@ -11,7 +11,6 @@ import { Inject } from '@nestjs/common';
 import { Class } from '../../../shared/Class';
 import { BigInteger } from '../../../shared/domain/BigInteger';
 import { BigNumber } from 'ethers';
-import { PriceFeedConverter } from '../../../shared/infrastructure/PriceFeedConverter';
 import { ExchangeProviders } from '../../../swaps/domain/providers/exchange-providers';
 import { PathComputer } from '../../domain/path-computer';
 import { PriceFeedFetcher } from '../../../shared/infrastructure/PriceFeedFetcher';
@@ -26,8 +25,6 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
     private readonly bridgeOrderProvider: BridgeOrderComputer,
     @Inject(Class.TokenDetailsFetcher)
     private readonly tokenDetailsFetcher: TokenDetailsFetcher,
-    @Inject(Class.PriceFeedConverter)
-    private readonly priceFeedConverter: PriceFeedConverter,
     @Inject(Class.PriceFeedFetcher)
     private readonly priceFeedFetcher: PriceFeedFetcher,
     @Inject(Class.GasPriceFetcher)
@@ -37,7 +34,6 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
       swapOrderProvider,
       bridgeOrderProvider,
       tokenDetailsFetcher,
-      priceFeedConverter,
       priceFeedFetcher,
       gasPriceFetcher,
     );

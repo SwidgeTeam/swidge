@@ -9,7 +9,6 @@ export class Class {
   public static HttpClient = 'httpClient';
   public static CachedHttpClient = 'CachedHttpClient';
   public static TokenDetailsFetcher = 'TokenDetailsFetcher';
-  public static PriceFeedConverter = 'PriceFeedConverter';
   public static TokensRepository = 'TokensRepository';
   public static PriceFeedFetcher: 'PriceFeedFetcher';
   public static GasPriceFetcher: 'GasPriceFetcher';

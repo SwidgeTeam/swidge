@@ -1,7 +1,7 @@
 import { BigNumber, ethers } from 'ethers';
 
-export class PriceFeedConverter {
-  public async fetch(
+export class GasConverter {
+  public async convert(
     gasUnits: BigNumber,
     gasPrice: BigNumber,
     priceOriginCoin: BigNumber,

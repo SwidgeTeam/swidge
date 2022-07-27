@@ -6,7 +6,6 @@ import { BridgeOrderComputer } from '../../../../../src/bridges/application/quer
 import { Token } from '../../../../../src/shared/domain/Token';
 import { InsufficientLiquidity } from '../../../../../src/swaps/domain/InsufficientLiquidity';
 import { TokenDetailsFetcher } from '../../../../../src/shared/infrastructure/TokenDetailsFetcher';
-import { PriceFeedConverter } from '../../../../../src/shared/infrastructure/PriceFeedConverter';
 import { BigNumber } from 'ethers';
 import { PriceFeedFetcher } from '../../../../../src/shared/infrastructure/PriceFeedFetcher';
 import { stub } from 'sinon';
@@ -27,11 +26,6 @@ describe('get path', () => {
         return Promise.resolve(new Token('', '', 6, 'SYMB'));
       },
     });
-    const mockPriceFeedConverter = createMock<PriceFeedConverter>({
-      fetch: () => {
-        return Promise.resolve(BigNumber.from(0));
-      },
-    });
 
     const priceFeedFetcher = new PriceFeedFetcher();
     stub(priceFeedFetcher, 'fetch')
@@ -48,7 +42,6 @@ describe('get path', () => {
       mockSwapProvider,
       mockBridgeProvider,
       mockTokenDetailsFetcher,
-      mockPriceFeedConverter,
       priceFeedFetcher,
       gasPriceFetcher,
     );
