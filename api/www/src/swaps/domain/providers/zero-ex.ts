@@ -62,7 +62,7 @@ export class ZeroEx implements Exchange {
       request.tokenOut,
       response.allowanceTarget,
       encodedData,
-      BigInteger.fromBigNumber(response.buyAmount),
+      BigInteger.fromString(response.buyAmount),
       BigNumber.from(response.gas),
     );
   }

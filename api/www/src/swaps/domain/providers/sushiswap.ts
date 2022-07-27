@@ -146,7 +146,7 @@ export class Sushiswap implements Exchange {
       request.tokenOut,
       '',
       callData,
-      BigInteger.fromBigNumber(trade[0].outputAmount.numerator.toString()),
+      BigInteger.fromString(trade[0].outputAmount.numerator.toString()),
       BigNumber.from(gasEstimations[chainId]),
     );
   }

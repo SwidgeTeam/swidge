@@ -18,17 +18,17 @@ export class UpdateTransactionHandler
     const transaction = await this.repository.find(command.txHash);
 
     if (command.bridgeAmountIn) {
-      const bridgeAmountIn = BigInteger.fromBigNumber(command.bridgeAmountIn);
+      const bridgeAmountIn = BigInteger.fromString(command.bridgeAmountIn);
       transaction.setBridgeAmountIn(bridgeAmountIn);
     }
 
     if (command.bridgeAmountOut) {
-      const bridgeAmountOut = BigInteger.fromBigNumber(command.bridgeAmountOut);
+      const bridgeAmountOut = BigInteger.fromString(command.bridgeAmountOut);
       transaction.setBridgeAmountOut(bridgeAmountOut);
     }
 
     if (command.amountOut) {
-      const amountOut = BigInteger.fromBigNumber(command.amountOut);
+      const amountOut = BigInteger.fromString(command.amountOut);
       transaction.setAmountOut(amountOut);
     }
 
