@@ -35,6 +35,7 @@ export class GetPathController {
         required: path.originSwap.required,
         amountOut: path.originSwap.buyAmountDecimal,
         estimatedGas: path.originSwap.estimatedGas.toString(),
+        fee: path.originFeeDecimal,
       },
       bridge: {
         tokenIn: this.mapTokenDetails(path.bridging.tokenIn),
@@ -49,6 +50,7 @@ export class GetPathController {
         tokenIn: this.mapTokenDetails(path.destinationSwap.tokenIn),
         tokenOut: this.mapTokenDetails(path.destinationSwap.tokenOut),
         required: path.destinationSwap.required,
+        fee: '',
       },
     });
   }

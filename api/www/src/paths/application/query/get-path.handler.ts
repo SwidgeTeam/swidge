@@ -58,11 +58,19 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
 
     const swapOrder = await this.swapOrderProvider.execute(ExchangeProviders.ZeroEx, swapRequest);
 
+    const gasPriceOrigin = await this.gasPriceFetcher.fetch(query.fromChainId);
+    const priceOriginCoin = await this.priceFeedFetcher.fetch(query.fromChainId);
+    const zero = BigInteger.zero();
+
     return new Path(
       swapOrder,
       BridgingOrder.notRequired(),
       SwapOrder.notRequired(),
-      BigNumber.from(0),
+      zero,
+      gasPriceOrigin,
+      zero,
+      priceOriginCoin,
+      PriceFeed.zero(),
     );
   }
 

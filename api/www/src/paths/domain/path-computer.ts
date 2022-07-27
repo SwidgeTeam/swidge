@@ -88,6 +88,10 @@ export class PathComputer {
       candidate.bridgeStep,
       candidate.destinationStep,
       nativeWei,
+      this.gasPriceOrigin,
+      this.gasPriceDestination,
+      this.priceOriginCoin,
+      this.priceDestinationCoin,
     );
   }
 
