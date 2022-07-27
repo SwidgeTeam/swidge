@@ -1,4 +1,4 @@
-import { stub } from 'sinon';
+import { SinonStub, SinonStubStatic, stub } from 'sinon';
 import { ZeroEx } from '../../../../src/swaps/domain/providers/zero-ex';
 import { SwapOrderComputer } from '../../../../src/swaps/application/query/swap-order-computer';
 import { PathComputer } from '../../../../src/paths/domain/path-computer';
@@ -22,6 +22,7 @@ import { createMock } from 'ts-auto-mock';
 import { SushiPairsRepository } from '../../../../src/swaps/domain/sushi-pairs-repository';
 import { PriceFeedFetcher } from '../../../../src/shared/infrastructure/PriceFeedFetcher';
 import { GasPriceFetcher } from '../../../../src/shared/infrastructure/GasPriceFetcher';
+import { Sushiswap } from '../../../../src/swaps/domain/providers/sushiswap';
 
 describe('path-computer', () => {
   it('should compute a single path', async () => {
@@ -32,81 +33,34 @@ describe('path-computer', () => {
     const bridgeTokenIn = Tokens.USDC[Polygon];
     const bridgeTokenOut = Tokens.USDC[Fantom];
 
-    // mock TokenDetailsFetcher
     const fetcher = new TokenDetailsFetcher();
     const mockTokenFetcher = stub(fetcher, 'fetch');
     mockTokenFetcher.onCall(0).resolves(srcToken);
     mockTokenFetcher.onCall(1).resolves(dstToken);
 
-    // mock both calls of ZeroEx provider
     const myHttpClient = HttpClient.create();
-    const zeroEx = new ZeroEx(myHttpClient);
-    const zeroExStub = stub(zeroEx, 'execute')
-      .onCall(0)
-      .resolves(
-        new SwapOrder(
-          ExchangeProviders.ZeroEx,
-          srcToken,
-          bridgeTokenIn,
-          '',
-          '',
-          BigInteger.fromDecimal('2', srcToken.decimals),
-          BigNumber.from('0'),
-        ),
-      )
-      .onCall(1)
-      .resolves(
-        new SwapOrder(
-          ExchangeProviders.ZeroEx,
-          bridgeTokenOut,
-          dstToken,
-          '',
-          '',
-          BigInteger.fromDecimal('2', srcToken.decimals),
-          BigNumber.from('100000'),
-        ),
-      );
-    stub(zeroEx, 'isEnabledOn').returns(true);
-    stub(ZeroEx, 'create').returns(zeroEx);
+    const myCachedHttpClient = CachedHttpClient.create();
+
+    // mock both calls of ZeroEx provider
+    const zeroExStub = getZeroEx(srcToken, bridgeTokenIn, bridgeTokenOut, dstToken);
 
     // mock Multichain bridge provider
-    const myCachedHttpClient = CachedHttpClient.create();
-    const multichain = new Multichain(myCachedHttpClient);
-    const multichainStub = stub(multichain, 'execute')
-      .onCall(0)
-      .resolves(
-        new BridgingOrder(
-          BigInteger.zero(),
-          bridgeTokenIn,
-          bridgeTokenOut,
-          Fantom,
-          '',
-          new BridgingFees(0, BigInteger.fromDecimal('0'), BigInteger.fromDecimal('0'), 18),
-          new BridgingLimits(
-            BigInteger.fromDecimal('0'),
-            BigInteger.fromDecimal('0'),
-            BigInteger.fromDecimal('0'),
-            18,
-          ),
-          true,
-        ),
-      );
-    stub(multichain, 'isEnabledOn').returns(true);
-    stub(Multichain, 'create').returns(multichain);
+    const multichainStub = getMultichain(bridgeTokenIn, bridgeTokenOut);
+
+    const mockSushiRepository = createMock<SushiPairsRepository>({
+      getPairs: (chainId) => Promise.reject([]),
+    });
+
+    const sushiStub = getSushi(srcToken, bridgeTokenIn, bridgeTokenOut, dstToken);
 
     // mock GasPriceFetcher
     const gasPriceFetcher = new GasPriceFetcher();
     stub(gasPriceFetcher, 'fetch').resolves(BigNumber.from('100000000'));
 
-    // mock Chainlink's PriceFeedFetcher
     const priceFeedFetcher = getPriceFeedFetcher([
       { chain: Polygon, result: '500' },
       { chain: Fantom, result: '1500' },
     ]);
-
-    const mockSushiRepository = createMock<SushiPairsRepository>({
-      getPairs: (chainId) => Promise.reject([]),
-    });
 
     // instantiate dependencies
     const swapOrderComputer = new SwapOrderComputer(
@@ -133,10 +87,111 @@ describe('path-computer', () => {
 
     /** Assert */
     expect(zeroExStub.callCount).toEqual(2);
-    expect(multichainStub.callCount).toEqual(1);
+    expect(sushiStub.callCount).toEqual(2);
+    expect(multichainStub.callCount).toEqual(2);
     expect(path.destinationFee.toString()).toEqual('3333333333333');
   });
 });
+
+function getSushi(srcToken, bridgeTokenIn, bridgeTokenOut, dstToken): SinonStub {
+  const myHttpClient = HttpClient.create();
+  const mockSushiRepository = createMock<SushiPairsRepository>({
+    getPairs: (chainId) => Promise.reject([]),
+  });
+  const sushi = new Sushiswap(myHttpClient, mockSushiRepository);
+  const sushiStub = stub(sushi, 'execute')
+    .onCall(0)
+    .resolves(
+      new SwapOrder(
+        ExchangeProviders.Sushi,
+        srcToken,
+        bridgeTokenIn,
+        '',
+        '',
+        BigInteger.fromDecimal('2', srcToken.decimals),
+        BigNumber.from('0'),
+      ),
+    )
+    .onCall(1)
+    .resolves(
+      new SwapOrder(
+        ExchangeProviders.Sushi,
+        bridgeTokenOut,
+        dstToken,
+        '',
+        '',
+        BigInteger.fromDecimal('2', srcToken.decimals),
+        BigNumber.from('100000'),
+      ),
+    );
+
+  stub(sushi, 'isEnabledOn').returns(true);
+  stub(Sushiswap, 'create').returns(sushi);
+
+  return sushiStub;
+}
+
+function getZeroEx(srcToken, bridgeTokenIn, bridgeTokenOut, dstToken): SinonStub {
+  const myHttpClient = HttpClient.create();
+  const zeroEx = new ZeroEx(myHttpClient);
+  const zeroExStub = stub(zeroEx, 'execute')
+    .onCall(0)
+    .resolves(
+      new SwapOrder(
+        ExchangeProviders.ZeroEx,
+        srcToken,
+        bridgeTokenIn,
+        '',
+        '',
+        BigInteger.fromDecimal('2', srcToken.decimals),
+        BigNumber.from('0'),
+      ),
+    )
+    .onCall(1)
+    .resolves(
+      new SwapOrder(
+        ExchangeProviders.ZeroEx,
+        bridgeTokenOut,
+        dstToken,
+        '',
+        '',
+        BigInteger.fromDecimal('2', srcToken.decimals),
+        BigNumber.from('100000'),
+      ),
+    );
+  stub(zeroEx, 'isEnabledOn').returns(true);
+  stub(ZeroEx, 'create').returns(zeroEx);
+
+  return zeroExStub;
+}
+
+function getMultichain(bridgeTokenIn, bridgeTokenOut): SinonStub {
+  const myCachedHttpClient = CachedHttpClient.create();
+  const multichain = new Multichain(myCachedHttpClient);
+  const multichainStub = stub(multichain, 'execute')
+    .onCall(0)
+    .resolves(
+      new BridgingOrder(
+        BigInteger.zero(),
+        bridgeTokenIn,
+        bridgeTokenOut,
+        Fantom,
+        '',
+        new BridgingFees(0, BigInteger.fromDecimal('0'), BigInteger.fromDecimal('0'), 18),
+        new BridgingLimits(
+          BigInteger.fromDecimal('0'),
+          BigInteger.fromDecimal('0'),
+          BigInteger.fromDecimal('0'),
+          18,
+        ),
+        true,
+      ),
+    );
+  stub(multichain, 'isEnabledOn').returns(true);
+  stub(Multichain, 'create').returns(multichain);
+
+  return multichainStub;
+}
 
 function getPriceFeedFetcher(responses: { chain: string; result: string }[]) {
   const priceFeedFetcher = new PriceFeedFetcher();
