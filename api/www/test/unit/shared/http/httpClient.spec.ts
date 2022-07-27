@@ -5,7 +5,7 @@ import axios, {
   AxiosRequestConfig,
   AxiosResponse,
 } from 'axios';
-import { HttpClient } from '../../../../src/shared/http/httpClient';
+import { HttpClient } from '../../../../src/shared/infrastructure/http/httpClient';
 
 describe('HttpClient', () => {
   afterEach(() => {

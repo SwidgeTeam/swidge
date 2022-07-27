@@ -1,5 +1,5 @@
-import { HttpClient, Parameters, URL, Headers } from './httpClient';
-import { IHttpClient } from './IHttpClient';
+import { IHttpClient, Parameters, URL, Headers } from '../../domain/http/IHttpClient';
+import { HttpClient } from './httpClient';
 
 export class CachedHttpClient implements IHttpClient {
   private readonly httpClient: HttpClient;

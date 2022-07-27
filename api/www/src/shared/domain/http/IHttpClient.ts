@@ -1,4 +1,6 @@
-import { Headers, Parameters, URL } from './httpClient';
+export type URL = string;
+export type Headers = Record<string, string>;
+export type Parameters = Record<string, unknown>;
 
 export interface IHttpClient {
   get<Response>(url: URL, headers?: Headers): Promise<Response>;

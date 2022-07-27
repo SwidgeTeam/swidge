@@ -4,7 +4,7 @@ import { BSC, Fantom, Mainnet, Polygon } from '../../../shared/enums/ChainIds';
 import { BigInteger } from '../../../shared/domain/BigInteger';
 import { BigNumber, ethers } from 'ethers';
 import { Exchange } from '../exchange';
-import { IHttpClient } from '../../../shared/http/IHttpClient';
+import { IHttpClient } from '../../../shared/domain/http/IHttpClient';
 import { ExchangeProviders } from './exchange-providers';
 import {
   CurrencyAmount,

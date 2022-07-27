@@ -8,7 +8,7 @@ import { AmountTooBig } from '../AmountTooBig';
 import { AmountTooSmall } from '../AmountTooSmall';
 import { AbiEncoder } from '../../../shared/domain/CallEncoder';
 import { Bridge } from '../bridge';
-import { CachedHttpClient } from '../../../shared/http/cachedHttpClient';
+import { CachedHttpClient } from '../../../shared/infrastructure/http/cachedHttpClient';
 import { Avalanche, BSC, Fantom, Mainnet, Optimism, Polygon } from '../../../shared/enums/ChainIds';
 
 interface DestToken {

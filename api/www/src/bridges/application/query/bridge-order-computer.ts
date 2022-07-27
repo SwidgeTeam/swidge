@@ -2,11 +2,11 @@ import { BridgingRequest } from '../../domain/bridging-request';
 import { BridgingOrder } from '../../domain/bridging-order';
 import { Inject } from '@nestjs/common';
 import { Class } from '../../../shared/Class';
-import { HttpClient } from '../../../shared/http/httpClient';
+import { HttpClient } from '../../../shared/infrastructure/http/httpClient';
 import { Multichain } from '../../domain/providers/multichain';
 import { Bridge } from '../../domain/bridge';
 import { BridgeProviders } from '../../domain/providers/bridge-providers';
-import { CachedHttpClient } from '../../../shared/http/cachedHttpClient';
+import { CachedHttpClient } from '../../../shared/infrastructure/http/cachedHttpClient';
 
 export class BridgeOrderComputer {
   private readonly multichain: Multichain;

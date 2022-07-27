@@ -4,7 +4,7 @@ import { SushiPair } from '../../domain/sushi-pair';
 import { BigInteger } from '../../../shared/domain/BigInteger';
 import { Inject } from '@nestjs/common';
 import { Class } from '../../../shared/Class';
-import { HttpClient } from '../../../shared/http/httpClient';
+import { HttpClient } from '../../../shared/infrastructure/http/httpClient';
 import { GraphPair, theGraphEndpoints } from '../../domain/providers/sushiswap';
 import { Token } from '../../../shared/domain/Token';
 import { ethers } from 'ethers';

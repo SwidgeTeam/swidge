@@ -1,4 +1,4 @@
-import { Class } from '../Class';
+import { Class } from '../../Class';
 import { HttpClient } from './httpClient';
 
 export default () => {

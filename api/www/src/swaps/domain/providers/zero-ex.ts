@@ -7,7 +7,7 @@ import { AbiEncoder } from '../../../shared/domain/CallEncoder';
 import { BigInteger } from '../../../shared/domain/BigInteger';
 import { BigNumber } from 'ethers';
 import { Exchange } from '../exchange';
-import { HttpClient } from '../../../shared/http/httpClient';
+import { HttpClient } from '../../../shared/infrastructure/http/httpClient';
 import { ExchangeProviders } from './exchange-providers';
 
 export class ZeroEx implements Exchange {

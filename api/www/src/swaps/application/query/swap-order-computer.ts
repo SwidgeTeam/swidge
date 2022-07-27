@@ -1,5 +1,5 @@
 import { Inject } from '@nestjs/common';
-import { HttpClient } from '../../../shared/http/httpClient';
+import { HttpClient } from '../../../shared/infrastructure/http/httpClient';
 import { Class } from '../../../shared/Class';
 import { SwapRequest } from '../../domain/SwapRequest';
 import { SwapOrder } from '../../domain/SwapOrder';
@@ -7,7 +7,7 @@ import { Exchange } from '../../domain/exchange';
 import { ExchangeProviders } from '../../domain/providers/exchange-providers';
 import { ZeroEx } from '../../domain/providers/zero-ex';
 import { Sushiswap } from '../../domain/providers/sushiswap';
-import { CachedHttpClient } from '../../../shared/http/cachedHttpClient';
+import { CachedHttpClient } from '../../../shared/infrastructure/http/cachedHttpClient';
 import { SushiPairsRepository } from '../../domain/sushi-pairs-repository';
 
 export class SwapOrderComputer {

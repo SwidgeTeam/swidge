@@ -1,5 +1,5 @@
 import { restore, stub } from 'sinon';
-import { CachedHttpClient } from '../../../../src/shared/http/cachedHttpClient';
+import { CachedHttpClient } from '../../../../src/shared/infrastructure/http/cachedHttpClient';
 import axios from 'axios';
 
 describe('CachedHttpClient', () => {

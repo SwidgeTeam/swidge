@@ -1,9 +1,5 @@
 import axios, { Axios, AxiosError, AxiosResponse } from 'axios';
-import { IHttpClient } from './IHttpClient';
-
-export type URL = string;
-export type Headers = Record<string, string>;
-export type Parameters = Record<string, unknown>;
+import { IHttpClient, Parameters, URL, Headers } from '../../domain/http/IHttpClient';
 
 export class HttpClient implements IHttpClient {
   private readonly axios: Axios;
