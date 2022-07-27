@@ -14,6 +14,7 @@ import { BigNumber } from 'ethers';
 import { PriceFeedConverter } from '../../../shared/infrastructure/PriceFeedConverter';
 import { ExchangeProviders } from '../../../swaps/domain/providers/exchange-providers';
 import { PathComputer } from '../../domain/path-computer';
+import { PriceFeedFetcher } from '../../../shared/infrastructure/PriceFeedFetcher';
 
 @QueryHandler(GetPathQuery)
 export class GetPathHandler implements IQueryHandler<GetPathQuery> {
@@ -26,12 +27,15 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
     private readonly tokenDetailsFetcher: TokenDetailsFetcher,
     @Inject(Class.PriceFeedConverter)
     private readonly priceFeedConverter: PriceFeedConverter,
+    @Inject(Class.PriceFeedFetcher)
+    private readonly priceFeedFetcher: PriceFeedFetcher,
   ) {
     this.pathComputer = new PathComputer(
       swapOrderProvider,
       bridgeOrderProvider,
       tokenDetailsFetcher,
       priceFeedConverter,
+      priceFeedFetcher,
     );
   }
 

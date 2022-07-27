@@ -16,6 +16,7 @@ import { BigNumber } from 'ethers';
 import { PriceFeedConverter } from '../../shared/infrastructure/PriceFeedConverter';
 import { PathNotFound } from './path-not-found';
 import { flatten } from 'lodash';
+import { PriceFeedFetcher } from '../../shared/infrastructure/PriceFeedFetcher';
 
 export class PathComputer {
   /** Providers */
@@ -23,6 +24,7 @@ export class PathComputer {
   private readonly bridgeOrderProvider: BridgeOrderComputer;
   private readonly tokenDetailsFetcher: TokenDetailsFetcher;
   private readonly priceFeedConverter: PriceFeedConverter;
+  private readonly priceFeedFetcher: PriceFeedFetcher;
   /** Details */
   private readonly bridgingAssets;
   private srcToken: Token;
@@ -30,6 +32,8 @@ export class PathComputer {
   private fromChain: string;
   private toChain: string;
   private amountIn: BigInteger;
+  private priceOriginCoin: BigNumber;
+  private priceDestinationCoin: BigNumber;
   /** Result */
   private candidatePaths: CandidatePath[]; // Final candidate paths
 
@@ -38,11 +42,13 @@ export class PathComputer {
     _bridgeOrderProvider: BridgeOrderComputer,
     _tokenDetailsFetcher: TokenDetailsFetcher,
     _priceFeedConverter: PriceFeedConverter,
+    _priceFeedFetcher: PriceFeedFetcher,
   ) {
     this.swapOrderProvider = _swapOrderProvider;
     this.bridgeOrderProvider = _bridgeOrderProvider;
     this.tokenDetailsFetcher = _tokenDetailsFetcher;
     this.priceFeedConverter = _priceFeedConverter;
+    this.priceFeedFetcher = _priceFeedFetcher;
     this.bridgingAssets = [USDC];
   }
 
@@ -64,6 +70,10 @@ export class PathComputer {
     if (!candidate) {
       throw new PathNotFound();
     }
+
+    // Get price of both native coins
+    this.priceOriginCoin = await this.priceFeedFetcher.fetch(this.fromChain);
+    this.priceDestinationCoin = await this.priceFeedFetcher.fetch(this.toChain);
 
     const nativeWei = await this.convertDestinationGasIntoOriginNative(candidate.destinationStep);
 
@@ -266,8 +276,9 @@ export class PathComputer {
     const estimatedDestinationGas = destinationSwap.estimatedGas.add(fixDestinationGas);
 
     return await this.priceFeedConverter.fetch(
-      this.fromChain,
       this.toChain,
+      this.priceOriginCoin,
+      this.priceDestinationCoin,
       estimatedDestinationGas,
     );
   }

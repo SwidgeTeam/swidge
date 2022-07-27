@@ -8,6 +8,8 @@ import { InsufficientLiquidity } from '../../../../../src/swaps/domain/Insuffici
 import { TokenDetailsFetcher } from '../../../../../src/shared/infrastructure/TokenDetailsFetcher';
 import { PriceFeedConverter } from '../../../../../src/shared/infrastructure/PriceFeedConverter';
 import { BigNumber } from 'ethers';
+import { PriceFeedFetcher } from '../../../../../src/shared/infrastructure/PriceFeedFetcher';
+import { stub } from 'sinon';
 
 describe('get path', () => {
   it('should return error if invalid first swap', async () => {
@@ -30,11 +32,19 @@ describe('get path', () => {
       },
     });
 
+    const priceFeedFetcher = new PriceFeedFetcher();
+    stub(priceFeedFetcher, 'fetch')
+      .onCall(0)
+      .resolves(BigNumber.from('101010'))
+      .onCall(1)
+      .resolves(BigNumber.from('101010'));
+
     const handler = new GetPathHandler(
       mockSwapProvider,
       mockBridgeProvider,
       mockTokenDetailsFetcher,
       mockPriceFeedConverter,
+      priceFeedFetcher,
     );
 
     const query = new GetPathQuery('137', '250', '0xtokenA', '0xtokenB', '10');

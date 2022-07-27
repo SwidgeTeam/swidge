@@ -20,8 +20,8 @@ import { BridgingLimits } from '../../../../src/bridges/domain/BridgingLimits';
 import { Tokens } from '../../../../src/shared/enums/Tokens';
 import { Fantom, Polygon } from '../../../../src/shared/enums/ChainIds';
 import { createMock } from 'ts-auto-mock';
-import { InsufficientLiquidity } from '../../../../src/swaps/domain/InsufficientLiquidity';
 import { SushiPairsRepository } from '../../../../src/swaps/domain/sushi-pairs-repository';
+import { PriceFeedFetcher } from '../../../../src/shared/infrastructure/PriceFeedFetcher';
 
 describe('path-computer', () => {
   it('should compute a single path', async () => {
@@ -94,6 +94,10 @@ describe('path-computer', () => {
     stub(multichain, 'isEnabledOn').returns(true);
     stub(Multichain, 'create').returns(multichain);
 
+    // mock Chainlink's PriceFeedFetcher
+    const priceFeedFetcher = new PriceFeedFetcher();
+    stub(priceFeedFetcher, 'fetch').resolves(BigNumber.from('101010'));
+
     // mock Chainlink's PriceFeedConverter
     const priceFeedConverter = new PriceFeedConverter();
     stub(priceFeedConverter, 'fetch').resolves(BigNumber.from('101010'));
@@ -116,6 +120,7 @@ describe('path-computer', () => {
       bridgeOrderComputer,
       fetcher,
       priceFeedConverter,
+      priceFeedFetcher,
     );
 
     // create pat query
