@@ -3,7 +3,8 @@
         "id": "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
         "symbol": "BNB",
         "name": "BNB",
-        "decimals": 18
+        "decimals": 18,
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/f_auto,c_limit,w_64,q_auto/https://raw.githubusercontent.com/sushiswap/icons/master/network/bsc.jpg"
     },
     {
         "id": "0x4ee438be38f8682abb089f2bfea48851c5e71eaf",
