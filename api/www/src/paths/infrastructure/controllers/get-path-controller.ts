@@ -43,6 +43,7 @@ export class GetPathController {
         data: path.bridging.data,
         required: path.bridging.required,
         amountOut: path.bridging.amountOutDecimal,
+        fee: path.bridging.decimalFee,
       },
       destinationSwap: {
         tokenIn: this.mapTokenDetails(path.destinationSwap.tokenIn),

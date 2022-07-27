@@ -77,6 +77,10 @@ export class BridgingOrder {
     return this.finalFee(convertedAmount);
   }
 
+  get decimalFee(): string {
+    return this.fee.toDecimal(this.tokenOut.decimals);
+  }
+
   private finalFee(crossAmount: BigInteger): BigInteger {
     // Compute the given percentage
     let fee = crossAmount.times(this._fees.percentageFee * 100).div(100 * 100);
