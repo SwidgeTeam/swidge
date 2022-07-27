@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { GetPathHandler } from './application/query/get-path.handler';
-import { GetPathController } from './infrastructure/controllers/get-path.controller';
+import { GetPathController } from './infrastructure/controllers/get-path-controller';
 import { SwapsModule } from '../swaps/swaps.module';
 import { SwapOrderComputer } from '../swaps/application/query/swap-order-computer';
 import { BridgesModule } from '../bridges/bridges.module';
