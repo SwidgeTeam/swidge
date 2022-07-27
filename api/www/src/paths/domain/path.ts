@@ -41,11 +41,19 @@ export class Path {
     return this._destinationFee;
   }
 
-  get originFeeDecimal(): string {
+  get originFeeInUSD(): string {
     return this._originSwap.estimatedGas
       .times(this._originGasPrice)
       .times(this._priceOriginCoin.lastPrice)
       .div(BigInteger.weiInEther())
       .toDecimal(this._priceOriginCoin.decimals);
+  }
+
+  get destinationFeeInUSD(): string {
+    return this._destinationSwap.estimatedGas
+      .times(this._destinationGasPrice)
+      .times(this._priceDestinationCoin.lastPrice)
+      .div(BigInteger.weiInEther())
+      .toDecimal(this._priceDestinationCoin.decimals);
   }
 }
