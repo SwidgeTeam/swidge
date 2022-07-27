@@ -22,6 +22,10 @@ export class BigInteger {
     return new BigInteger(value);
   }
 
+  static weiInEther() {
+    return new BigInteger(ethers.constants.WeiPerEther);
+  }
+
   static zero() {
     const number = BigNumber.from(0);
     return new BigInteger(number);

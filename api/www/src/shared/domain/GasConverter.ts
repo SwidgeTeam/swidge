@@ -1,4 +1,3 @@
-import { ethers } from 'ethers';
 import { BigInteger } from './BigInteger';
 
 export class GasConverter {
@@ -11,7 +10,7 @@ export class GasConverter {
     // Compute cost in destination Wei
     const feeInDestinationWei = gasPrice.times(gasUnits);
 
-    const unit = BigInteger.fromBigNumber(ethers.constants.WeiPerEther);
+    const unit = BigInteger.weiInEther();
 
     // Compute exchange ratio
     let exchangeRatio;
