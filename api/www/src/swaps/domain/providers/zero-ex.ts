@@ -5,7 +5,6 @@ import { ContractAddress } from '../../../shared/types';
 import { InsufficientLiquidity } from '../InsufficientLiquidity';
 import { AbiEncoder } from '../../../shared/domain/CallEncoder';
 import { BigInteger } from '../../../shared/domain/BigInteger';
-import { BigNumber } from 'ethers';
 import { Exchange } from '../exchange';
 import { HttpClient } from '../../../shared/infrastructure/http/httpClient';
 import { ExchangeProviders } from './exchange-providers';
@@ -63,7 +62,7 @@ export class ZeroEx implements Exchange {
       response.allowanceTarget,
       encodedData,
       BigInteger.fromString(response.buyAmount),
-      BigNumber.from(response.gas),
+      BigInteger.fromString(response.gas),
     );
   }
 }

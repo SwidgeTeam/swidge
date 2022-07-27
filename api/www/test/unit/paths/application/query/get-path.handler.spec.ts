@@ -6,10 +6,12 @@ import { BridgeOrderComputer } from '../../../../../src/bridges/application/quer
 import { Token } from '../../../../../src/shared/domain/Token';
 import { InsufficientLiquidity } from '../../../../../src/swaps/domain/InsufficientLiquidity';
 import { TokenDetailsFetcher } from '../../../../../src/shared/infrastructure/TokenDetailsFetcher';
-import { BigNumber } from 'ethers';
 import { PriceFeedFetcher } from '../../../../../src/shared/infrastructure/PriceFeedFetcher';
 import { stub } from 'sinon';
 import { GasPriceFetcher } from '../../../../../src/shared/infrastructure/GasPriceFetcher';
+import { BigInteger } from '../../../../../src/shared/domain/BigInteger';
+import { PriceFeed } from '../../../../../src/shared/domain/PriceFeed';
+import { Fantom, Polygon } from '../../../../../src/shared/enums/ChainIds';
 
 describe('get path', () => {
   it('should return error if invalid first swap', async () => {
@@ -27,16 +29,14 @@ describe('get path', () => {
       },
     });
 
-    const priceFeedFetcher = new PriceFeedFetcher();
-    stub(priceFeedFetcher, 'fetch')
-      .onCall(0)
-      .resolves(BigNumber.from('101010'))
-      .onCall(1)
-      .resolves(BigNumber.from('101010'));
+    const priceFeedFetcher = getPriceFeedFetcher([
+      { chain: Polygon, result: '500' },
+      { chain: Fantom, result: '1500' },
+    ]);
 
     // mock GasPriceFetcher
     const gasPriceFetcher = new GasPriceFetcher();
-    stub(gasPriceFetcher, 'fetch').resolves(BigNumber.from('101010'));
+    stub(gasPriceFetcher, 'fetch').resolves(BigInteger.fromString('101010'));
 
     const handler = new GetPathHandler(
       mockSwapProvider,
@@ -52,3 +52,13 @@ describe('get path', () => {
     await expect(handler.execute(query)).rejects.toThrow('PATH_NOT_FOUND');
   });
 });
+
+function getPriceFeedFetcher(responses: { chain: string; result: string }[]) {
+  const priceFeedFetcher = new PriceFeedFetcher();
+  const fetcherStub = stub(priceFeedFetcher, 'fetch');
+  for (const response of responses) {
+    const priceFeed = new PriceFeed(BigInteger.fromString(response.result), 8);
+    fetcherStub.withArgs(response.chain).resolves(priceFeed);
+  }
+  return priceFeedFetcher;
+}

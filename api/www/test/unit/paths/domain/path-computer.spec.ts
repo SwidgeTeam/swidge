@@ -23,6 +23,7 @@ import { SushiPairsRepository } from '../../../../src/swaps/domain/sushi-pairs-r
 import { PriceFeedFetcher } from '../../../../src/shared/infrastructure/PriceFeedFetcher';
 import { GasPriceFetcher } from '../../../../src/shared/infrastructure/GasPriceFetcher';
 import { Sushiswap } from '../../../../src/swaps/domain/providers/sushiswap';
+import { PriceFeed } from '../../../../src/shared/domain/PriceFeed';
 
 describe('path-computer', () => {
   it('should compute a single path', async () => {
@@ -55,7 +56,7 @@ describe('path-computer', () => {
 
     // mock GasPriceFetcher
     const gasPriceFetcher = new GasPriceFetcher();
-    stub(gasPriceFetcher, 'fetch').resolves(BigNumber.from('100000000'));
+    stub(gasPriceFetcher, 'fetch').resolves(BigInteger.fromString('100000000'));
 
     const priceFeedFetcher = getPriceFeedFetcher([
       { chain: Polygon, result: '500' },
@@ -109,7 +110,7 @@ function getSushi(srcToken, bridgeTokenIn, bridgeTokenOut, dstToken): SinonStub 
         '',
         '',
         BigInteger.fromDecimal('2', srcToken.decimals),
-        BigNumber.from('0'),
+        BigInteger.fromString('0'),
       ),
     )
     .onCall(1)
@@ -121,7 +122,7 @@ function getSushi(srcToken, bridgeTokenIn, bridgeTokenOut, dstToken): SinonStub 
         '',
         '',
         BigInteger.fromDecimal('2', srcToken.decimals),
-        BigNumber.from('100000'),
+        BigInteger.fromString('100000'),
       ),
     );
 
@@ -144,7 +145,7 @@ function getZeroEx(srcToken, bridgeTokenIn, bridgeTokenOut, dstToken): SinonStub
         '',
         '',
         BigInteger.fromDecimal('2', srcToken.decimals),
-        BigNumber.from('0'),
+        BigInteger.fromString('0'),
       ),
     )
     .onCall(1)
@@ -156,7 +157,7 @@ function getZeroEx(srcToken, bridgeTokenIn, bridgeTokenOut, dstToken): SinonStub
         '',
         '',
         BigInteger.fromDecimal('2', srcToken.decimals),
-        BigNumber.from('100000'),
+        BigInteger.fromString('100000'),
       ),
     );
   stub(zeroEx, 'isEnabledOn').returns(true);
@@ -197,7 +198,8 @@ function getPriceFeedFetcher(responses: { chain: string; result: string }[]) {
   const priceFeedFetcher = new PriceFeedFetcher();
   const fetcherStub = stub(priceFeedFetcher, 'fetch');
   for (const response of responses) {
-    fetcherStub.withArgs(response.chain).resolves(BigNumber.from(response.result));
+    const priceFeed = new PriceFeed(BigInteger.fromString(response.result), 8);
+    fetcherStub.withArgs(response.chain).resolves(priceFeed);
   }
   return priceFeedFetcher;
 }

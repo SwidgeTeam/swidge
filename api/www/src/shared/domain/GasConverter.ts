@@ -1,26 +1,27 @@
-import { BigNumber, ethers } from 'ethers';
+import { ethers } from 'ethers';
+import { BigInteger } from './BigInteger';
 
 export class GasConverter {
   public async convert(
-    gasUnits: BigNumber,
-    gasPrice: BigNumber,
-    priceOriginCoin: BigNumber,
-    priceDestinationCoin: BigNumber,
-  ): Promise<BigNumber> {
+    gasUnits: BigInteger,
+    gasPrice: BigInteger,
+    priceOriginCoin: BigInteger,
+    priceDestinationCoin: BigInteger,
+  ): Promise<BigInteger> {
     // Compute cost in destination Wei
-    const feeInDestinationWei = gasPrice.mul(gasUnits);
+    const feeInDestinationWei = gasPrice.times(gasUnits);
 
-    const unit = ethers.utils.parseEther('1');
+    const unit = BigInteger.fromBigNumber(ethers.constants.WeiPerEther);
 
     // Compute exchange ratio
     let exchangeRatio;
-    if (priceDestinationCoin.gt(priceOriginCoin)) {
-      exchangeRatio = priceOriginCoin.mul(unit).div(priceDestinationCoin);
+    if (priceDestinationCoin.greaterThan(priceOriginCoin)) {
+      exchangeRatio = priceOriginCoin.times(unit).div(priceDestinationCoin);
     } else {
-      exchangeRatio = priceDestinationCoin.mul(unit).div(priceOriginCoin);
+      exchangeRatio = priceDestinationCoin.times(unit).div(priceOriginCoin);
     }
 
     // Compute cost in origin Wei
-    return feeInDestinationWei.mul(exchangeRatio).div(unit);
+    return feeInDestinationWei.times(exchangeRatio).div(unit);
   }
 }

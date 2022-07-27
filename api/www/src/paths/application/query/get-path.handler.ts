@@ -10,11 +10,11 @@ import { TokenDetailsFetcher } from '../../../shared/infrastructure/TokenDetails
 import { Inject } from '@nestjs/common';
 import { Class } from '../../../shared/Class';
 import { BigInteger } from '../../../shared/domain/BigInteger';
-import { BigNumber } from 'ethers';
 import { ExchangeProviders } from '../../../swaps/domain/providers/exchange-providers';
 import { PathComputer } from '../../domain/path-computer';
 import { PriceFeedFetcher } from '../../../shared/infrastructure/PriceFeedFetcher';
 import { GasPriceFetcher } from '../../../shared/infrastructure/GasPriceFetcher';
+import { PriceFeed } from '../../../shared/domain/PriceFeed';
 
 @QueryHandler(GetPathQuery)
 export class GetPathHandler implements IQueryHandler<GetPathQuery> {

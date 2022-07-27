@@ -2,7 +2,7 @@ import { SwapRequest } from '../SwapRequest';
 import { SwapOrder } from '../SwapOrder';
 import { BSC, Fantom, Mainnet, Polygon } from '../../../shared/enums/ChainIds';
 import { BigInteger } from '../../../shared/domain/BigInteger';
-import { BigNumber, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import { Exchange } from '../exchange';
 import { IHttpClient } from '../../../shared/domain/http/IHttpClient';
 import { ExchangeProviders } from './exchange-providers';
@@ -147,7 +147,7 @@ export class Sushiswap implements Exchange {
       '',
       callData,
       BigInteger.fromString(trade[0].outputAmount.numerator.toString()),
-      BigNumber.from(gasEstimations[chainId]),
+      BigInteger.fromString(gasEstimations[chainId]),
     );
   }
 

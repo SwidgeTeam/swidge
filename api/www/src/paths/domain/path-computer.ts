@@ -12,12 +12,12 @@ import { BridgeOrderComputer } from '../../bridges/application/query/bridge-orde
 import { SwapOrderComputer } from '../../swaps/application/query/swap-order-computer';
 import { BridgingRequest } from '../../bridges/domain/bridging-request';
 import { Path } from './path';
-import { BigNumber } from 'ethers';
 import { PathNotFound } from './path-not-found';
 import { flatten } from 'lodash';
 import { PriceFeedFetcher } from '../../shared/infrastructure/PriceFeedFetcher';
 import { GasPriceFetcher } from '../../shared/infrastructure/GasPriceFetcher';
 import { GasConverter } from '../../shared/domain/GasConverter';
+import { PriceFeed } from '../../shared/domain/PriceFeed';
 
 export class PathComputer {
   /** Providers */
@@ -34,8 +34,10 @@ export class PathComputer {
   private fromChain: string;
   private toChain: string;
   private amountIn: BigInteger;
-  private priceOriginCoin: BigNumber;
-  private priceDestinationCoin: BigNumber;
+  private priceOriginCoin: PriceFeed;
+  private priceDestinationCoin: PriceFeed;
+  private gasPriceDestination: BigInteger;
+  private gasPriceOrigin: BigInteger;
   /** Result */
   private candidatePaths: CandidatePath[]; // Final candidate paths
 
@@ -74,7 +76,8 @@ export class PathComputer {
       throw new PathNotFound();
     }
 
-    // Get price of both native coins
+    this.gasPriceOrigin = await this.gasPriceFetcher.fetch(this.fromChain);
+    this.gasPriceDestination = await this.gasPriceFetcher.fetch(this.toChain);
     this.priceOriginCoin = await this.priceFeedFetcher.fetch(this.fromChain);
     this.priceDestinationCoin = await this.priceFeedFetcher.fetch(this.toChain);
 
@@ -273,18 +276,16 @@ export class PathComputer {
    */
   private async convertDestinationGasIntoOriginNative(
     destinationSwap: SwapOrder,
-  ): Promise<BigNumber> {
-    const fixDestinationGas = BigNumber.from(0);
+  ): Promise<BigInteger> {
+    const fixDestinationGas = BigInteger.zero();
 
-    const destinationEstimatedGas = destinationSwap.estimatedGas.add(fixDestinationGas);
-
-    const destinationGasPrice = await this.gasPriceFetcher.fetch(this.toChain);
+    const destinationEstimatedGas = destinationSwap.estimatedGas.plus(fixDestinationGas);
 
     return await this.gasConverter.convert(
       destinationEstimatedGas,
-      destinationGasPrice,
-      this.priceOriginCoin,
-      this.priceDestinationCoin,
+      this.gasPriceDestination,
+      this.priceOriginCoin.lastPrice,
+      this.priceDestinationCoin.lastPrice,
     );
   }
 

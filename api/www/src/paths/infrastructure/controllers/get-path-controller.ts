@@ -34,7 +34,7 @@ export class GetPathController {
         data: path.originSwap.data,
         required: path.originSwap.required,
         amountOut: path.originSwap.buyAmountDecimal,
-        estimatedGas: path.originSwap.estimatedGas,
+        estimatedGas: path.originSwap.estimatedGas.toString(),
       },
       bridge: {
         tokenIn: this.mapTokenDetails(path.bridging.tokenIn),
