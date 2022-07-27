@@ -4,7 +4,7 @@
         "name": "Avalanche",
         "symbol": "AVAX",
         "decimals": 18,
-        "logo": ""
+        "logo": "https://res.cloudinary.com/sushi-cdn/image/fetch/f_auto,c_limit,w_64,q_auto/https://raw.githubusercontent.com/sushiswap/icons/master/network/avalanche.jpg"
     },
     {
         "id": "0x6e84a6216eA6dACC71eE8E6b0a5B7322EEbC0fDd",

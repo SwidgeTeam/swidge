@@ -10,7 +10,7 @@ export default class AvalancheToken implements IToken {
     decimals: number
     logo: string
 
-    constructor(json: ITokenJson & { logo: string }) {
+    constructor(json: ITokenJson) {
         this.address = json.id
         this.symbol = json.symbol
         this.name = json.name

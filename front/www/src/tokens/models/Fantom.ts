@@ -8,19 +8,21 @@ export default class FantomToken implements IToken {
     symbol: string
     name: string
     decimals: number
+    logo: string
 
-    constructor(iSushiSwapFantomToken: ITokenJson) {
-        this.address = iSushiSwapFantomToken.id
-        this.symbol = iSushiSwapFantomToken.symbol
-        this.name = iSushiSwapFantomToken.name
-        this.decimals = iSushiSwapFantomToken.decimals
+    constructor(json: ITokenJson) {
+        this.address = json.id
+        this.symbol = json.symbol
+        this.name = json.name
+        this.decimals = json.decimals
+        this.logo = json.logo
     }
 
-    public get img () {
-        return `https://res.cloudinary.com/sushi-cdn/image/fetch/w_48,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/logos/main/token/${this.symbol.toLocaleLowerCase()}.jpg`
+    public get img() {
+        return this.logo
     }
 
-    public replaceByDefault (e: Event) {
+    public replaceByDefault(e: Event) {
         const imageTarget = e.target as HTMLImageElement
         imageTarget.src = FantomToken.fantomImg
     }
