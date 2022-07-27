@@ -23,12 +23,9 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
   constructor(
     private readonly swapOrderProvider: SwapOrderComputer,
     private readonly bridgeOrderProvider: BridgeOrderComputer,
-    @Inject(Class.TokenDetailsFetcher)
-    private readonly tokenDetailsFetcher: TokenDetailsFetcher,
-    @Inject(Class.PriceFeedFetcher)
-    private readonly priceFeedFetcher: PriceFeedFetcher,
-    @Inject(Class.GasPriceFetcher)
-    private readonly gasPriceFetcher: GasPriceFetcher,
+    @Inject(Class.TokenDetailsFetcher) private readonly tokenDetailsFetcher: TokenDetailsFetcher,
+    @Inject(Class.PriceFeedFetcher) private readonly priceFeedFetcher: PriceFeedFetcher,
+    @Inject(Class.GasPriceFetcher) private readonly gasPriceFetcher: GasPriceFetcher,
   ) {
     this.pathComputer = new PathComputer(
       swapOrderProvider,
