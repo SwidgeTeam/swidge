@@ -90,7 +90,7 @@ describe('path-computer', () => {
     expect(zeroExStub.callCount).toEqual(2);
     expect(sushiStub.callCount).toEqual(2);
     expect(multichainStub.callCount).toEqual(2);
-    expect(path.destinationFee.toString()).toEqual('3333333333333');
+    expect(path.destinationFeeInOriginWei.toString()).toEqual('3333333333333');
   });
 });
 

@@ -37,7 +37,7 @@ export class Path {
     return this._destinationSwap;
   }
 
-  get destinationFee(): BigInteger {
+  get destinationFeeInOriginWei(): BigInteger {
     return this._destinationFee;
   }
 

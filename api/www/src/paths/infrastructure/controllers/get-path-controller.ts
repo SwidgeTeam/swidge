@@ -26,7 +26,7 @@ export class GetPathController {
     return res.json({
       router: DeployedAddresses.Router,
       amountOut: path.amountOut,
-      destinationFee: path.destinationFee.toString(),
+      destinationFee: path.destinationFeeInOriginWei.toString(),
       originSwap: {
         code: path.originSwap.providerCode,
         tokenIn: this.mapTokenDetails(path.originSwap.tokenIn),
