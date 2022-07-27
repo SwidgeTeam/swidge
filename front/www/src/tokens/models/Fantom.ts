@@ -10,12 +10,12 @@ export default class FantomToken implements IToken {
     decimals: number
     logo: string
 
-    constructor(iSushiSwapFantomToken: ITokenJson) {
-        this.address = iSushiSwapFantomToken.id
-        this.symbol = iSushiSwapFantomToken.symbol
-        this.name = iSushiSwapFantomToken.name
-        this.decimals = iSushiSwapFantomToken.decimals
-        this.logo = iSushiSwapFantomToken.logo
+    constructor(json: ITokenJson) {
+        this.address = json.id
+        this.symbol = json.symbol
+        this.name = json.name
+        this.decimals = json.decimals
+        this.logo = json.logo
     }
 
     public get img() {
