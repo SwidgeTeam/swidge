@@ -108,6 +108,16 @@ fuck: stop rm build create start
 
 off: up logs
 
+### Tests
+
+test-api:
+	@$(call DOCKER_COMPOSE_RUN,--rm ${DOCKER_API_SERVICE} test)
+
+test-relayer:
+	@$(call DOCKER_COMPOSE_RUN,--rm ${DOCKER_RELAYER_SERVICE} test)
+
+test: test-api test-relayer test-contracts
+
 ### Database
 
 db-client:
