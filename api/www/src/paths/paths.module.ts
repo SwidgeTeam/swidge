@@ -14,6 +14,7 @@ import priceFeedConverterProvider from '../shared/infrastructure/PriceFeedConver
 import cachedHttpClientProvider from '../shared/infrastructure/http/cachedHttpClient.provider';
 import sushiPairsRepositoryProvider from '../swaps/infrastructure/database/repositories/sushi-pairs.repository.provider';
 import priceFeedFetcherProvider from '../shared/infrastructure/PriceFeedFetcher.provider';
+import gasPriceFetcherProvider from '../shared/infrastructure/GasPriceFetcher.provider';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import priceFeedFetcherProvider from '../shared/infrastructure/PriceFeedFetcher.
     tokenDetailsFetcherProvider(),
     priceFeedConverterProvider(),
     priceFeedFetcherProvider(),
+    gasPriceFetcherProvider(),
     sushiPairsRepositoryProvider(),
   ],
 })

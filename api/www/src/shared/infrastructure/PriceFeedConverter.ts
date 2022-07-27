@@ -1,18 +1,14 @@
 import { BigNumber, ethers } from 'ethers';
-import { RpcNode } from '../enums/RpcNode';
 
 export class PriceFeedConverter {
   public async fetch(
-    toChainId: string,
+    gasUnits: BigNumber,
+    gasPrice: BigNumber,
     priceOriginCoin: BigNumber,
     priceDestinationCoin: BigNumber,
-    gasUnits: BigNumber,
   ): Promise<BigNumber> {
-    const provider = new ethers.providers.JsonRpcProvider(RpcNode[toChainId]);
-
     // Compute cost in destination Wei
-    const feeData = await provider.getFeeData();
-    const feeInDestinationWei = feeData.gasPrice.mul(gasUnits);
+    const feeInDestinationWei = gasPrice.mul(gasUnits);
 
     const unit = ethers.utils.parseEther('1');
 

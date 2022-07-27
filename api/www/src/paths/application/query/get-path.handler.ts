@@ -15,6 +15,7 @@ import { PriceFeedConverter } from '../../../shared/infrastructure/PriceFeedConv
 import { ExchangeProviders } from '../../../swaps/domain/providers/exchange-providers';
 import { PathComputer } from '../../domain/path-computer';
 import { PriceFeedFetcher } from '../../../shared/infrastructure/PriceFeedFetcher';
+import { GasPriceFetcher } from '../../../shared/infrastructure/GasPriceFetcher';
 
 @QueryHandler(GetPathQuery)
 export class GetPathHandler implements IQueryHandler<GetPathQuery> {
@@ -29,6 +30,8 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
     private readonly priceFeedConverter: PriceFeedConverter,
     @Inject(Class.PriceFeedFetcher)
     private readonly priceFeedFetcher: PriceFeedFetcher,
+    @Inject(Class.GasPriceFetcher)
+    private readonly gasPriceFetcher: GasPriceFetcher,
   ) {
     this.pathComputer = new PathComputer(
       swapOrderProvider,
@@ -36,6 +39,7 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
       tokenDetailsFetcher,
       priceFeedConverter,
       priceFeedFetcher,
+      gasPriceFetcher,
     );
   }
 

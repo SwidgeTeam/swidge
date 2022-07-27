@@ -22,6 +22,7 @@ import { Fantom, Polygon } from '../../../../src/shared/enums/ChainIds';
 import { createMock } from 'ts-auto-mock';
 import { SushiPairsRepository } from '../../../../src/swaps/domain/sushi-pairs-repository';
 import { PriceFeedFetcher } from '../../../../src/shared/infrastructure/PriceFeedFetcher';
+import { GasPriceFetcher } from '../../../../src/shared/infrastructure/GasPriceFetcher';
 
 describe('path-computer', () => {
   it('should compute a single path', async () => {
@@ -94,6 +95,10 @@ describe('path-computer', () => {
     stub(multichain, 'isEnabledOn').returns(true);
     stub(Multichain, 'create').returns(multichain);
 
+    // mock GasPriceFetcher
+    const gasPriceFetcher = new GasPriceFetcher();
+    stub(gasPriceFetcher, 'fetch').resolves(BigNumber.from('101010'));
+
     // mock Chainlink's PriceFeedFetcher
     const priceFeedFetcher = new PriceFeedFetcher();
     stub(priceFeedFetcher, 'fetch').resolves(BigNumber.from('101010'));
@@ -121,6 +126,7 @@ describe('path-computer', () => {
       fetcher,
       priceFeedConverter,
       priceFeedFetcher,
+      gasPriceFetcher,
     );
 
     // create pat query

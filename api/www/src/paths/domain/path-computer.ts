@@ -17,6 +17,7 @@ import { PriceFeedConverter } from '../../shared/infrastructure/PriceFeedConvert
 import { PathNotFound } from './path-not-found';
 import { flatten } from 'lodash';
 import { PriceFeedFetcher } from '../../shared/infrastructure/PriceFeedFetcher';
+import { GasPriceFetcher } from '../../shared/infrastructure/GasPriceFetcher';
 
 export class PathComputer {
   /** Providers */
@@ -25,6 +26,7 @@ export class PathComputer {
   private readonly tokenDetailsFetcher: TokenDetailsFetcher;
   private readonly priceFeedConverter: PriceFeedConverter;
   private readonly priceFeedFetcher: PriceFeedFetcher;
+  private readonly gasPriceFetcher: GasPriceFetcher;
   /** Details */
   private readonly bridgingAssets;
   private srcToken: Token;
@@ -43,12 +45,14 @@ export class PathComputer {
     _tokenDetailsFetcher: TokenDetailsFetcher,
     _priceFeedConverter: PriceFeedConverter,
     _priceFeedFetcher: PriceFeedFetcher,
+    _gasPriceFetcher: GasPriceFetcher,
   ) {
     this.swapOrderProvider = _swapOrderProvider;
     this.bridgeOrderProvider = _bridgeOrderProvider;
     this.tokenDetailsFetcher = _tokenDetailsFetcher;
     this.priceFeedConverter = _priceFeedConverter;
     this.priceFeedFetcher = _priceFeedFetcher;
+    this.gasPriceFetcher = _gasPriceFetcher;
     this.bridgingAssets = [USDC];
   }
 
@@ -273,13 +277,15 @@ export class PathComputer {
   ): Promise<BigNumber> {
     const fixDestinationGas = BigNumber.from(0);
 
-    const estimatedDestinationGas = destinationSwap.estimatedGas.add(fixDestinationGas);
+    const destinationEstimatedGas = destinationSwap.estimatedGas.add(fixDestinationGas);
+
+    const destinationGasPrice = await this.gasPriceFetcher.fetch(this.toChain);
 
     return await this.priceFeedConverter.fetch(
-      this.toChain,
+      destinationEstimatedGas,
+      destinationGasPrice,
       this.priceOriginCoin,
       this.priceDestinationCoin,
-      estimatedDestinationGas,
     );
   }
 

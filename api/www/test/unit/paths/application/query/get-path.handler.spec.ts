@@ -10,6 +10,7 @@ import { PriceFeedConverter } from '../../../../../src/shared/infrastructure/Pri
 import { BigNumber } from 'ethers';
 import { PriceFeedFetcher } from '../../../../../src/shared/infrastructure/PriceFeedFetcher';
 import { stub } from 'sinon';
+import { GasPriceFetcher } from '../../../../../src/shared/infrastructure/GasPriceFetcher';
 
 describe('get path', () => {
   it('should return error if invalid first swap', async () => {
@@ -39,12 +40,17 @@ describe('get path', () => {
       .onCall(1)
       .resolves(BigNumber.from('101010'));
 
+    // mock GasPriceFetcher
+    const gasPriceFetcher = new GasPriceFetcher();
+    stub(gasPriceFetcher, 'fetch').resolves(BigNumber.from('101010'));
+
     const handler = new GetPathHandler(
       mockSwapProvider,
       mockBridgeProvider,
       mockTokenDetailsFetcher,
       mockPriceFeedConverter,
       priceFeedFetcher,
+      gasPriceFetcher,
     );
 
     const query = new GetPathQuery('137', '250', '0xtokenA', '0xtokenB', '10');
