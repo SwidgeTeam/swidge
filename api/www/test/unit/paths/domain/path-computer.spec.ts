@@ -22,7 +22,6 @@ import { createMock } from 'ts-auto-mock';
 import { SushiPairsRepository } from '../../../../src/swaps/domain/sushi-pairs-repository';
 import { PriceFeedFetcher } from '../../../../src/shared/infrastructure/PriceFeedFetcher';
 import { GasPriceFetcher } from '../../../../src/shared/infrastructure/GasPriceFetcher';
-import { GasConverter } from '../../../../src/shared/domain/GasConverter';
 
 describe('path-computer', () => {
   it('should compute a single path', async () => {
@@ -64,7 +63,7 @@ describe('path-computer', () => {
           '',
           '',
           BigInteger.fromDecimal('2', srcToken.decimals),
-          BigNumber.from('0'),
+          BigNumber.from('100000'),
         ),
       );
     stub(zeroEx, 'isEnabledOn').returns(true);
@@ -97,11 +96,13 @@ describe('path-computer', () => {
 
     // mock GasPriceFetcher
     const gasPriceFetcher = new GasPriceFetcher();
-    stub(gasPriceFetcher, 'fetch').resolves(BigNumber.from('101010'));
+    stub(gasPriceFetcher, 'fetch').resolves(BigNumber.from('100000000'));
 
     // mock Chainlink's PriceFeedFetcher
-    const priceFeedFetcher = new PriceFeedFetcher();
-    stub(priceFeedFetcher, 'fetch').resolves(BigNumber.from('101010'));
+    const priceFeedFetcher = getPriceFeedFetcher([
+      { chain: Polygon, result: '500' },
+      { chain: Fantom, result: '1500' },
+    ]);
 
     const mockSushiRepository = createMock<SushiPairsRepository>({
       getPairs: (chainId) => Promise.reject([]),
@@ -133,6 +134,15 @@ describe('path-computer', () => {
     /** Assert */
     expect(zeroExStub.callCount).toEqual(2);
     expect(multichainStub.callCount).toEqual(1);
-    expect(path.destinationFee.toString()).toEqual('101010');
+    expect(path.destinationFee.toString()).toEqual('3333333333333');
   });
 });
+
+function getPriceFeedFetcher(responses: { chain: string; result: string }[]) {
+  const priceFeedFetcher = new PriceFeedFetcher();
+  const fetcherStub = stub(priceFeedFetcher, 'fetch');
+  for (const response of responses) {
+    fetcherStub.withArgs(response.chain).resolves(BigNumber.from(response.result));
+  }
+  return priceFeedFetcher;
+}
