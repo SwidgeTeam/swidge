@@ -4,7 +4,7 @@ import { SushiPairs } from './sushi-pairs';
 export interface SushiPairsRepository {
   getPairs(chainId: string): Promise<SushiPairs>;
 
-  getAllPairs(): Promise<SushiPairs>;
+  getOutdatedPairs(): Promise<SushiPairs>;
 
   save(pair: SushiPair): void;
 }

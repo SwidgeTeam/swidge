@@ -140,14 +140,17 @@ db-import:
 	)
 
 db-upgrade: db-migrate
-db-migrate:
-	@$(call DOCKER_COMPOSE_RUN, --rm api migration:run)
+db-migrate: db-ormconfig
+	@$(call DOCKER_COMPOSE_RUN, --rm ${DOCKER_API_SERVICE} migration:run)
 
-db-rollback:
-	@$(call DOCKER_COMPOSE_RUN, --rm api migration:revert)
+db-rollback: db-ormconfig
+	@$(call DOCKER_COMPOSE_RUN, --rm ${DOCKER_API_SERVICE} migration:revert)
 
-db-generate-migration:
-	@$(call DOCKER_COMPOSE_RUN, --rm api migration:generate)
+db-generate-migration: db-ormconfig
+	@$(call DOCKER_COMPOSE_RUN, --rm ${DOCKER_API_SERVICE} migration:generate)
+
+db-ormconfig:
+	@$(call DOCKER_COMPOSE_RUN, --rm ${DOCKER_API_SERVICE} ormconfig)
 
 ### Localstack
 

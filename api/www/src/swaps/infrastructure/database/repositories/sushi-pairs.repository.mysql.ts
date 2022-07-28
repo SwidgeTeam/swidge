@@ -1,4 +1,4 @@
-import { EntityManager, EntityRepository } from 'typeorm';
+import { EntityManager, EntityRepository, LessThan } from 'typeorm';
 import { SushiPairsEntity } from '../models/sushi-pairs.entity';
 import { SushiPairsRepository } from '../../../domain/sushi-pairs-repository';
 import { ethers } from 'ethers';
@@ -25,8 +25,14 @@ export class SushiPairsRepositoryMysql implements SushiPairsRepository {
   /**
    * Returns all the stored pairs
    */
-  public async getAllPairs(): Promise<SushiPairs> {
-    const result = await this.manager.find(SushiPairsEntity);
+  public async getOutdatedPairs(): Promise<SushiPairs> {
+    const oneMinuteAgo = new Date(Date.now() - 1000 * 60);
+    const result = await this.manager.find(SushiPairsEntity, {
+      where: [
+        { updated: null },
+        { updated: LessThan(oneMinuteAgo) }
+      ],
+    });
     return this.constructPairs(result);
   }
 
@@ -96,6 +102,7 @@ export class SushiPairsRepositoryMysql implements SushiPairsRepository {
       token1_decimals: pair.token1.decimals,
       reserve0: pair.reserve0.toString(),
       reserve1: pair.reserve1.toString(),
+      updated: new Date(),
     });
   }
 
@@ -107,11 +114,14 @@ export class SushiPairsRepositoryMysql implements SushiPairsRepository {
     await this.manager.update(
       SushiPairsEntity,
       {
-        id: pair.id,
+        chainId: pair.chainId,
+        token0_id: pair.token0.address,
+        token1_id: pair.token1.address,
       },
       {
         reserve0: pair.reserve0.toString(),
         reserve1: pair.reserve1.toString(),
+        updated: new Date(),
       },
     );
   }
