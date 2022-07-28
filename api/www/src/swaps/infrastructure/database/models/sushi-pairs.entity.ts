@@ -38,4 +38,7 @@ export class SushiPairsEntity {
 
   @Column()
   reserve1: string;
+
+  @Column({ type: 'timestamp', nullable: true })
+  updated: Date;
 }

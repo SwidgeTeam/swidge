@@ -24,20 +24,10 @@ export class UpdateSushiPairsHandler implements ICommandHandler<UpdateSushiPairs
    * Entrypoint
    */
   async execute(): Promise<void> {
-    await this.updateExistingPairs();
+    // Update first the top volume pairs
     await this.updateTopVolumePairs();
-  }
-
-  /**
-   * Updates the existing pairs
-   * @private
-   */
-  private async updateExistingPairs(): Promise<void> {
-    const pairs = await this.repository.getAllPairs();
-
-    for (const pair of pairs.items<SushiPair[]>()) {
-      await this.updateReserves(pair);
-    }
+    // Look then for outdated pairs
+    await this.updateOutdatedPairs();
   }
 
   /**
@@ -51,6 +41,18 @@ export class UpdateSushiPairsHandler implements ICommandHandler<UpdateSushiPairs
       pairs.forEach((pair) => {
         this.repository.save(pair);
       });
+    }
+  }
+
+  /**
+   * Updates the existing pairs
+   * @private
+   */
+  private async updateOutdatedPairs(): Promise<void> {
+    const pairs = await this.repository.getOutdatedPairs();
+
+    for (const pair of pairs.items<SushiPair[]>()) {
+      await this.updateReserves(pair);
     }
   }
 
