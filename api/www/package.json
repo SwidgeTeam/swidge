@@ -21,10 +21,10 @@
       "test:e2e": "jest --config test/e2e/jest-e2e.json",
       "ormconfig": "(rm ormconfig.json 2>/dev/null || true) && ts-node -r tsconfig-paths/register scripts/write-ormconfig.ts",
       "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js",
-      "migration:generate": "yarn ormconfig && yarn build && yarn run typeorm migration:generate -n default",
+      "migration:generate": "yarn build && yarn run typeorm migration:generate -n default",
       "migration:create": "yarn run typeorm migration:create -n",
-      "migration:run": "yarn ormconfig && yarn run typeorm migration:run",
-      "migration:revert": "yarn ormconfig && yarn run typeorm migration:revert"
+      "migration:run": "yarn run typeorm migration:run",
+      "migration:revert": "yarn run typeorm migration:revert"
    },
    "dependencies": {
       "@nestjs/common": "^8.0.0",
