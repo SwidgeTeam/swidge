@@ -8,9 +8,12 @@ import ModalNetworks from '@/components/ModalNetworks.vue'
 import { computed, ref } from 'vue'
 import ConnectButton from '@/components/Buttons/ConnectButton.vue'
 import { Networks } from '@/domain/chains/Networks'
+import TransactionsButton from './Buttons/TransactionsButton.vue'
+import ModalTransactions from './ModalTransactions.vue'
 
 const emits = defineEmits<{
     (event: 'switch-network', chainId: string): void
+    (event: 'show-transactions'): void
 }>()
 
 const web3Store = useWeb3Store()
@@ -67,6 +70,8 @@ const chainIcon = computed({
                 @switch-network="isModalOpen = true"
             />
             <AddressButton :address="createShortAddress(account)"/>
+            <TransactionsButton
+                @show-transactions="isModalOpen = true"/>
         </div>
         <div v-else class="flex gap-4 font-extralight">
             <ConnectButton
@@ -79,5 +84,10 @@ const chainIcon = computed({
         @close-modal="isModalOpen = false"
         @set-chain="changeNetwork($event)"
     />
+    <ModalTransactions
+        :is-modal-open="isModalOpen"
+        @close-modal="isModalOpen = false"
+        @show-transactions="emits('show-transactions')"
+        />
 </template>
 
