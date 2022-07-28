@@ -3,12 +3,12 @@ import {Dialog, DialogOverlay, TransitionChild, TransitionRoot} from '@headlessu
 import {XIcon} from '@heroicons/vue/solid'
 
 defineProps<{
-  isModalOpen: boolean
+  isTransactionsModalOpen: boolean
 }>()
 
 const emits = defineEmits<{
   (event: 'close-modal'): void
-  (event: 'show-transactions', chain: string): void
+  (event: 'show-transactions'): void
 }>()
 
 const onCloseModal = () => {
@@ -22,7 +22,7 @@ const onCloseModal = () => {
 <template>
   <TransitionRoot
     as="template"
-    :show="isModalOpen"
+    :show="isTransactionsModalOpen"
   >
     <Dialog
       as="div"

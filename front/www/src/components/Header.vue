@@ -20,7 +20,8 @@ const web3Store = useWeb3Store()
 const { account, isConnected, isCorrectNetwork, selectedNetworkId } = storeToRefs(web3Store)
 const { connect, switchToNetwork } = web3Store
 
-const isModalOpen = ref(false)
+const isNetworkModalOpen = ref(false)
+const isTransactionsModalOpen = ref(false)
 
 const createShortAddress = (address: string): string => {
     return address.substring(0, 6) + '...' + address.substring(address.length - 4)
@@ -29,7 +30,7 @@ const createShortAddress = (address: string): string => {
 const changeNetwork = (chainId: string) => {
     switchToNetwork(chainId)
         .then(() => {
-            isModalOpen.value = false
+            isNetworkModalOpen.value = false
             emits('switch-network', chainId)
         })
 }
@@ -67,11 +68,11 @@ const chainIcon = computed({
                 :chain-name="chainName"
                 :icon-link="chainIcon"
                 :is-network="isCorrectNetwork"
-                @switch-network="isModalOpen = true"
+                @switch-network="isNetworkModalOpen = true"
             />
             <AddressButton :address="createShortAddress(account)"/>
             <TransactionsButton
-                @show-transactions="isModalOpen = true"/>
+                @show-transactions="isTransactionsModalOpen = true"/>
         </div>
         <div v-else class="flex gap-4 font-extralight">
             <ConnectButton
@@ -80,13 +81,13 @@ const chainIcon = computed({
         </div>
     </nav>
     <ModalNetworks
-        :is-modal-open="isModalOpen"
-        @close-modal="isModalOpen = false"
+        :is-network-modal-open="isNetworkModalOpen"
+        @close-modal="isNetworkModalOpen = false"
         @set-chain="changeNetwork($event)"
     />
     <ModalTransactions
-        :is-modal-open="isModalOpen"
-        @close-modal="isModalOpen = false"
+        :is-transactions-modal-open="isTransactionsModalOpen"
+        @close-modal="isTransactionsModalOpen = false"
         @show-transactions="emits('show-transactions')"
         />
 </template>
