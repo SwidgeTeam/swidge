@@ -1,17 +1,18 @@
-import axios from 'axios';
-import HttpClient from './http-base-client';
-import { indexedErrors } from './models/get-quote-error';
-import GetQuoteRequest from './models/get-quote-request';
-import GetQuoteResponse from './models/get-quote-response';
-import { ApiErrorResponse } from "@/api/models/ApiErrorResponse";
-import { TokenList } from '@/domain/tokens/TokenList';
-import IToken from '@/domain/tokens/IToken';
-import { Networks } from '@/domain/chains/Networks';
-import Path from '@/domain/paths/path';
+import axios from 'axios'
+import HttpClient from './http-base-client'
+import { indexedErrors } from './models/get-quote-error'
+import GetQuoteRequest from './models/get-quote-request'
+import GetQuoteResponse from './models/get-quote-response'
+import { ApiErrorResponse } from '@/api/models/ApiErrorResponse'
+import { TransactionsList } from '@/api/models/transactions'
+import { TokenList } from '@/domain/tokens/TokenList'
+import IToken from '@/domain/tokens/IToken'
+import { Networks } from '@/domain/chains/Networks'
+import Path from '@/domain/paths/path'
 
 class SwidgeAPI extends HttpClient {
     public constructor() {
-        super(import.meta.env.VITE_APP_API_HOST);
+        super(import.meta.env.VITE_APP_API_HOST)
     }
 
     public async fetchTokens(): Promise<IToken[]> {
@@ -80,6 +81,28 @@ class SwidgeAPI extends HttpClient {
                 throw new Error(errorMessage)
             }
             throw new Error('UnknowError no axios error')
+        }
+    }
+
+    public async getTransactions(walletAddress: string): Promise<TransactionsList> {
+        return {
+            'transactions': [{
+                'status': 'processing',
+                'date': '1658998584538',
+                'fromChain': '137',
+                'toChain': '250',
+                'srcAsset': '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
+                'dstAsset': '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+                'amountIn': '10000000000000000000'
+            }, {
+                'status': 'completed',
+                'date': '1658998584538',
+                'fromChain': '250',
+                'toChain': '137',
+                'srcAsset': '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+                'dstAsset': '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
+                'amountIn': '10000000000000000000'
+            }]
         }
     }
 }
