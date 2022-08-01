@@ -75,13 +75,13 @@ const loadData = async () => {
                             @click="onCloseModal()"
                         />
                         <div v-if="transactions">
-                          <li v-for="i in transactions" class="content-center gradient-border-header-main flex flex-wrap justify-between gap-2 mb-4 p-2">
-                              <div> Date: {{ Date(i.date) }} </div>
+                          <li v-for="i in transactions" class="grid content-center gradient-border-header-main flex flex-wrap justify-between gap-2 mb-4 p-2">
+                              <div> Date: {{ i.date }} </div>
                               <div> Amount swaped: {{ i.amountIn }} </div>
                               <div> From chain: {{ i.fromChain }} </div>
                               <div> To chain: {{ i.toChain }} </div>
-                              <div> {{ i.status }} </div>
-                              <div> {{ i.srcAsset }} </div>
+                              <div> Transaction status: {{ i.status }} </div>
+                              <div> Token: {{ i.srcAsset }} </div>
                             </li>
                         </div>
                     </div>
