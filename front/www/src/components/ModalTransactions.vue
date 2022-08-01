@@ -1,6 +1,10 @@
 <script setup lang='ts'>
 import {Dialog, DialogOverlay, TransitionChild, TransitionRoot} from '@headlessui/vue'
 import {XIcon} from '@heroicons/vue/solid'
+import SwidgeAPI from '@/api/swidge-api'
+import { useWeb3Store } from '@/store/web3'
+
+const web3Store = useWeb3Store()
 
 defineProps<{
   isTransactionsModalOpen: boolean
@@ -15,7 +19,7 @@ const onCloseModal = () => {
     emits('close-modal')
 }
 
-
+const transactions = SwidgeAPI.getTransactions(web3Store.account)
 
 </script>
 
@@ -59,7 +63,10 @@ const onCloseModal = () => {
               @click="onCloseModal()"
             />
             <div>
-               List 
+              
+              <button>
+               {{transactions}}
+              </button>
             </div>
           </div>
         </TransitionChild>
