@@ -34,7 +34,12 @@ const loadData = async () => {
 }
 
 const transformDate = (timestamp:number) => {
-    const date = new Date(timestamp)
+    const year = new Date(timestamp).getFullYear() 
+    const month = new Date(timestamp).getMonth()
+    const day = new Date(timestamp).getDay() 
+    const hours = new Date(timestamp).getHours()
+    const minutes = new Date(timestamp).getMinutes() 
+    const date = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes
     return date
 }
 
