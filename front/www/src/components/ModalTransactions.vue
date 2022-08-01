@@ -9,9 +9,12 @@ import networks from '@/assets/Networks'
 
 const web3Store = useWeb3Store()
 
-defineProps<{
-    isTransactionsModalOpen: boolean,
-}>()
+const props = defineProps({
+    isOpen: {
+        type: Boolean,
+        default: true
+    },
+})
 
 const emits = defineEmits<{
     (event: 'close-modal'): void
@@ -22,23 +25,33 @@ const onCloseModal = () => {
     emits('close-modal')
 }
 
+const transactions = ref<Transaction[]>([])
+const isLoading = ref<boolean>(false)
+
 onUpdated(async () => {
-    await loadData()
+    if (props.isOpen) {
+        isLoading.value = true
+        await loadData()
+            .then(txs => {
+                transactions.value = txs
+                isLoading.value = false
+            })
+    }
 })
 
-const transactions = ref<Transaction[]>([])
-
 const loadData = async () => {
-    const transactionList = await SwidgeAPI.getTransactions(web3Store.account)
-    transactions.value = transactionList.transactions
+    return SwidgeAPI.getTransactions(web3Store.account)
+        .then(transactionList => {
+            return transactionList.transactions
+        })
 }
 
-const transformDate = (timestamp:number) => {
-    const year = new Date(timestamp).getFullYear() 
+const transformDate = (timestamp: number) => {
+    const year = new Date(timestamp).getFullYear()
     const month = new Date(timestamp).getMonth()
-    const day = new Date(timestamp).getDay() 
+    const day = new Date(timestamp).getDay()
     const hours = new Date(timestamp).getHours()
-    const minutes = new Date(timestamp).getMinutes() 
+    const minutes = new Date(timestamp).getMinutes()
     const date = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes
     return date
 }
@@ -48,7 +61,7 @@ const transformDate = (timestamp:number) => {
 <template>
     <TransitionRoot
         as="template"
-        :show="isTransactionsModalOpen"
+        :show="isOpen"
     >
         <Dialog
             as="div"
@@ -84,23 +97,28 @@ const transformDate = (timestamp:number) => {
                             class="absolute w-5 top-6 right-6 cursor-pointer"
                             @click="onCloseModal()"
                         />
-                        <div v-if="transactions.length > 1">
-                          <li v-for="i in transactions" class="grid content-center gradient-border-header-main flex flex-wrap justify-between gap-2 mb-4 p-2">
-                              <div> Date: {{ transformDate(+i.date) }} </div>
-                              <div> Amount swaped: {{ i.amountIn }} </div>
-                              <div> From chain: {{ networks.get(i.fromChain)?.name }} </div>
-                              <div> To chain: {{ networks.get(i.toChain)?.name }} </div>
-                              <div> Transaction status: {{ i.status }} </div>
-                              <div> From Token: {{ i.srcAsset }} </div> 
-                              <div> To Token: {{ i.dstAsset }} </div>
+                        <div v-if="isLoading">
+                            loading
+                        </div>
+                        <div v-if="!isLoading && transactions.length < 1" class="text-center">
+                            No transactions
+                        </div>
+                        <div v-if="!isLoading && transactions.length > 1">
+                            <li
+                                v-for="i in transactions"
+                                class="grid content-center gradient-border-header-main flex flex-wrap justify-between gap-2 mb-4 p-2">
+                                <div> Date: {{ transformDate(+i.date) }}</div>
+                                <div> Amount swaped: {{ i.amountIn }}</div>
+                                <div> From chain: {{ networks.get(i.fromChain)?.name }}</div>
+                                <div> To chain: {{ networks.get(i.toChain)?.name }}</div>
+                                <div> Transaction status: {{ i.status }}</div>
+                                <div> From Token: {{ i.srcAsset }}</div>
+                                <div> To Token: {{ i.dstAsset }}</div>
 
                             </li>
                         </div>
                         <div v-else>
-                          test
-                        </div>
-                        <div v-if="transactions.length < 1" class="text-center">
-                          No transactions 
+                            test
                         </div>
                     </div>
                 </TransitionChild>

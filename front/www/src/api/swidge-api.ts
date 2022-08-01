@@ -85,6 +85,7 @@ class SwidgeAPI extends HttpClient {
     }
 
     public async getTransactions(walletAddress: string): Promise<TransactionsList> {
+        await new Promise(resolve => setTimeout(resolve, 2000))
         try {
             const response = await this.instance.get('https://mocki.io/v1/891eedcb-dd7c-4901-b899-1f6f081e2794')
             return response.data
