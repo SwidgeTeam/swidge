@@ -80,30 +80,22 @@ class SwidgeAPI extends HttpClient {
                 const errorMessage = indexedErrors[getQuoteErrorResponse.message] ?? 'Unhandled error!'
                 throw new Error(errorMessage)
             }
-            throw new Error('UnknowError no axios error')
+            throw new Error('UnknownError no axios error')
         }
     }
 
     public async getTransactions(walletAddress: string): Promise<TransactionsList> {
-        return Promise.resolve({
-            'transactions': [{
-                'status': 'processing',
-                'date': '1658998584538',
-                'fromChain': '137',
-                'toChain': '250',
-                'srcAsset': '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
-                'dstAsset': '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
-                'amountIn': '10000000000000000000'
-            }, {
-                'status': 'completed',
-                'date': '1658998584538',
-                'fromChain': '250',
-                'toChain': '137',
-                'srcAsset': '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
-                'dstAsset': '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
-                'amountIn': '10000000000000000000'
-            }]
-        });
+        try {
+            const response = await this.instance.get('https://mocki.io/v1/891eedcb-dd7c-4901-b899-1f6f081e2794')
+            return response.data
+        } catch (e: unknown) {
+            if (axios.isAxiosError(e)) {
+                const apiErrorResponse = e.response?.data as ApiErrorResponse
+                const errorMessage = apiErrorResponse.message ?? 'Unhandled error!'
+                throw new Error(errorMessage)
+            }
+            throw new Error('UnknownError no axios error')
+        }
     }
 }
 
