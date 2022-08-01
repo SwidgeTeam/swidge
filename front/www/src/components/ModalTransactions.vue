@@ -19,7 +19,7 @@ const onCloseModal = () => {
     emits('close-modal')
 }
 
-const transactions = SwidgeAPI.getTransactions(web3Store.account)
+const transactions = await SwidgeAPI.getTransactions(web3Store.account)
 
 </script>
 
