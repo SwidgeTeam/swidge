@@ -10,6 +10,8 @@ import { PutTransactionController } from './infrastructure/controllers/put-trans
 import { ConfigModule } from '../config/config.module';
 import { ConfigService } from '../config/config.service';
 import { ConfigService as NestJSConfigService } from '@nestjs/config';
+import { GetWalletTransactionsController } from './infrastructure/controllers/get-wallet-transactions-controller';
+import { GetWalletTransactionsHandler } from './application/query/get-wallet-transactions-handler';
 
 @Module({
   imports: [CqrsModule, ConfigModule],
@@ -17,11 +19,13 @@ import { ConfigService as NestJSConfigService } from '@nestjs/config';
     GetTransactionController,
     PostTransactionController,
     PutTransactionController,
+    GetWalletTransactionsController,
   ],
   providers: [
     GetTransactionHandler,
     CreateTransactionHandler,
     UpdateTransactionHandler,
+    GetWalletTransactionsHandler,
     ConfigService,
     NestJSConfigService,
     transactionRepositoryProvider(),
