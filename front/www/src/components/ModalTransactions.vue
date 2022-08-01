@@ -30,19 +30,16 @@ const isLoading = ref<boolean>(false)
 
 onUpdated(async () => {
     if (props.isOpen) {
-        isLoading.value = true
         await loadData()
-            .then(txs => {
-                transactions.value = txs
-                isLoading.value = false
-            })
     }
 })
 
 const loadData = async () => {
+    isLoading.value = true
     return SwidgeAPI.getTransactions(web3Store.account)
         .then(transactionList => {
-            return transactionList.transactions
+            transactions.value = transactionList.transactions
+            isLoading.value = false
         })
 }
 
