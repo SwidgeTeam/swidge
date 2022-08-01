@@ -86,7 +86,7 @@ const chainIcon = computed({
         @set-chain="changeNetwork($event)"
     />
     <ModalTransactions
-        :is-transactions-modal-open="isTransactionsModalOpen"
+        :is-open="isTransactionsModalOpen"
         @close-modal="isTransactionsModalOpen = false"
         @show-transactions="emits('show-transactions')"
         />
