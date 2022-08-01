@@ -85,7 +85,7 @@ class SwidgeAPI extends HttpClient {
     }
 
     public async getTransactions(walletAddress: string): Promise<TransactionsList> {
-        return {
+        return Promise.resolve({
             'transactions': [{
                 'status': 'processing',
                 'date': '1658998584538',
@@ -103,7 +103,7 @@ class SwidgeAPI extends HttpClient {
                 'dstAsset': '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
                 'amountIn': '10000000000000000000'
             }]
-        }
+        });
     }
 }
 
