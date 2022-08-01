@@ -96,7 +96,10 @@ const transformDate = (timestamp:number) => {
 
                             </li>
                         </div>
-                        <div v-else class="text-center">
+                        <div v-else>
+                          test
+                        </div>
+                        <div v-if="transactions.length < 1" class="text-center">
                           No transactions 
                         </div>
                     </div>
