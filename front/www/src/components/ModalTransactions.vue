@@ -5,6 +5,7 @@ import SwidgeAPI from '@/api/swidge-api'
 import { useWeb3Store } from '@/store/web3'
 import { onUpdated, ref } from 'vue'
 import { Transaction } from '@/api/models/transactions'
+import networks from '@/assets/Networks'
 
 const web3Store = useWeb3Store()
 
@@ -32,6 +33,10 @@ const loadData = async () => {
     transactions.value = transactionList.transactions
 }
 
+const transformDate = (timestamp:number) => {
+    const date = new Date(timestamp)
+    return date
+}
 
 </script>
 
@@ -74,15 +79,20 @@ const loadData = async () => {
                             class="absolute w-5 top-6 right-6 cursor-pointer"
                             @click="onCloseModal()"
                         />
-                        <div v-if="transactions">
+                        <div v-if="transactions.length > 1">
                           <li v-for="i in transactions" class="grid content-center gradient-border-header-main flex flex-wrap justify-between gap-2 mb-4 p-2">
-                              <div> Date: {{ i.date }} </div>
+                              <div> Date: {{ transformDate(+i.date) }} </div>
                               <div> Amount swaped: {{ i.amountIn }} </div>
-                              <div> From chain: {{ i.fromChain }} </div>
-                              <div> To chain: {{ i.toChain }} </div>
+                              <div> From chain: {{ networks.get(i.fromChain)?.name }} </div>
+                              <div> To chain: {{ networks.get(i.toChain)?.name }} </div>
                               <div> Transaction status: {{ i.status }} </div>
-                              <div> Token: {{ i.srcAsset }} </div>
+                              <div> From Token: {{ i.srcAsset }} </div> 
+                              <div> To Token: {{ i.dstAsset }} </div>
+
                             </li>
+                        </div>
+                        <div v-else class="text-center">
+                          No transactions 
                         </div>
                     </div>
                 </TransitionChild>
