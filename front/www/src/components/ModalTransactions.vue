@@ -32,6 +32,7 @@ const loadData = async () => {
     transactions.value = transactionList.transactions
 }
 
+
 </script>
 
 <template>
@@ -73,11 +74,15 @@ const loadData = async () => {
                             class="absolute w-5 top-6 right-6 cursor-pointer"
                             @click="onCloseModal()"
                         />
-                        <div>
-
-                            <button>
-                                {{ transactions }}
-                            </button>
+                        <div v-if="transactions">
+                          <li v-for="i in transactions" class="content-center gradient-border-header-main flex flex-wrap justify-between gap-2 mb-4 p-2">
+                              <div> Date: {{ Date(i.date) }} </div>
+                              <div> Amount swaped: {{ i.amountIn }} </div>
+                              <div> From chain: {{ i.fromChain }} </div>
+                              <div> To chain: {{ i.toChain }} </div>
+                              <div> {{ i.status }} </div>
+                              <div> {{ i.srcAsset }} </div>
+                            </li>
                         </div>
                     </div>
                 </TransitionChild>
