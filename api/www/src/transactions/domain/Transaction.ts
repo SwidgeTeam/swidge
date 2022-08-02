@@ -2,6 +2,9 @@ import { ContractAddress } from '../../shared/types';
 import { BigInteger } from '../../shared/domain/BigInteger';
 
 export class Transaction {
+  private COMPLETED_STATUS = 'completed';
+  private ONGOING_STATUS = 'ongoing';
+
   public static create(
     _txHash: string,
     _walletAddress: string,
@@ -117,6 +120,10 @@ export class Transaction {
 
   get completed(): Date {
     return this._completed;
+  }
+
+  get status(): string {
+    return this.completed ? this.COMPLETED_STATUS : this.ONGOING_STATUS;
   }
 
   /** Modifiers */

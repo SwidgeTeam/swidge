@@ -3,6 +3,7 @@ export interface TransactionsList {
 }
 
 export interface Transaction {
+    txHash: string
     status: string
     date: string
     fromChain: string

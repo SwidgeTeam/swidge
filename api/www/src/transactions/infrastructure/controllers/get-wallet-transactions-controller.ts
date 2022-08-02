@@ -22,11 +22,12 @@ export class GetWalletTransactionsController {
       transactions: transactions.map((tx: Transaction) => {
         return {
           txHash: tx.txHash,
+          status: tx.status,
           date: tx.executed,
-          fromChainId: tx.fromChainId,
-          toChainId: tx.toChainId,
-          srcToken: tx.srcToken,
-          dstToken: tx.dstToken,
+          fromChain: tx.fromChainId,
+          toChain: tx.toChainId,
+          srcAsset: tx.srcToken,
+          dstAsset: tx.dstToken,
           amountIn: tx.amountIn,
         };
       }),
