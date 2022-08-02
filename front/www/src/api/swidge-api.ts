@@ -4,10 +4,25 @@ import { indexedErrors } from './models/get-quote-error';
 import GetQuoteRequest from './models/get-quote-request';
 import GetQuoteResponse from './models/get-quote-response';
 import { ApiErrorResponse } from "@/api/models/ApiErrorResponse";
+import { TokenList } from '@/domain/tokens/TokenList';
 
 class SwidgeAPI extends HttpClient {
     public constructor() {
         super(import.meta.env.VITE_APP_API_HOST);
+    }
+
+    public async fetchTokens(): Promise<TokenList> {
+        try {
+            const response = await this.instance.get('/token-list')
+            return response.data
+        } catch (e: unknown) {
+            if (axios.isAxiosError(e)) {
+                const apiErrorResponse = e.response?.data as ApiErrorResponse
+                const errorMessage = apiErrorResponse.message ?? 'Unhandled error!'
+                throw new Error(errorMessage)
+            }
+            throw new Error('UnknownError no axios error')
+        }
     }
 
     public async getQuote(getQuotePayload: GetQuoteRequest): Promise<GetQuoteResponse> {
