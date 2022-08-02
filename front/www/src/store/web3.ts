@@ -1,9 +1,9 @@
 import { ethers } from 'ethers'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { ref } from 'vue'
-import { Networks } from "@/assets/Networks";
-import IERC20Abi from '@/contracts/IERC20.json';
-import { NATIVE_COIN_ADDRESS } from "@/contracts/routerCaller";
+import { Networks } from '@/assets/Networks'
+import IERC20Abi from '@/contracts/IERC20.json'
+import { NATIVE_COIN_ADDRESS } from '@/contracts/routerCaller'
 
 export const useWeb3Store = defineStore('web3', () => {
     const account = ref('')
@@ -17,7 +17,7 @@ export const useWeb3Store = defineStore('web3', () => {
         try {
             const { ethereum } = window
             if (!ethereum) {
-                error.value = "Metamask not installed."
+                error.value = 'Metamask not installed.'
                 return
             }
             if (!(await checkIfIsAlreadyConnected()) && connect) {
@@ -27,7 +27,7 @@ export const useWeb3Store = defineStore('web3', () => {
             await checkIsCorrectNetwork()
             await setupEventListeners()
         } catch {
-            error.value = "Account request refused."
+            error.value = 'Account request refused.'
             isConnected.value = false
         }
     }
@@ -101,7 +101,7 @@ export const useWeb3Store = defineStore('web3', () => {
     async function switchToNetwork(chainId: string) {
         const { ethereum } = window
         try {
-            const hexChainId = '0x' + Number(chainId).toString(16);
+            const hexChainId = '0x' + Number(chainId).toString(16)
             await ethereum.request({
                 method: 'wallet_switchEthereumChain',
                 params: [{ chainId: hexChainId }]
@@ -127,15 +127,12 @@ export const useWeb3Store = defineStore('web3', () => {
     }
 
     function getChainProvider(chainId: string) {
-        const chain = networks.get(chainId)
-        if (chain === undefined) {
-            throw new Error('Unsupported chain')
-        }
+        const chain = Networks.get(chainId)
         return ethers.getDefaultProvider({
             name: chain.name,
             chainId: Number(chain.id),
             _defaultProvider: (providers) => new providers.JsonRpcProvider(chain.rpcUrl)
-        });
+        })
     }
 
     return {
