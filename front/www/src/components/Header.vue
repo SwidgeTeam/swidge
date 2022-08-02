@@ -33,6 +33,9 @@ const changeNetwork = (chainId: string) => {
 
 const chainName = computed({
     get: () => {
+        if (!selectedNetworkId.value) {
+            return ''
+        }
         const chain = Networks.get(selectedNetworkId.value)
         return chain.name
     },
@@ -41,6 +44,9 @@ const chainName = computed({
 
 const chainIcon = computed({
     get: () => {
+        if (!selectedNetworkId.value) {
+            return ''
+        }
         const chain = Networks.get(selectedNetworkId.value)
         return chain.icon
     },
@@ -51,11 +57,11 @@ const chainIcon = computed({
 <template>
     <nav class="flex items-center justify-between w-full px-24">
         <a class="flex items-center justify-center w-40" href="https://www.swidge.xyz/">
-          
-          
-          <SwidgeLogo />
-          
-            
+
+
+            <SwidgeLogo/>
+
+
         </a>
         <div v-if="isConnected" class="flex gap-4 font-extralight">
             <ChainButton

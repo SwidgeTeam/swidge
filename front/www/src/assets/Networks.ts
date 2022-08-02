@@ -88,4 +88,8 @@ export class Networks {
     public static all(): INetwork[] {
         return Array.from(this.networks.values())
     }
+
+    public static ids(): string[] {
+        return Array.from(this.networks.keys())
+    }
 }

@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { ref } from 'vue'
-import networks from "@/assets/Networks";
+import { Networks } from "@/assets/Networks";
 import IERC20Abi from '@/contracts/IERC20.json';
 import { NATIVE_COIN_ADDRESS } from "@/contracts/routerCaller";
 
@@ -54,7 +54,7 @@ export const useWeb3Store = defineStore('web3', () => {
         const { ethereum } = window
         const hexChainId = await ethereum.request({ method: 'eth_chainId' })
         const chainId = parseInt(hexChainId, 16).toString()
-        const acceptedChains = Array.from(networks.keys())
+        const acceptedChains = Networks.ids()
         if (acceptedChains.includes(chainId)) {
             isCorrectNetwork.value = true
             selectedNetworkId.value = chainId
