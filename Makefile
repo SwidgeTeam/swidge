@@ -103,6 +103,7 @@ $(addsuffix -logs, ${MAKE_SERVICES}): %-logs:
 	@$(call DOCKER_COMPOSE, logs --follow $*)
 
 setup: db-migrate
+	@make db-import < ./db/tokens.sql
 
 fuck: stop rm build create start
 
