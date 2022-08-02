@@ -1,8 +1,11 @@
 <script setup lang='ts'>
 import TokenDisplay from './TokenDisplay.vue'
 import NetworkAndTokenNothingFound from './NetworkAndTokenNothingFound.vue'
-import IToken from '@/tokens/models/IToken'
 import { INetwork } from '@/models/INetwork'
+import { useTokensStore } from '@/store/tokens'
+import ITokenN from '@/domain/tokens/ITokenN'
+
+const tokensStore = useTokensStore()
 
 const props = defineProps<{
     chainList: INetwork[]
@@ -12,35 +15,29 @@ const props = defineProps<{
 }>()
 
 const emits = defineEmits<{
-    (event: 'set-token', { token, chain }: { token: IToken, chain: INetwork }): void
+    (event: 'set-token', token: ITokenN): void
 }>()
 
-/* const filterList = [
-    'Popular',
-    'Alphabetical',
-    'Recent'
-]
-
-const selectedFilter = ref('Popular') */
-
-const filteredChainList = (list: any) => {
-    if (props.selectedNetworkId === '' && props.chainList.find((el: INetwork) => el.name.toLowerCase().includes(props.searchTerm))) {
-        return list.filter((el: any) => el.name.toLowerCase().includes(props.searchTerm))
+/**
+ * Retrieves and filters the token list according to the given props
+ */
+const filteredTokenList = (): ITokenN[] => {
+    if (
+        props.selectedNetworkId === '' &&
+        props.searchTerm === ''
+    ) {
+        return tokensStore.getTokens
     } else {
-        return list.filter((el: any) => props.selectedNetworkId === '' ? el : el.id === props.selectedNetworkId)
-    }
-}
-
-const filteredTokenList = (tokenList: IToken[]) => {
-    if (props.selectedNetworkId === '' && props.chainList.find((el: INetwork) => el.name.toLowerCase().includes(props.searchTerm))) {
-        return tokenList
-    } else {
-        return tokenList
-            .filter(
-                (el: IToken) => {
-                    return el.name.toLowerCase().includes(props.searchTerm) ||
-                        el.symbol.toLowerCase().includes(props.searchTerm)
-                })
+        const token = tokensStore.getChainTokens(props.selectedNetworkId)
+        return token.filter(
+            (token: ITokenN) => {
+                return (
+                    token.name.toLowerCase().includes(props.searchTerm) ||
+                    token.symbol.toLowerCase().includes(props.searchTerm) ||
+                    token.chainName.toLowerCase() === props.searchTerm ||
+                    token.chainId === props.selectedNetworkId
+                )
+            })
     }
 }
 
@@ -50,13 +47,6 @@ const filteredTokenList = (tokenList: IToken[]) => {
     <div class="text-lg font-roboto">
         <div class="flex gap-6 items-center">
             <span>Select Token:</span>
-            <!-- FILTER FUNCTION IN TOKEN LIST
-            <div class="flex gap-2 items-center">
-                <span class="font-extralight text-sm mt-1">Filter</span>
-                <ButtonSelect
-                    v-model:selected="selectedFilter"
-                    :list="filterList"/>
-            </div> -->
             <span
                 v-if="selectedNetworkId !== '' || searchTerm !== ''"
                 class="text-sm font-extralight mt-1 ml-auto">Network</span>
@@ -67,30 +57,16 @@ const filteredTokenList = (tokenList: IToken[]) => {
             <ul
                 v-if="selectedNetworkId !== '' || searchTerm !== ''"
                 class="text-base flex flex-col mt-6">
-                <template
-                    v-for="chain in filteredChainList(chainList)"
-                    :key="chain.id">
-                    <li
-                        v-for="token in filteredTokenList(chain.tokens)"
-                        :key="token.address"
-                        class="hover:bg-cards-background-dark-grey py-3 rounded-xl cursor-pointer"
-                        @click="emits('set-token', {
-              token: {
-                address: token.address,
-                img: token.img,
-                symbol: token.symbol,
-                name: token.name,
-                decimals: token.decimals,
-                replaceByDefault: token.replaceByDefault
-              },
-              chain: chain
-            })"
-                    >
-                        <TokenDisplay
-                            :token="token"
-                            :chain-name="chain.name"/>
-                    </li>
-                </template>
+                <li
+                    v-for="token in filteredTokenList()"
+                    :key="token.address"
+                    class="hover:bg-cards-background-dark-grey py-3 rounded-xl cursor-pointer"
+                    @click="emits('set-token', token)"
+                >
+                    <TokenDisplay
+                        :token="token"
+                    />
+                </li>
             </ul>
         </div>
     </div>
