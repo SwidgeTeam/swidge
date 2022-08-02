@@ -6,7 +6,7 @@ import GetQuoteResponse from './models/get-quote-response';
 import { ApiErrorResponse } from "@/api/models/ApiErrorResponse";
 import { TokenList } from '@/domain/tokens/TokenList';
 import IToken from '@/domain/tokens/IToken';
-import { Networks } from '@/assets/Networks';
+import { Networks } from '@/domain/chains/Networks';
 
 class SwidgeAPI extends HttpClient {
     public constructor() {

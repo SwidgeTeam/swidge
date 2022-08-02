@@ -1,6 +1,6 @@
 <script setup lang='ts'>
 import IToken from '@/domain/tokens/IToken'
-import { Networks } from '@/assets/Networks'
+import { Networks } from '@/domain/chains/Networks'
 
 const props = defineProps<{
     token: IToken

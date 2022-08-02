@@ -7,7 +7,7 @@ import SwidgeLogo from './svg/SwidgeLogo.vue'
 import ModalNetworks from '@/components/ModalNetworks.vue'
 import { computed, ref } from 'vue'
 import ConnectButton from '@/components/Buttons/ConnectButton.vue'
-import { Networks } from '@/assets/Networks'
+import { Networks } from '@/domain/chains/Networks'
 
 const emits = defineEmits<{
     (event: 'switch-network', chainId: string): void

@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import {Dialog, DialogOverlay, TransitionChild, TransitionRoot} from '@headlessui/vue'
 import {XIcon} from '@heroicons/vue/solid'
-import { Networks } from '@/assets/Networks'
+import { Networks } from '@/domain/chains/Networks'
 
 defineProps<{
   isModalOpen: boolean

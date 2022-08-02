@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { ref } from 'vue'
-import { Networks } from '@/assets/Networks'
+import { Networks } from '@/domain/chains/Networks'
 import IERC20Abi from '@/contracts/IERC20.json'
 import { NATIVE_COIN_ADDRESS } from '@/contracts/routerCaller'
 

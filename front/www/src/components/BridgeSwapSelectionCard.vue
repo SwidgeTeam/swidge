@@ -3,7 +3,7 @@ import { ChevronDownIcon } from '@heroicons/vue/outline'
 import { INetwork } from '@/models/INetwork'
 import { computed } from 'vue'
 import IToken from '@/domain/tokens/IToken'
-import { Networks } from '@/assets/Networks'
+import { Networks } from '@/domain/chains/Networks'
 
 
 const props = defineProps<{
