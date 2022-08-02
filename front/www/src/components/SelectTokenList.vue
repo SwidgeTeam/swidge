@@ -4,6 +4,7 @@ import NetworkAndTokenNothingFound from './NetworkAndTokenNothingFound.vue'
 import { INetwork } from '@/models/INetwork'
 import { useTokensStore } from '@/store/tokens'
 import IToken from '@/domain/tokens/IToken'
+import { computed } from 'vue'
 
 const tokensStore = useTokensStore()
 
@@ -19,31 +20,34 @@ const emits = defineEmits<{
 }>()
 
 /**
- * Retrieves and filters the token list according to the given props
+ * Filters the token list according to the given props
  */
-const filteredTokenList = (): IToken[] => {
-    let tokens: IToken[]
+const filteredTokens = computed({
+    get: () => {
+        let tokens: IToken[]
 
-    if (props.selectedNetworkId) {
-        // If there's a selected network, get only the chain's tokens
-        tokens = tokensStore.getChainTokens(props.selectedNetworkId)
-    } else {
-        // Otherwise get them all
-        tokens = tokensStore.getTokens
-    }
+        if (props.selectedNetworkId) {
+            // If there's a selected network, get only the chain's tokens
+            tokens = tokensStore.getChainTokens(props.selectedNetworkId)
+        } else {
+            // Otherwise get them all
+            tokens = tokensStore.getTokens
+        }
 
-    return tokens
-        .filter(token => {
-            const pattern = props.searchTerm.toLowerCase().trim()
-            // If there's a search pattern, filter only those that match
-            return (
-                pattern === '' ||
-                token.name.toLowerCase().includes(pattern) ||
-                token.symbol.toLowerCase().includes(pattern) ||
-                token.chainName.toLowerCase().includes(pattern)
-            )
-        })
-}
+        return tokens
+            .filter(token => {
+                const pattern = props.searchTerm.toLowerCase().trim()
+                // If there's a search pattern, filter only those that match
+                return (
+                    pattern === '' ||
+                    token.name.toLowerCase().includes(pattern) ||
+                    token.symbol.toLowerCase().includes(pattern) ||
+                    token.chainName.toLowerCase().includes(pattern)
+                )
+            })
+    },
+    set: () => null,
+})
 
 </script>
 
@@ -63,7 +67,7 @@ const filteredTokenList = (): IToken[] => {
                 v-else
                 class="text-base flex flex-col mt-6">
                 <li
-                    v-for="token in filteredTokenList()"
+                    v-for="token in filteredTokens"
                     :key="token.address"
                     class="hover:bg-cards-background-dark-grey py-3 rounded-xl cursor-pointer"
                     @click="emits('set-token', token)"
