@@ -10,4 +10,5 @@ export class Class {
   public static CachedHttpClient = 'CachedHttpClient';
   public static TokenDetailsFetcher = 'TokenDetailsFetcher';
   public static PriceFeedConverter = 'PriceFeedConverter';
+  public static TokensRepository = 'TokensRepository';
 }

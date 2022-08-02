@@ -7,6 +7,7 @@ import { PathsModule } from './paths/paths.module';
 import { SwapsModule } from './swaps/swaps.module';
 import databaseConfiguration from './config/database.configuration';
 import { AddressesModule } from './addresses/addresses.module';
+import { TokensModule } from './tokens/tokens.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { AddressesModule } from './addresses/addresses.module';
     HealthModule,
     PathsModule,
     SwapsModule,
+    TokensModule,
   ],
 })
 export class AppModule {}
