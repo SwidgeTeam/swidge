@@ -44,13 +44,13 @@ const loadData = async () => {
 }
 
 const transformDate = (timestamp: number) => {
-    const year = new Date(timestamp).getFullYear()
-    const month = new Date(timestamp).getMonth()
-    const day = new Date(timestamp).getDay()
-    const hours = new Date(timestamp).getHours()
-    const minutes = new Date(timestamp).getMinutes()
-    const date = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes
-    return date
+    const date = new Date(timestamp)
+    const year = date.getFullYear()
+    const month = date.getMonth()
+    const day = date.getDay()
+    const hours = date.getHours()
+    const minutes = date.getMinutes()
+    return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes
 }
 
 </script>
@@ -95,34 +95,35 @@ const transformDate = (timestamp: number) => {
                             @click="onCloseModal()"
                         />
                         <div v-if="isLoading">
-                              <div class="animate-pulse flex space-x-4">
+                            <div class="animate-pulse flex space-x-4">
                                 <div class="rounded-full bg-slate-700 h-10 w-10"></div>
                                 <div class="flex-1 space-y-6 py-1">
-                                  <div class="h-2 bg-slate-700 rounded"></div>
-                                  <div class="space-y-3">
-                                    <div class="grid grid-cols-3 gap-4">
-                                      <div class="h-2 bg-slate-700 rounded col-span-2"></div>
-                                      <div class="h-2 bg-slate-700 rounded col-span-1"></div>
-                                    </div>
                                     <div class="h-2 bg-slate-700 rounded"></div>
-                                  </div>
+                                    <div class="space-y-3">
+                                        <div class="grid grid-cols-3 gap-4">
+                                            <div class="h-2 bg-slate-700 rounded col-span-2"></div>
+                                            <div class="h-2 bg-slate-700 rounded col-span-1"></div>
+                                        </div>
+                                        <div class="h-2 bg-slate-700 rounded"></div>
+                                    </div>
                                 </div>
-                              </div>
+                            </div>
                         </div>
                         <div v-if="!isLoading && transactions.length < 1" class="text-center">
                             No transactions
                         </div>
                         <div v-if="!isLoading && transactions.length > 1">
                             <li
-                                v-for="i in transactions"
+                                v-for="t in transactions"
+                                :key="t.txHash"
                                 class="grid content-center gradient-border-header-main flex flex-wrap justify-between gap-2 mb-4 p-2">
-                                <div> Date: {{ transformDate(+i.date) }}</div>
-                                <div> Amount swaped: {{ i.amountIn }}</div>
-                                <div> From chain: {{ networks.get(i.fromChain)?.name }}</div>
-                                <div> To chain: {{ networks.get(i.toChain)?.name }}</div>
-                                <div> Transaction status: {{ i.status }}</div>
-                                <div> From Token: {{ i.srcAsset }}</div>
-                                <div> To Token: {{ i.dstAsset }}</div>
+                                <div> Date: {{ transformDate(+t.date) }}</div>
+                                <div> Amount: {{ t.amountIn }}</div>
+                                <div> From chain: {{ networks.get(t.fromChain)?.name }}</div>
+                                <div> To chain: {{ networks.get(t.toChain)?.name }}</div>
+                                <div> Transaction status: {{ t.status }}</div>
+                                <div> From Token: {{ t.srcAsset }}</div>
+                                <div> To Token: {{ t.dstAsset }}</div>
                             </li>
                         </div>
                     </div>
