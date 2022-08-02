@@ -3,6 +3,7 @@ import { ChevronDownIcon } from '@heroicons/vue/outline'
 import { INetwork } from '@/models/INetwork'
 import { computed } from 'vue'
 import IToken from '@/domain/tokens/IToken'
+import { Networks } from '@/assets/Networks';
 
 
 const props = defineProps<{
@@ -37,8 +38,12 @@ const setToMaxAmount = () => {
     emits('on-click-max-amount')
 }
 
-const onFallbackImgHandler = (event: Event) => {
-    // TODO replace by chain icon
+const onFallbackImgHandler = (e: Event) => {
+    if (props.token) {
+        const chain = Networks.get(props.token.chainId)
+        const imageTarget = e.target as HTMLImageElement
+        imageTarget.src = chain.icon
+    }
 }
 
 const trimmedBalance = computed({
@@ -72,30 +77,31 @@ const trimmedBalance = computed({
                                     v-if="chainInfo && chainInfo.name !== ''"
                                 >
                                     {{ chainInfo.name }}:
-                                <div class="flex items-center w-full gap-2 text-xl">
-                                    <div class="flex gap-2 items-center">
-                                        <img
-                                            v-if="token && token.logo !== ''"
-                                            :src="token.logo"
-                                            width="32"
-                                            class="rounded-full"
-                                            height="32"
-                                            @error="onFallbackImgHandler"
-                                         />
-                                        <span class="flex py-2 min-w-[rem]">{{
-                                            token ? token.symbol : 'Select Token'
-                                        }}</span>
+                                    <div class="flex items-center w-full gap-2 text-xl">
+                                        <div class="flex gap-2 items-center">
+                                            <img
+                                                v-if="token && token.logo !== ''"
+                                                :src="token.logo"
+                                                width="32"
+                                                class="rounded-full"
+                                                height="32"
+                                                @error="onFallbackImgHandler"
+                                            />
+                                            <span class="flex py-2 min-w-[rem]">{{
+                                                    token ? token.symbol : 'Select Token'
+                                                }}</span>
+                                        </div>
                                     </div>
-                            </div>
                                 </div>
-                                <div v-else class="flex flex-align-center w-30 select-network-button">Select Network</div>
+                                <div v-else class="flex flex-align-center w-30 select-network-button">Select Network
+                                </div>
                             </div>
                         </div>
 
                     </div>
 
                     <div class="flex items-center gap-2 text-xl">
-                        <ChevronDownIcon class="h-6" />
+                        <ChevronDownIcon class="h-6"/>
                     </div>
                 </div>
             </div>
@@ -111,8 +117,8 @@ const trimmedBalance = computed({
                 </div>
                 <button
                     v-if="balance && token && chainInfo"
-                    @click="setToMaxAmount"
                     class="px-2 text-[14px] font-roboto bg-[#B22F7F] rounded-2xl text-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#B22F7F]"
+                    @click="setToMaxAmount"
                 >
                     MAX
                 </button>
@@ -127,7 +133,6 @@ const trimmedBalance = computed({
                 placeholder="0.0"
                 class="w-40 p-0 text-2xl text-right bg-transparent border-none outline-none appearance-none focus:border-transparent focus:ring-0 truncate"
                 autocomplete="off"
-                autocorrect="off"
                 minlength="1"
                 maxlength="79"
                 inputmode="decimal"
