@@ -24,7 +24,8 @@
       "migration:generate": "yarn build && yarn run typeorm migration:generate -n default",
       "migration:create": "yarn run typeorm migration:create -n",
       "migration:run": "yarn run typeorm migration:run",
-      "migration:revert": "yarn run typeorm migration:revert"
+      "migration:revert": "yarn run typeorm migration:revert",
+      "add-tokens": "ts-node -r tsconfig-paths/register scripts/add-tokens.ts"
    },
    "dependencies": {
       "@nestjs/common": "^8.0.0",

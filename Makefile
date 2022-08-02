@@ -152,6 +152,9 @@ db-generate-migration: db-ormconfig
 db-ormconfig:
 	@$(call DOCKER_COMPOSE_RUN, --rm ${DOCKER_API_SERVICE} ormconfig)
 
+db-add-tokens:
+	@$(call DOCKER_COMPOSE_RUN, --rm ${DOCKER_API_SERVICE} add-tokens)
+
 ### Localstack
 
 AWS_CLI = \
