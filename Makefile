@@ -103,6 +103,7 @@ $(addsuffix -logs, ${MAKE_SERVICES}): %-logs:
 	@$(call DOCKER_COMPOSE, logs --follow $*)
 
 setup: db-migrate
+	@make db-import < ./db/tokens.sql
 
 fuck: stop rm build create start
 
@@ -122,21 +123,21 @@ test: test-api test-relayer test-contracts
 
 db-client:
 	@$(call DOCKER_COMPOSE_EXEC, \
-		db mysql \
+		${DOCKER_DB_SERVICE} mysql \
 			--user=${MYSQL_USER} \
 			--password=${MYSQL_PASSWORD} \
 			--default-character-set=utf8mb4 \
-			${MYSQL_DB} \
+			${MYSQL_DATABASE} \
 	)
 
 db-import:
 	@$(call DOCKER_COMPOSE_EXEC, \
-			-T db mysql \
+			-T ${DOCKER_DB_SERVICE} mysql \
 			--host=${MYSQL_HOST} \
 			--user=${MYSQL_USER} \
 			--password=${MYSQL_PASSWORD} \
 			--default-character-set=utf8mb4 \
-			${MYSQL_DB} \
+			${MYSQL_DATABASE} \
 	)
 
 db-upgrade: db-migrate

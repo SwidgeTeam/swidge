@@ -7,7 +7,7 @@ import SwidgeLogo from './svg/SwidgeLogo.vue'
 import ModalNetworks from '@/components/ModalNetworks.vue'
 import { computed, ref } from 'vue'
 import ConnectButton from '@/components/Buttons/ConnectButton.vue'
-import networks from '@/assets/Networks'
+import { Networks } from '@/domain/chains/Networks'
 
 const emits = defineEmits<{
     (event: 'switch-network', chainId: string): void
@@ -33,8 +33,10 @@ const changeNetwork = (chainId: string) => {
 
 const chainName = computed({
     get: () => {
-        const chain = networks.get(selectedNetworkId.value)
-        if (!chain) return ''
+        if (!selectedNetworkId.value) {
+            return ''
+        }
+        const chain = Networks.get(selectedNetworkId.value)
         return chain.name
     },
     set: () => null
@@ -42,8 +44,10 @@ const chainName = computed({
 
 const chainIcon = computed({
     get: () => {
-        const chain = networks.get(selectedNetworkId.value)
-        if (!chain) return ''
+        if (!selectedNetworkId.value) {
+            return ''
+        }
+        const chain = Networks.get(selectedNetworkId.value)
         return chain.icon
     },
     set: () => null
@@ -53,11 +57,11 @@ const chainIcon = computed({
 <template>
     <nav class="flex items-center justify-between w-full px-24">
         <a class="flex items-center justify-center w-40" href="https://www.swidge.xyz/">
-          
-          
-          <SwidgeLogo />
-          
-            
+
+
+            <SwidgeLogo/>
+
+
         </a>
         <div v-if="isConnected" class="flex gap-4 font-extralight">
             <ChainButton

@@ -7,6 +7,7 @@ async function run() {
   const apiUrl = process.env.API_URL;
   const data = fs.readFileSync('./scripts/tokens.json', 'utf8');
   const rawTokens = JSON.parse(data);
+  const secret = '';
 
   if (!chainId) {
     throw new Error('Need to input chain ID');
@@ -39,7 +40,7 @@ async function run() {
       },
       {
         headers: {
-          Authorization: `Bearer secret`,
+          Authorization: `Bearer ${secret}`,
         },
       },
     )

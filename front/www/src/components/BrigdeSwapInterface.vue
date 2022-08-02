@@ -8,19 +8,18 @@ import BridgeSwapSelectionCard from './BridgeSwapSelectionCard.vue'
 import ModalNetworkAndTokenSelect from './ModalNetworkAndTokenSelect.vue'
 import Header from '@/components/Header.vue'
 import FAQCard from '@/components/FAQCard.vue'
-import IToken from '@/tokens/models/IToken'
 import BridgeSwapInteractiveButton from './BridgeSwapInteractiveButton.vue'
 import SwidgeAPI from '@/api/swidge-api'
 import GetQuoteResponse from '@/api/models/get-quote-response'
 import { RouterCaller, RouterCallPayload } from '@/contracts/routerCaller'
 import { useWeb3Store } from '@/store/web3'
 import { BigNumber, ethers, providers } from 'ethers'
-import networks from '@/assets/Networks'
+import { Networks } from '@/domain/chains/Networks'
 import { INetwork } from '@/models/INetwork'
 import ModalSwidgeStatus from './ModalSwidgeStatus.vue'
 import { TransactionSteps } from '@/models/TransactionSteps'
 import SwitchButton from './Buttons/SwitchButton.vue'
-// import TransactionSettings from './TransactionSettings.vue'
+import IToken from '@/domain/tokens/IToken'
 
 
 const web3Store = useWeb3Store()
@@ -42,25 +41,23 @@ const isExecutingTransaction = ref<boolean>(false)
 
 
 const selectedSourceToken = ref<IToken>({
+    chainId: '',
+    chainName: '',
     address: '',
-    decimals: 0,
-    img: '',
     name: '',
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    replaceByDefault(): void {
-    },
     symbol: '',
+    decimals: 0,
+    logo: '',
 })
 
 const selectedDestinationToken = ref<IToken>({
+    chainId: '',
+    chainName: '',
     address: '',
-    decimals: 0,
-    img: '',
     name: '',
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    replaceByDefault(): void {
-    },
     symbol: '',
+    decimals: 0,
+    logo: '',
 })
 
 const quotedPath = ref<GetQuoteResponse>({
@@ -112,7 +109,6 @@ const sourceChainInfo = reactive<INetwork>({
     name: '',
     icon: '',
     id: '',
-    tokens: [],
     rpcUrl: '',
     live: false,
 })
@@ -120,7 +116,6 @@ const destinationChainInfo = reactive<INetwork>({
     name: '',
     icon: '',
     id: '',
-    tokens: [],
     rpcUrl: '',
     live: false,
 })
@@ -128,7 +123,6 @@ const switchChainInfo = reactive<INetwork>({
     name: '',
     icon: '',
     id: '',
-    tokens: [],
     rpcUrl: '',
     live: false,
 })
@@ -182,9 +176,11 @@ const buttonLabel = computed({
 const resetSelectedOriginToken = () => {
     selectedSourceToken.value.address = ''
     selectedSourceToken.value.decimals = 0
-    selectedSourceToken.value.img = ''
+    selectedSourceToken.value.logo = ''
     selectedSourceToken.value.name = ''
     selectedSourceToken.value.symbol = ''
+    selectedSourceToken.value.chainId = ''
+    selectedSourceToken.value.chainName = ''
 }
 
 /**
@@ -222,7 +218,7 @@ const handleOpenTokenList = (isSource: boolean) => {
  */
 
 const getNetworks = () => {
-    return Array.from(networks.values()).filter(network => {
+    return Networks.all().filter(network => {
         return network.live
     })
 
@@ -233,48 +229,47 @@ const getNetworks = () => {
  * @param chainId
  */
 const handleGlobalNetworkSwitched = (chainId: string) => {
-    const chain = <INetwork>networks.get(chainId)
+    const chain = Networks.get(chainId)
     updateOriginChainInfo(chain)
     resetSelectedOriginToken()
 }
 
 /**
  * Handles selection of a token from the selection modal
- * @param info
+ * @param token
  */
-const handleUpdateTokenFromModal = (info: {
-    token: IToken
-    chain: INetwork
-}) => {
+const handleUpdateTokenFromModal = (token: IToken) => {
     if (isSourceChainToken.value) {
         // If the origin network is being chosen
-        if (sourceChainInfo.id != info.chain.id) {
+        if (sourceChainInfo.id != token.chainId) {
             // If network and token of source and destination are the same, switch inputs instead of setting new ones.
 
-            if (((info.chain.id == destinationChainInfo.id) || (info.chain.id == sourceChainInfo.id)) &&
-                (info.token == selectedDestinationToken.value || selectedSourceToken.value)) {
+            if (((token.chainId == destinationChainInfo.id) || (token.chainId == sourceChainInfo.id)) &&
+                (token == selectedDestinationToken.value || selectedSourceToken.value)) {
                 switchHandlerFunction()
 
             } else {
                 // If we changed origin network, inform wallet
-                switchToNetwork(info.chain.id).then(() => {
-                    updateOriginChainInfo(info.chain)
-                    updateOriginToken(info.token)                
+                switchToNetwork(token.chainId).then(() => {
+                    const chain = Networks.get(token.chainId)
+                    updateOriginChainInfo(chain)
+                    updateOriginToken(token)
                 })
             }
         } else {
-            updateOriginToken(info.token)
+            updateOriginToken(token)
         }
     } else {
-        if (((info.chain.id == destinationChainInfo.id) || (info.chain.id == sourceChainInfo.id)) &&
-            (info.token == selectedDestinationToken.value || selectedSourceToken.value)) {
+        if (((token.chainId == destinationChainInfo.id) || (token.chainId == sourceChainInfo.id)) &&
+            (token == selectedDestinationToken.value || selectedSourceToken.value)) {
             switchHandlerFunction()
-            
+
         } else {
             // If the destination network is being chosen
-            updateDestinationChainInfo(info.chain)
+            const chain = Networks.get(token.chainId)
+            updateDestinationChainInfo(chain)
             // Update token details
-            selectedDestinationToken.value = info.token
+            selectedDestinationToken.value = token
         }
     }
 
@@ -295,7 +290,6 @@ const updateOriginChainInfo = (chain: INetwork) => {
     sourceChainInfo.id = chain.id
     sourceChainInfo.icon = chain.icon
     sourceChainInfo.name = chain.name
-    sourceChainInfo.tokens = chain.tokens
 }
 
 
@@ -331,7 +325,6 @@ const updateDestinationChainInfo = (chain: INetwork) => {
     destinationChainInfo.id = chain.id
     destinationChainInfo.icon = chain.icon
     destinationChainInfo.name = chain.name
-    destinationChainInfo.tokens = chain.tokens
 }
 
 /**
@@ -341,28 +334,24 @@ const switchHandlerFunction = () => {
     switchChainInfo.id = sourceChainInfo.id
     switchChainInfo.icon = sourceChainInfo.icon
     switchChainInfo.name = sourceChainInfo.name
-    switchChainInfo.tokens = sourceChainInfo.tokens
 
     sourceChainInfo.id = destinationChainInfo.id
     sourceChainInfo.icon = destinationChainInfo.icon
     sourceChainInfo.name = destinationChainInfo.name
-    sourceChainInfo.tokens = destinationChainInfo.tokens
 
     destinationChainInfo.id = switchChainInfo.id
     destinationChainInfo.icon = switchChainInfo.icon
     destinationChainInfo.name = switchChainInfo.name
-    destinationChainInfo.tokens = switchChainInfo.tokens
 
     // Switch Temp variable
     const switchTokenSource = ref<IToken>({
+        chainId: '',
+        chainName: '',
         address: '',
-        decimals: 0,
-        img: '',
         name: '',
         symbol: '',
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        replaceByDefault(): void {
-        }
+        decimals: 0,
+        logo: '',
     })
 
     switchTokenSource.value = selectedSourceToken.value
