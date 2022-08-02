@@ -109,7 +109,6 @@ const sourceChainInfo = reactive<INetwork>({
     name: '',
     icon: '',
     id: '',
-    tokens: [],
     rpcUrl: '',
     live: false,
 })
@@ -117,7 +116,6 @@ const destinationChainInfo = reactive<INetwork>({
     name: '',
     icon: '',
     id: '',
-    tokens: [],
     rpcUrl: '',
     live: false,
 })
@@ -125,7 +123,6 @@ const switchChainInfo = reactive<INetwork>({
     name: '',
     icon: '',
     id: '',
-    tokens: [],
     rpcUrl: '',
     live: false,
 })
@@ -293,7 +290,6 @@ const updateOriginChainInfo = (chain: INetwork) => {
     sourceChainInfo.id = chain.id
     sourceChainInfo.icon = chain.icon
     sourceChainInfo.name = chain.name
-    sourceChainInfo.tokens = chain.tokens
 }
 
 
@@ -329,7 +325,6 @@ const updateDestinationChainInfo = (chain: INetwork) => {
     destinationChainInfo.id = chain.id
     destinationChainInfo.icon = chain.icon
     destinationChainInfo.name = chain.name
-    destinationChainInfo.tokens = chain.tokens
 }
 
 /**
@@ -339,17 +334,14 @@ const switchHandlerFunction = () => {
     switchChainInfo.id = sourceChainInfo.id
     switchChainInfo.icon = sourceChainInfo.icon
     switchChainInfo.name = sourceChainInfo.name
-    switchChainInfo.tokens = sourceChainInfo.tokens
 
     sourceChainInfo.id = destinationChainInfo.id
     sourceChainInfo.icon = destinationChainInfo.icon
     sourceChainInfo.name = destinationChainInfo.name
-    sourceChainInfo.tokens = destinationChainInfo.tokens
 
     destinationChainInfo.id = switchChainInfo.id
     destinationChainInfo.icon = switchChainInfo.icon
     destinationChainInfo.name = switchChainInfo.name
-    destinationChainInfo.tokens = switchChainInfo.tokens
 
     // Switch Temp variable
     const switchTokenSource = ref<IToken>({
