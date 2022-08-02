@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import {Dialog, DialogOverlay, TransitionChild, TransitionRoot} from '@headlessui/vue'
 import {XIcon} from '@heroicons/vue/solid'
-import networks from '@/assets/Networks'
+import { Networks } from '@/assets/Networks'
 
 defineProps<{
   isModalOpen: boolean
@@ -21,7 +21,7 @@ const selectChain = (chain: string) => {
 }
 
 const getNetworks = () => {
-    return Array.from(networks.values()).filter(network => {
+    return Networks.all().filter(network => {
         return network.live
     })
 }

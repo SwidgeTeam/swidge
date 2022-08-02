@@ -15,7 +15,7 @@ import GetQuoteResponse from '@/api/models/get-quote-response'
 import { RouterCaller, RouterCallPayload } from '@/contracts/routerCaller'
 import { useWeb3Store } from '@/store/web3'
 import { BigNumber, ethers, providers } from 'ethers'
-import networks from '@/assets/Networks'
+import { Networks } from '@/assets/Networks'
 import { INetwork } from '@/models/INetwork'
 import ModalSwidgeStatus from './ModalSwidgeStatus.vue'
 import { TransactionSteps } from '@/models/TransactionSteps'
@@ -222,7 +222,7 @@ const handleOpenTokenList = (isSource: boolean) => {
  */
 
 const getNetworks = () => {
-    return Array.from(networks.values()).filter(network => {
+    return Networks.all().filter(network => {
         return network.live
     })
 
@@ -233,7 +233,7 @@ const getNetworks = () => {
  * @param chainId
  */
 const handleGlobalNetworkSwitched = (chainId: string) => {
-    const chain = <INetwork>networks.get(chainId)
+    const chain = Networks.get(chainId)
     updateOriginChainInfo(chain)
     resetSelectedOriginToken()
 }

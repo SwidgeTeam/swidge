@@ -7,7 +7,7 @@ import SwidgeLogo from './svg/SwidgeLogo.vue'
 import ModalNetworks from '@/components/ModalNetworks.vue'
 import { computed, ref } from 'vue'
 import ConnectButton from '@/components/Buttons/ConnectButton.vue'
-import networks from '@/assets/Networks'
+import { Networks } from '@/assets/Networks'
 
 const emits = defineEmits<{
     (event: 'switch-network', chainId: string): void
@@ -33,8 +33,7 @@ const changeNetwork = (chainId: string) => {
 
 const chainName = computed({
     get: () => {
-        const chain = networks.get(selectedNetworkId.value)
-        if (!chain) return ''
+        const chain = Networks.get(selectedNetworkId.value)
         return chain.name
     },
     set: () => null
@@ -42,8 +41,7 @@ const chainName = computed({
 
 const chainIcon = computed({
     get: () => {
-        const chain = networks.get(selectedNetworkId.value)
-        if (!chain) return ''
+        const chain = Networks.get(selectedNetworkId.value)
         return chain.icon
     },
     set: () => null
