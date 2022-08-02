@@ -3,7 +3,7 @@ import { ChevronDownIcon } from '@heroicons/vue/outline'
 import { INetwork } from '@/models/INetwork'
 import { computed } from 'vue'
 import IToken from '@/domain/tokens/IToken'
-import { Networks } from '@/assets/Networks';
+import { Networks } from '@/assets/Networks'
 
 
 const props = defineProps<{
@@ -73,8 +73,8 @@ const trimmedBalance = computed({
                         <div>
                             <div class="font-extralight">
                                 <div
-                                    class="text-sm"
                                     v-if="chainInfo && chainInfo.name !== ''"
+                                    class="text-sm"
                                 >
                                     {{ chainInfo.name }}:
                                     <div class="flex items-center w-full gap-2 text-xl">
