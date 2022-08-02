@@ -19,9 +19,6 @@ const emits = defineEmits<{
     (event: 'set-token', token: IToken): void
 }>()
 
-/**
- * Filters the token list according to the given props
- */
 const filteredTokens = computed({
     get: () => {
         let tokens: IToken[]
@@ -34,17 +31,20 @@ const filteredTokens = computed({
             tokens = tokensStore.getTokens
         }
 
+        const pattern = props.searchTerm.toLowerCase().trim()
+
+        if (pattern) {
+            // If there's a search pattern, filter only those that match
+            tokens = tokens
+                .filter(token => {
+                    return (
+                        token.name.toLowerCase().includes(pattern) ||
+                        token.symbol.toLowerCase().includes(pattern)
+                    )
+                })
+        }
+
         return tokens
-            .filter(token => {
-                const pattern = props.searchTerm.toLowerCase().trim()
-                // If there's a search pattern, filter only those that match
-                return (
-                    pattern === '' ||
-                    token.name.toLowerCase().includes(pattern) ||
-                    token.symbol.toLowerCase().includes(pattern) ||
-                    token.chainName.toLowerCase().includes(pattern)
-                )
-            })
     },
     set: () => null,
 })
