@@ -57,11 +57,7 @@ const chainIcon = computed({
 <template>
     <nav class="flex items-center justify-between w-full px-24">
         <a class="flex items-center justify-center w-40" href="https://www.swidge.xyz/">
-
-
             <SwidgeLogo/>
-
-
         </a>
         <div v-if="isConnected" class="flex gap-4 font-extralight">
             <ChainButton
@@ -80,7 +76,6 @@ const chainIcon = computed({
     </nav>
     <ModalNetworks
         :is-modal-open="isModalOpen"
-        :networks="networks"
         @close-modal="isModalOpen = false"
         @set-chain="changeNetwork($event)"
     />
