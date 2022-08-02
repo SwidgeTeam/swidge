@@ -1,7 +1,6 @@
-import IToken from './IToken'
 import ITokenJson from '@/tokens/models/ITokenJson'
 
-export default class PolygonToken implements IToken {
+export default class PolygonToken {
     public static polygonImg = 'https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/logos/main/token/polygon.jpg'
 
     address: string

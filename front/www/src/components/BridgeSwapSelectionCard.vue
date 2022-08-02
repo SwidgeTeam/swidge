@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import IToken from '@/tokens/models/IToken'
 import { ChevronDownIcon } from '@heroicons/vue/outline'
 import { INetwork } from '@/models/INetwork'
 import { computed } from 'vue'
+import ITokenN from '@/domain/tokens/ITokenN'
 
 
 const props = defineProps<{
     value: string
     balance?: string
-    token?: IToken
+    token?: ITokenN
     chainInfo?: INetwork
     disabledInput: boolean
 }>()
@@ -38,7 +38,7 @@ const setToMaxAmount = () => {
 }
 
 const onFallbackImgHandler = (event: Event) => {
-    if (props.token) props.token.replaceByDefault(event)
+    // TODO replace by chain icon
 }
 
 const trimmedBalance = computed({
@@ -67,31 +67,17 @@ const trimmedBalance = computed({
                     <div class="flex flex-col">
                         <div>
                             <div class="font-extralight">
-                                <!-- <img
-                            v-if="chainInfo && chainInfo.icon !== ''"
-                            :src="chainInfo.icon"
-                            class="rounded-full"
-                            width="24"
-                            height="24"
-                                /> -->
-                                <!-- <div>
-                            {{
-                                chainInfo && chainInfo.name !== ''
-                                    ? `${chainInfo.name}:`
-                                    : 'Select Network'
-                            }}
-                                </div> -->
                                 <div
-                                    class="text-sm"                                    
+                                    class="text-sm"
                                     v-if="chainInfo && chainInfo.name !== ''"
-                                >   
+                                >
                                     {{ chainInfo.name }}:
                                 <div class="flex items-center w-full gap-2 text-xl">
                                     <div class="flex gap-2 items-center">
                                         <img
-                                            v-if="token && token.img !== ''"
-                                            :src="token.img"
-                                            width="32"                                    
+                                            v-if="token && token.logo !== ''"
+                                            :src="token.logo"
+                                            width="32"
                                             class="rounded-full"
                                             height="32"
                                             @error="onFallbackImgHandler"
@@ -105,7 +91,7 @@ const trimmedBalance = computed({
                                 <div v-else class="flex flex-align-center w-30 select-network-button">Select Network</div>
                             </div>
                         </div>
-                        
+
                     </div>
 
                     <div class="flex items-center gap-2 text-xl">
@@ -147,7 +133,7 @@ const trimmedBalance = computed({
                 inputmode="decimal"
                 pattern="^[0-9]*[.,]?[0-9]*$"
                 @change="emits('input-changed')"
-                @input="onChange"               
+                @input="onChange"
             />
         </div>
     </div>

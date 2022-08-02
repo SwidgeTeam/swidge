@@ -1,7 +1,6 @@
-import IToken from './IToken'
 import ITokenJson from '@/tokens/models/ITokenJson'
 
-export default class AvalancheToken implements IToken {
+export default class AvalancheToken {
 
     public static avaxImg = 'https://res.cloudinary.com/sushi-cdn/image/fetch/f_auto,c_limit,w_64,q_auto/https://raw.githubusercontent.com/sushiswap/icons/master/network/avalanche.jpg'
     address: string

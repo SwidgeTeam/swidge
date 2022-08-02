@@ -1,7 +1,6 @@
-import IToken from './IToken'
 import ITokenJson from '@/tokens/models/ITokenJson'
 
-export default class FantomToken implements IToken {
+export default class FantomToken  {
 
     public static fantomImg = 'https://res.cloudinary.com/sushi-cdn/image/fetch/f_auto,c_limit,w_48,q_auto/https://raw.githubusercontent.com/sushiswap/icons/master/network/fantom.jpg'
     address: string
