@@ -22,23 +22,27 @@ const emits = defineEmits<{
  * Retrieves and filters the token list according to the given props
  */
 const filteredTokenList = (): IToken[] => {
-    if (
-        props.selectedNetworkId === '' &&
-        props.searchTerm === ''
-    ) {
-        return tokensStore.getTokens
+    let tokens: IToken[]
+
+    if (props.selectedNetworkId) {
+        // If there's a selected network, get only the chain's tokens
+        tokens = tokensStore.getChainTokens(props.selectedNetworkId)
     } else {
-        const token = tokensStore.getChainTokens(props.selectedNetworkId)
-        return token.filter(
-            (token: IToken) => {
-                return (
-                    token.name.toLowerCase().includes(props.searchTerm) ||
-                    token.symbol.toLowerCase().includes(props.searchTerm) ||
-                    token.chainName.toLowerCase() === props.searchTerm ||
-                    token.chainId === props.selectedNetworkId
-                )
-            })
+        // Otherwise get them all
+        tokens = tokensStore.getTokens
     }
+
+    return tokens
+        .filter(token => {
+            const pattern = props.searchTerm.toLowerCase().trim()
+            // If there's a search pattern, filter only those that match
+            return (
+                pattern === '' ||
+                token.name.toLowerCase().includes(pattern) ||
+                token.symbol.toLowerCase().includes(pattern) ||
+                token.chainName.toLowerCase().includes(pattern)
+            )
+        })
 }
 
 </script>
@@ -53,9 +57,10 @@ const filteredTokenList = (): IToken[] => {
         </div>
         <div class="h-80 w-full overflow-y-auto">
             <NetworkAndTokenNothingFound
-                v-if="selectedNetworkId === '' && searchTerm === ''"/>
+                v-if="selectedNetworkId === '' && searchTerm === ''"
+            />
             <ul
-                v-if="selectedNetworkId !== '' || searchTerm !== ''"
+                v-else
                 class="text-base flex flex-col mt-6">
                 <li
                     v-for="token in filteredTokenList()"
