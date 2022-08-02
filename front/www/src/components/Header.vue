@@ -13,7 +13,6 @@ import ModalTransactions from './ModalTransactions.vue'
 
 const emits = defineEmits<{
     (event: 'switch-network', chainId: string): void
-    (event: 'show-transactions'): void
 }>()
 
 const web3Store = useWeb3Store()
@@ -88,7 +87,6 @@ const chainIcon = computed({
     <ModalTransactions
         :is-open="isTransactionsModalOpen"
         @close-modal="isTransactionsModalOpen = false"
-        @show-transactions="emits('show-transactions')"
-        />
+    />
 </template>
 

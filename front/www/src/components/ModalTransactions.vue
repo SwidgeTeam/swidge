@@ -6,6 +6,9 @@ import { useWeb3Store } from '@/store/web3'
 import { onUpdated, ref } from 'vue'
 import { Transaction } from '@/api/models/transactions'
 import networks from '@/assets/Networks'
+import IToken from '@/tokens/models/IToken'
+import { INetwork } from '@/models/INetwork'
+import { ethers } from 'ethers'
 
 const web3Store = useWeb3Store()
 
@@ -18,7 +21,6 @@ const props = defineProps({
 
 const emits = defineEmits<{
     (event: 'close-modal'): void
-    (event: 'show-transactions'): void
 }>()
 
 const onCloseModal = () => {
@@ -34,6 +36,9 @@ onUpdated(async () => {
     }
 })
 
+/**
+ * Load transactions list
+ */
 const loadData = async () => {
     isLoading.value = true
     return SwidgeAPI.getTransactions(web3Store.account)
@@ -43,6 +48,10 @@ const loadData = async () => {
         })
 }
 
+/**
+ * Format date
+ * @param timestamp
+ */
 const transformDate = (timestamp: number) => {
     const date = new Date(timestamp)
     const year = date.getFullYear()
@@ -51,6 +60,62 @@ const transformDate = (timestamp: number) => {
     const hours = date.getHours()
     const minutes = date.getMinutes()
     return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes
+}
+
+/**
+ * Fetches a chain by ID
+ * @param chainId
+ */
+const getNetwork = (chainId: string): INetwork => {
+    const network = networks.get(chainId)
+    if (!network) {
+        throw new Error('Unsupported network')
+    }
+    return network
+}
+
+/**
+ * Returns the chain name
+ * @param chainId
+ */
+const getChainName = (chainId: string): string => {
+    const network = getNetwork(chainId)
+
+    return network.name
+}
+
+/**
+ * Gets a token from a specific chain
+ * @param chainId
+ * @param address
+ */
+const getToken = (chainId: string, address: string): IToken => {
+    const network = getNetwork(chainId)
+
+    return network.tokens.find(token => {
+        return token.address === address
+    })
+}
+
+/**
+ * Returns the token name
+ * @param chainId
+ * @param address
+ */
+const getTokenName = (chainId: string, address: string): string => {
+    const token = getToken(chainId, address)
+    return token.name
+}
+
+/**
+ * Formats an amount of the given token
+ * @param chainId
+ * @param address
+ * @param amount
+ */
+const formattedAmount = (chainId: string, address: string, amount: string) => {
+    const token = getToken(chainId, address)
+    return ethers.utils.formatUnits(amount, token.decimals)
 }
 
 </script>
@@ -109,21 +174,21 @@ const transformDate = (timestamp: number) => {
                                 </div>
                             </div>
                         </div>
-                        <div v-if="!isLoading && transactions.length < 1" class="text-center">
+                        <div v-if="!isLoading && transactions.length === 0" class="text-center">
                             No transactions
                         </div>
-                        <div v-if="!isLoading && transactions.length > 1">
+                        <div v-if="!isLoading && transactions.length > 0">
                             <li
                                 v-for="t in transactions"
                                 :key="t.txHash"
                                 class="grid content-center gradient-border-header-main flex flex-wrap justify-between gap-2 mb-4 p-2">
                                 <div> Date: {{ transformDate(+t.date) }}</div>
-                                <div> Amount: {{ t.amountIn }}</div>
-                                <div> From chain: {{ networks.get(t.fromChain)?.name }}</div>
-                                <div> To chain: {{ networks.get(t.toChain)?.name }}</div>
-                                <div> Transaction status: {{ t.status }}</div>
-                                <div> From Token: {{ t.srcAsset }}</div>
-                                <div> To Token: {{ t.dstAsset }}</div>
+                                <div> Amount: {{ formattedAmount(t.fromChain, t.srcAsset, t.amountIn) }}</div>
+                                <div> From chain: {{ getChainName(t.fromChain) }}</div>
+                                <div> To chain: {{ getChainName(t.toChain) }}</div>
+                                <div> Status: {{ t.status }}</div>
+                                <div> From: {{ getTokenName(t.fromChain, t.srcAsset) }}</div>
+                                <div> To: {{ getTokenName(t.toChain, t.dstAsset) }}</div>
                             </li>
                         </div>
                     </div>
