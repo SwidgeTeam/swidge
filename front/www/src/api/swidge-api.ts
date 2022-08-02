@@ -5,7 +5,7 @@ import GetQuoteRequest from './models/get-quote-request';
 import GetQuoteResponse from './models/get-quote-response';
 import { ApiErrorResponse } from "@/api/models/ApiErrorResponse";
 import { TokenList } from '@/domain/tokens/TokenList';
-import ITokenN from '@/domain/tokens/ITokenN';
+import IToken from '@/domain/tokens/IToken';
 import { Networks } from '@/assets/Networks';
 
 class SwidgeAPI extends HttpClient {
@@ -13,7 +13,7 @@ class SwidgeAPI extends HttpClient {
         super(import.meta.env.VITE_APP_API_HOST);
     }
 
-    public async fetchTokens(): Promise<ITokenN[]> {
+    public async fetchTokens(): Promise<IToken[]> {
         try {
             const response = await this.instance.get<TokenList>('/token-list')
             return response.data.list.map(token => {

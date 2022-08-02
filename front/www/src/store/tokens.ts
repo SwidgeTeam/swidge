@@ -1,17 +1,17 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import swidgeApi from '@/api/swidge-api'
-import ITokenN from '@/domain/tokens/ITokenN'
+import IToken from '@/domain/tokens/IToken'
 
 export const useTokensStore = defineStore('tokens', {
     state: () => ({
-        tokens: [] as ITokenN[]
+        tokens: [] as IToken[]
     }),
     getters: {
-        getTokens(): ITokenN[] {
+        getTokens(): IToken[] {
             return this.tokens
         },
         getChainTokens(state) {
-            return (chainId: string): ITokenN[] => {
+            return (chainId: string): IToken[] => {
                 return state.tokens
                     .filter(token => {
                         return token.chainId === chainId

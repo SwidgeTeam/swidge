@@ -19,7 +19,7 @@ import { INetwork } from '@/models/INetwork'
 import ModalSwidgeStatus from './ModalSwidgeStatus.vue'
 import { TransactionSteps } from '@/models/TransactionSteps'
 import SwitchButton from './Buttons/SwitchButton.vue'
-import ITokenN from '@/domain/tokens/ITokenN'
+import IToken from '@/domain/tokens/IToken'
 
 
 const web3Store = useWeb3Store()
@@ -40,7 +40,7 @@ const transactionAlertMessage = ref<string>('')
 const isExecutingTransaction = ref<boolean>(false)
 
 
-const selectedSourceToken = ref<ITokenN>({
+const selectedSourceToken = ref<IToken>({
     chainId: '',
     chainName: '',
     address: '',
@@ -50,7 +50,7 @@ const selectedSourceToken = ref<ITokenN>({
     logo: '',
 })
 
-const selectedDestinationToken = ref<ITokenN>({
+const selectedDestinationToken = ref<IToken>({
     chainId: '',
     chainName: '',
     address: '',
@@ -241,7 +241,7 @@ const handleGlobalNetworkSwitched = (chainId: string) => {
  * Handles selection of a token from the selection modal
  * @param token
  */
-const handleUpdateTokenFromModal = (token: ITokenN) => {
+const handleUpdateTokenFromModal = (token: IToken) => {
     if (isSourceChainToken.value) {
         // If the origin network is being chosen
         if (sourceChainInfo.id != token.chainId) {
@@ -301,7 +301,7 @@ const updateOriginChainInfo = (chain: INetwork) => {
  * Updates the selected origin token
  * @param token
  */
-const updateOriginToken = async (token: ITokenN) => {
+const updateOriginToken = async (token: IToken) => {
     // If user selected a different token, update
     if (selectedSourceToken.value.address !== token.address) {
         // Update token details
@@ -352,7 +352,7 @@ const switchHandlerFunction = () => {
     destinationChainInfo.tokens = switchChainInfo.tokens
 
     // Switch Temp variable
-    const switchTokenSource = ref<ITokenN>({
+    const switchTokenSource = ref<IToken>({
         chainId: '',
         chainName: '',
         address: '',

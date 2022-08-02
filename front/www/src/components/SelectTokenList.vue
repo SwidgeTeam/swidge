@@ -3,7 +3,7 @@ import TokenDisplay from './TokenDisplay.vue'
 import NetworkAndTokenNothingFound from './NetworkAndTokenNothingFound.vue'
 import { INetwork } from '@/models/INetwork'
 import { useTokensStore } from '@/store/tokens'
-import ITokenN from '@/domain/tokens/ITokenN'
+import IToken from '@/domain/tokens/IToken'
 
 const tokensStore = useTokensStore()
 
@@ -15,13 +15,13 @@ const props = defineProps<{
 }>()
 
 const emits = defineEmits<{
-    (event: 'set-token', token: ITokenN): void
+    (event: 'set-token', token: IToken): void
 }>()
 
 /**
  * Retrieves and filters the token list according to the given props
  */
-const filteredTokenList = (): ITokenN[] => {
+const filteredTokenList = (): IToken[] => {
     if (
         props.selectedNetworkId === '' &&
         props.searchTerm === ''
@@ -30,7 +30,7 @@ const filteredTokenList = (): ITokenN[] => {
     } else {
         const token = tokensStore.getChainTokens(props.selectedNetworkId)
         return token.filter(
-            (token: ITokenN) => {
+            (token: IToken) => {
                 return (
                     token.name.toLowerCase().includes(props.searchTerm) ||
                     token.symbol.toLowerCase().includes(props.searchTerm) ||

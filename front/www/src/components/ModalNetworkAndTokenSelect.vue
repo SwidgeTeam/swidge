@@ -6,7 +6,7 @@ import SearchInputBox from './SearchInputBox.vue'
 import NetworkLineSelector from './NetworkLineSelector.vue'
 import SelectTokenList from './SelectTokenList.vue'
 import { INetwork } from '@/models/INetwork'
-import ITokenN from '@/domain/tokens/ITokenN'
+import IToken from '@/domain/tokens/IToken'
 
 defineProps<{
     isModalOpen: boolean
@@ -15,13 +15,13 @@ defineProps<{
 }>()
 const emits = defineEmits<{
     (event: 'close-modal'): void
-    (event: 'update-token', token: ITokenN): void
+    (event: 'update-token', token: IToken): void
 }>()
 
 const searchTerm = ref('')
 const selectedNetworkId = ref('')
 
-const handleSetToken = (token: ITokenN) => {
+const handleSetToken = (token: IToken) => {
     searchTerm.value = ''
     selectedNetworkId.value = ''
     emits('update-token', token)

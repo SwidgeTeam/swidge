@@ -2,13 +2,13 @@
 import { ChevronDownIcon } from '@heroicons/vue/outline'
 import { INetwork } from '@/models/INetwork'
 import { computed } from 'vue'
-import ITokenN from '@/domain/tokens/ITokenN'
+import IToken from '@/domain/tokens/IToken'
 
 
 const props = defineProps<{
     value: string
     balance?: string
-    token?: ITokenN
+    token?: IToken
     chainInfo?: INetwork
     disabledInput: boolean
 }>()

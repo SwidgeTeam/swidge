@@ -1,8 +1,8 @@
 <script setup lang='ts'>
-import ITokenN from '@/domain/tokens/ITokenN'
+import IToken from '@/domain/tokens/IToken'
 
 defineProps<{
-  token: ITokenN
+  token: IToken
 }>()
 
 </script>

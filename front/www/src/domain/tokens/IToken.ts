@@ -1,4 +1,4 @@
-export default interface ITokenN {
+export default interface IToken {
     chainId: string
     chainName: string
     address: string
