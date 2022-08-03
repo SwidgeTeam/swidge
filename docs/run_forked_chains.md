@@ -23,7 +23,7 @@ that you'll have to do.
 - Compile the contracts once you are happy with them
 - Deploy/update the contract that you are working on the forked local chain
 
-Now I'll go in details on each of these steps.
+Now I'll go in details on each of all these steps.
 
 ### Install Metamask on a new browser
 The reason why you cannot use your existing Metamask on your existing browser, it's because most probably
@@ -39,7 +39,8 @@ have to add it to your local `.env` so Ganache can send you coins when forking t
 
 ### Add the new mnemonic to your local `.env`
 On the root of the repository, if you don't have it already, create a file `.env`.
-There you have to add a line like this:
+
+There, you have to add a line like this:
 ```shell
 MNEMONIC=put your flashy newly created mnemonic here but at no other place
 ```
@@ -88,3 +89,41 @@ with your fake local coins.
 
 Then only downside tho, is, don't expect the swap to finalize. For that you would need to spin up both forked
 chains, and bring the relayer up too. That's for another document.
+
+## Extra steps
+
+Now, if you still reading it's because you want to test new Solidity code on your local machine.
+
+### Compile the contracts
+You always need to compile the contracts before deploying, because the contracts deployed are the compiled ones.
+
+To compile, execute:
+```shell
+make build-contracts
+```
+
+### Update/deploy the contract facet
+
+Now you will update/deploy the diamond facets that you are working on into the diamond.
+
+I am assuming for simplicity's sake that you are not deploying a new diamond on you local machine, if it's 
+the case, you either know what to do already or ask advice someone on the team.
+
+There's a couple of ways you can update a facet:
+
+- Update all the contracts on the diamond
+
+```shell
+make udf-polygon # or any other chain you spun up
+# acronym of Update Diamond Fork
+```
+
+- Updating the one you want
+```shell
+make deploy-facet-fork-polygon facet="NameOfTheFacetContract"
+```
+
+After that, if the deploy occurs successfully, you can test it by executing a transaction from the app.
+
+Needless to say that it's faster and better to test contracts with unit testing, but there's some occasions 
+that you might want to test yourself the whole system integration.

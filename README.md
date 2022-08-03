@@ -187,7 +187,7 @@ also any of the variables on the `/env` folder.
 ## Running the whole system in local
 
 In order to execute the whole lifecycle of a transaction on your loal machine, 
-[follow these steps](docs/set_up_metamask.md).
+[follow these steps](docs/run_forked_chains.md).
 
 ## Git workflow
 
