@@ -24,7 +24,7 @@ export class GetQuoteSwapHandler implements IQueryHandler<GetQuoteSwapQuery> {
       query.chainId,
       srcToken,
       dstToken,
-      BigInteger.fromBigNumber(query.amount),
+      BigInteger.fromString(query.amount),
     );
 
     return await this.swapQuery.execute(ExchangeProviders.ZeroEx, request);

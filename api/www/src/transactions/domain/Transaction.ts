@@ -26,7 +26,7 @@ export class Transaction {
       _bridgeTokenIn,
       _bridgeTokenOut,
       _dstToken,
-      BigInteger.fromBigNumber(_amount),
+      BigInteger.fromString(_amount),
       BigInteger.zero(),
       BigInteger.zero(),
       BigInteger.zero(),

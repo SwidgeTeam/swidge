@@ -3,7 +3,7 @@ import { QueryBus } from '@nestjs/cqrs';
 import { Response } from 'express';
 import { GetPathQuery } from '../../application/query/get-path.query';
 import { Path } from '../../domain/path';
-import { GetPathDto } from './GetPathDto';
+import { GetPathDto } from './get-path-dto';
 import { Token } from '../../../shared/domain/Token';
 import { DeployedAddresses } from '../../../shared/DeployedAddresses';
 
@@ -26,7 +26,7 @@ export class GetPathController {
     return res.json({
       router: DeployedAddresses.Router,
       amountOut: path.amountOut,
-      destinationFee: path.destinationFee.toString(),
+      destinationFee: path.destinationFeeInOriginWei.toString(),
       originSwap: {
         code: path.originSwap.providerCode,
         tokenIn: this.mapTokenDetails(path.originSwap.tokenIn),
@@ -34,7 +34,8 @@ export class GetPathController {
         data: path.originSwap.data,
         required: path.originSwap.required,
         amountOut: path.originSwap.buyAmountDecimal,
-        estimatedGas: path.originSwap.estimatedGas,
+        estimatedGas: path.originSwap.estimatedGas.toString(),
+        fee: path.originFeeInUSD,
       },
       bridge: {
         tokenIn: this.mapTokenDetails(path.bridging.tokenIn),
@@ -43,11 +44,13 @@ export class GetPathController {
         data: path.bridging.data,
         required: path.bridging.required,
         amountOut: path.bridging.amountOutDecimal,
+        fee: path.bridging.decimalFee,
       },
       destinationSwap: {
         tokenIn: this.mapTokenDetails(path.destinationSwap.tokenIn),
         tokenOut: this.mapTokenDetails(path.destinationSwap.tokenOut),
         required: path.destinationSwap.required,
+        fee: path.destinationFeeInUSD,
       },
     });
   }

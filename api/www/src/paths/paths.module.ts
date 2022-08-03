@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { GetPathHandler } from './application/query/get-path.handler';
-import { GetPathController } from './infrastructure/controllers/get-path.controller';
+import { GetPathController } from './infrastructure/controllers/get-path-controller';
 import { SwapsModule } from '../swaps/swaps.module';
 import { SwapOrderComputer } from '../swaps/application/query/swap-order-computer';
 import { BridgesModule } from '../bridges/bridges.module';
@@ -10,9 +10,10 @@ import httpClientProvider from '../shared/infrastructure/http/httpClient.provide
 import addressesRepositoryProvider from '../addresses/infrastructure/database/repositories/addresses.repository.provider';
 import { TransactionsModule } from '../transactions/transactions.module';
 import tokenDetailsFetcherProvider from '../shared/infrastructure/TokenDetailsFetcher.provider';
-import priceFeedConverterProvider from '../shared/infrastructure/PriceFeedConverter.provider';
 import cachedHttpClientProvider from '../shared/infrastructure/http/cachedHttpClient.provider';
 import sushiPairsRepositoryProvider from '../swaps/infrastructure/database/repositories/sushi-pairs.repository.provider';
+import priceFeedFetcherProvider from '../shared/infrastructure/PriceFeedFetcher.provider';
+import gasPriceFetcherProvider from '../shared/infrastructure/GasPriceFetcher.provider';
 
 @Module({
   imports: [
@@ -30,7 +31,8 @@ import sushiPairsRepositoryProvider from '../swaps/infrastructure/database/repos
     cachedHttpClientProvider(),
     addressesRepositoryProvider(),
     tokenDetailsFetcherProvider(),
-    priceFeedConverterProvider(),
+    priceFeedFetcherProvider(),
+    gasPriceFetcherProvider(),
     sushiPairsRepositoryProvider(),
   ],
 })

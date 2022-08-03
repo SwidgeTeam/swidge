@@ -1,9 +1,11 @@
-import { BigNumber, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import { RpcNode } from '../enums/RpcNode';
 import { PriceFeeds } from '../PriceFeeds';
+import { PriceFeed } from '../domain/PriceFeed';
+import { BigInteger } from '../domain/BigInteger';
 
 export class PriceFeedFetcher {
-  public async fetch(chainId: string): Promise<BigNumber> {
+  public async fetch(chainId: string): Promise<PriceFeed> {
     const provider = new ethers.providers.JsonRpcProvider(RpcNode[chainId]);
     const feedAddress = PriceFeeds[chainId];
 
@@ -125,8 +127,10 @@ export class PriceFeedFetcher {
       provider,
     );
 
+    const decimals = await priceFeed.decimals();
     const lastRound = await priceFeed.latestRoundData();
+    const lastPrice = BigInteger.fromBigNumber(lastRound.answer);
 
-    return lastRound.answer;
+    return new PriceFeed(lastPrice, decimals);
   }
 }

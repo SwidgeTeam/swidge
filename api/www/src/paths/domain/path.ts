@@ -1,13 +1,18 @@
 import { SwapOrder } from '../../swaps/domain/SwapOrder';
 import { BridgingOrder } from '../../bridges/domain/bridging-order';
-import { BigNumber } from 'ethers';
+import { BigInteger } from '../../shared/domain/BigInteger';
+import { PriceFeed } from '../../shared/domain/PriceFeed';
 
 export class Path {
   constructor(
     private readonly _originSwap: SwapOrder,
     private readonly _bridging: BridgingOrder,
     private readonly _destinationSwap: SwapOrder,
-    private readonly _destinationFee: BigNumber,
+    private readonly _destinationFee: BigInteger,
+    private readonly _originGasPrice: BigInteger,
+    private readonly _destinationGasPrice: BigInteger,
+    private readonly _priceOriginCoin: PriceFeed,
+    private readonly _priceDestinationCoin: PriceFeed,
   ) {}
 
   get amountOut(): string {
@@ -32,7 +37,23 @@ export class Path {
     return this._destinationSwap;
   }
 
-  get destinationFee(): BigNumber {
+  get destinationFeeInOriginWei(): BigInteger {
     return this._destinationFee;
+  }
+
+  get originFeeInUSD(): string {
+    return this._originSwap.estimatedGas
+      .times(this._originGasPrice)
+      .times(this._priceOriginCoin.lastPrice)
+      .div(BigInteger.weiInEther())
+      .toDecimal(this._priceOriginCoin.decimals);
+  }
+
+  get destinationFeeInUSD(): string {
+    return this._destinationSwap.estimatedGas
+      .times(this._destinationGasPrice)
+      .times(this._priceDestinationCoin.lastPrice)
+      .div(BigInteger.weiInEther())
+      .toDecimal(this._priceDestinationCoin.decimals);
   }
 }

@@ -1,8 +1,5 @@
-<script setup lang='ts'>
-import {
-    ArrowCircleRightIcon,
-    XCircleIcon,
-} from '@heroicons/vue/outline'
+<script setup lang="ts">
+import { ArrowCircleRightIcon, XCircleIcon } from '@heroicons/vue/outline'
 import { ref, reactive, computed } from 'vue'
 import BridgeSwapSelectionCard from './BridgeSwapSelectionCard.vue'
 import ModalNetworkAndTokenSelect from './ModalNetworkAndTokenSelect.vue'
@@ -20,7 +17,7 @@ import ModalSwidgeStatus from './ModalSwidgeStatus.vue'
 import { TransactionSteps } from '@/models/TransactionSteps'
 import SwitchButton from './Buttons/SwitchButton.vue'
 import IToken from '@/domain/tokens/IToken'
-
+import TransactionDetails from './TransactionDetails.vue'
 
 const web3Store = useWeb3Store()
 const { switchToNetwork, getChainProvider, getBalance } = web3Store
@@ -28,6 +25,7 @@ const { switchToNetwork, getChainProvider, getBalance } = web3Store
 const sourceTokenAmount = ref<string>('')
 const destinationTokenAmount = ref<string>('')
 const sourceTokenMaxAmount = ref<string>('')
+const totalFee = ref<string>('')
 
 const isModalTokensOpen = ref(false)
 const isSourceChainToken = ref(false)
@@ -38,7 +36,6 @@ const isModalStatusOpen = ref(false)
 const showTransactionAlert = ref(false)
 const transactionAlertMessage = ref<string>('')
 const isExecutingTransaction = ref<boolean>(false)
-
 
 const selectedSourceToken = ref<IToken>({
     chainId: '',
@@ -78,6 +75,7 @@ const quotedPath = ref<GetQuoteResponse>({
         required: false,
         amountOut: '',
         estimatedGas: '',
+        fee: '',
     },
     bridge: {
         tokenIn: {
@@ -92,6 +90,7 @@ const quotedPath = ref<GetQuoteResponse>({
         data: '',
         required: false,
         amountOut: '',
+        fee: '',
     },
     destinationSwap: {
         tokenIn: {
@@ -103,6 +102,7 @@ const quotedPath = ref<GetQuoteResponse>({
             address: '',
         },
         required: false,
+        fee: '',
     },
 })
 const sourceChainInfo = reactive<INetwork>({
@@ -212,7 +212,6 @@ const handleOpenTokenList = (isSource: boolean) => {
     isModalTokensOpen.value = true
 }
 
-
 /**
  * Returns an array with the accepted networks
  */
@@ -221,7 +220,6 @@ const getNetworks = () => {
     return Networks.all().filter(network => {
         return network.live
     })
-
 }
 
 /**
@@ -247,7 +245,6 @@ const handleUpdateTokenFromModal = (token: IToken) => {
             if (((token.chainId == destinationChainInfo.id) || (token.chainId == sourceChainInfo.id)) &&
                 (token == selectedDestinationToken.value || selectedSourceToken.value)) {
                 switchHandlerFunction()
-
             } else {
                 // If we changed origin network, inform wallet
                 switchToNetwork(token.chainId).then(() => {
@@ -263,7 +260,6 @@ const handleUpdateTokenFromModal = (token: IToken) => {
         if (((token.chainId == destinationChainInfo.id) || (token.chainId == sourceChainInfo.id)) &&
             (token == selectedDestinationToken.value || selectedSourceToken.value)) {
             switchHandlerFunction()
-
         } else {
             // If the destination network is being chosen
             const chain = Networks.get(token.chainId)
@@ -291,7 +287,6 @@ const updateOriginChainInfo = (chain: INetwork) => {
     sourceChainInfo.icon = chain.icon
     sourceChainInfo.name = chain.name
 }
-
 
 /**
  * Updates the selected origin token
@@ -372,7 +367,6 @@ const switchHandlerFunction = () => {
  * If Input Token + Network == Output Token + Network --> Switch Fields.
  */
 
-
 /**
  * Quotes the possible path for a given pair and amount
  */
@@ -395,8 +389,15 @@ const onQuote = async () => {
         quotedPath.value = quote
         destinationTokenAmount.value = quote.amountOut
         isGettingQuote.value = false
+        totalFee.value = (
+            Number(quote.originSwap.fee) +
+            Number(quote.bridge.fee) +
+            Number(quote.destinationSwap.fee)
+        ).toFixed(2).toString()
 
-        if (Number(sourceTokenAmount.value) > Number(sourceTokenMaxAmount.value)) {
+        if (
+            Number(sourceTokenAmount.value) > Number(sourceTokenMaxAmount.value)
+        ) {
             showTransactionAlert.value = true
             transactionAlertMessage.value = 'Insufficient Balance'
             return
@@ -411,6 +412,7 @@ const onQuote = async () => {
             transactionAlertMessage.value = e.message
             showTransactionAlert.value = true
             destinationTokenAmount.value = ''
+            totalFee.value = ''
         } else {
             console.log('Unexpected error', e)
         }
@@ -573,30 +575,29 @@ const closeModalStatus = () => {
 
 <template>
     <div class="flex flex-col flex-grow bg-radial-gradient-pink">
-        <Header class="py-2" @switch-network="handleGlobalNetworkSwitched($event)"></Header>
+        <Header
+            class="py-2"
+            @switch-network="handleGlobalNetworkSwitched($event)"
+        ></Header>
         <main class="flex items-center justify-center mt-20">
             <div class="flex gap-[2rem]">
                 <div class="flex flex-col gap-6">
                     <div class="flex items-center justify-between">
-                        <span class="text-3xl ">Swap & Bridge</span>
+                        <span class="text-3xl">Swap & Bridge</span>
                         <ArrowCircleRightIcon
                             v-if="!isFaqOpen"
                             class="w-7 h-7 cursor-pointer"
-                            @click="isFaqOpen = true"/>
+                            @click="isFaqOpen = true"
+                        />
                         <XCircleIcon
                             v-if="isFaqOpen"
                             class="w-7 h-7 cursor-pointer"
-                            @click="isFaqOpen = false"/>
+                            @click="isFaqOpen = false"
+                        />
                     </div>
                     <div
-                        class="
-                            flex flex-col
-                            gap-6
-                            px-12
-                            py-6
-                            rounded-3xl
-                            bg-cards-background-dark-grey
-                        ">
+                        class="flex flex-col gap-6 px-12 py-6 rounded-3xl bg-cards-background-dark-grey"
+                    >
                         <div class="flex flex-col w-full gap-4">
                             <span class="text-2xl">You send:</span>
                             <BridgeSwapSelectionCard
@@ -606,13 +607,16 @@ const closeModalStatus = () => {
                                 :balance="sourceTokenMaxAmount"
                                 :disabled-input="false"
                                 @input-changed="handleSourceInputChanged()"
-                                @on-click-max-amount="handleSourceInputChanged()"
-                                @open-token-list="() => handleOpenTokenList(true)"/>
+                                @on-click-max-amount="
+                                    handleSourceInputChanged()
+                                "
+                                @open-token-list="
+                                    () => handleOpenTokenList(true)
+                                "
+                            />
                         </div>
                         <div>
-                            <SwitchButton
-                                @switch="switchHandlerFunction"
-                            />
+                            <SwitchButton @switch="switchHandlerFunction" />
                         </div>
                         <div class="flex flex-col w-full gap-4">
                             <span class="text-2xl">You receive:</span>
@@ -621,35 +625,36 @@ const closeModalStatus = () => {
                                 :chain-info="destinationChainInfo"
                                 :disabled-input="true"
                                 :token="selectedDestinationToken"
-                                @open-token-list="() => handleOpenTokenList(false)"/>
-
-                            <!-- <TransactionSettings
-                                :slippage-value="slippage"
-                                :waiting-time="waitingTime"
-                                :bridge-fee-value="bridgeFee">
-                            </TransactionSettings> -->
+                                @open-token-list="
+                                    () => handleOpenTokenList(false)
+                                "
+                            />
                         </div>
+                        <TransactionDetails v-if="totalFee" :totalFee="totalFee" />
                         <BridgeSwapInteractiveButton
                             :text="buttonLabel"
                             :is-loading="isGettingQuote"
                             :disabled="isExecuteButtonDisabled"
-                            :on-click="onExecuteTransaction"/>
+                            :on-click="onExecuteTransaction"
+                        />
                     </div>
                     <ModalNetworkAndTokenSelect
                         :is-modal-open="isModalTokensOpen"
                         :networks="getNetworks()"
                         :is-origin="isSourceChainToken"
                         @close-modal="isModalTokensOpen = false"
-                        @update-token="handleUpdateTokenFromModal($event)"/>
+                        @update-token="handleUpdateTokenFromModal($event)"
+                    />
 
                     <ModalSwidgeStatus
                         :steps="steps"
                         :show="isModalStatusOpen"
                         :source-chain="sourceChainInfo.name"
                         :destination-chain="destinationChainInfo.name"
-                        @close-modal="closeModalStatus"/>
+                        @close-modal="closeModalStatus"
+                    />
                 </div>
-                <FAQCard v-if="isFaqOpen"/>
+                <FAQCard v-if="isFaqOpen" />
             </div>
         </main>
     </div>

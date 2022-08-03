@@ -6,21 +6,34 @@ import { Tokens } from '../../../../src/shared/enums/Tokens';
 import { USDC } from '../../../../src/shared/enums/TokenSymbols';
 import { Mainnet, Polygon } from '../../../../src/shared/enums/ChainIds';
 
-export function randomWithFees(fees: BridgingFees) {
-  const limits = new BridgingLimits(
-    BigInteger.fromDecimal('0'),
-    BigInteger.fromDecimal('0'),
-    BigInteger.fromDecimal('0'),
-    18,
-  );
-  return new BridgingOrder(
-    BigInteger.fromDecimal('1'),
-    Tokens[USDC][Mainnet],
-    Tokens[USDC][Polygon],
-    Polygon,
-    '',
-    fees,
-    limits,
-    true,
-  );
+export class BridgingOrderMother {
+  static create(
+    amount: BigInteger,
+    tokenIn,
+    tokenOut,
+    chainId: string,
+    fees: BridgingFees,
+    limits: BridgingLimits,
+    required: boolean,
+  ) {
+    return new BridgingOrder(amount, tokenIn, tokenOut, chainId, '', fees, limits, required);
+  }
+
+  static randomWithFeesAndAmount(fees: BridgingFees, amount: BigInteger) {
+    const limits = new BridgingLimits(
+      BigInteger.fromDecimal('0'),
+      BigInteger.fromDecimal('0'),
+      BigInteger.fromDecimal('0'),
+      18,
+    );
+    return this.create(
+      amount,
+      Tokens[USDC][Mainnet],
+      Tokens[USDC][Polygon],
+      Polygon,
+      fees,
+      limits,
+      true,
+    );
+  }
 }

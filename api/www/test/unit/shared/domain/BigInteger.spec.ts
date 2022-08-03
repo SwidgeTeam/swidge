@@ -58,7 +58,7 @@ describe('BigInteger', () => {
 
   it('should construct from already bigNumber value', () => {
     // Arrange
-    const number = BigInteger.fromBigNumber('123456789123456789');
+    const number = BigInteger.fromString('123456789123456789');
 
     // Act
     const stringNumber = number.toString();
@@ -71,7 +71,7 @@ describe('BigInteger', () => {
 
   it('should format default decimals from bigNumber', () => {
     // Arrange
-    const number = BigInteger.fromBigNumber('1234567891234567890');
+    const number = BigInteger.fromString('1234567891234567890');
 
     // Act
     const stringNumber = number.toDecimal();
@@ -82,7 +82,7 @@ describe('BigInteger', () => {
 
   it('should format custom decimals from bigNumber', () => {
     // Arrange
-    const number = BigInteger.fromBigNumber('123456789123456789');
+    const number = BigInteger.fromString('123456789123456789');
 
     // Act
     const stringNumber = number.toDecimal(10);

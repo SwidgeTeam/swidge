@@ -12,17 +12,21 @@ import { BridgeOrderComputer } from '../../bridges/application/query/bridge-orde
 import { SwapOrderComputer } from '../../swaps/application/query/swap-order-computer';
 import { BridgingRequest } from '../../bridges/domain/bridging-request';
 import { Path } from './path';
-import { BigNumber } from 'ethers';
-import { PriceFeedConverter } from '../../shared/infrastructure/PriceFeedConverter';
 import { PathNotFound } from './path-not-found';
 import { flatten } from 'lodash';
+import { PriceFeedFetcher } from '../../shared/infrastructure/PriceFeedFetcher';
+import { GasPriceFetcher } from '../../shared/infrastructure/GasPriceFetcher';
+import { GasConverter } from '../../shared/domain/GasConverter';
+import { PriceFeed } from '../../shared/domain/PriceFeed';
 
 export class PathComputer {
   /** Providers */
   private readonly swapOrderProvider: SwapOrderComputer;
   private readonly bridgeOrderProvider: BridgeOrderComputer;
   private readonly tokenDetailsFetcher: TokenDetailsFetcher;
-  private readonly priceFeedConverter: PriceFeedConverter;
+  private readonly priceFeedFetcher: PriceFeedFetcher;
+  private readonly gasPriceFetcher: GasPriceFetcher;
+  private readonly gasConverter: GasConverter;
   /** Details */
   private readonly bridgingAssets;
   private srcToken: Token;
@@ -30,6 +34,10 @@ export class PathComputer {
   private fromChain: string;
   private toChain: string;
   private amountIn: BigInteger;
+  private priceOriginCoin: PriceFeed;
+  private priceDestinationCoin: PriceFeed;
+  private gasPriceDestination: BigInteger;
+  private gasPriceOrigin: BigInteger;
   /** Result */
   private candidatePaths: CandidatePath[]; // Final candidate paths
 
@@ -37,12 +45,15 @@ export class PathComputer {
     _swapOrderProvider: SwapOrderComputer,
     _bridgeOrderProvider: BridgeOrderComputer,
     _tokenDetailsFetcher: TokenDetailsFetcher,
-    _priceFeedConverter: PriceFeedConverter,
+    _priceFeedFetcher: PriceFeedFetcher,
+    _gasPriceFetcher: GasPriceFetcher,
   ) {
     this.swapOrderProvider = _swapOrderProvider;
     this.bridgeOrderProvider = _bridgeOrderProvider;
     this.tokenDetailsFetcher = _tokenDetailsFetcher;
-    this.priceFeedConverter = _priceFeedConverter;
+    this.priceFeedFetcher = _priceFeedFetcher;
+    this.gasPriceFetcher = _gasPriceFetcher;
+    this.gasConverter = new GasConverter();
     this.bridgingAssets = [USDC];
   }
 
@@ -65,6 +76,11 @@ export class PathComputer {
       throw new PathNotFound();
     }
 
+    this.gasPriceOrigin = await this.gasPriceFetcher.fetch(this.fromChain);
+    this.gasPriceDestination = await this.gasPriceFetcher.fetch(this.toChain);
+    this.priceOriginCoin = await this.priceFeedFetcher.fetch(this.fromChain);
+    this.priceDestinationCoin = await this.priceFeedFetcher.fetch(this.toChain);
+
     const nativeWei = await this.convertDestinationGasIntoOriginNative(candidate.destinationStep);
 
     return new Path(
@@ -72,6 +88,10 @@ export class PathComputer {
       candidate.bridgeStep,
       candidate.destinationStep,
       nativeWei,
+      this.gasPriceOrigin,
+      this.gasPriceDestination,
+      this.priceOriginCoin,
+      this.priceDestinationCoin,
     );
   }
 
@@ -216,20 +236,20 @@ export class PathComputer {
    * Returns a possible bridge order
    * @param providerId ID of bridge provider to use
    * @param asset The asset that we want to send across the bridge
-   * @param swapAmountOut The amount that we want to cross
+   * @param bridgeAmountIn The amount that we want to cross
    * @private
    */
   private async getBridgeOrder(
     providerId: string,
     asset: string,
-    swapAmountOut: BigInteger,
+    bridgeAmountIn: BigInteger,
   ): Promise<BridgingOrder> {
     const bridgeTokenIn = Tokens[asset][this.fromChain];
     const bridgeRequest = new BridgingRequest(
       this.fromChain,
       this.toChain,
       bridgeTokenIn,
-      swapAmountOut,
+      bridgeAmountIn,
     );
     try {
       return await this.bridgeOrderProvider.execute(providerId, bridgeRequest);
@@ -260,15 +280,16 @@ export class PathComputer {
    */
   private async convertDestinationGasIntoOriginNative(
     destinationSwap: SwapOrder,
-  ): Promise<BigNumber> {
-    const fixDestinationGas = BigNumber.from(0);
+  ): Promise<BigInteger> {
+    const fixDestinationGas = BigInteger.zero();
 
-    const estimatedDestinationGas = destinationSwap.estimatedGas.add(fixDestinationGas);
+    const destinationEstimatedGas = destinationSwap.estimatedGas.plus(fixDestinationGas);
 
-    return await this.priceFeedConverter.fetch(
-      this.fromChain,
-      this.toChain,
-      estimatedDestinationGas,
+    return await this.gasConverter.convert(
+      destinationEstimatedGas,
+      this.gasPriceDestination,
+      this.priceOriginCoin.lastPrice,
+      this.priceDestinationCoin.lastPrice,
     );
   }
 

@@ -13,9 +13,17 @@ export class BigInteger {
     return new BigInteger(number);
   }
 
-  static fromBigNumber(value: string) {
+  static fromString(value: string) {
     const number = BigNumber.from(value);
     return new BigInteger(number);
+  }
+
+  static fromBigNumber(value: BigNumber) {
+    return new BigInteger(value);
+  }
+
+  static weiInEther() {
+    return new BigInteger(ethers.constants.WeiPerEther);
   }
 
   static zero() {
@@ -35,12 +43,14 @@ export class BigInteger {
     return new BigInteger(this._number.sub(other._number));
   }
 
-  public times(amount: number): BigInteger {
-    return new BigInteger(this._number.mul(amount));
+  public times(amount: BigInteger | number): BigInteger {
+    const other = typeof amount === 'number' ? amount : amount._number;
+    return new BigInteger(this._number.mul(other));
   }
 
-  public div(amount: number): BigInteger {
-    return new BigInteger(this._number.div(amount));
+  public div(amount: BigInteger | number): BigInteger {
+    const other = typeof amount === 'number' ? amount : amount._number;
+    return new BigInteger(this._number.div(other));
   }
 
   public lessThan(other: BigInteger) {
@@ -66,10 +76,7 @@ export class BigInteger {
     return ethers.utils.formatUnits(this._number, decimals);
   }
 
-  public convertDecimalsFromTo(
-    fromDecimals: number,
-    toDecimals: number,
-  ): BigInteger {
+  public convertDecimalsFromTo(fromDecimals: number, toDecimals: number): BigInteger {
     let num;
     if (fromDecimals < toDecimals) {
       num = this._number.mul(10 ** (toDecimals - fromDecimals));

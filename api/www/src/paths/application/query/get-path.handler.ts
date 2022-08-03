@@ -10,10 +10,11 @@ import { TokenDetailsFetcher } from '../../../shared/infrastructure/TokenDetails
 import { Inject } from '@nestjs/common';
 import { Class } from '../../../shared/Class';
 import { BigInteger } from '../../../shared/domain/BigInteger';
-import { BigNumber } from 'ethers';
-import { PriceFeedConverter } from '../../../shared/infrastructure/PriceFeedConverter';
 import { ExchangeProviders } from '../../../swaps/domain/providers/exchange-providers';
 import { PathComputer } from '../../domain/path-computer';
+import { PriceFeedFetcher } from '../../../shared/infrastructure/PriceFeedFetcher';
+import { GasPriceFetcher } from '../../../shared/infrastructure/GasPriceFetcher';
+import { PriceFeed } from '../../../shared/domain/PriceFeed';
 
 @QueryHandler(GetPathQuery)
 export class GetPathHandler implements IQueryHandler<GetPathQuery> {
@@ -22,16 +23,16 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
   constructor(
     private readonly swapOrderProvider: SwapOrderComputer,
     private readonly bridgeOrderProvider: BridgeOrderComputer,
-    @Inject(Class.TokenDetailsFetcher)
-    private readonly tokenDetailsFetcher: TokenDetailsFetcher,
-    @Inject(Class.PriceFeedConverter)
-    private readonly priceFeedConverter: PriceFeedConverter,
+    @Inject(Class.TokenDetailsFetcher) private readonly tokenDetailsFetcher: TokenDetailsFetcher,
+    @Inject(Class.PriceFeedFetcher) private readonly priceFeedFetcher: PriceFeedFetcher,
+    @Inject(Class.GasPriceFetcher) private readonly gasPriceFetcher: GasPriceFetcher,
   ) {
     this.pathComputer = new PathComputer(
       swapOrderProvider,
       bridgeOrderProvider,
       tokenDetailsFetcher,
-      priceFeedConverter,
+      priceFeedFetcher,
+      gasPriceFetcher,
     );
   }
 
@@ -57,11 +58,19 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
 
     const swapOrder = await this.swapOrderProvider.execute(ExchangeProviders.ZeroEx, swapRequest);
 
+    const gasPriceOrigin = await this.gasPriceFetcher.fetch(query.fromChainId);
+    const priceOriginCoin = await this.priceFeedFetcher.fetch(query.fromChainId);
+    const zero = BigInteger.zero();
+
     return new Path(
       swapOrder,
       BridgingOrder.notRequired(),
       SwapOrder.notRequired(),
-      BigNumber.from(0),
+      zero,
+      gasPriceOrigin,
+      zero,
+      priceOriginCoin,
+      PriceFeed.zero(),
     );
   }
 
