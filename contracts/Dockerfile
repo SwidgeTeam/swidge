@@ -10,7 +10,7 @@ WORKDIR /code
 
 COPY www/. /code/
 
-RUN yarn install
+RUN yarn install --python=/usr/bin/python
 
 VOLUME [ "/code/node_modules" ]
 VOLUME [ "/code/build" ]
