@@ -181,12 +181,25 @@ const formattedAmount = (chainId: string, address: string, amount: string) => {
                             <li
                                 v-for="t in transactions"
                                 :key="t.txHash"
-                                class="grid content-center gradient-border-header-main flex flex-wrap justify-between gap-2 mb-4 p-2">
-                                <div> Date: {{ transformDate(+t.date) }}</div>
+                                class="content-center gradient-border-header-main flex flex-wrap justify-between gap-2 mb-4 p-2">
+                                <div class="w-full flex justify-between">
+                                    <div class="grid flex justify-start content-center"> {{ transformDate(+t.date) }} </div>
+                                    <div v-if="t.status == 'processing'" class="flex justify-end border border-gray-50 px-3 rounded-2xl grid grid-row-1 content-center"> {{ t.status }} 
+                                    <svg class="grid flex content-center animate-spin " width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M11.8736 1.28601e-05C18.0818 1.25887e-05 23.1145 5.03271 23.1145 11.2409C23.1145 17.449 18.0818 22.4817 11.8737 22.4817C5.66551 22.4817 0.632812 17.449 0.632812 11.2409C0.632812 5.03271 5.66551 1.31315e-05 11.8736 1.28601e-05ZM11.8737 16.7961C14.9417 16.7961 17.4289 14.3089 17.4289 11.2409C17.4289 8.17277 14.9417 5.68559 11.8736 5.68559C8.80557 5.68559 6.31839 8.17277 6.31839 11.2409C6.31839 14.3089 8.80557 16.7961 11.8737 16.7961Z" fill="#222129"/>
+                                    <path d="M11.8736 1.28601e-05C13.9045 1.27713e-05 15.8975 0.55021 17.6407 1.59214C19.3839 2.63407 20.8123 4.12881 21.7741 5.91751C22.7358 7.70622 23.1951 9.72207 23.1029 11.7509C23.0108 13.7796 22.3707 15.7456 21.2508 17.4397L16.5079 14.3044C17.0613 13.4671 17.3776 12.4955 17.4232 11.4929C17.4687 10.4903 17.2418 9.49403 16.7665 8.61004C16.2912 7.72606 15.5853 6.98735 14.7237 6.47243C13.8622 5.9575 12.8773 5.68559 11.8736 5.68559L11.8736 1.28601e-05Z" fill="white"/>
+                                    </svg>
+                                    </div>
+                                    <div v-if="t.status =='completed'" class="flex justify-end border border-green-400 bg-green-400 px-3 rounded-2xl"> {{ t.status }} 
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M20.3558 10.5168V11.3876C20.3546 13.4289 19.6936 15.4151 18.4714 17.05C17.2492 18.6849 15.5312 19.881 13.5737 20.4597C11.6162 21.0385 9.5241 20.969 7.60934 20.2616C5.69457 19.5542 4.05977 18.2468 2.94876 16.5344C1.83774 14.8219 1.31004 12.7962 1.44435 10.7594C1.57866 8.72256 2.36778 6.78371 3.69403 5.23199C5.02028 3.68028 6.8126 2.59886 8.80367 2.149C10.7947 1.69914 12.8779 1.90496 14.7424 2.73575" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M20.3556 4.28278L10.3435 14.932L7.33984 11.7404" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </div>
+                                </div>
                                 <div> Amount: {{ formattedAmount(t.fromChain, t.srcAsset, t.amountIn) }}</div>
                                 <div> From chain: {{ getChainName(t.fromChain) }}</div>
                                 <div> To chain: {{ getChainName(t.toChain) }}</div>
-                                <div> Status: {{ t.status }}</div>
                                 <div> From: {{ getTokenName(t.fromChain, t.srcAsset) }}</div>
                                 <div> To: {{ getTokenName(t.toChain, t.dstAsset) }}</div>
                             </li>

@@ -85,7 +85,7 @@ class SwidgeAPI extends HttpClient {
     }
 
     public async getTransactions(walletAddress: string): Promise<TransactionsList> {
-        await new Promise(resolve => setTimeout(resolve, 2000))
+        await new Promise(resolve => setTimeout(resolve, 500))
         return Promise.resolve({
             'transactions': [
                 {
