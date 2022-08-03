@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ChevronDownIcon } from '@heroicons/vue/outline'
-import { INetwork } from '@/models/INetwork'
 import { computed } from 'vue'
 import IToken from '@/domain/tokens/IToken'
 import { Networks } from '@/domain/chains/Networks'
@@ -10,7 +9,6 @@ const props = defineProps<{
     value: string
     balance?: string
     token?: IToken
-    chainInfo?: INetwork
     disabledInput: boolean
 }>()
 
@@ -70,10 +68,10 @@ const trimmedBalance = computed({
                         class="flex justify-between gap-2 cursor-pointer bg-[#222129]/40 px-2 py-1 rounded-2xl hover:bg-[#222129]/100 transition duration-150 ease-out hover:ease-in"
                         @click="emits('open-token-list')">
                         <div
-                            v-if="chainInfo && chainInfo.name !== ''"
+                            v-if="token && token.chainName !== ''"
                             class="flex flex-col text-sm font-extralight"
                         >
-                            <span>{{ chainInfo.name }}</span>
+                            <span>{{ token.chainName }}</span>
                             <div class="flex items-center w-full gap-2 text-xl">
                                 <div class="flex gap-2 items-center">
                                     <img
@@ -86,7 +84,7 @@ const trimmedBalance = computed({
                                     />
                                     <span class="flex py-2 min-w-[rem]">
                                         {{
-                                            token ? token.symbol : ''
+                                            token ? token.symbol : 'ss'
                                         }}
                                     </span>
                                 </div>
@@ -95,7 +93,7 @@ const trimmedBalance = computed({
                         <div v-else class="flex flex-align-center text-md font-light py-4 w-120">Select token</div>
 
                         <div
-                            v-if="chainInfo && chainInfo.name !== ''"
+                            v-if="token && token.chainName !== ''"
                             class="items-center gap-2 text-xl">
                             <ChevronDownIcon class="h-6"/>
                         </div>

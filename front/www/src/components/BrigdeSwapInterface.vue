@@ -603,7 +603,6 @@ const closeModalStatus = () => {
                             <BridgeSwapSelectionCard
                                 v-model:value="sourceTokenAmount"
                                 :token="selectedSourceToken"
-                                :chain-info="sourceChainInfo"
                                 :balance="sourceTokenMaxAmount"
                                 :disabled-input="false"
                                 @input-changed="handleSourceInputChanged()"
@@ -622,7 +621,6 @@ const closeModalStatus = () => {
                             <span class="text-2xl">You receive:</span>
                             <BridgeSwapSelectionCard
                                 v-model:value="destinationTokenAmount"
-                                :chain-info="destinationChainInfo"
                                 :disabled-input="true"
                                 :token="selectedDestinationToken"
                                 @open-token-list="
