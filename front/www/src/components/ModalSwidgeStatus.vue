@@ -5,12 +5,13 @@ import { XIcon } from '@heroicons/vue/outline'
 import StatusStep from './StatusStep.vue'
 import { TransactionSteps } from '@/models/TransactionSteps'
 import { computed } from 'vue'
+import IToken from '@/domain/tokens/IToken'
 
 const props = defineProps<{
     show: boolean
     steps: TransactionSteps,
-    sourceChain: string,
-    destinationChain: string
+    sourceToken: IToken,
+    destinationToken: IToken
 }>()
 
 const emits = defineEmits<{
@@ -22,15 +23,15 @@ const successMessage = computed({
         const amountIn = props.steps.origin.amountIn
         const tokenIn = props.steps.origin.tokenIn
         let amountOut, tokenOut
-        if (props.sourceChain === props.destinationChain) {
+        if (props.sourceToken.chainName === props.destinationToken.chainName) {
             amountOut = props.steps.origin.amountOut
             tokenOut = props.steps.origin.tokenOut
         } else {
             amountOut = props.steps.destination.amountOut
             tokenOut = props.steps.destination.tokenOut
         }
-        return 'You’ve successfully transferred ' + Number(amountIn).toFixed(2) + ' ' + tokenIn + ' on ' + props.sourceChain +
-            ' to ' + Number(amountOut).toFixed(2) + ' ' + tokenOut + ' on ' + props.destinationChain
+        return 'You’ve successfully transferred ' + Number(amountIn).toFixed(2) + ' ' + tokenIn + ' on ' + props.sourceToken.chainName +
+            ' to ' + Number(amountOut).toFixed(2) + ' ' + tokenOut + ' on ' + props.destinationToken.chainName
     },
     set: () => null
 })

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ArrowCircleRightIcon, XCircleIcon } from '@heroicons/vue/outline'
-import { ref, reactive, computed } from 'vue'
+import { ref, computed } from 'vue'
 import BridgeSwapSelectionCard from './BridgeSwapSelectionCard.vue'
 import ModalNetworkAndTokenSelect from './ModalNetworkAndTokenSelect.vue'
 import Header from '@/components/Header.vue'
@@ -12,7 +12,6 @@ import { RouterCaller, RouterCallPayload } from '@/contracts/routerCaller'
 import { useWeb3Store } from '@/store/web3'
 import { BigNumber, ethers, providers } from 'ethers'
 import { Networks } from '@/domain/chains/Networks'
-import { INetwork } from '@/models/INetwork'
 import ModalSwidgeStatus from './ModalSwidgeStatus.vue'
 import { TransactionSteps } from '@/models/TransactionSteps'
 import SwitchButton from './Buttons/SwitchButton.vue'
@@ -104,27 +103,6 @@ const quotedPath = ref<GetQuoteResponse>({
         required: false,
         fee: '',
     },
-})
-const sourceChainInfo = reactive<INetwork>({
-    name: '',
-    icon: '',
-    id: '',
-    rpcUrl: '',
-    live: false,
-})
-const destinationChainInfo = reactive<INetwork>({
-    name: '',
-    icon: '',
-    id: '',
-    rpcUrl: '',
-    live: false,
-})
-const switchChainInfo = reactive<INetwork>({
-    name: '',
-    icon: '',
-    id: '',
-    rpcUrl: '',
-    live: false,
 })
 
 const steps = ref<TransactionSteps>({
@@ -224,11 +202,8 @@ const getNetworks = () => {
 
 /**
  * Handles a change of network when executed from outside the token selector
- * @param chainId
  */
-const handleGlobalNetworkSwitched = (chainId: string) => {
-    const chain = Networks.get(chainId)
-    updateOriginChainInfo(chain)
+const handleGlobalNetworkSwitched = () => {
     resetSelectedOriginToken()
 }
 
@@ -237,19 +212,22 @@ const handleGlobalNetworkSwitched = (chainId: string) => {
  * @param token
  */
 const handleUpdateTokenFromModal = (token: IToken) => {
+    const originChainId = selectedSourceToken.value.chainId
+    const destinationChainId = selectedDestinationToken.value.chainId
+
     if (isSourceChainToken.value) {
         // If the origin network is being chosen
-        if (sourceChainInfo.id != token.chainId) {
+        if (originChainId != token.chainId) {
             // If network and token of source and destination are the same, switch inputs instead of setting new ones.
 
-            if (((token.chainId == destinationChainInfo.id) || (token.chainId == sourceChainInfo.id)) &&
-                (token == selectedDestinationToken.value || selectedSourceToken.value)) {
+            if (
+                (token.chainId == destinationChainId || token.chainId == originChainId) &&
+                (token == selectedDestinationToken.value || selectedSourceToken.value)
+            ) {
                 switchHandlerFunction()
             } else {
                 // If we changed origin network, inform wallet
                 switchToNetwork(token.chainId).then(() => {
-                    const chain = Networks.get(token.chainId)
-                    updateOriginChainInfo(chain)
                     updateOriginToken(token)
                 })
             }
@@ -257,13 +235,12 @@ const handleUpdateTokenFromModal = (token: IToken) => {
             updateOriginToken(token)
         }
     } else {
-        if (((token.chainId == destinationChainInfo.id) || (token.chainId == sourceChainInfo.id)) &&
-            (token == selectedDestinationToken.value || selectedSourceToken.value)) {
+        if (
+            (token.chainId == destinationChainId || token.chainId == originChainId) &&
+            (token == selectedDestinationToken.value || selectedSourceToken.value)
+        ) {
             switchHandlerFunction()
         } else {
-            // If the destination network is being chosen
-            const chain = Networks.get(token.chainId)
-            updateDestinationChainInfo(chain)
             // Update token details
             selectedDestinationToken.value = token
         }
@@ -276,16 +253,6 @@ const handleUpdateTokenFromModal = (token: IToken) => {
 
     // Close modal
     isModalTokensOpen.value = false
-}
-
-/**
- * Updates the details of source chain
- * @param chain
- */
-const updateOriginChainInfo = (chain: INetwork) => {
-    sourceChainInfo.id = chain.id
-    sourceChainInfo.icon = chain.icon
-    sourceChainInfo.name = chain.name
 }
 
 /**
@@ -313,33 +280,11 @@ const updateTokenBalance = async (address: string) => {
 }
 
 /**
- * Updates details of destination chain
- * @param chain
- */
-const updateDestinationChainInfo = (chain: INetwork) => {
-    destinationChainInfo.id = chain.id
-    destinationChainInfo.icon = chain.icon
-    destinationChainInfo.name = chain.name
-}
-
-/**
  * Sets the transition variable switchDestinationChain to Current source Chain info
  */
 const switchHandlerFunction = () => {
-    switchChainInfo.id = sourceChainInfo.id
-    switchChainInfo.icon = sourceChainInfo.icon
-    switchChainInfo.name = sourceChainInfo.name
-
-    sourceChainInfo.id = destinationChainInfo.id
-    sourceChainInfo.icon = destinationChainInfo.icon
-    sourceChainInfo.name = destinationChainInfo.name
-
-    destinationChainInfo.id = switchChainInfo.id
-    destinationChainInfo.icon = switchChainInfo.icon
-    destinationChainInfo.name = switchChainInfo.name
-
     // Switch Temp variable
-    const switchTokenSource = ref<IToken>({
+    const switchToken = ref<IToken>({
         chainId: '',
         chainName: '',
         address: '',
@@ -349,9 +294,9 @@ const switchHandlerFunction = () => {
         logo: '',
     })
 
-    switchTokenSource.value = selectedSourceToken.value
+    switchToken.value = selectedSourceToken.value
     selectedSourceToken.value = selectedDestinationToken.value
-    selectedDestinationToken.value = switchTokenSource.value
+    selectedDestinationToken.value = switchToken.value
 
     //Reset Input Values on Switch of Network+Token
     sourceTokenAmount.value = ''
@@ -380,9 +325,9 @@ const onQuote = async () => {
     }
     try {
         const quote: GetQuoteResponse = await SwidgeAPI.getQuote({
-            fromChainId: sourceChainInfo.id,
+            fromChainId: selectedSourceToken.value.chainId,
             srcToken: selectedSourceToken.value.address,
-            toChainId: destinationChainInfo.id,
+            toChainId: selectedDestinationToken.value.chainId,
             dstToken: selectedDestinationToken.value.address,
             amount: sourceTokenAmount.value.toString(),
         })
@@ -473,7 +418,7 @@ const onExecuteTransaction = async () => {
 }
 
 const isCrossTransaction = () => {
-    return sourceChainInfo.id !== destinationChainInfo.id
+    return selectedSourceToken.value.chainId !== selectedDestinationToken.value.chainId
 }
 
 /**
@@ -553,13 +498,7 @@ const openTransactionStatusModal = () => {
 
     isModalStatusOpen.value = true
 }
-/**
- * Passes variables to TransactionSettingCoponent to display the calculated
- * Slippage, Fees and arriving Value.
- */
-// const slippage = '3%'
-// const bridgeFee = '2%'
-// const waitingTime = '10 min'
+
 /**
  * Closes the transaction status modal,
  * closing also all the listeners set on the providers
@@ -577,7 +516,7 @@ const closeModalStatus = () => {
     <div class="flex flex-col flex-grow bg-radial-gradient-pink">
         <Header
             class="py-2"
-            @switch-network="handleGlobalNetworkSwitched($event)"
+            @switch-network="handleGlobalNetworkSwitched"
         ></Header>
         <main class="flex items-center justify-center mt-20">
             <div class="flex gap-[2rem]">
@@ -615,7 +554,7 @@ const closeModalStatus = () => {
                             />
                         </div>
                         <div>
-                            <SwitchButton @switch="switchHandlerFunction" />
+                            <SwitchButton @switch="switchHandlerFunction"/>
                         </div>
                         <div class="flex flex-col w-full gap-4">
                             <span class="text-2xl">You receive:</span>
@@ -628,7 +567,7 @@ const closeModalStatus = () => {
                                 "
                             />
                         </div>
-                        <TransactionDetails v-if="totalFee" :totalFee="totalFee" />
+                        <TransactionDetails v-if="totalFee" :total-fee="totalFee"/>
                         <BridgeSwapInteractiveButton
                             :text="buttonLabel"
                             :is-loading="isGettingQuote"
@@ -647,12 +586,12 @@ const closeModalStatus = () => {
                     <ModalSwidgeStatus
                         :steps="steps"
                         :show="isModalStatusOpen"
-                        :source-chain="sourceChainInfo.name"
-                        :destination-chain="destinationChainInfo.name"
+                        :source-token="selectedSourceToken"
+                        :destination-token="selectedDestinationToken"
                         @close-modal="closeModalStatus"
                     />
                 </div>
-                <FAQCard v-if="isFaqOpen" />
+                <FAQCard v-if="isFaqOpen"/>
             </div>
         </main>
     </div>
