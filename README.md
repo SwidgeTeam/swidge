@@ -96,10 +96,10 @@ You can fork any accepted chain with:
 $ make fork-<chain>
 ```
 
-That will run Brownie inside a container and fork the selected chain.
+That will run Hardhat inside a container and fork the selected chain.
 Once you have done that, you can run any of the following helpers.
 
-You can find the accepted chains on [this env file](https://github.com/SwidgeTeam/swidge/blob/master/env/default/brownie.env).
+You can find the accepted chains on [this env file](https://github.com/SwidgeTeam/swidge/blob/master/env/default/networks.env).
 
 ### Deploy on forked chain
 
