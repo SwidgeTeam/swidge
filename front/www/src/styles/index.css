@@ -13,7 +13,7 @@
     body {
         @apply flex flex-grow bg-background-main-dark background-gradient
     }
-    
+
 }
 
 @layer utilities {
@@ -28,12 +28,13 @@
     .to-native-button {
         @apply py-2 px-6 text-sm rounded-full font-medium border border-gray-600 hover:bg-gray-700
     }
+
     .background-gradient {
-        background-image: radial-gradient(100% 100% at 50% 25%,var(--tw-gradient-stops));
+        background-image: radial-gradient(100% 100% at 50% 25%, var(--tw-gradient-stops));
         --tw-gradient-to: #222129;
-        --tw-gradient-from: rgba(181,45,126,.06);
-        --tw-gradient-stops: var(--tw-gradient-from),var(--tw-gradient-to);
-    }    
+        --tw-gradient-from: rgba(181, 45, 126, .06);
+        --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+    }
 
     .gradient-main {
         background: linear-gradient(270deg, #3E3085 0%, #7C2F82 27.15%, #B22F7F 51.04%, #543E71 78.86%, #0C4966 100%);
@@ -51,7 +52,7 @@
         linear-gradient(270deg, #3E3085 0%, #7C2F82 27.15%, #B22F7F 51.04%, #543E71 78.86%, #0C4966 100%) border-box;
         border: 1.5px solid transparent;
         border-radius: 12px;
-        transition: 0.3s;    
+        transition: 0.3s;
     }
 
     .gradient-border-header-main-hover {
@@ -59,7 +60,7 @@
         linear-gradient(270deg, #3E3085 0%, #7C2F82 27.15%, #B22F7F 51.04%, #543E71 78.86%, #0C4966 100%) border-box;
         border: 1.5px solid transparent;
         border-radius: 12px;
-        transition: 0.3s; 
+        transition: 0.3s;
     }
 
     .header-button {
@@ -77,7 +78,7 @@
     }
 
     .select-network-button {
-        @apply py-2 text-center font-roboto font-light 
+        @apply py-2 text-center font-roboto font-light
     }
 
     .network-button > img {
@@ -92,7 +93,7 @@
         width: 24px;
         border-radius: 50%;
     }
-    
+
     .standardArrow {
         width: 44px;
         height: 44px;
@@ -101,8 +102,8 @@
         transition: transform 0.4s ease-in;
         -o-transition: -o-transform 0.4s ease-in;
         border-radius: 100%;
-        background: rgba(34,33,41,0.4);
-    }   
+        background: rgba(34, 33, 41, 0.4);
+    }
 
     .standardArrow:hover {
         transform: rotate(-180deg);
@@ -112,8 +113,12 @@
         -o-transition: -o-transform 0.4s ease-in;
         background: #222129;
     }
-    
-#app {
-    @apply flex flex-grow
-}
+
+    .w-120 {
+        width: 120px;
+    }
+
+    #app {
+        @apply flex flex-grow
+    }
 }

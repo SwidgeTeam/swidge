@@ -61,85 +61,79 @@ const trimmedBalance = computed({
 
 <template>
     <div
-        class="flex gap-2 px-6 py-4 items-center gradient-border-selection-main w-[32rem]"
+        class="flex flex-col gap-2 px-4 py-3 items-center gradient-border-selection-main w-[32rem]"
     >
-        <div class="flex flex-col flex-auto w-full">
-            <div class="flex items-center w-full gap-2 text-xl">
-                <div
-                    class="flex justify-between gap-2 cursor-pointer bg-[#222129]/40 px-4 py-2 rounded-2xl hover:bg-[#222129]/100 transition duration-150 ease-out hover:ease-in"
-                    @click="emits('open-token-list')"
-                >
-                    <div class="flex flex-col">
-                        <div>
-                            <div class="font-extralight">
-                                <div
-                                    v-if="chainInfo && chainInfo.name !== ''"
-                                    class="text-sm"
-                                >
-                                    {{ chainInfo.name }}:
-                                    <div class="flex items-center w-full gap-2 text-xl">
-                                        <div class="flex gap-2 items-center">
-                                            <img
-                                                v-if="token && token.logo !== ''"
-                                                :src="token.logo"
-                                                width="32"
-                                                class="rounded-full"
-                                                height="32"
-                                                @error="onFallbackImgHandler"
-                                            />
-                                            <span class="flex py-2 min-w-[rem]">{{
-                                                    token ? token.symbol : 'Select Token'
-                                                }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div v-else class="flex flex-align-center w-30 select-network-button">Select Network
+        <div class="flex flex-row">
+            <div class="flex">
+                <div class="flex items-center w-full gap-2 text-xl">
+                    <div
+                        class="flex justify-between gap-2 cursor-pointer bg-[#222129]/40 px-2 py-1 rounded-2xl hover:bg-[#222129]/100 transition duration-150 ease-out hover:ease-in"
+                        @click="emits('open-token-list')">
+                        <div
+                            v-if="chainInfo && chainInfo.name !== ''"
+                            class="flex flex-col text-sm font-extralight"
+                        >
+                            <span>{{ chainInfo.name }}</span>
+                            <div class="flex items-center w-full gap-2 text-xl">
+                                <div class="flex gap-2 items-center">
+                                    <img
+                                        v-if="token && token.logo !== ''"
+                                        :src="token.logo"
+                                        class="rounded-full"
+                                        width="24"
+                                        height="24"
+                                        @error="onFallbackImgHandler"
+                                    />
+                                    <span class="flex py-2 min-w-[rem]">
+                                        {{
+                                            token ? token.symbol : ''
+                                        }}
+                                    </span>
                                 </div>
                             </div>
                         </div>
+                        <div v-else class="flex flex-align-center text-md font-light w-120">Select token</div>
 
-                    </div>
-
-                    <div class="flex items-center gap-2 text-xl">
-                        <ChevronDownIcon class="h-6"/>
+                        <div class="items-center gap-2 text-xl">
+                            <ChevronDownIcon class="h-6"/>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="flex gap-2 pt-2">
-                <div
-                    v-if="balance && token && chainInfo"
-                    class="font-extralight text-sm"
-                >
-                    Balance: {{ trimmedBalance }}
-                </div>
-                <div v-else class="font-extralight px-6 text-sm hidden">
+            <div class="flex">
+                <input
+                    type="text"
+                    :disabled="disabledInput"
+                    :value="value"
+                    placeholder="0.0"
+                    class="w-full p-0 text-2xl text-right bg-transparent border-none outline-none appearance-none focus:border-transparent focus:ring-0 truncate"
+                    autocomplete="off"
+                    minlength="1"
+                    maxlength="79"
+                    inputmode="decimal"
+                    pattern="^[0-9]*[.,]?[0-9]*$"
+                    @change="emits('input-changed')"
+                    @input="onChange"
+                />
+            </div>
+        </div>
+        <div
+            v-if="balance && token"
+            class="flex flex-row w-full">
+            <div class="flex gap-2 w-full">
+                <div class="font-extralight text-sm">
                     Balance: {{ trimmedBalance }}
                 </div>
                 <button
-                    v-if="balance && token && chainInfo"
                     class="px-2 text-[14px] font-roboto bg-[#B22F7F] rounded-2xl text-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#B22F7F]"
                     @click="setToMaxAmount"
                 >
                     MAX
                 </button>
             </div>
-        </div>
-
-        <div>
-            <input
-                type="text"
-                :disabled="disabledInput"
-                :value="value"
-                placeholder="0.0"
-                class="w-40 p-0 text-2xl text-right bg-transparent border-none outline-none appearance-none focus:border-transparent focus:ring-0 truncate"
-                autocomplete="off"
-                minlength="1"
-                maxlength="79"
-                inputmode="decimal"
-                pattern="^[0-9]*[.,]?[0-9]*$"
-                @change="emits('input-changed')"
-                @input="onChange"
-            />
+            <div class="w-full text-right">
+                <!-- TODO $$ value -->
+            </div>
         </div>
     </div>
 </template>
