@@ -39,7 +39,8 @@ const filteredTokens = computed({
                 .filter(token => {
                     return (
                         token.name.toLowerCase().includes(pattern) ||
-                        token.symbol.toLowerCase().includes(pattern)
+                        token.symbol.toLowerCase().includes(pattern) ||
+                        token.chainName.toLowerCase().includes(pattern)
                     )
                 })
         }
@@ -67,8 +68,8 @@ const filteredTokens = computed({
                 v-else
                 class="text-base flex flex-col mt-6">
                 <li
-                    v-for="token in filteredTokens"
-                    :key="token.address"
+                    v-for="(token, index) in filteredTokens"
+                    :key="index"
                     class="hover:bg-cards-background-dark-grey py-3 rounded-xl cursor-pointer"
                     @click="emits('set-token', token)"
                 >
