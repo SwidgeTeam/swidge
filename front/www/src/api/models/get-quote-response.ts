@@ -15,6 +15,7 @@ export default interface GetQuoteResponse {
         amountOut: string,
         required: boolean,
         estimatedGas: string,
+        fee: string,
     },
     bridge: {
         tokenIn: TokenDetails,
@@ -23,10 +24,12 @@ export default interface GetQuoteResponse {
         data: string,
         required: boolean,
         amountOut: string,
+        fee: string,
     },
     destinationSwap: {
         tokenIn: TokenDetails,
         tokenOut: TokenDetails,
-        required: boolean
+        required: boolean,
+        fee: string,
     }
 }
