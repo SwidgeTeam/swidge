@@ -184,6 +184,11 @@ use the port 33060 of your machine to expose the MySQL server.
 You can do the same with any variable of the conditionally set variables on the Makefile, as 
 also any of the variables on the `/env` folder.
 
+## Running the whole system in local
+
+In order to execute the whole lifecycle of a transaction on your loal machine, 
+[follow these steps](docs/set_up_metamask.md).
+
 ## Git workflow
 
 ### Resolving an issue
