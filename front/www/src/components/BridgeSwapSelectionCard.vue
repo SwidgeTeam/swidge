@@ -92,9 +92,16 @@ const trimmedBalance = computed({
                                 </div>
                             </div>
                         </div>
-                        <div v-else class="flex flex-align-center text-md font-light w-120">Select token</div>
+                        <div v-else class="flex flex-align-center text-md font-light py-4 w-120">Select token</div>
 
-                        <div class="items-center gap-2 text-xl">
+                        <div
+                            v-if="chainInfo && chainInfo.name !== ''"
+                            class="items-center gap-2 text-xl">
+                            <ChevronDownIcon class="h-6"/>
+                        </div>
+                        <div
+                            v-else
+                            class="flex items-center gap-2 text-xl">
                             <ChevronDownIcon class="h-6"/>
                         </div>
                     </div>
