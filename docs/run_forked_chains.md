@@ -2,9 +2,9 @@
 ## Running the whole system in local
 
 After you have `make up` the project, you have all the non-blockchain elements of the system running on
-your local machine. If you now also want to execute transactions on local environment, in order to test
+your local machine. If you now also want to execute transactions on local environment(in order to test
 some functionalities or screens only available when executing transactions, or because you are developing
-some Solidity functionality that you need to test "live", you are going to make some extra steps.
+some Solidity functionality that you need to test "live") you are going to need to take some extra steps.
 
 Basically, what you are going to need is:
 - Install Metamask on a browser where you didn't have it before
@@ -16,17 +16,10 @@ Basically, what you are going to need is:
 Just then you will be able to execute transactions on the local environment, and they will be executed
 on the forked local blockchain.
 
-But, the steps above will only be enough if you want to use the currently deployed version of the contracts
-for your execution. If you want to try you new Solidity code on local environment, there's a couple more steps
-that you'll have to do.
-
-- Compile the contracts once you are happy with them
-- Deploy/update the contract that you are working on the forked local chain
-
 Now I'll go in details on each of all these steps.
 
 ### Install Metamask on a new browser
-The reason why you cannot use your existing Metamask on your existing browser, it's because most probably
+The reason why you cannot use your existing Metamask on your existing browser it's, because most probably
 you already have the network IDs that we are going to add, and you cannot have two networks with the
 same ID on Metamask. It also helps to compartmentalize, this way you always know when you are executing
 a transaction on the local environment or on the real one, so it helps to prevent mistakes.
@@ -46,9 +39,9 @@ MNEMONIC=put your flashy newly created mnemonic here but at no other place
 ```
 
 ### Add a new network in this Metamask
-Now you need to add a network. You can add any of the accepted networks, listed in
-[this env file](https://github.com/SwidgeTeam/swidge/blob/master/env/default/networks.env).
-But for the example let's say we add Polygon.
+Now you need to add a network. You can add any of the accepted networks listed in
+[this env file](https://github.com/SwidgeTeam/swidge/blob/master/env/default/networks.env),
+but for this example let's say we are going to work on Polygon.
 
 According to the details on the given env file, it will be:
 ```
@@ -56,8 +49,8 @@ chainId: 137
 port: 8501
 ```
 
-The network that you decide to include here, it's the one that we will fork later, and it's the one that
-you will have to use as the origin chain on your transaction from the app.
+The network that you decide to include here it's the one that we will fork later, and it's the one that
+you will have to use, as the origin network, on your transaction from the app.
 
 Now you can go to our clean Metamask > Settings > Networks > Add/Create
 
@@ -69,7 +62,7 @@ By the end you should have a form that looks similar to this:
 
 </div>
 
-Save, and you are good to go. If you select you `Polygon Fork` network on Metamask it should keep loading,
+Save, and you are good to go. If you now select your `Polygon Fork` network on Metamask, it should appear loading,
 trying to connect to an RPC node that is not yet up.
 
 ### Fork the chain
@@ -90,9 +83,16 @@ with your fake local coins.
 Then only downside tho, is, don't expect the swap to finalize. For that you would need to spin up both forked
 chains, and bring the relayer up too. That's for another document.
 
-## Extra steps
+## For Solidity devs
 
 Now, if you still reading it's because you want to test new Solidity code on your local machine.
+
+The steps above will only be enough if you want to use the currently deployed version of the contracts
+for your execution. If you want to try you new Solidity code on local environment, there's a couple more steps
+that you'll have to do.
+
+- Compile the contracts once you are happy with them
+- Deploy/update the contract that you are working on the forked local chain
 
 ### Compile the contracts
 You always need to compile the contracts before deploying, because the contracts deployed are the compiled ones.
