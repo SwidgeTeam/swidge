@@ -629,19 +629,8 @@ const closeModalStatus = () => {
                                     () => handleOpenTokenList(false)
                                 "
                             />
-
-                            <!-- <TransactionSettings
-                                :slippage-value="slippage"
-                                :waiting-time="waitingTime"
-                                :bridge-fee-value="bridgeFee">
-                            </TransactionSettings> -->
                         </div>
                         <TransactionDetails v-if="totalFee" :totalFee="totalFee" />
-                        <!-- <div v-if="totalFee" class="bg-[#222129]/40 flex flex-col px-4 py-2 rounded-2xl gap-2" >
-                            <span class="text-md flex items-center gap-2"> <InformationCircleIcon class="w-5 h-5 cursor-pointer" />Transaction Details</span>
-                            <span class="font-extralight text-sm">Total fees: {{ totalFee }} USD</span>
-                        </div> -->
-
                         <BridgeSwapInteractiveButton
                             :text="buttonLabel"
                             :is-loading="isGettingQuote"

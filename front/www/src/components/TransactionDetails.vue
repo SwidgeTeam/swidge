@@ -9,7 +9,7 @@ const props = defineProps<{
         <span class="text-2xl">Transaction Settings: </span>
         <div class="flex justify-between">
             <span class="font-light text-xl"> Total fees </span>
-            <span class="flex items-end"> ≈ {{ props.totalFee }} USD</span>
+            <span class="flex items-end"> ≈ ${{ props.totalFee }} USD</span>
         </div>
     </div>
 </template>
