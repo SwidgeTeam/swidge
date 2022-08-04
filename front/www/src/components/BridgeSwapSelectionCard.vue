@@ -65,6 +65,21 @@ const getToken = () => {
         return tokensStore.getDestinationToken()
     }
 }
+
+const getChainName = (): string => {
+    const token = getToken()
+    return token ? token.chainName : ''
+}
+
+const getTokenLogo = (): string => {
+    const token = getToken()
+    return token ? token.logo : ''
+}
+
+const getTokenSymbol = (): string => {
+    const token = getToken()
+    return token ? token.symbol : ''
+}
 </script>
 
 <template>
@@ -81,11 +96,11 @@ const getToken = () => {
                             v-if="getToken()"
                             class="flex flex-col text-sm font-extralight"
                         >
-                            <span>{{ getToken().chainName }}</span>
+                            <span>{{ getChainName() }}</span>
                             <div class="flex items-center w-full gap-2 text-xl">
                                 <div class="flex gap-2 items-center">
                                     <img
-                                        :src="getToken().logo"
+                                        :src="getTokenLogo()"
                                         class="rounded-full"
                                         width="24"
                                         height="24"
@@ -93,7 +108,7 @@ const getToken = () => {
                                     />
                                     <span class="flex py-2 min-w-[rem]">
                                         {{
-                                            getToken().symbol
+                                            getTokenSymbol()
                                         }}
                                     </span>
                                 </div>
