@@ -2,8 +2,7 @@
 import { ChevronDownIcon } from '@heroicons/vue/outline'
 import { computed } from 'vue'
 import { useTokensStore } from '@/store/tokens'
-import { Networks } from '@/domain/chains/Networks';
-import IToken from '@/domain/tokens/IToken';
+import { Networks } from '@/domain/chains/Networks'
 
 const tokensStore = useTokensStore()
 
@@ -133,7 +132,7 @@ const getToken = () => {
             </div>
         </div>
         <div
-            v-if="balance && token"
+            v-if="isOrigin && getToken()"
             class="flex flex-row w-full">
             <div class="flex gap-2 w-full">
                 <div class="font-extralight text-sm">
