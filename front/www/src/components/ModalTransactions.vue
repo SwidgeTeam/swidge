@@ -78,11 +78,11 @@ const getNetwork = (chainId: string): INetwork => {
  * Returns the chain name
  * @param chainId
  */
-const getChainName = (chainId: string): string => {
-    const network = getNetwork(chainId)
+// const getChainName = (chainId: string): string => {
+//     const network = getNetwork(chainId)
 
-    return network.name
-}
+//     return network.name
+// }
 
 /**
  * Returns the chain icon
@@ -112,9 +112,19 @@ const getToken = (chainId: string, address: string): IToken => {
  * @param chainId
  * @param address
  */
-const getTokenName = (chainId: string, address: string): string => {
+// const getTokenName = (chainId: string, address: string): string => {
+//     const token = getToken(chainId, address)
+//     return token.name
+// }
+
+/**
+ * Returns the token icon
+ * @param chainId
+ * @param address
+ */
+const getTokenIcon = (chainId: string, address: string): string => {
     const token = getToken(chainId, address)
-    return token.name
+    return token.img
 }
 
 /**
@@ -207,19 +217,25 @@ const formattedAmount = (chainId: string, address: string, amount: string) => {
                                         </svg>
                                     </div>
                                 </div>
-                                <div class="grid grid-cols-3">
-                                    <div>
-                                        <img src="{{getChainIcon(t.fromChain)}}"/>
-                                        <div> From: {{ getTokenName(t.fromChain, t.srcAsset) }}</div>
-                                        <div> Amount: {{ formattedAmount(t.fromChain, t.srcAsset, t.amountIn) }}</div>
+                                <div class="grid grid-cols-3 gap-2 flex flex-wrap justify-between grid-flow-col auto-cols-max w-full mx-16 pt-2">
+                                    <div class="w-full grid place-content-center p-2">
+                                        <div class="relative scale-100">
+                                            <img style="width: 64px; height: 64px" :src="getTokenIcon(t.fromChain,t.srcAsset)" class="rounded-full scale-125 object-center relative bot-0 top-0 "/>
+                                            <img style="width: 48px; height: 48px" :src="getChainIcon(t.fromChain)" class="rounded-full scale-75 absolute -right-6 -top-6 drop-shadow-xl"/>
+                                        </div>
+                                        <div class="flex justify-center mb-2 pt-2">{{ formattedAmount(t.fromChain, t.srcAsset, t.amountIn) }}</div>
                                     </div>
-                                    <div>
-
+                                    <div class="grid place-content-center w-full object-center ">
+                                        <svg width="82" height="16" viewBox="0 0 82 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M1 7C0.447715 7 4.5665e-08 7.44772 0 8C-4.5665e-08 8.55228 0.447715 9 1 9L1 7ZM81.7071 8.70711C82.0976 8.31659 82.0976 7.68342 81.7071 7.2929L75.3431 0.928939C74.9526 0.538415 74.3195 0.538415 73.9289 0.928939C73.5384 1.31946 73.5384 1.95263 73.9289 2.34315L79.5858 8.00001L73.9289 13.6569C73.5384 14.0474 73.5384 14.6806 73.9289 15.0711C74.3195 15.4616 74.9526 15.4616 75.3431 15.0711L81.7071 8.70711ZM1 9L81 9.00001L81 7.00001L1 7L1 9Z" fill="white"/>
+                                        </svg>
                                     </div>
-                                    <div>
-                                        <div> To chain: {{ getChainName(t.toChain) }}</div>
-                                        <div> To: {{ getTokenName(t.toChain, t.dstAsset) }}</div>
-                                        <div> Amount: {{ formattedAmount(t.fromChain, t.srcAsset, t.amountIn) }}</div>
+                                    <div class="w-full grid place-content-center p-2 relative">
+                                        <div class="relative scale-100">
+                                            <img  style="width: 64px; height: 64px" :src="getTokenIcon(t.toChain,t.dstAsset)" class="rounded-full scale-125 object-center relative bot-0 top-0 "/>
+                                            <img  style="width: 48px; height: 48px" :src="getChainIcon(t.toChain)" class="rounded-full scale-75 absolute -right-6 -top-6 drop-shadow-xl"/>
+                                        </div>
+                                        <div class="flex justify-center mb-2 pt-2">{{ formattedAmount(t.fromChain, t.srcAsset, t.amountIn) }}</div>
                                     </div>
                                 </div>
                             </li>
