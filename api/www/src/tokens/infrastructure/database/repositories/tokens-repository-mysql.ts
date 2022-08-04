@@ -60,10 +60,28 @@ export class TokensRepositoryMySQL implements TokensRepository {
   }
 
   /**
-   * Saves a new token
+   * Saves a token
    * @param token
    */
   async save(token: TokenListItem): Promise<void> {
+    const [, count] = await this.manager.findAndCount(TokensEntity, {
+      where: {
+        chainId: token.chainId,
+        address: token.address,
+      },
+    });
+    if (count > 0) {
+      await this.update(token);
+    } else {
+      await this.insert(token);
+    }
+  }
+
+  /**
+   * Inserts a new token
+   * @param token
+   */
+  private async insert(token: TokenListItem): Promise<void> {
     await this.manager.save(TokensEntity, {
       chainId: token.chainId,
       address: token.address,
@@ -71,6 +89,25 @@ export class TokensRepositoryMySQL implements TokensRepository {
       decimals: token.decimals,
       symbol: token.symbol,
       logo: token.logoURL,
+      externalId: token.externalId,
+      created: new Date(),
+    });
+  }
+
+  /**
+   * Updates an existing token
+   * @param token
+   */
+  private async update(token: TokenListItem): Promise<void> {
+    await this.manager.save(TokensEntity, {
+      chainId: token.chainId,
+      address: token.address,
+      name: token.name,
+      decimals: token.decimals,
+      symbol: token.symbol,
+      logo: token.logoURL,
+      externalId: token.externalId,
+      created: new Date(),
     });
   }
 
