@@ -178,7 +178,6 @@ const handleUpdateTokenFromModal = (token: IToken) => {
         // If the origin network is being chosen
         if (originChainId != token.chainId) {
             // If network and token of source and destination are the same, switch inputs instead of setting new ones.
-
             if (token.chainId == destinationChainId && token.address == destinationTokenAddress) {
                 switchHandlerFunction()
             } else {
@@ -242,6 +241,7 @@ const switchHandlerFunction = () => {
     //Reset Input Values on Switch of Network+Token
     sourceTokenAmount.value = ''
     destinationTokenAmount.value = ''
+    totalFee.value = ''
 
     // Clean alert message in case there is
     transactionAlertMessage.value = 'Swidge'
