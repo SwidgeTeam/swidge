@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ArrowCircleRightIcon, XCircleIcon } from '@heroicons/vue/outline'
 import { ref, computed } from 'vue'
 import BridgeSwapSelectionCard from './BridgeSwapSelectionCard.vue'
 import ModalNetworkAndTokenSelect from './ModalNetworkAndTokenSelect.vue'
@@ -15,7 +14,7 @@ import { TransactionSteps } from '@/models/TransactionSteps'
 import SwitchButton from './Buttons/SwitchButton.vue'
 import IToken from '@/domain/tokens/IToken'
 import TransactionDetails from './TransactionDetails.vue'
-import { useTokensStore } from '@/store/tokens';
+import { useTokensStore } from '@/store/tokens'
 
 const web3Store = useWeb3Store()
 const tokensStore = useTokensStore()
@@ -28,7 +27,6 @@ const totalFee = ref<string>('')
 
 const isModalTokensOpen = ref(false)
 const isSourceChainToken = ref(false)
-const isFaqOpen = ref(false)
 const isGettingQuote = ref(false)
 const isExecuteButtonDisabled = ref(true)
 const isModalStatusOpen = ref(false)
@@ -455,66 +453,51 @@ const closeModalStatus = () => {
 </script>
 
 <template>
-    <div class="flex flex-col gap-6">
-        <div class="flex items-center justify-between">
-            <span class="text-3xl">Swap & Bridge</span>
-            <ArrowCircleRightIcon
-                v-if="!isFaqOpen"
-                class="w-7 h-7 cursor-pointer"
-                @click="isFaqOpen = true"
-            />
-            <XCircleIcon
-                v-if="isFaqOpen"
-                class="w-7 h-7 cursor-pointer"
-                @click="isFaqOpen = false"
-            />
-        </div>
-        <div
-            class="flex flex-col gap-6 px-12 py-6 rounded-3xl bg-cards-background-dark-grey"
-        >
-            <div class="flex flex-col w-full gap-4">
-                <span class="text-2xl">You send:</span>
-                <BridgeSwapSelectionCard
-                    v-model:value="sourceTokenAmount"
-                    :is-origin="true"
-                    :disabled-input="false"
-                    :balance="sourceTokenMaxAmount"
-                    @input-changed="handleSourceInputChanged"
-                    @on-click-max-amount="handleSourceInputChanged"
-                    @open-token-list="() => handleOpenTokenList(true)"
-                />
-            </div>
-            <div>
-                <SwitchButton @switch="switchHandlerFunction"/>
-            </div>
-            <div class="flex flex-col w-full gap-4">
-                <span class="text-2xl">You receive:</span>
-                <BridgeSwapSelectionCard
-                    v-model:value="destinationTokenAmount"
-                    :is-origin="false"
-                    :disabled-input="true"
-                    @open-token-list="() => handleOpenTokenList(false)"
-                />
-            </div>
-            <TransactionDetails v-if="totalFee" :total-fee="totalFee"/>
-            <BridgeSwapInteractiveButton
-                :text="buttonLabel"
-                :is-loading="isGettingQuote"
-                :disabled="isExecuteButtonDisabled"
-                :on-click="onExecuteTransaction"
+    <div
+        class="flex flex-col gap-6 px-12 py-6 rounded-3xl bg-cards-background-dark-grey"
+    >
+        <div class="flex flex-col w-full gap-4">
+            <span class="text-2xl">You send:</span>
+            <BridgeSwapSelectionCard
+                v-model:value="sourceTokenAmount"
+                :is-origin="true"
+                :disabled-input="false"
+                :balance="sourceTokenMaxAmount"
+                @input-changed="handleSourceInputChanged"
+                @on-click-max-amount="handleSourceInputChanged"
+                @open-token-list="() => handleOpenTokenList(true)"
             />
         </div>
-        <ModalNetworkAndTokenSelect
-            :is-modal-open="isModalTokensOpen"
-            :networks="getNetworks()"
-            :is-origin="isSourceChainToken"
-            @close-modal="isModalTokensOpen = false"
-            @update-token="handleUpdateTokenFromModal($event)"
-        />
-        <ModalSwidgeStatus
-            :steps="steps"
-            :show="isModalStatusOpen"
-            @close-modal="closeModalStatus"
+        <div>
+            <SwitchButton @switch="switchHandlerFunction"/>
+        </div>
+        <div class="flex flex-col w-full gap-4">
+            <span class="text-2xl">You receive:</span>
+            <BridgeSwapSelectionCard
+                v-model:value="destinationTokenAmount"
+                :is-origin="false"
+                :disabled-input="true"
+                @open-token-list="() => handleOpenTokenList(false)"
+            />
+        </div>
+        <TransactionDetails v-if="totalFee" :total-fee="totalFee"/>
+        <BridgeSwapInteractiveButton
+            :text="buttonLabel"
+            :is-loading="isGettingQuote"
+            :disabled="isExecuteButtonDisabled"
+            :on-click="onExecuteTransaction"
         />
     </div>
+    <ModalNetworkAndTokenSelect
+        :is-modal-open="isModalTokensOpen"
+        :networks="getNetworks()"
+        :is-origin="isSourceChainToken"
+        @close-modal="isModalTokensOpen = false"
+        @update-token="handleUpdateTokenFromModal($event)"
+    />
+    <ModalSwidgeStatus
+        :steps="steps"
+        :show="isModalStatusOpen"
+        @close-modal="closeModalStatus"
+    />
 </template>
