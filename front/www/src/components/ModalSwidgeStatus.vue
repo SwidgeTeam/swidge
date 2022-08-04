@@ -5,13 +5,13 @@ import { XIcon } from '@heroicons/vue/outline'
 import StatusStep from './StatusStep.vue'
 import { TransactionSteps } from '@/models/TransactionSteps'
 import { computed } from 'vue'
-import IToken from '@/domain/tokens/IToken'
+import { useTokensStore } from '@/store/tokens'
+
+const tokensStore = useTokensStore()
 
 const props = defineProps<{
     show: boolean
-    steps: TransactionSteps,
-    sourceToken: IToken,
-    destinationToken: IToken
+    steps: TransactionSteps
 }>()
 
 const emits = defineEmits<{
@@ -23,15 +23,15 @@ const successMessage = computed({
         const amountIn = props.steps.origin.amountIn
         const tokenIn = props.steps.origin.tokenIn
         let amountOut, tokenOut
-        if (props.sourceToken.chainName === props.destinationToken.chainName) {
+        if (tokensStore.sameChainAssets) {
             amountOut = props.steps.origin.amountOut
             tokenOut = props.steps.origin.tokenOut
         } else {
             amountOut = props.steps.destination.amountOut
             tokenOut = props.steps.destination.tokenOut
         }
-        return 'You’ve successfully transferred ' + Number(amountIn).toFixed(2) + ' ' + tokenIn + ' on ' + props.sourceToken.chainName +
-            ' to ' + Number(amountOut).toFixed(2) + ' ' + tokenOut + ' on ' + props.destinationToken.chainName
+        return 'You’ve successfully transferred ' + Number(amountIn).toFixed(2) + ' ' + tokenIn + ' on ' + tokensStore.getOriginChainName +
+            ' to ' + Number(amountOut).toFixed(2) + ' ' + tokenOut + ' on ' + tokensStore.getDestinationChainName
     },
     set: () => null
 })
@@ -113,7 +113,7 @@ const successMessage = computed({
 
                         <div v-if="steps.completed" class="flex flex-col items-center">
                             <div class="text-3xl font-extrabold">Swidge successful!</div>
-                            <div class="mt-6">{{successMessage}}</div>
+                            <div class="mt-6">{{ successMessage }}</div>
                             <div class="mt-3">
                                 <button
                                     class="w-full py-3 rounded-xl flex items-center justify-center"

@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import { ChevronDownIcon } from '@heroicons/vue/outline'
 import { computed } from 'vue'
-import IToken from '@/domain/tokens/IToken'
-import { Networks } from '@/domain/chains/Networks'
+import { useTokensStore } from '@/store/tokens'
+import { Networks } from '@/domain/chains/Networks';
+import IToken from '@/domain/tokens/IToken';
 
+const tokensStore = useTokensStore()
 
 const props = defineProps<{
     value: string
     balance?: string
-    token?: IToken
     disabledInput: boolean
+    isOrigin: boolean
 }>()
 
 const emits = defineEmits<{
@@ -37,8 +39,9 @@ const setToMaxAmount = () => {
 }
 
 const onFallbackImgHandler = (e: Event) => {
-    if (props.token) {
-        const chain = Networks.get(props.token.chainId)
+    const token = getToken()
+    if (token) {
+        const chain = Networks.get(token.chainId)
         const imageTarget = e.target as HTMLImageElement
         imageTarget.src = chain.icon
     }
@@ -55,6 +58,14 @@ const trimmedBalance = computed({
     },
     set: () => null,
 })
+
+const getToken = () => {
+    if (props.isOrigin) {
+        return tokensStore.getOriginToken()
+    } else {
+        return tokensStore.getDestinationToken()
+    }
+}
 </script>
 
 <template>
@@ -68,15 +79,14 @@ const trimmedBalance = computed({
                         class="flex justify-between gap-2 cursor-pointer bg-[#222129]/40 px-2 py-1 rounded-2xl hover:bg-[#222129]/100 transition duration-150 ease-out hover:ease-in"
                         @click="emits('open-token-list')">
                         <div
-                            v-if="token && token.chainName !== ''"
+                            v-if="getToken()"
                             class="flex flex-col text-sm font-extralight"
                         >
-                            <span>{{ token.chainName }}</span>
+                            <span>{{ getToken().chainName }}</span>
                             <div class="flex items-center w-full gap-2 text-xl">
                                 <div class="flex gap-2 items-center">
                                     <img
-                                        v-if="token && token.logo !== ''"
-                                        :src="token.logo"
+                                        :src="getToken().logo"
                                         class="rounded-full"
                                         width="24"
                                         height="24"
@@ -84,7 +94,7 @@ const trimmedBalance = computed({
                                     />
                                     <span class="flex py-2 min-w-[rem]">
                                         {{
-                                            token ? token.symbol : 'ss'
+                                            getToken().symbol
                                         }}
                                     </span>
                                 </div>
@@ -93,7 +103,7 @@ const trimmedBalance = computed({
                         <div v-else class="flex flex-align-center text-md font-light py-4 w-120">Select token</div>
 
                         <div
-                            v-if="token && token.chainName !== ''"
+                            v-if="getToken()"
                             class="items-center gap-2 text-xl">
                             <ChevronDownIcon class="h-6"/>
                         </div>
