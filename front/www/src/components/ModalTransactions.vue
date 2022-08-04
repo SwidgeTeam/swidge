@@ -112,10 +112,10 @@ const getToken = (chainId: string, address: string): IToken => {
  * @param chainId
  * @param address
  */
-// const getTokenName = (chainId: string, address: string): string => {
-//     const token = getToken(chainId, address)
-//     return token.name
-// }
+const getTokenName = (chainId: string, address: string): string => {
+    const token = getToken(chainId, address)
+    return token.name
+}
 
 /**
  * Returns the token icon
@@ -219,7 +219,8 @@ const formattedAmount = (chainId: string, address: string, amount: string) => {
                                 </div>
                                 <div class="grid grid-cols-3 gap-2 flex flex-wrap justify-between grid-flow-col auto-cols-max w-full mx-16 pt-4">
                                     <div class="w-full grid place-content-center p-2">
-                                        <div class="relative scale-100">
+                                        <div class="relative scale-100 has-tooltip">
+                                            <span class='tooltip rounded-xl shadow-lg p-1 bg-[#31313E] text-white text-sm font-light absolute border border-cyan-700 -bottom-6 -left-20 px-2'>{{getTokenName(t.fromChain,t.srcAsset)}}</span>
                                             <img style="width: 64px; height: 64px" :src="getTokenIcon(t.fromChain,t.srcAsset)" class="rounded-full scale-125 object-center relative bot-0 top-0 shadow-lg shadow-black"/>
                                             <img style="width: 48px; height: 48px" :src="getChainIcon(t.fromChain)" class="rounded-full scale-75 absolute -right-6 -top-6 shadow-lg shadow-black"/>
                                         </div>
@@ -231,7 +232,8 @@ const formattedAmount = (chainId: string, address: string, amount: string) => {
                                         </svg>
                                     </div>
                                     <div class="w-full grid place-content-center p-2 relative">
-                                        <div class="relative scale-100">
+                                        <div class="relative scale-100 has-tooltip">
+                                            <span class='tooltip rounded-xl shadow-lg p-1 bg-[#31313E] text-white text-sm font-light absolute border border-cyan-700 -bottom-6 -left-20 px-2'>{{getTokenName(t.toChain,t.dstAsset)}}</span>
                                             <img  style="width: 64px; height: 64px" :src="getTokenIcon(t.toChain,t.dstAsset)" class="rounded-full scale-125 object-center relative bot-0 top-0 shadow-lg shadow-black"/>
                                             <img  style="width: 48px; height: 48px" :src="getChainIcon(t.toChain)" class="rounded-full scale-75 absolute -right-6 -top-6 shadow-lg shadow-black"/>
                                         </div>
