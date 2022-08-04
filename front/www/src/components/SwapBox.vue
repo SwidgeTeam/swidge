@@ -1,0 +1,65 @@
+<script setup lang='ts'>
+import BridgeSwapSelectionCard from './BridgeSwapSelectionCard.vue'
+import SwitchButton from './Buttons/SwitchButton.vue'
+import TransactionDetails from './TransactionDetails.vue'
+import BridgeSwapInteractiveButton from './BridgeSwapInteractiveButton.vue'
+
+defineProps<{
+    sourceTokenAmount: string
+    destinationTokenAmount: string
+    sourceTokenMaxAmount: string
+    buttonText: string
+    isGettingQuote: boolean
+    isExecuteButtonDisabled: boolean
+    transactionFees: string
+}>()
+
+const emits = defineEmits<{
+    (event: 'update:source-token-amount', value: string): void
+    (event: 'source-input-changed'): void
+    (event: 'select-source-token'): void
+    (event: 'select-destination-token'): void
+    (event: 'switch-tokens'): void
+    (event: 'execute-transaction'): void
+}>()
+
+</script>
+
+<template>
+    <div class="flex flex-col gap-6 px-12 py-6 rounded-3xl bg-cards-background-dark-grey">
+        <div class="flex flex-col w-full gap-4">
+            <span class="text-2xl">You send:</span>
+            <BridgeSwapSelectionCard
+                :value="sourceTokenAmount"
+                :is-origin="true"
+                :disabled-input="false"
+                :balance="sourceTokenMaxAmount"
+                @update:value="(value) => emits('update:source-token-amount', value)"
+                @input-changed="() => emits('source-input-changed')"
+                @open-token-list="() => emits('select-source-token')"
+            />
+        </div>
+        <div>
+            <SwitchButton @switch="() => emits('switch-tokens')"/>
+        </div>
+        <div class="flex flex-col w-full gap-4">
+            <span class="text-2xl">You receive:</span>
+            <BridgeSwapSelectionCard
+                :value="destinationTokenAmount"
+                :is-origin="false"
+                :disabled-input="true"
+                @open-token-list="() => emits('select-destination-token')"
+            />
+        </div>
+        <TransactionDetails
+            v-if="transactionFees"
+            :total-fee="transactionFees"
+        />
+        <BridgeSwapInteractiveButton
+            :text="buttonText"
+            :is-loading="isGettingQuote"
+            :disabled="isExecuteButtonDisabled"
+            :on-click="() => emits('execute-transaction')"
+        />
+    </div>
+</template>

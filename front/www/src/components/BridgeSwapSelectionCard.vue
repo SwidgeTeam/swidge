@@ -15,7 +15,6 @@ const props = defineProps<{
 
 const emits = defineEmits<{
     (event: 'update:value', value: string): void
-    (event: 'on-click-max-amount'): void
     (event: 'input-changed'): void
     (event: 'open-token-list'): void
 }>()
@@ -34,7 +33,7 @@ const onChange = (event: Event) => {
 const setToMaxAmount = () => {
     if (!props.balance) return
     emits('update:value', props.balance)
-    emits('on-click-max-amount')
+    emits('input-changed')
 }
 
 const onFallbackImgHandler = (e: Event) => {

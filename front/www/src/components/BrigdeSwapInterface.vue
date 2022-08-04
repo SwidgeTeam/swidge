@@ -1,23 +1,21 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import BridgeSwapSelectionCard from './BridgeSwapSelectionCard.vue'
 import ModalNetworkAndTokenSelect from './ModalNetworkAndTokenSelect.vue'
-import BridgeSwapInteractiveButton from './BridgeSwapInteractiveButton.vue'
-import SwidgeAPI from '@/api/swidge-api'
 import GetQuoteResponse from '@/api/models/get-quote-response'
 import { RouterCaller, RouterCallPayload } from '@/contracts/routerCaller'
 import { useWeb3Store } from '@/store/web3'
 import { BigNumber, ethers, providers } from 'ethers'
-import { Networks } from '@/domain/chains/Networks'
 import ModalSwidgeStatus from './ModalSwidgeStatus.vue'
 import { TransactionSteps } from '@/models/TransactionSteps'
-import SwitchButton from './Buttons/SwitchButton.vue'
 import IToken from '@/domain/tokens/IToken'
-import TransactionDetails from './TransactionDetails.vue'
 import { useTokensStore } from '@/store/tokens'
+import { usePathsStore } from '@/store/paths'
+import SwapBox from '@/components/SwapBox.vue'
 
 const web3Store = useWeb3Store()
 const tokensStore = useTokensStore()
+const transactionStore = usePathsStore()
+
 const { switchToNetwork, getChainProvider, getBalance } = web3Store
 
 const sourceTokenAmount = ref<string>('')
@@ -33,55 +31,6 @@ const isModalStatusOpen = ref(false)
 const showTransactionAlert = ref(false)
 const transactionAlertMessage = ref<string>('')
 const isExecutingTransaction = ref<boolean>(false)
-
-const quotedPath = ref<GetQuoteResponse>({
-    router: '',
-    amountOut: '',
-    destinationFee: '',
-    originSwap: {
-        code: '',
-        tokenIn: {
-            name: '',
-            address: '',
-        },
-        tokenOut: {
-            name: '',
-            address: '',
-        },
-        data: '',
-        required: false,
-        amountOut: '',
-        estimatedGas: '',
-        fee: '',
-    },
-    bridge: {
-        tokenIn: {
-            name: '',
-            address: '',
-        },
-        tokenOut: {
-            name: '',
-            address: '',
-        },
-        toChainId: '',
-        data: '',
-        required: false,
-        amountOut: '',
-        fee: '',
-    },
-    destinationSwap: {
-        tokenIn: {
-            name: '',
-            address: '',
-        },
-        tokenOut: {
-            name: '',
-            address: '',
-        },
-        required: false,
-        fee: '',
-    },
-})
 
 const steps = ref<TransactionSteps>({
     origin: {
@@ -137,6 +86,14 @@ const shouldQuote = () => {
 }
 
 /**
+ * Updates the input amount
+ * @param value
+ */
+const handleSourceInputUpdate = (value: string) => {
+    sourceTokenAmount.value = value
+}
+
+/**
  * Handles the update of the amount on the origin amount
  */
 const handleSourceInputChanged = () => {
@@ -152,16 +109,6 @@ const handleSourceInputChanged = () => {
 const handleOpenTokenList = (isSource: boolean) => {
     isSourceChainToken.value = isSource
     isModalTokensOpen.value = true
-}
-
-/**
- * Returns an array with the accepted networks
- */
-
-const getNetworks = () => {
-    return Networks.all().filter(network => {
-        return network.live
-    })
 }
 
 /**
@@ -259,21 +206,23 @@ const onQuote = async () => {
     if (!tokensStore.bothTokensSelected) {
         return
     }
+
     try {
-        const quote: GetQuoteResponse = await SwidgeAPI.getQuote({
+        await transactionStore.quotePath({
             fromChainId: tokensStore.getOriginChainId,
             srcToken: tokensStore.getOriginTokenAddress,
             toChainId: tokensStore.getDestinationChainId,
             dstToken: tokensStore.getDestinationTokenAddress,
             amount: sourceTokenAmount.value.toString(),
         })
-        quotedPath.value = quote
-        destinationTokenAmount.value = quote.amountOut
+
+        const path = transactionStore.getPath
+        destinationTokenAmount.value = path.amountOut
         isGettingQuote.value = false
         totalFee.value = (
-            Number(quote.originSwap.fee) +
-            Number(quote.bridge.fee) +
-            Number(quote.destinationSwap.fee)
+            Number(path.originSwap.fee) +
+            Number(path.bridge.fee) +
+            Number(path.destinationSwap.fee)
         ).toFixed(2).toString()
 
         if (
@@ -308,31 +257,35 @@ const onExecuteTransaction = async () => {
     if (!originToken) {
         throw new Error('Undefined origin token')
     }
+    const path = transactionStore.getPath
+    if (!path) {
+        throw new Error('No path')
+    }
     const amountIn = ethers.utils.parseUnits(
         sourceTokenAmount.value,
         originToken.decimals
     )
     const contractCallPayload: RouterCallPayload = {
-        router: quotedPath.value.router,
+        router: path.router,
         amountIn: amountIn,
-        destinationFee: BigNumber.from(quotedPath.value.destinationFee),
+        destinationFee: BigNumber.from(path.destinationFee),
         originSwap: {
-            providerCode: quotedPath.value.originSwap.code,
-            tokenIn: quotedPath.value.originSwap.tokenIn.address,
-            tokenOut: quotedPath.value.originSwap.tokenOut.address,
-            data: quotedPath.value.originSwap.data,
-            required: quotedPath.value.originSwap.required,
-            estimatedGas: quotedPath.value.originSwap.estimatedGas,
+            providerCode: path.originSwap.code,
+            tokenIn: path.originSwap.tokenIn.address,
+            tokenOut: path.originSwap.tokenOut.address,
+            data: path.originSwap.data,
+            required: path.originSwap.required,
+            estimatedGas: path.originSwap.estimatedGas,
         },
         bridge: {
-            toChainId: quotedPath.value.bridge.toChainId,
-            tokenIn: quotedPath.value.bridge.tokenIn.address,
-            data: quotedPath.value.bridge.data,
-            required: quotedPath.value.bridge.required,
+            toChainId: path.bridge.toChainId,
+            tokenIn: path.bridge.tokenIn.address,
+            data: path.bridge.data,
+            required: path.bridge.required,
         },
         destinationSwap: {
-            tokenIn: quotedPath.value.destinationSwap.tokenIn.address,
-            tokenOut: quotedPath.value.destinationSwap.tokenOut.address,
+            tokenIn: path.destinationSwap.tokenIn.address,
+            tokenOut: path.destinationSwap.tokenOut.address,
         },
     }
 
@@ -347,7 +300,7 @@ const onExecuteTransaction = async () => {
         .then(async (receipt: { transactionHash: string }) => {
             steps.value.origin.completed = true
             if (isCrossTransaction()) {
-                setUpEventListener(receipt.transactionHash)
+                setUpEventListener(path, receipt.transactionHash)
             } else {
                 steps.value.completed = true
             }
@@ -380,13 +333,14 @@ const unsetExecutingButton = () => {
 /**
  * Sets up the required listener to check for the events on the destination chain
  * It allows the frontend to know when the transaction has been completed
+ * @param path
  * @param executedTxHash
  */
-const setUpEventListener = (executedTxHash: string) => {
-    const provider = getChainProvider(quotedPath.value.bridge.toChainId)
+const setUpEventListener = (path: GetQuoteResponse, executedTxHash: string) => {
+    const provider = getChainProvider(path.bridge.toChainId)
 
     const filter = {
-        address: quotedPath.value.router,
+        address: path.router,
         topics: [ethers.utils.id('CrossFinalized(bytes32,uint256)')],
     }
 
@@ -411,27 +365,29 @@ const setUpEventListener = (executedTxHash: string) => {
  * Opens the transaction status modal after an executed transaction
  */
 const openTransactionStatusModal = () => {
-    steps.value.origin.tokenIn = quotedPath.value.originSwap.tokenIn.name
-    steps.value.origin.tokenOut = quotedPath.value.originSwap.tokenOut.name
+    const path = transactionStore.getPath
+    if (!path) {
+        throw new Error('No path')
+    }
+    steps.value.origin.tokenIn = path.originSwap.tokenIn.name
+    steps.value.origin.tokenOut = path.originSwap.tokenOut.name
     steps.value.origin.amountIn = sourceTokenAmount.value
-    steps.value.origin.amountOut = quotedPath.value.originSwap.amountOut
-    steps.value.origin.required = quotedPath.value.originSwap.required
+    steps.value.origin.amountOut = path.originSwap.amountOut
+    steps.value.origin.required = path.originSwap.required
     steps.value.origin.completed = false
 
-    steps.value.bridge.tokenIn = quotedPath.value.bridge.tokenIn.name
-    steps.value.bridge.tokenOut = quotedPath.value.bridge.tokenOut.name
-    steps.value.bridge.amountIn = quotedPath.value.originSwap.amountOut
-    steps.value.bridge.amountOut = quotedPath.value.bridge.amountOut
-    steps.value.bridge.required = quotedPath.value.bridge.required
+    steps.value.bridge.tokenIn = path.bridge.tokenIn.name
+    steps.value.bridge.tokenOut = path.bridge.tokenOut.name
+    steps.value.bridge.amountIn = path.originSwap.amountOut
+    steps.value.bridge.amountOut = path.bridge.amountOut
+    steps.value.bridge.required = path.bridge.required
     steps.value.bridge.completed = false
 
-    steps.value.destination.tokenIn =
-        quotedPath.value.destinationSwap.tokenIn.name
-    steps.value.destination.tokenOut =
-        quotedPath.value.destinationSwap.tokenOut.name
-    steps.value.destination.amountIn = quotedPath.value.bridge.amountOut
-    steps.value.destination.amountOut = quotedPath.value.amountOut
-    steps.value.destination.required = quotedPath.value.destinationSwap.required
+    steps.value.destination.tokenIn = path.destinationSwap.tokenIn.name
+    steps.value.destination.tokenOut = path.destinationSwap.tokenOut.name
+    steps.value.destination.amountIn = path.bridge.amountOut
+    steps.value.destination.amountOut = path.amountOut
+    steps.value.destination.required = path.destinationSwap.required
     steps.value.destination.completed = false
 
     steps.value.completed = false
@@ -453,44 +409,23 @@ const closeModalStatus = () => {
 </script>
 
 <template>
-    <div
-        class="flex flex-col gap-6 px-12 py-6 rounded-3xl bg-cards-background-dark-grey"
-    >
-        <div class="flex flex-col w-full gap-4">
-            <span class="text-2xl">You send:</span>
-            <BridgeSwapSelectionCard
-                v-model:value="sourceTokenAmount"
-                :is-origin="true"
-                :disabled-input="false"
-                :balance="sourceTokenMaxAmount"
-                @input-changed="handleSourceInputChanged"
-                @on-click-max-amount="handleSourceInputChanged"
-                @open-token-list="() => handleOpenTokenList(true)"
-            />
-        </div>
-        <div>
-            <SwitchButton @switch="switchHandlerFunction"/>
-        </div>
-        <div class="flex flex-col w-full gap-4">
-            <span class="text-2xl">You receive:</span>
-            <BridgeSwapSelectionCard
-                v-model:value="destinationTokenAmount"
-                :is-origin="false"
-                :disabled-input="true"
-                @open-token-list="() => handleOpenTokenList(false)"
-            />
-        </div>
-        <TransactionDetails v-if="totalFee" :total-fee="totalFee"/>
-        <BridgeSwapInteractiveButton
-            :text="buttonLabel"
-            :is-loading="isGettingQuote"
-            :disabled="isExecuteButtonDisabled"
-            :on-click="onExecuteTransaction"
-        />
-    </div>
+    <SwapBox
+        :source-token-amount="sourceTokenAmount"
+        :destination-token-amount="destinationTokenAmount"
+        :source-token-max-amount="sourceTokenMaxAmount"
+        :button-text="buttonLabel"
+        :is-getting-quote="isGettingQuote"
+        :is-execute-button-disabled="isExecuteButtonDisabled"
+        :transaction-fees="totalFee"
+        @update:source-token-amount="handleSourceInputUpdate"
+        @source-input-changed="handleSourceInputChanged"
+        @select-source-token="() => handleOpenTokenList(true)"
+        @select-destination-token="() => handleOpenTokenList(false)"
+        @switch-tokens="switchHandlerFunction"
+        @execute-transaction="onExecuteTransaction"
+    />
     <ModalNetworkAndTokenSelect
         :is-modal-open="isModalTokensOpen"
-        :networks="getNetworks()"
         :is-origin="isSourceChainToken"
         @close-modal="isModalTokensOpen = false"
         @update-token="handleUpdateTokenFromModal($event)"

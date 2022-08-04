@@ -5,13 +5,12 @@ import { ref } from 'vue'
 import SearchInputBox from './SearchInputBox.vue'
 import NetworkLineSelector from './NetworkLineSelector.vue'
 import SelectTokenList from './SelectTokenList.vue'
-import { INetwork } from '@/models/INetwork'
 import IToken from '@/domain/tokens/IToken'
+import { Networks } from '@/domain/chains/Networks'
 
 defineProps<{
     isModalOpen: boolean
     isOrigin: boolean
-    networks: INetwork[]
 }>()
 const emits = defineEmits<{
     (event: 'close-modal'): void
@@ -20,6 +19,12 @@ const emits = defineEmits<{
 
 const searchTerm = ref('')
 const selectedNetworkId = ref('')
+
+const getNetworks = () => {
+    return Networks.all().filter(network => {
+        return network.live
+    })
+}
 
 const handleSetToken = (token: IToken) => {
     searchTerm.value = ''
@@ -77,11 +82,11 @@ const onCloseModal = () => {
                             placeholder="Search by token or network"/>
                         <NetworkLineSelector
                             v-model:selected-network-id="selectedNetworkId"
-                            :networks="networks"
+                            :networks="getNetworks()"
                             class="my-6"/>
                         <SelectTokenList
                             :is-origin="isOrigin"
-                            :chain-list="networks"
+                            :chain-list="getNetworks()"
                             :search-term="searchTerm"
                             :selected-network-id="selectedNetworkId"
                             @set-token="handleSetToken($event)"/>
