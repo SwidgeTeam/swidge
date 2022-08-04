@@ -20,4 +20,10 @@ export class TokensEntity {
 
   @Column()
   logo: string;
+
+  @Column({ type: 'timestamp', nullable: true })
+  created: Date;
+
+  @Column({ type: 'timestamp', nullable: true })
+  updated: Date;
 }
