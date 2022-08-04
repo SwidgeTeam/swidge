@@ -15,6 +15,7 @@ import { PathComputer } from '../../domain/path-computer';
 import { PriceFeedFetcher } from '../../../shared/infrastructure/PriceFeedFetcher';
 import { GasPriceFetcher } from '../../../shared/infrastructure/GasPriceFetcher';
 import { PriceFeed } from '../../../shared/domain/PriceFeed';
+import { PathNotFound } from '../../domain/path-not-found';
 
 @QueryHandler(GetPathQuery)
 export class GetPathHandler implements IQueryHandler<GetPathQuery> {
@@ -56,7 +57,12 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
 
     const swapRequest = new SwapRequest(query.fromChainId, srcToken, dstToken, amountIn);
 
-    const swapOrder = await this.swapOrderProvider.execute(ExchangeProviders.ZeroEx, swapRequest);
+    let swapOrder: SwapOrder;
+    try {
+      swapOrder = await this.swapOrderProvider.execute(ExchangeProviders.ZeroEx, swapRequest);
+    } catch (e) {
+      throw new PathNotFound();
+    }
 
     const gasPriceOrigin = await this.gasPriceFetcher.fetch(query.fromChainId);
     const priceOriginCoin = await this.priceFeedFetcher.fetch(query.fromChainId);
