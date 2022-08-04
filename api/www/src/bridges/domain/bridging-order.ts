@@ -78,7 +78,11 @@ export class BridgingOrder {
   }
 
   get decimalFee(): string {
-    return this.fee.toDecimal(this.tokenOut.decimals);
+    if (this._required) {
+      return this.fee.toDecimal(this.tokenOut.decimals);
+    } else {
+      return '';
+    }
   }
 
   private finalFee(crossAmount: BigInteger): BigInteger {
