@@ -43,4 +43,17 @@ export class TokenListItem {
   get price(): number {
     return this._price;
   }
+
+  public withPrice(price: number): TokenListItem {
+    return new TokenListItem(
+      this._chainId,
+      this._address,
+      this._name,
+      this._decimals,
+      this._symbol,
+      this._logoURL,
+      this._externalId,
+      price,
+    );
+  }
 }
