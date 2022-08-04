@@ -8,6 +8,7 @@ export class TokenListItem {
     private readonly _decimals: number,
     private readonly _symbol: string,
     private readonly _logoURL: string,
+    private readonly _externalId: string,
   ) {}
 
   get chainId(): string {
@@ -32,5 +33,9 @@ export class TokenListItem {
 
   get logoURL(): string {
     return this._logoURL;
+  }
+
+  get externalId(): string {
+    return this._externalId;
   }
 }

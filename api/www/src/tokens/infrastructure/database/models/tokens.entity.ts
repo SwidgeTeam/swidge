@@ -21,6 +21,9 @@ export class TokensEntity {
   @Column()
   logo: string;
 
+  @Column()
+  externalId: string;
+
   @Column({ type: 'timestamp', nullable: true })
   created: Date;
 

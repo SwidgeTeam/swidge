@@ -23,6 +23,7 @@ export class TokensRepositoryMySQL implements TokensRepository {
         token.decimals,
         token.symbol,
         token.logo,
+        token.externalId,
       );
     });
 
@@ -52,6 +53,7 @@ export class TokensRepositoryMySQL implements TokensRepository {
       token.decimals,
       token.symbol,
       token.logo,
+      token.externalId,
     );
   }
 
@@ -96,6 +98,7 @@ export class TokensRepositoryMySQL implements TokensRepository {
         token.decimals,
         token.symbol,
         token.logo,
+        token.externalId,
       );
     });
 
