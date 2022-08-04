@@ -23,6 +23,7 @@
             ]
         },
         "types": [
+            "vitest/globals",
             "vite/client",
             "vite-plugin-pages/client",
             "vite-plugin-vue-layouts/client"
