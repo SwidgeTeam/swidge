@@ -217,13 +217,13 @@ const formattedAmount = (chainId: string, address: string, amount: string) => {
                                         </svg>
                                     </div>
                                 </div>
-                                <div class="grid grid-cols-3 gap-2 flex flex-wrap justify-between grid-flow-col auto-cols-max w-full mx-16 pt-2">
+                                <div class="grid grid-cols-3 gap-2 flex flex-wrap justify-between grid-flow-col auto-cols-max w-full mx-16 pt-4">
                                     <div class="w-full grid place-content-center p-2">
                                         <div class="relative scale-100">
-                                            <img style="width: 64px; height: 64px" :src="getTokenIcon(t.fromChain,t.srcAsset)" class="rounded-full scale-125 object-center relative bot-0 top-0 "/>
-                                            <img style="width: 48px; height: 48px" :src="getChainIcon(t.fromChain)" class="rounded-full scale-75 absolute -right-6 -top-6 drop-shadow-xl"/>
+                                            <img style="width: 64px; height: 64px" :src="getTokenIcon(t.fromChain,t.srcAsset)" class="rounded-full scale-125 object-center relative bot-0 top-0 shadow-lg shadow-black"/>
+                                            <img style="width: 48px; height: 48px" :src="getChainIcon(t.fromChain)" class="rounded-full scale-75 absolute -right-6 -top-6 shadow-lg shadow-black"/>
                                         </div>
-                                        <div class="flex justify-center mb-2 pt-2">{{ formattedAmount(t.fromChain, t.srcAsset, t.amountIn) }}</div>
+                                        <div class="flex justify-center pt-5">{{ formattedAmount(t.fromChain, t.srcAsset, t.amountIn) }}</div>
                                     </div>
                                     <div class="grid place-content-center w-full object-center ">
                                         <svg width="82" height="16" viewBox="0 0 82 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -232,10 +232,10 @@ const formattedAmount = (chainId: string, address: string, amount: string) => {
                                     </div>
                                     <div class="w-full grid place-content-center p-2 relative">
                                         <div class="relative scale-100">
-                                            <img  style="width: 64px; height: 64px" :src="getTokenIcon(t.toChain,t.dstAsset)" class="rounded-full scale-125 object-center relative bot-0 top-0 "/>
-                                            <img  style="width: 48px; height: 48px" :src="getChainIcon(t.toChain)" class="rounded-full scale-75 absolute -right-6 -top-6 drop-shadow-xl"/>
+                                            <img  style="width: 64px; height: 64px" :src="getTokenIcon(t.toChain,t.dstAsset)" class="rounded-full scale-125 object-center relative bot-0 top-0 shadow-lg shadow-black"/>
+                                            <img  style="width: 48px; height: 48px" :src="getChainIcon(t.toChain)" class="rounded-full scale-75 absolute -right-6 -top-6 shadow-lg shadow-black"/>
                                         </div>
-                                        <div class="flex justify-center mb-2 pt-2">{{ formattedAmount(t.fromChain, t.srcAsset, t.amountIn) }}</div>
+                                        <div class="flex justify-center pt-5">{{ formattedAmount(t.fromChain, t.srcAsset, t.amountIn) }}</div>
                                     </div>
                                 </div>
                             </li>
