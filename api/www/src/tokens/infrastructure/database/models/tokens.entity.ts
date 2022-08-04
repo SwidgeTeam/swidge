@@ -24,6 +24,9 @@ export class TokensEntity {
   @Column()
   externalId: string;
 
+  @Column()
+  price: number;
+
   @Column({ type: 'timestamp', nullable: true })
   created: Date;
 

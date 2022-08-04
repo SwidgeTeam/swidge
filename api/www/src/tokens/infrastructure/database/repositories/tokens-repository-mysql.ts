@@ -24,6 +24,7 @@ export class TokensRepositoryMySQL implements TokensRepository {
         token.symbol,
         token.logo,
         token.externalId,
+        token.price,
       );
     });
 
@@ -54,6 +55,7 @@ export class TokensRepositoryMySQL implements TokensRepository {
       token.symbol,
       token.logo,
       token.externalId,
+      token.price,
     );
   }
 
@@ -99,6 +101,7 @@ export class TokensRepositoryMySQL implements TokensRepository {
         token.symbol,
         token.logo,
         token.externalId,
+        token.price,
       );
     });
 

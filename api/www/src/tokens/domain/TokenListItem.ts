@@ -9,6 +9,7 @@ export class TokenListItem {
     private readonly _symbol: string,
     private readonly _logoURL: string,
     private readonly _externalId: string,
+    private readonly _price: number,
   ) {}
 
   get chainId(): string {
@@ -37,5 +38,9 @@ export class TokenListItem {
 
   get externalId(): string {
     return this._externalId;
+  }
+
+  get price(): number {
+    return this._price;
   }
 }
