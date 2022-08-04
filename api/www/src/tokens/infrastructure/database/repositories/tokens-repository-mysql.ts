@@ -1,6 +1,6 @@
 import { TokensRepository } from '../../../domain/tokens.repository';
 import { TokenListItem } from '../../../domain/TokenListItem';
-import { EntityManager } from 'typeorm';
+import { EntityManager, LessThan } from 'typeorm';
 import { TokensEntity } from '../models/tokens.entity';
 import { Injectable } from '@nestjs/common';
 import { TokenList } from '../../../domain/TokenItem';
@@ -68,5 +68,37 @@ export class TokensRepositoryMySQL implements TokensRepository {
       symbol: token.symbol,
       logo: token.logoURL,
     });
+  }
+
+  /**
+   * Fetches the more outdated `amount` of tokens
+   * @param minutes Minimum amount of number to consider token outdated
+   * @param amount Amount of tokens to return
+   */
+  async getOutdatedTokens(minutes: number, amount: number): Promise<TokenList> {
+    const deadline = new Date(Date.now() - 1000 * 60 * minutes);
+    const tokens = await this.manager.find(TokensEntity, {
+      where: [
+        { updated: null },
+        { updated: LessThan(deadline) }
+      ],
+      order: {
+        updated: 'ASC',
+      },
+      take: amount,
+    });
+
+    const items = tokens.map((token) => {
+      return new TokenListItem(
+        token.chainId,
+        token.address,
+        token.name,
+        token.decimals,
+        token.symbol,
+        token.logo,
+      );
+    });
+
+    return new TokenList(items);
   }
 }

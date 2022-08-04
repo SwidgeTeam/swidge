@@ -7,4 +7,6 @@ export interface TokensRepository {
   find(chainId: string, address: string): Promise<TokenListItem | null>;
 
   save(token: TokenListItem): void;
+
+  getOutdatedTokens(minutes: number, amount: number): Promise<TokenList>;
 }
