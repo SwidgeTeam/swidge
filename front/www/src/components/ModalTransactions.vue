@@ -75,16 +75,6 @@ const getNetwork = (chainId: string): INetwork => {
 }
 
 /**
- * Returns the chain name
- * @param chainId
- */
-// const getChainName = (chainId: string): string => {
-//     const network = getNetwork(chainId)
-
-//     return network.name
-// }
-
-/**
  * Returns the chain icon
  * @param chainId
  */
