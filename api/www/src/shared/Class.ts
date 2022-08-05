@@ -13,4 +13,5 @@ export class Class {
   public static PriceFeedFetcher = 'PriceFeedFetcher';
   public static GasPriceFetcher = 'GasPriceFetcher';
   public static TokenDollarValueFetcher = 'TokenDollarValueFetcher';
+  public static Logger = 'Logger';
 }
