@@ -169,10 +169,10 @@ const formattedAmount = (chainId: string, address: string, amount: string): stri
                         <div v-if="isLoading">
                             <TransactionSplash/>
                         </div>
-                        <div v-if="!isLoading && transactions.length === 0" class="text-center">
+                        <div v-else-if="!isLoading && transactions.length === 0" class="text-center">
                             No transactions
                         </div>
-                        <div v-if="!isLoading && transactions.length > 0">
+                        <div v-else>
                             <TransactionStatus
                                 v-for="(tx, index) in transactions"
                                 :key="index"
