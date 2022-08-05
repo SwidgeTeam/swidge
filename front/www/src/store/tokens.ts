@@ -37,7 +37,7 @@ export const useTokensStore = defineStore('tokens', {
             return (chainId: string, address: string): IToken | undefined => {
                 return state.tokens
                     .find(token => {
-                        return token.chainId === chainId && token.address === address
+                        return token.chainId === chainId && token.address.toLowerCase() === address.toLowerCase()
                     })
             }
         },
