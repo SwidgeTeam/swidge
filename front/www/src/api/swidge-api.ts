@@ -85,70 +85,18 @@ class SwidgeAPI extends HttpClient {
     }
 
     public async getTransactions(walletAddress: string): Promise<TransactionsList> {
-        await new Promise(resolve => setTimeout(resolve, 500))
-        return Promise.resolve({
-            'transactions': [
-                {
-                    'txHash': '0x1',
-                    'status': 'processing',
-                    'date': '1658998584538',
-                    'fromChain': '137',
-                    'toChain': '250',
-                    'srcAsset': '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
-                    'dstAsset': '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
-                    'amountIn': '10000000000000000000'
-                }, {
-                    'txHash': '0x2',
-                    'status': 'completed',
-                    'date': '1658998584538',
-                    'fromChain': '250',
-                    'toChain': '137',
-                    'srcAsset': '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
-                    'dstAsset': '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
-                    'amountIn': '10000000000000000000'
-                }, {
-                    'txHash': '0x3',
-                    'status': 'processing',
-                    'date': '1658998584538',
-                    'fromChain': '137',
-                    'toChain': '250',
-                    'srcAsset': '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
-                    'dstAsset': '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
-                    'amountIn': '10000000000000000000'
-                }, {
-                    'txHash': '0x4',
-                    'status': 'completed',
-                    'date': '1658998584538',
-                    'fromChain': '250',
-                    'toChain': '137',
-                    'srcAsset': '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
-                    'dstAsset': '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
-                    'amountIn': '10000000000000000000'
-                }, {
-                    'txHash': '0x5',
-                    'status': 'completed',
-                    'date': '1658998584538',
-                    'fromChain': '250',
-                    'toChain': '137',
-                    'srcAsset': '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
-                    'dstAsset': '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
-                    'amountIn': '10000000000000000000'
-                },
-            ]
-        })
-        //try {
-        //    const response = await this.instance.get('https://mocki.io/v1/891eedcb-dd7c-4901-b899-1f6f081e2794')
-        //    return response.data
-        //} catch (e: unknown) {
-        //    if (axios.isAxiosError(e)) {
-        //        const apiErrorResponse = e.response?.data as ApiErrorResponse
-        //        const errorMessage = apiErrorResponse.message ?? 'Unhandled error!'
-        //        throw new Error(errorMessage)
-        //    }
-        //    throw new Error('UnknownError no axios error')
-        //}
+        try {
+            const response = await this.instance.get(`/transactions/${walletAddress}`)
+            return response.data
+        } catch (e: unknown) {
+            if (axios.isAxiosError(e)) {
+                const apiErrorResponse = e.response?.data as ApiErrorResponse
+                const errorMessage = apiErrorResponse.message ?? 'Unhandled error!'
+                throw new Error(errorMessage)
+            }
+            throw new Error('UnknownError no axios error')
+        }
     }
 }
 
-// TODO: Let's see if worth it to expose just one instance of the API
 export default new SwidgeAPI()
