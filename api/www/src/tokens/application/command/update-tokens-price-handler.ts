@@ -13,9 +13,8 @@ import {
   Polygon,
 } from '../../../shared/enums/ChainIds';
 import { TokenList } from '../../domain/TokenItem';
-import { TokenDollarValueFetcher } from '../../domain/token-dollar-value-fetcher';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const CoinGecko = require('coingecko-api');
+import { CoinPriceFetcher } from '../../domain/coin-price-fetcher';
+import { TokensPriceFetcher } from '../../domain/tokens-price-fetcher';
 
 @CommandHandler(UpdateTokensPriceCommand)
 export class UpdateTokensPriceHandler implements ICommandHandler<UpdateTokensPriceCommand> {
@@ -23,10 +22,9 @@ export class UpdateTokensPriceHandler implements ICommandHandler<UpdateTokensPri
 
   constructor(
     @Inject(Class.TokensRepository) private readonly repository: TokensRepository,
-    @Inject(Class.TokenDollarValueFetcher) private readonly priceFetcher: TokenDollarValueFetcher,
-  ) {
-    this.client = new CoinGecko();
-  }
+    @Inject(Class.CoinPriceFetcher) private readonly coinPriceFetcher: CoinPriceFetcher,
+    @Inject(Class.TokensPriceFetcher) private readonly tokensPriceFetcher: TokensPriceFetcher,
+  ) {}
 
   /**
    * Entrypoint for the command of updating tokens price
@@ -44,7 +42,7 @@ export class UpdateTokensPriceHandler implements ICommandHandler<UpdateTokensPri
 
     // update coins
     for (const token of tokens.getNatives().items<TokenListItem[]>()) {
-      const price = await this.priceFetcher.fetch(token.externalId);
+      const price = await this.coinPriceFetcher.fetch(token.externalId);
       token.setPrice(price);
       this.repository.save(token);
     }
@@ -57,43 +55,18 @@ export class UpdateTokensPriceHandler implements ICommandHandler<UpdateTokensPri
    * @param chainId
    */
   private async updateTokens(tokens: TokenList, chainId: string) {
-    const addresses = [];
-    tokens.forEach((token: TokenListItem) => {
-      addresses.push(token.address.toLowerCase());
+    const addresses = tokens.map<string[]>((token: TokenListItem) => {
+      return token.address;
     });
-    const prices = await this.client.simple.fetchTokenPrice(
-      {
-        contract_addresses: addresses,
-        vs_currencies: 'usd',
-      },
-      this.getPlatform(chainId),
-    );
 
-    for (const [address, price] of Object.entries(prices.data)) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      tokens.updateTokenPrice(chainId, address, price.usd);
+    const prices = this.tokensPriceFetcher.fetch(addresses, chainId);
+
+    for (const [address, price] of Object.entries(prices)) {
+      tokens.updateTokenPrice(chainId, address, price);
     }
 
     for (const token of tokens.items<TokenListItem[]>()) {
       this.repository.save(token);
-    }
-  }
-
-  private getPlatform(chainId: string): string {
-    switch (chainId) {
-      case Polygon:
-        return 'polygon-pos';
-      case BSC:
-        return 'binance-smart-chain';
-      case Fantom:
-        return 'fantom';
-      case Optimism:
-        return 'optimistic-ethereum';
-      case Avalanche:
-        return 'avalanche';
-      default:
-        throw new Error('not supported');
     }
   }
 }
