@@ -4,7 +4,7 @@ import { Response } from 'express';
 import { UpdateTokensPriceCommand } from '../../application/command/update-tokens-price-command';
 
 @Controller()
-export class AddTokensController {
+export class UpdateTokensPriceController {
   constructor(private readonly commandBus: CommandBus) {}
 
   @Put('update-tokens-price')

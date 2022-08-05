@@ -5,17 +5,21 @@ import { GetTokenListController } from './infrastructure/controllers/get-token-l
 import { GetTokenListHandler } from './application/query/get-token-list-handler';
 import { AddTokensController } from './infrastructure/controllers/add-tokens-controller';
 import { AddTokensHandler } from './application/command/add-tokens-handler';
+import { UpdateTokensPriceController } from './infrastructure/controllers/update-tokens-price-controller';
+import { UpdateTokensPriceHandler } from './application/command/update-tokens-price-handler';
 
 @Module({
   imports: [CqrsModule],
   controllers: [
     GetTokenListController,
     AddTokensController,
+    UpdateTokensPriceController,
   ],
   providers: [
     GetTokenListHandler,
     AddTokensHandler,
-    tokensRepositoryProvider()
+    UpdateTokensPriceHandler,
+    tokensRepositoryProvider(),
   ],
 })
 export class TokensModule {}
