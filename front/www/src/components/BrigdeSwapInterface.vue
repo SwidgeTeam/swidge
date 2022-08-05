@@ -86,14 +86,6 @@ const shouldQuote = () => {
 }
 
 /**
- * Updates the input amount
- * @param value
- */
-const handleSourceInputUpdate = (value: string) => {
-    sourceTokenAmount.value = value
-}
-
-/**
  * Handles the update of the amount on the origin amount
  */
 const handleSourceInputChanged = () => {
@@ -410,14 +402,13 @@ const closeModalStatus = () => {
 
 <template>
     <SwapBox
-        :source-token-amount="sourceTokenAmount"
+        v-model:source-token-amount="sourceTokenAmount"
         :destination-token-amount="destinationTokenAmount"
         :source-token-max-amount="sourceTokenMaxAmount"
         :button-text="buttonLabel"
         :is-getting-quote="isGettingQuote"
         :is-execute-button-disabled="isExecuteButtonDisabled"
         :transaction-fees="totalFee"
-        @update:source-token-amount="handleSourceInputUpdate"
         @source-input-changed="handleSourceInputChanged"
         @select-source-token="() => handleOpenTokenList(true)"
         @select-destination-token="() => handleOpenTokenList(false)"
