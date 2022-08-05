@@ -91,6 +91,7 @@ export class TokensRepositoryMySQL implements TokensRepository {
       logo: token.logoURL,
       externalId: token.externalId,
       created: new Date(),
+      price: token.price,
     });
   }
 
@@ -108,6 +109,7 @@ export class TokensRepositoryMySQL implements TokensRepository {
       logo: token.logoURL,
       externalId: token.externalId,
       created: new Date(),
+      price: token.price,
     });
   }
 

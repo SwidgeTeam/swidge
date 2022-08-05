@@ -34,7 +34,7 @@ export class UpdateTokensPriceHandler implements ICommandHandler<UpdateTokensPri
    */
   private async updateTokenPrice(token: TokenListItem) {
     const price = await this.pricesFetcher.fetch(token.externalId);
-    const updatedToken = token.withPrice(price);
-    await this.repository.save(updatedToken);
+    token.setPrice(price);
+    await this.repository.save(token);
   }
 }
