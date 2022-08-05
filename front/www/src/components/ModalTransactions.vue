@@ -179,18 +179,18 @@ const formattedAmount = (chainId: string, address: string, amount: string) => {
                         </div>
                         <div v-if="!isLoading && transactions.length > 0">
                             <TransactionStatus 
-                                v-for="t in transactions" 
-                                :key="t.txHash"
-                                :date="transformDate(+t.date)"
-                                :status="t.status"
-                                :tokenLogoIn="getTokenIcon(t.fromChain,t.srcAsset)"
-                                :chainLogoIn="getChainIcon(t.fromChain)"
-                                :tokenLogoOut="getTokenIcon(t.toChain,t.dstAsset)"
-                                :chainLogoOut="getChainIcon(t.toChain)"
-                                :amountIn="formattedAmount(t.fromChain, t.srcAsset, t.amountIn)"
-                                :amountOut="formattedAmount(t.fromChain, t.srcAsset, t.amountIn)"
-                                :tokenNameIn="getTokenName(t.fromChain,t.srcAsset)"
-                                :tokenNameOut="getTokenName(t.toChain,t.dstAsset)"
+                                v-for="(tx, index) in transactions" 
+                                :key="index"
+                                :date="transformDate(+tx.date)"
+                                :status="tx.status"
+                                :tokenLogoIn="getTokenIcon(tx.fromChain,tx.srcAsset)"
+                                :chainLogoIn="getChainIcon(tx.fromChain)"
+                                :tokenLogoOut="getTokenIcon(tx.toChain,tx.dstAsset)"
+                                :chainLogoOut="getChainIcon(tx.toChain)"
+                                :amountIn="formattedAmount(tx.fromChain, tx.srcAsset, tx.amountIn)"
+                                :amountOut="formattedAmount(tx.fromChain, tx.srcAsset, tx.amountIn)"
+                                :tokenNameIn="getTokenName(tx.fromChain,tx.srcAsset)"
+                                :tokenNameOut="getTokenName(tx.toChain,tx.dstAsset)"
                             />
                         </div>
                     </div>
