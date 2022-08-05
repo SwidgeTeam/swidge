@@ -5,6 +5,7 @@ import { GetTokenListController } from './infrastructure/controllers/get-token-l
 import { GetTokenListHandler } from './application/query/get-token-list-handler';
 import { AddTokensController } from './infrastructure/controllers/add-tokens-controller';
 import { AddTokensHandler } from './application/command/add-tokens-handler';
+import { UpdateTokensDetails } from './application/command/update-tokens-details';
 import { UpdateTokensPriceController } from './infrastructure/controllers/update-tokens-price-controller';
 import { UpdateTokensPriceHandler } from './application/command/update-tokens-price-handler';
 
@@ -19,6 +20,7 @@ import { UpdateTokensPriceHandler } from './application/command/update-tokens-pr
     GetTokenListHandler,
     AddTokensHandler,
     UpdateTokensPriceHandler,
+    UpdateTokensDetails,
     tokensRepositoryProvider(),
   ],
 })
