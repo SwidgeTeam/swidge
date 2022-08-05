@@ -108,7 +108,7 @@ export class TokensRepositoryMySQL implements TokensRepository {
       symbol: token.symbol,
       logo: token.logoURL,
       externalId: token.externalId,
-      created: new Date(),
+      updated: new Date(),
       price: token.price,
     });
   }
