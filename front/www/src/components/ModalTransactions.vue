@@ -9,8 +9,10 @@ import networks from '@/assets/Networks'
 import IToken from '@/tokens/models/IToken'
 import { INetwork } from '@/models/INetwork'
 import { ethers } from 'ethers'
-import ModalTransactionsStatusCompleted from './ModalTransactionsStatusCompleted.vue'
-import ModalTransactionsStatusProcessing from './ModalTransactionsStatusProcessing.vue'
+import TransactionSplash from './TransactionSplash.vue'
+import ProcessingLabel from './ProcessingLabel.vue'
+import CompletedLabel from './CompletedLabel.vue'
+
 
 const web3Store = useWeb3Store()
 
@@ -172,19 +174,7 @@ const formattedAmount = (chainId: string, address: string, amount: string) => {
                             @click="onCloseModal()"
                         />
                         <div v-if="isLoading">
-                            <div class="animate-pulse flex space-x-4">
-                                <div class="rounded-full bg-slate-700 h-10 w-10"></div>
-                                <div class="flex-1 space-y-6 py-1">
-                                    <div class="h-2 bg-slate-700 rounded"></div>
-                                    <div class="space-y-3">
-                                        <div class="grid grid-cols-3 gap-4">
-                                            <div class="h-2 bg-slate-700 rounded col-span-2"></div>
-                                            <div class="h-2 bg-slate-700 rounded col-span-1"></div>
-                                        </div>
-                                        <div class="h-2 bg-slate-700 rounded"></div>
-                                    </div>
-                                </div>
-                            </div>
+                            <TransactionSplash/>
                         </div>
                         <div v-if="!isLoading && transactions.length === 0" class="text-center">
                             No transactions
@@ -196,12 +186,8 @@ const formattedAmount = (chainId: string, address: string, amount: string) => {
                                 class="content-center gradient-border-header-main flex flex-wrap justify-between gap-2 mb-4 p-2">
                                 <div class="w-full flex justify-between">
                                     <div class="grid flex justify-start content-center"> {{ transformDate(+t.date) }} </div>
-                                    <div v-if="t.status == 'processing'" class="flex justify-end border border-gray-50 px-2 rounded-2xl content-center justify-center items-center gap-1"> {{ t.status }} 
-                                        <ModalTransactionsStatusProcessing/>
-                                    </div>
-                                    <div v-if="t.status =='completed'" class="flex justify-end border border-green-400 bg-green-400 px-2 rounded-2xl justify-center items-center gap-1"> {{ t.status }} 
-                                        <ModalTransactionsStatusCompleted/>
-                                    </div>
+                                    <ProcessingLabel v-if="t.status == 'processing'"/>
+                                    <CompletedLabel v-if="t.status =='completed'"/>
                                 </div>
                                 <div class="grid grid-cols-3 gap-2 flex flex-wrap justify-between grid-flow-col auto-cols-max w-full mx-16 pt-4">
                                     <div class="w-full grid place-content-center p-2">
