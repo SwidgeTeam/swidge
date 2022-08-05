@@ -176,16 +176,16 @@ const formattedAmount = (chainId: string, address: string, amount: string): stri
                             <TransactionStatus
                                 v-for="(tx, index) in transactions"
                                 :key="index"
-                                :date="transformDate(+tx.date)"
+                                :date="transformDate(tx.date)"
                                 :status="tx.status"
-                                :tokenLogoIn="getTokenIcon(tx.fromChain,tx.srcAsset)"
-                                :chainLogoIn="getChainIcon(tx.fromChain)"
-                                :tokenLogoOut="getTokenIcon(tx.toChain,tx.dstAsset)"
-                                :chainLogoOut="getChainIcon(tx.toChain)"
-                                :amountIn="formattedAmount(tx.fromChain, tx.srcAsset, tx.amountIn)"
-                                :amountOut="formattedAmount(tx.fromChain, tx.srcAsset, tx.amountIn)"
-                                :tokenNameIn="getTokenName(tx.fromChain,tx.srcAsset)"
-                                :tokenNameOut="getTokenName(tx.toChain,tx.dstAsset)"
+                                :token-logo-in="getTokenIcon(tx.fromChain,tx.srcAsset)"
+                                :chain-logo-in="getChainIcon(tx.fromChain)"
+                                :token-logo-out="getTokenIcon(tx.toChain,tx.dstAsset)"
+                                :chain-logo-out="getChainIcon(tx.toChain)"
+                                :amount-in="formattedAmount(tx.fromChain, tx.srcAsset, tx.amountIn)"
+                                :amount-out="formattedAmount(tx.fromChain, tx.srcAsset, tx.amountIn)"
+                                :token-name-in="getTokenName(tx.fromChain,tx.srcAsset)"
+                                :token-name-out="getTokenName(tx.toChain,tx.dstAsset)"
                             />
                         </div>
                     </div>
