@@ -2,16 +2,13 @@ import { Inject } from '@nestjs/common';
 import { Class } from '../../../shared/Class';
 import { TokensRepository } from '../../domain/tokens.repository';
 import { Avalanche, BSC, Fantom, Optimism, Polygon } from '../../../shared/enums/ChainIds';
-import { TokenListItem } from '../../domain/TokenListItem';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const CoinGecko = require('coingecko-api');
 
 export class UpdateTokensDetails {
   private client;
 
-  constructor(
-    @Inject(Class.TokensRepository) private readonly repository: TokensRepository,
-  ) {
+  constructor(@Inject(Class.TokensRepository) private readonly repository: TokensRepository) {
     this.client = new CoinGecko();
   }
 
@@ -21,7 +18,6 @@ export class UpdateTokensDetails {
   async execute(): Promise<void> {
     const list = await this.client.coins.all();
     const tokens = await this.repository.getList();
-    const items: TokenListItem[] = [];
 
     for (const coin of list.data) {
       await this.sleep(1); // for quota restrictions
@@ -45,17 +41,14 @@ export class UpdateTokensDetails {
           token
             .setExternalId(coinId)
             .setLogo(coin_data.image.small);
-          // include in updated set
-          items.push(token);
+          // update token
+          this.repository.save(token);
+
         } catch (e) {
           // Failed because we don't support the specific chain yet
           // nothing to do
         }
       }
-    }
-
-    for (const item of items) {
-      this.repository.save(item);
     }
   }
 
