@@ -5,7 +5,7 @@ import { Token } from '../../shared/domain/Token';
 export class SwapOrder {
   public static notRequired() {
     return new SwapOrder(
-      null,
+      '0',
       Token.null(),
       Token.null(),
       null,
@@ -17,16 +17,7 @@ export class SwapOrder {
   }
 
   public static sameToken(token: Token) {
-    return new SwapOrder(
-      null,
-      token,
-      token,
-      null,
-      null,
-      null,
-      BigInteger.zero(),
-      false,
-    );
+    return new SwapOrder('0', token, token, null, '0x', null, BigInteger.zero(), false);
   }
 
   constructor(
