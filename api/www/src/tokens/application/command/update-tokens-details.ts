@@ -4,13 +4,15 @@ import { TokensRepository } from '../../domain/tokens.repository';
 import { Avalanche, BSC, Fantom, Optimism, Polygon } from '../../../shared/enums/ChainIds';
 import { Logger } from '../../../shared/domain/logger';
 import { TokenList } from '../../domain/TokenItem';
+import { TokenListItem } from '../../domain/TokenListItem';
+import { NATIVE_TOKEN_ADDRESS } from '../../../shared/enums/Natives';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const CoinGecko = require('coingecko-api');
 
 export class UpdateTokensDetails {
   private client;
   private tokens: TokenList;
-  private COINS_PER_PAGE = 250;
+  private DELAY_SECONDS = 1;
 
   constructor(
     @Inject(Class.TokensRepository) private readonly repository: TokensRepository,
@@ -24,84 +26,52 @@ export class UpdateTokensDetails {
    */
   async execute(): Promise<void> {
     this.tokens = await this.repository.getList();
-    let processedCoins,
-      page = 1;
 
-    do {
-      processedCoins = await this.checkNextPage(page);
-      page++;
-    } while (processedCoins === this.COINS_PER_PAGE);
-  }
-
-  async checkNextPage(page: number): Promise<number> {
-    this.logger.log(`page ${page}`);
-    const list = await this.client.coins.all({
-      per_page: this.COINS_PER_PAGE,
-      page: page,
-    });
-
-    for (const coin of list.data) {
-      await this.sleep(1); // for quota restrictions
-      const coinId = coin.id;
-      this.logger.log(`checking ${coinId}`);
-      const coin_data = await this.fetchCoinData(coinId);
-      if (!coin_data.asset_platform_id) {
-        // means it's a native coin, will treat them manually
+    for (const token of this.tokens.items<TokenListItem[]>()) {
+      if (token.address === NATIVE_TOKEN_ADDRESS) {
+        // do not quote native coins, managed manually
         continue;
       }
-      for (const [platform, address] of Object.entries(coin_data.platforms)) {
-        try {
-          // convert chain id
-          const chainId = this.getChainId(platform);
-          // fetch token
-          const token = this.tokens.find(chainId, address as string);
-          if (!token) {
-            // if it doesn't exist means we don't support the token yet
-            continue;
-          }
-          // update details
-          token.setExternalId(coinId).setLogo(coin_data.image.small);
-          // update token
-          this.repository.save(token);
-          this.logger.log(`updated ${coinId}`);
-        } catch (e) {
-          // Failed because we don't support the specific chain yet
-          // nothing to do
-        }
+
+      await this.sleep(this.DELAY_SECONDS); // quota restrictions
+
+      try {
+        // fetch data
+        const platform = this.getPlatform(token.chainId);
+        const contract = await this.client.coins.fetchCoinContractInfo(
+          token.address.toLowerCase(),
+          platform,
+        );
+
+        // update token
+        token.setLogo(contract.data.image.small);
+        this.repository.save(token);
+
+        this.logger.log(`updated ${token.symbol}`);
+      } catch (e) {
+        this.logger.log(`NOT FOUND -- ${token.symbol}`);
       }
     }
-
-    return list.data.length;
   }
 
-  private async fetchCoinData(id: string) {
-    const coin = await this.client.coins.fetch(id, {
-      localization: false,
-      community_data: false,
-      developer_data: false,
-      tickers: false,
-    });
-    return coin.data;
+  private getPlatform(chainId: string): string {
+    switch (chainId) {
+      case Polygon:
+        return 'polygon-pos';
+      case BSC:
+        return 'binance-smart-chain';
+      case Fantom:
+        return 'fantom';
+      case Optimism:
+        return 'optimistic-ethereum';
+      case Avalanche:
+        return 'avalanche';
+      default:
+        throw new Error('not supported');
+    }
   }
 
   private async sleep(seconds: number) {
     return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
-  }
-
-  private getChainId(platform: string): string {
-    switch (platform) {
-      case 'polygon-pos':
-        return Polygon;
-      case 'binance-smart-chain':
-        return BSC;
-      case 'fantom':
-        return Fantom;
-      case 'optimistic-ethereum':
-        return Optimism;
-      case 'avalanche':
-        return Avalanche;
-      default:
-        throw new Error('not supported');
-    }
   }
 }
