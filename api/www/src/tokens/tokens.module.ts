@@ -8,8 +8,8 @@ import { AddTokensHandler } from './application/command/add-tokens-handler';
 import { UpdateTokensDetails } from './application/command/update-tokens-details';
 import { UpdateTokensPriceController } from './infrastructure/controllers/update-tokens-price-controller';
 import { UpdateTokensPriceHandler } from './application/command/update-tokens-price-handler';
-import coingeckoPriceFetcherProvider from './infrastructure/external/coingecko-price-fetcher.provider';
 import consoleLoggerProvider from '../shared/infrastructure/console-logger-provider';
+import coingeckoPriceFetcherProvider from './infrastructure/external/coingecko-price-fetcher.provider';
 
 @Module({
   imports: [CqrsModule],
