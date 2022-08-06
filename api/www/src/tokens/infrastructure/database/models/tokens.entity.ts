@@ -24,7 +24,7 @@ export class TokensEntity {
   @Column()
   externalId: string;
 
-  @Column()
+  @Column('double')
   price: number;
 
   @Column({ type: 'timestamp', nullable: true })

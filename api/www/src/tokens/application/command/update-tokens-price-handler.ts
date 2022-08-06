@@ -40,9 +40,7 @@ export class UpdateTokensPriceHandler implements ICommandHandler<UpdateTokensPri
     const ids = this.getNativesIds(natives);
     try {
       const prices = await this.coinsPriceFetcher.fetch(ids);
-
       for (const row of prices) {
-        console.log(row.id, row.price);
         const coin = natives.findByExternalId(row.id);
         coin.setPrice(row.price);
         this.repository.save(coin);
@@ -79,7 +77,6 @@ export class UpdateTokensPriceHandler implements ICommandHandler<UpdateTokensPri
     const prices = await this.tokensPriceFetcher.fetch(addresses, chainId);
 
     for (const row of prices) {
-      console.log(row.address, row.price);
       tokens.updateTokenPrice(chainId, row.address, row.price);
     }
 

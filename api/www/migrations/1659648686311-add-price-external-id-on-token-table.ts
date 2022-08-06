@@ -5,7 +5,7 @@ export class addPriceExternalIdOnTokenTable1659648686311 implements MigrationInt
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`ALTER TABLE \`tokens\` ADD \`externalId\` varchar(255) NOT NULL`);
-    await queryRunner.query(`ALTER TABLE \`tokens\` ADD \`price\` int NOT NULL`);
+    await queryRunner.query(`ALTER TABLE \`tokens\` ADD \`price\` double NOT NULL`);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
