@@ -184,6 +184,11 @@ use the port 33060 of your machine to expose the MySQL server.
 You can do the same with any variable of the conditionally set variables on the Makefile, as 
 also any of the variables on the `/env` folder.
 
+### Running Vagrant
+
+If for some reason you cannot run Docker on your machine, or you have trouble with some OS-specific dependencies 
+configurations, you can just run everything inside a Vagrant box. For that, [follow these steps](docs/run_forked_chains.md).
+
 ## Running the whole system in local
 
 In order to execute the whole lifecycle of a transaction on your loal machine, 
