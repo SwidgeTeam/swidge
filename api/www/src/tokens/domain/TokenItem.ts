@@ -16,6 +16,15 @@ export class TokenList extends Collection {
     return null;
   }
 
+  findByExternalId(id: string): TokenListItem {
+    for (const token of this.items<TokenListItem[]>()) {
+      if (token.externalId === id) {
+        return token;
+      }
+    }
+    return null;
+  }
+
   ofChain(chainId: string): TokenList {
     const items = [];
     for (const token of this.items<TokenListItem[]>()) {

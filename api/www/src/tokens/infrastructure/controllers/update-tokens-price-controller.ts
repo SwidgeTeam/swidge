@@ -1,4 +1,4 @@
-import { Controller, Get, Put, Res } from '@nestjs/common';
+import { Controller, Get, Res } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { Response } from 'express';
 import { UpdateTokensPriceCommand } from '../../application/command/update-tokens-price-command';

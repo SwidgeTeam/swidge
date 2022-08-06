@@ -13,6 +13,6 @@ export class Class {
   public static PriceFeedFetcher = 'PriceFeedFetcher';
   public static GasPriceFetcher = 'GasPriceFetcher';
   public static TokensPriceFetcher = 'TokensPriceFetcher';
-  public static CoinPriceFetcher = 'CoinPriceFetcher';
+  public static CoinsPriceFetcher = 'CoinPriceFetcher';
   public static Logger = 'Logger';
 }

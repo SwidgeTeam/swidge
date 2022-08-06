@@ -10,7 +10,7 @@ import { UpdateTokensPriceController } from './infrastructure/controllers/update
 import { UpdateTokensPriceHandler } from './application/command/update-tokens-price-handler';
 import consoleLoggerProvider from '../shared/infrastructure/console-logger-provider';
 import coingeckoTokensPriceFetcherProvider from './infrastructure/external/coingecko-tokens-price-fetcher-provider';
-import coingeckoCoinPriceFetcherProvider from './infrastructure/external/coingecko-coin-price-fetcher-provider';
+import coingeckoCoinPriceFetcherProvider from './infrastructure/external/coingecko-coins-price-fetcher-provider';
 
 @Module({
   imports: [CqrsModule],
