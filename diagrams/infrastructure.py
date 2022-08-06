@@ -27,7 +27,7 @@ with Diagram("Infrastructure", show=False, direction="TB"):
             stats_alb = ALB("balancer")
             with Cluster('Public subnet 1'):
                 stats_instance = EC2('instance')
-            relayer_instance >> api_instance
+            relayer_instance >> api_alb
             stats_alb >> stats_instance
 
         queues = SQS('queues')
@@ -48,7 +48,6 @@ with Diagram("Infrastructure", show=False, direction="TB"):
         distribution_app = CloudFront('distribution')
         bucket_app = SimpleStorageServiceS3Bucket('bucket')
         distribution_app >> bucket_app
-        bucket_app >> api_instance
 
     dns >> [distribution_landing, distribution_app, api_alb, stats_alb]
 
