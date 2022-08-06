@@ -12,4 +12,7 @@ export class Class {
   public static TokensRepository = 'TokensRepository';
   public static PriceFeedFetcher = 'PriceFeedFetcher';
   public static GasPriceFetcher = 'GasPriceFetcher';
+  public static TokensPriceFetcher = 'TokensPriceFetcher';
+  public static CoinsPriceFetcher = 'CoinPriceFetcher';
+  public static Logger = 'Logger';
 }

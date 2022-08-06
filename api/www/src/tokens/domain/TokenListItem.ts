@@ -7,7 +7,9 @@ export class TokenListItem {
     private readonly _name: string,
     private readonly _decimals: number,
     private readonly _symbol: string,
-    private readonly _logoURL: string,
+    private _logoURL: string,
+    private _externalId: string,
+    private _price: number,
   ) {}
 
   get chainId(): string {
@@ -32,5 +34,28 @@ export class TokenListItem {
 
   get logoURL(): string {
     return this._logoURL;
+  }
+
+  get externalId(): string {
+    return this._externalId;
+  }
+
+  get price(): number {
+    return this._price;
+  }
+
+  public setLogo(logo: string): TokenListItem {
+    this._logoURL = logo;
+    return this;
+  }
+
+  public setExternalId(id: string): TokenListItem {
+    this._externalId = id;
+    return this;
+  }
+
+  public setPrice(price: number): TokenListItem {
+    this._price = price;
+    return this;
   }
 }

@@ -28,6 +28,7 @@ export class GetTokenListController {
       s: item.symbol,
       d: item.decimals,
       l: item.logoURL,
+      p: item.price,
     };
   }
 }
