@@ -22,4 +22,10 @@ export default defineConfig({
         include: ['vue', 'vue-router', '@vueuse/core', '@vueuse/head'],
         exclude: ['vue-demi'],
     },
+    server: {
+        hmr: true,
+        watch: {
+            usePolling: true,
+        }
+    }
 });
