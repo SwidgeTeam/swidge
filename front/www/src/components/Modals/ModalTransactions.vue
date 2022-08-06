@@ -7,10 +7,10 @@ import { Networks } from '@/domain/chains/Networks'
 import IToken from '@/domain/tokens/IToken'
 import { INetwork } from '@/models/INetwork'
 import { ethers } from 'ethers'
-import TransactionSplash from './TransactionSplash.vue'
-import TransactionStatus from './TransactionStatus.vue'
+import TransactionSplash from '../TransactionSplash.vue'
+import TransactionStatus from '../TransactionStatus.vue'
 import { useTokensStore } from '@/store/tokens'
-import Modal from '@/components/Modal.vue'
+import Modal from '@/components/Modals/Modal.vue'
 
 const web3Store = useWeb3Store()
 const tokensStore = useTokensStore()

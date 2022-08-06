@@ -9,7 +9,7 @@ import { computed, ref } from 'vue'
 import ConnectButton from '@/components/Buttons/ConnectButton.vue'
 import { Networks } from '@/domain/chains/Networks'
 import TransactionsButton from './Buttons/TransactionsButton.vue'
-import ModalTransactions from './ModalTransactions.vue'
+import ModalTransactions from './Modals/ModalTransactions.vue'
 
 const emits = defineEmits<{
     (event: 'switch-network', chainId: string): void
