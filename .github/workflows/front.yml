@@ -57,24 +57,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2.0.1
-        with:
-          version: latest
-
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-          registry-url: https://registry.npmjs.org/
-          cache: 'pnpm'
-          cache-dependency-path: ${{ env.root-path }}/pnpm-lock.yaml
 
       - name: Install dependencies
-        run: pnpm install
+        run: yarn install
 
       - name: Build Project
-        run: pnpm run build
+        run: yarn build
 
       - name: Archive Build
         uses: actions/upload-artifact@v2

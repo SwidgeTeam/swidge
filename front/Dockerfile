@@ -7,10 +7,10 @@ WORKDIR /front_app
 
 COPY www /front_app
 
-RUN pnpm install
+RUN yarn install
 
 VOLUME [ "/front_app/node_modules" ]
 
-ENTRYPOINT [ "pnpm" ]
+ENTRYPOINT [ "yarn" ]
 
 CMD [ "dev" ]
