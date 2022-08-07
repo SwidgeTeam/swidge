@@ -22,7 +22,7 @@ import { Route } from '../../shared/domain/route';
 import { RouteStep } from '../../shared/domain/route-step';
 import { TransactionDetails } from '../../shared/domain/transaction-details';
 import { DeployedAddresses } from '../../shared/DeployedAddresses';
-import { RouterCallEncoder } from '../../shared/domain/RouterCallEncoder';
+import { RouterCallEncoder } from '../../shared/domain/router-call-encoder';
 
 export class PathComputer {
   /** Providers */

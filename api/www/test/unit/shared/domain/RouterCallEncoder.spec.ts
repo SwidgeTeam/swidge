@@ -1,6 +1,6 @@
 import { SwapOrder } from '../../../../src/swaps/domain/SwapOrder';
 import { BridgingOrder } from '../../../../src/bridges/domain/bridging-order';
-import { RouterCallEncoder } from '../../../../src/shared/domain/RouterCallEncoder';
+import { RouterCallEncoder } from '../../../../src/shared/domain/router-call-encoder';
 import { BigInteger } from '../../../../src/shared/domain/BigInteger';
 
 describe('router-call-encoder', () => {
