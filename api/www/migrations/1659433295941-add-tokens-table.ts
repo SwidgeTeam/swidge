@@ -5,7 +5,21 @@ export class addTokensTable1659433295941 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TABLE \`tokens\` (\`chainId\` varchar(255) NOT NULL, \`address\` varchar(255) NOT NULL, \`name\` varchar(255) NOT NULL, \`symbol\` varchar(255) NOT NULL, \`decimals\` int NOT NULL, \`logo\` varchar(255) NOT NULL, UNIQUE INDEX \`IDX_b9519e9350a83edcc7515fe67b\` (\`chainId\`, \`address\`), PRIMARY KEY (\`chainId\`, \`address\`)) ENGINE=InnoDB`,
+      `CREATE TABLE \`tokens\`
+       (
+           \`chainId\`    varchar(255) NOT NULL,
+           \`address\`    varchar(255) NOT NULL,
+           \`name\`       varchar(255) NOT NULL,
+           \`symbol\`     varchar(255) NOT NULL,
+           \`decimals\`   int          NOT NULL,
+           \`logo\`       varchar(255) NOT NULL,
+           \`created\`    timestamp NULL,
+           \`updated\`    timestamp NULL,
+           \`externalId\` varchar(255) NOT NULL,
+           \`price\`      double       NOT NULL,
+           UNIQUE INDEX \`IDX_b9519e9350a83edcc7515fe67b\` (\`chainId\`, \`address\`),
+           PRIMARY KEY (\`chainId\`, \`address\`)
+       ) ENGINE=InnoDB`,
     );
   }
 
