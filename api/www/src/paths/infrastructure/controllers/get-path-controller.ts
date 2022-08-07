@@ -2,10 +2,9 @@ import { Controller, Get, Query, Res } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
 import { Response } from 'express';
 import { GetPathQuery } from '../../application/query/get-path.query';
-import { Path } from '../../domain/path';
 import { GetPathDto } from './get-path-dto';
 import { Token } from '../../../shared/domain/Token';
-import { DeployedAddresses } from '../../../shared/DeployedAddresses';
+import { Route } from '../../../shared/domain/route';
 
 @Controller()
 export class GetPathController {
@@ -21,38 +20,34 @@ export class GetPathController {
       getPathDto.amount,
     );
 
-    const path = await this.queryBus.execute<GetPathQuery, Path>(query);
+    const router = await this.queryBus.execute<GetPathQuery, Route[]>(query);
 
     return res.json({
-      router: DeployedAddresses.Router,
-      amountOut: path.amountOut,
-      destinationFee: path.destinationFeeInOriginWei.toString(),
-      originSwap: {
-        code: path.originSwap.providerCode,
-        tokenIn: this.mapTokenDetails(path.originSwap.tokenIn),
-        tokenOut: this.mapTokenDetails(path.originSwap.tokenOut),
-        data: path.originSwap.data,
-        required: path.originSwap.required,
-        amountOut: path.originSwap.buyAmountDecimal,
-        estimatedGas: path.originSwap.estimatedGas.toString(),
-        fee: path.originFeeInUSD,
-      },
-      bridge: {
-        tokenIn: this.mapTokenDetails(path.bridging.tokenIn),
-        tokenOut: this.mapTokenDetails(path.bridging.tokenOut),
-        toChainId: path.bridging.toChainId,
-        data: path.bridging.data,
-        required: path.bridging.required,
-        amountOut: path.bridging.amountOutDecimal,
-        fee: path.bridging.decimalFee,
-      },
-      destinationSwap: {
-        tokenIn: this.mapTokenDetails(path.destinationSwap.tokenIn),
-        tokenOut: this.mapTokenDetails(path.destinationSwap.tokenOut),
-        required: path.destinationSwap.required,
-        fee: path.destinationFeeInUSD,
-      },
+      routes: router.map((route) => this.mapRoute(route)),
     });
+  }
+
+  private mapRoute(route: Route) {
+    return {
+      tx: {
+        to: route.transactionDetails.to,
+        callData: route.transactionDetails.callData,
+        value: route.transactionDetails.value.toString(),
+        gasLimit: route.transactionDetails.gasLimit.toString(),
+        gasPrice: route.transactionDetails.gasPrice.toString(),
+      },
+      amountOut: route.amountOut.toString(),
+      steps: route.steps.map((step) => {
+        return {
+          type: step.type,
+          name: step.name,
+          logo: step.logo,
+          tokenIn: this.mapTokenDetails(step.tokenIn),
+          tokenOut: this.mapTokenDetails(step.tokenOut),
+          fee: step.feeInUSD,
+        };
+      }),
+    };
   }
 
   private mapTokenDetails(token: Token) {
