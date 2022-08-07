@@ -96,11 +96,15 @@ export class LiFi implements Aggregator {
 
     let feeInUSD = 0;
     // include all the fees from the step
-    for (const entry of step.estimate.gasCosts) {
-      feeInUSD += Number(entry.amountUSD);
+    if (step.estimate.gasCosts) {
+      for (const entry of step.estimate.gasCosts) {
+        feeInUSD += Number(entry.amountUSD);
+      }
     }
-    for (const entry of step.estimate.feeCosts) {
-      feeInUSD += Number(entry.amountUSD);
+    if (step.estimate.feeCosts) {
+      for (const entry of step.estimate.feeCosts) {
+        feeInUSD += Number(entry.amountUSD);
+      }
     }
 
     let type;
