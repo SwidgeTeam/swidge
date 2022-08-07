@@ -129,14 +129,9 @@ But if the one you're looking for it's not there, you can always add it.
 
 ### Resetting local database
 
-Your local database will store its data on the `data/db` directory. Empty or remove this directory while the application
-is stopped to reset the database. You may need `sudo` to delete these files.
-
 ``` sh
-$ make stop
-$ rm -fr data/db # Or: sudo rm -fr data/db
-$ make start
-$ make db-migrate
+$ make fuck-db
+$ make setup
 ```
 
 ### Prompting logs
