@@ -27,7 +27,7 @@ Vagrant.configure("2") do |config|
   # via 127.0.0.1 to disable public access
   config.vm.network "forwarded_port", guest: 3000, host: 3000, host_ip: "127.0.0.1"
   config.vm.network "forwarded_port", guest: 3001, host: 3001, host_ip: "127.0.0.1"
-  config.vm.network "forwarded_port", guest: 8501, host: 8501, host_ip: "127.0.0.1"
+  config.vm.network "forwarded_port", guest: 8501, host: 8501
 
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
