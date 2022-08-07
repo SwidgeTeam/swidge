@@ -19,6 +19,7 @@ import { GasPriceFetcher } from '../../shared/infrastructure/GasPriceFetcher';
 import { GasConverter } from '../../shared/domain/GasConverter';
 import { PriceFeed } from '../../shared/domain/PriceFeed';
 import { AggregatorOrderComputer } from '../../aggregators/application/query/aggregator-order-computer';
+import { AggregatorRequest } from '../../aggregators/domain/aggregator-request';
 
 export class PathComputer {
   /** Providers */
@@ -72,7 +73,12 @@ export class PathComputer {
     this.dstToken = await this.tokenDetailsFetcher.fetch(query.dstToken, this.toChain);
     this.amountIn = BigInteger.fromDecimal(query.amountIn, this.srcToken.decimals);
 
-    this.candidatePaths = await this.originSwap();
+    const promiseComputedCandidates = this.getComputedProviderCandidates();
+    const promiseAggregatorCandidates = this.getAggregatorsCandidates();
+
+    this.candidatePaths = flatten(
+      await Promise.all([promiseComputedCandidates, promiseAggregatorCandidates]),
+    );
 
     const candidate = this.getBestCandidate();
 
@@ -100,8 +106,47 @@ export class PathComputer {
   }
 
   /**
-   * Computes all the possible paths from the origin asset
-   * to the different bridgeable assets on all the possible exchanges
+   * Fetches all the possible candidate paths
+   * from the different aggregator providers
+   * @private
+   */
+  private async getAggregatorsCandidates(): Promise<CandidatePath[]> {
+    const aggregatorRequest = new AggregatorRequest(
+      this.fromChain,
+      this.toChain,
+      this.srcToken,
+      this.dstToken,
+      this.amountIn,
+    );
+    const promises = [];
+    // for every integrated aggregator
+    for (const aggregatorId of this.getPossibleAggregators()) {
+      // ask for their candidates
+      const promiseCandidate = this.aggregatorOrderProvider.execute(
+        aggregatorId,
+        aggregatorRequest,
+      );
+      promises.push(promiseCandidate);
+    }
+    // resolve promises and flatten results
+    return flatten(await Promise.all(promises));
+  }
+
+  /**
+   * Compute all the possible candidate path from the origin chain/asset
+   * to the destination chain/asset using all fundamental providers
+   * @private
+   */
+  private async getComputedProviderCandidates(): Promise<CandidatePath[]> {
+    // the entrypoint to the algorithm is to compute all the possible origin swaps,
+    // the function itself then forwards to the next steps(bridge + destinationSwap).
+    // so from this point of view, we only call `originSwap`
+    return this.originSwap();
+  }
+
+  /**
+   * Computes all the possible swaps on the origin chain to
+   * the different bridgeable assets, and forwards to the bridging function
    * @private
    */
   private async originSwap(): Promise<CandidatePath[]> {
@@ -130,7 +175,8 @@ export class PathComputer {
   }
 
   /**
-   * Adds the bridge step to the computed possible paths
+   * For a given swap, it computes all the possible bridging solutions,
+   * then forwards to the destination swap function
    * @private
    */
   private async bridge(
@@ -164,8 +210,8 @@ export class PathComputer {
   }
 
   /**
-   * Iterates over all the possible combinations in order to compute
-   * all the possible destination swaps
+   * For every combination of swap+bridge orders, it computes the possible destination swap
+   * @dev Returns only the possible candidate paths given the whole set of steps
    * @private
    */
   private async destinationSwap(
@@ -195,12 +241,15 @@ export class PathComputer {
     // resolve all promises in order to create the candidates
     return (await Promise.all(promises))
       .map((order) => {
-        // in case no possible swap
         if (order) {
+          // in case there is a possible swap
           return new CandidatePath(originSwap, bridgeOrder, order);
         }
       })
-      .filter((candidate) => candidate !== undefined);
+      .filter((candidate) => {
+        // filters out cases where no destination swap exists
+        return candidate !== undefined;
+      });
   }
 
   /**
@@ -312,5 +361,13 @@ export class PathComputer {
    */
   private getPossibleBridges(): string[] {
     return this.bridgeOrderProvider.getEnabledBridges(this.fromChain, this.toChain);
+  }
+
+  /**
+   * Returns the available aggregators given the origin/destination chain combination
+   * @private
+   */
+  private getPossibleAggregators(): string[] {
+    return this.aggregatorOrderProvider.getEnabledAggregators(this.fromChain, this.toChain);
   }
 }
