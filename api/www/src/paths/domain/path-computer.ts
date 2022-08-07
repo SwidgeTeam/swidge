@@ -20,6 +20,7 @@ import { GasConverter } from '../../shared/domain/GasConverter';
 import { PriceFeed } from '../../shared/domain/PriceFeed';
 import { AggregatorOrderComputer } from '../../aggregators/application/query/aggregator-order-computer';
 import { AggregatorRequest } from '../../aggregators/domain/aggregator-request';
+import { Route } from './route';
 
 export class PathComputer {
   /** Providers */
@@ -110,7 +111,7 @@ export class PathComputer {
    * from the different aggregator providers
    * @private
    */
-  private async getAggregatorsCandidates(): Promise<CandidatePath[]> {
+  private async getAggregatorsCandidates(): Promise<Route[]> {
     const aggregatorRequest = new AggregatorRequest(
       this.fromChain,
       this.toChain,
@@ -122,12 +123,13 @@ export class PathComputer {
     // for every integrated aggregator
     for (const aggregatorId of this.getPossibleAggregators()) {
       // ask for their candidates
-      const promiseCandidate = this.aggregatorOrderProvider.execute(
+      const promiseAggregatorOrder = this.aggregatorOrderProvider.execute(
         aggregatorId,
         aggregatorRequest,
       );
-      promises.push(promiseCandidate);
+      promises.push(promiseAggregatorOrder);
     }
+
     // resolve promises and flatten results
     return flatten(await Promise.all(promises));
   }

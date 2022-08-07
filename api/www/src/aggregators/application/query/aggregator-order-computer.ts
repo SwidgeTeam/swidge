@@ -5,7 +5,7 @@ import { LiFi } from '../../domain/providers/liFi';
 import { AggregatorProviders } from '../../domain/providers/aggregator-providers';
 import { Aggregator } from '../../domain/aggregator';
 import { AggregatorRequest } from '../../domain/aggregator-request';
-import { AggregatorOrder } from '../../domain/aggregator-order';
+import { Route } from '../../../paths/domain/route';
 
 export class AggregatorOrderComputer {
   private readonly liFi: LiFi;
@@ -14,7 +14,7 @@ export class AggregatorOrderComputer {
     this.liFi = LiFi.create();
   }
 
-  public async execute(aggregatorId: string, request: AggregatorRequest): Promise<AggregatorOrder> {
+  public async execute(aggregatorId: string, request: AggregatorRequest): Promise<Route> {
     let aggregator: Aggregator;
     switch (aggregatorId) {
       case AggregatorProviders.LiFi:
