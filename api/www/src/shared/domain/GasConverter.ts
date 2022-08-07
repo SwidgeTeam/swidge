@@ -1,12 +1,12 @@
 import { BigInteger } from './BigInteger';
 
 export class GasConverter {
-  public async convert(
+  public convert(
     gasUnits: BigInteger,
     gasPrice: BigInteger,
     priceOriginCoin: BigInteger,
     priceDestinationCoin: BigInteger,
-  ): Promise<BigInteger> {
+  ): BigInteger {
     // Compute cost in destination Wei
     const feeInDestinationWei = gasPrice.times(gasUnits);
 

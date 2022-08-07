@@ -12,7 +12,7 @@ describe('GasConverter', () => {
     const expectedWei = BigInteger.fromString('3333333333333');
 
     // Act
-    const originWei = await gasConverter.convert(gasUnits, gasPrice, priceOrigin, priceDestination);
+    const originWei = gasConverter.convert(gasUnits, gasPrice, priceOrigin, priceDestination);
 
     // Assert
     expect(originWei).toEqual(expectedWei);

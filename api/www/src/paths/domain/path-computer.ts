@@ -6,12 +6,10 @@ import { Token } from '../../shared/domain/Token';
 import { BigInteger } from '../../shared/domain/BigInteger';
 import { SwapOrder } from '../../swaps/domain/SwapOrder';
 import { BridgingOrder } from '../../bridges/domain/bridging-order';
-import { CandidatePath } from './candidate-path';
 import { TokenDetailsFetcher } from '../../shared/infrastructure/TokenDetailsFetcher';
 import { BridgeOrderComputer } from '../../bridges/application/query/bridge-order-computer';
 import { SwapOrderComputer } from '../../swaps/application/query/swap-order-computer';
 import { BridgingRequest } from '../../bridges/domain/bridging-request';
-import { Path } from './path';
 import { PathNotFound } from './path-not-found';
 import { flatten } from 'lodash';
 import { PriceFeedFetcher } from '../../shared/infrastructure/PriceFeedFetcher';
@@ -20,7 +18,11 @@ import { GasConverter } from '../../shared/domain/GasConverter';
 import { PriceFeed } from '../../shared/domain/PriceFeed';
 import { AggregatorOrderComputer } from '../../aggregators/application/query/aggregator-order-computer';
 import { AggregatorRequest } from '../../aggregators/domain/aggregator-request';
-import { Route } from './route';
+import { Route } from '../../shared/domain/route';
+import { RouteStep } from '../../shared/domain/route-step';
+import { TransactionDetails } from '../../shared/domain/transaction-details';
+import { DeployedAddresses } from '../../shared/DeployedAddresses';
+import { RouterCallEncoder } from '../../shared/domain/RouterCallEncoder';
 
 export class PathComputer {
   /** Providers */
@@ -31,6 +33,7 @@ export class PathComputer {
   private readonly priceFeedFetcher: PriceFeedFetcher;
   private readonly gasPriceFetcher: GasPriceFetcher;
   private readonly gasConverter: GasConverter;
+  private readonly routerCallEncoder: RouterCallEncoder;
   /** Details */
   private readonly bridgingAssets;
   private srcToken: Token;
@@ -43,7 +46,7 @@ export class PathComputer {
   private gasPriceDestination: BigInteger;
   private gasPriceOrigin: BigInteger;
   /** Result */
-  private candidatePaths: CandidatePath[]; // Final candidate paths
+  private routes: Route[];
 
   constructor(
     _swapOrderProvider: SwapOrderComputer,
@@ -60,6 +63,7 @@ export class PathComputer {
     this.priceFeedFetcher = _priceFeedFetcher;
     this.gasPriceFetcher = _gasPriceFetcher;
     this.gasConverter = new GasConverter();
+    this.routerCallEncoder = new RouterCallEncoder();
     this.bridgingAssets = [USDC];
   }
 
@@ -74,36 +78,21 @@ export class PathComputer {
     this.dstToken = await this.tokenDetailsFetcher.fetch(query.dstToken, this.toChain);
     this.amountIn = BigInteger.fromDecimal(query.amountIn, this.srcToken.decimals);
 
-    const promiseComputedCandidates = this.getComputedProviderCandidates();
-    const promiseAggregatorCandidates = this.getAggregatorsCandidates();
-
-    this.candidatePaths = flatten(
-      await Promise.all([promiseComputedCandidates, promiseAggregatorCandidates]),
-    );
-
-    const candidate = this.getBestCandidate();
-
-    if (!candidate) {
-      throw new PathNotFound();
-    }
-
     this.gasPriceOrigin = await this.gasPriceFetcher.fetch(this.fromChain);
     this.gasPriceDestination = await this.gasPriceFetcher.fetch(this.toChain);
     this.priceOriginCoin = await this.priceFeedFetcher.fetch(this.fromChain);
     this.priceDestinationCoin = await this.priceFeedFetcher.fetch(this.toChain);
 
-    const nativeWei = await this.convertDestinationGasIntoOriginNative(candidate.destinationStep);
+    const promiseComputedRoutes = this.getComputedProviderCandidates();
+    const promiseAggregatorRoutes = this.getAggregatorsCandidates();
 
-    return new Path(
-      candidate.originStep,
-      candidate.bridgeStep,
-      candidate.destinationStep,
-      nativeWei,
-      this.gasPriceOrigin,
-      this.gasPriceDestination,
-      this.priceOriginCoin,
-      this.priceDestinationCoin,
-    );
+    this.routes = flatten(await Promise.all([promiseComputedRoutes, promiseAggregatorRoutes]));
+
+    if (this.routes.length === 0) {
+      throw new PathNotFound();
+    }
+
+    return this.routes;
   }
 
   /**
@@ -139,7 +128,7 @@ export class PathComputer {
    * to the destination chain/asset using all fundamental providers
    * @private
    */
-  private async getComputedProviderCandidates(): Promise<CandidatePath[]> {
+  private async getComputedProviderCandidates(): Promise<Route[]> {
     // the entrypoint to the algorithm is to compute all the possible origin swaps,
     // the function itself then forwards to the next steps(bridge + destinationSwap).
     // so from this point of view, we only call `originSwap`
@@ -151,7 +140,7 @@ export class PathComputer {
    * the different bridgeable assets, and forwards to the bridging function
    * @private
    */
-  private async originSwap(): Promise<CandidatePath[]> {
+  private async originSwap(): Promise<Route[]> {
     const promises = [];
     // for every enabled exchange on the origin chain
     for (const exchangeId of this.getPossibleExchanges(this.fromChain)) {
@@ -166,10 +155,10 @@ export class PathComputer {
           bridgeTokenIn,
           this.amountIn,
         );
-        // get the promise of the candidates for this path
-        const candidatesPromise = this.bridge(bridgingAsset, swapOrderPromise);
+        // get the promise of the routes for this path
+        const routesPromise = this.bridge(bridgingAsset, swapOrderPromise);
         // aggregate promises
-        promises.push(candidatesPromise);
+        promises.push(routesPromise);
       }
     }
     // resolve promises and flatten results
@@ -184,7 +173,7 @@ export class PathComputer {
   private async bridge(
     bridgingAsset: string,
     swapOrderPromise: Promise<SwapOrder>,
-  ): Promise<CandidatePath[]> {
+  ): Promise<Route[]> {
     const originSwap = await swapOrderPromise;
     if (!originSwap) {
       return [];
@@ -202,10 +191,10 @@ export class PathComputer {
       }
       // get the promise of the bridge order
       const bridgeOrderPromise = this.getBridgeOrder(bridgeId, bridgingAsset, bridgeAmountIn);
-      // get the promise of the candidates for this path
-      const candidatesPromise = this.destinationSwap(originSwap, bridgeOrderPromise);
+      // get the promise of the possible routes
+      const routesPromise = this.destinationSwap(originSwap, bridgeOrderPromise);
       // aggregate promises
-      promises = promises.concat(candidatesPromise);
+      promises = promises.concat(routesPromise);
     }
     // resolve promises and flatten results
     return flatten(await Promise.all(promises));
@@ -213,13 +202,13 @@ export class PathComputer {
 
   /**
    * For every combination of swap+bridge orders, it computes the possible destination swap
-   * @dev Returns only the possible candidate paths given the whole set of steps
+   * @dev Returns only the possible routes given the whole set of steps
    * @private
    */
   private async destinationSwap(
     originSwap: SwapOrder,
     bridgeOrderPromise: Promise<BridgingOrder>,
-  ): Promise<CandidatePath[]> {
+  ): Promise<Route[]> {
     // wait for the given order bridge to complete
     const bridgeOrder = await bridgeOrderPromise;
     if (!bridgeOrder) {
@@ -240,18 +229,105 @@ export class PathComputer {
       // save the promise
       promises.push(swapOrderPromise);
     }
-    // resolve all promises in order to create the candidates
+    // resolve all promises in order to create the routes
     return (await Promise.all(promises))
       .map((order) => {
         if (order) {
           // in case there is a possible swap
-          return new CandidatePath(originSwap, bridgeOrder, order);
+          return this.createRoute(originSwap, bridgeOrder, order);
         }
       })
       .filter((candidate) => {
         // filters out cases where no destination swap exists
         return candidate !== undefined;
       });
+  }
+
+  /**
+   *
+   * @param originSwap
+   * @param bridge
+   * @param destinationSwap
+   * @private
+   */
+  private createRoute(
+    originSwap: SwapOrder,
+    bridge: BridgingOrder,
+    destinationSwap: SwapOrder,
+  ): Route {
+    // select amount out
+
+    let amountOut;
+    if (destinationSwap.required) {
+      amountOut = destinationSwap.buyAmount.toDecimal(destinationSwap.tokenOut.decimals);
+    } else if (bridge.required) {
+      amountOut = bridge.amountOutDecimal;
+    } else {
+      amountOut = originSwap.buyAmount.toDecimal(originSwap.tokenOut.decimals);
+    }
+
+    // create the required steps of the route
+
+    const steps = [];
+    if (originSwap.required) {
+      const fee = originSwap.estimatedGas
+        .times(this.gasPriceOrigin)
+        .times(this.priceOriginCoin.lastPrice)
+        .div(BigInteger.weiInEther())
+        .toDecimal(this.priceOriginCoin.decimals);
+
+      const name = '';
+      const logo = '';
+      steps.push(RouteStep.swap(name, logo, originSwap.tokenIn, originSwap.tokenOut, fee));
+    }
+
+    if (bridge.required) {
+      const name = '';
+      const logo = '';
+      steps.push(RouteStep.bridge(name, logo, bridge.tokenIn, bridge.tokenOut, bridge.decimalFee));
+    }
+
+    if (destinationSwap.required) {
+      const fee = destinationSwap.estimatedGas
+        .times(this.gasPriceOrigin)
+        .times(this.priceOriginCoin.lastPrice)
+        .div(BigInteger.weiInEther())
+        .toDecimal(this.priceOriginCoin.decimals);
+
+      const name = '';
+      const logo = '';
+      steps.push(
+        RouteStep.swap(name, logo, destinationSwap.tokenIn, destinationSwap.tokenOut, fee),
+      );
+    }
+
+    // create transaction details
+
+    const callData = this.routerCallEncoder.encode(
+      this.amountIn,
+      originSwap,
+      bridge,
+      destinationSwap,
+    );
+
+    const originNativeWeiOfDestinationGas =
+      this.convertDestinationGasIntoOriginNative(destinationSwap);
+
+    let value = originNativeWeiOfDestinationGas;
+
+    if (originSwap.tokenIn.isNative()) {
+      value = originNativeWeiOfDestinationGas.plus(this.amountIn);
+    }
+
+    const transactionDetails = new TransactionDetails(
+      DeployedAddresses.Router,
+      callData,
+      value,
+      BigInteger.fromString('2000000'), // TODO set more accurate
+      this.gasPriceOrigin,
+    );
+
+    return new Route(amountOut, transactionDetails, steps);
   }
 
   /**
@@ -314,33 +390,15 @@ export class PathComputer {
   }
 
   /**
-   * Checks all the candidates to select the most optimal path
+   * Converts the estimated cost of the destination execution into native origin coin
    * @private
    */
-  private getBestCandidate(): CandidatePath {
-    let currentMax = BigInteger.zero();
-    let bestPath: CandidatePath;
-    for (const candidate of this.candidatePaths) {
-      if (candidate.amountOut.greaterThan(currentMax)) {
-        currentMax = candidate.amountOut;
-        bestPath = candidate;
-      }
-    }
-    return bestPath;
-  }
-
-  /**
-   *
-   * @private
-   */
-  private async convertDestinationGasIntoOriginNative(
-    destinationSwap: SwapOrder,
-  ): Promise<BigInteger> {
+  private convertDestinationGasIntoOriginNative(destinationSwap: SwapOrder): BigInteger {
     const fixDestinationGas = BigInteger.zero();
 
     const destinationEstimatedGas = destinationSwap.estimatedGas.plus(fixDestinationGas);
 
-    return await this.gasConverter.convert(
+    return this.gasConverter.convert(
       destinationEstimatedGas,
       this.gasPriceDestination,
       this.priceOriginCoin.lastPrice,
