@@ -3,9 +3,9 @@ import { AggregatorRequest } from '../aggregator-request';
 import LIFI, { Step } from '@lifi/sdk';
 import { Fantom, Polygon } from '../../../shared/enums/ChainIds';
 import { BigInteger } from '../../../shared/domain/BigInteger';
-import { TransactionDetails } from '../../../paths/domain/transaction-details';
-import { Route } from '../../../paths/domain/route';
-import { RouteStep } from '../../../paths/domain/route-step';
+import { TransactionDetails } from '../../../shared/domain/transaction-details';
+import { Route } from '../../../shared/domain/route';
+import { RouteStep } from '../../../shared/domain/route-step';
 import { Token } from '../../../shared/domain/Token';
 
 export class LiFi implements Aggregator {

@@ -5,7 +5,7 @@ import { LiFi } from '../../domain/providers/liFi';
 import { AggregatorProviders } from '../../domain/providers/aggregator-providers';
 import { Aggregator } from '../../domain/aggregator';
 import { AggregatorRequest } from '../../domain/aggregator-request';
-import { Route } from '../../../paths/domain/route';
+import { Route } from '../../../shared/domain/route';
 
 export class AggregatorOrderComputer {
   private readonly liFi: LiFi;
