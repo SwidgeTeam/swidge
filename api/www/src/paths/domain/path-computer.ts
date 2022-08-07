@@ -68,7 +68,7 @@ export class PathComputer {
   }
 
   /**
-   * Computes the candidate paths
+   * Computes the routes
    * @param query
    */
   public async compute(query: GetPathQuery) {
@@ -83,8 +83,8 @@ export class PathComputer {
     this.priceOriginCoin = await this.priceFeedFetcher.fetch(this.fromChain);
     this.priceDestinationCoin = await this.priceFeedFetcher.fetch(this.toChain);
 
-    const promiseComputedRoutes = this.getComputedProviderCandidates();
-    const promiseAggregatorRoutes = this.getAggregatorsCandidates();
+    const promiseComputedRoutes = this.getComputedProviderRoutes();
+    const promiseAggregatorRoutes = this.getAggregatorsRoutes();
 
     this.routes = flatten(await Promise.all([promiseComputedRoutes, promiseAggregatorRoutes]));
 
@@ -96,11 +96,11 @@ export class PathComputer {
   }
 
   /**
-   * Fetches all the possible candidate paths
+   * Fetches all the possible routes
    * from the different aggregator providers
    * @private
    */
-  private async getAggregatorsCandidates(): Promise<Route[]> {
+  private async getAggregatorsRoutes(): Promise<Route[]> {
     const aggregatorRequest = new AggregatorRequest(
       this.fromChain,
       this.toChain,
@@ -111,12 +111,9 @@ export class PathComputer {
     const promises = [];
     // for every integrated aggregator
     for (const aggregatorId of this.getPossibleAggregators()) {
-      // ask for their candidates
-      const promiseAggregatorOrder = this.aggregatorOrderProvider.execute(
-        aggregatorId,
-        aggregatorRequest,
-      );
-      promises.push(promiseAggregatorOrder);
+      // ask for their routes
+      const promiseRoute = this.aggregatorOrderProvider.execute(aggregatorId, aggregatorRequest);
+      promises.push(promiseRoute);
     }
 
     // resolve promises and flatten results
@@ -124,15 +121,52 @@ export class PathComputer {
   }
 
   /**
-   * Compute all the possible candidate path from the origin chain/asset
+   * Compute all the possible routes from the origin chain/asset
    * to the destination chain/asset using all fundamental providers
    * @private
    */
-  private async getComputedProviderCandidates(): Promise<Route[]> {
-    // the entrypoint to the algorithm is to compute all the possible origin swaps,
-    // the function itself then forwards to the next steps(bridge + destinationSwap).
-    // so from this point of view, we only call `originSwap`
-    return this.originSwap();
+  private async getComputedProviderRoutes(): Promise<Route[]> {
+    if (this.fromChain === this.toChain) {
+      return this.singleChainOriginSwap();
+    } else {
+      // the entrypoint to the algorithm is to compute all the possible origin swaps,
+      // the function itself then forwards to the next steps(bridge + destinationSwap).
+      // so from this point of view, we only call `originSwap`
+      return this.multiChainOriginSwap();
+    }
+  }
+
+  /**
+   * Computes all the possible swaps on a single chain
+   * @private
+   */
+  private async singleChainOriginSwap(): Promise<Route[]> {
+    const promises = [];
+    // for every enabled exchange on the origin chain
+    for (const exchangeId of this.getPossibleExchanges(this.fromChain)) {
+      // and create a possible path
+      const swapOrderPromise = this.getSwapOrder(
+        exchangeId,
+        this.fromChain,
+        this.srcToken,
+        this.dstToken,
+        this.amountIn,
+      );
+      // aggregate promises
+      promises.push(swapOrderPromise);
+    }
+    // resolve all promises in order to create the routes
+    return (await Promise.all(promises))
+      .map((order) => {
+        if (order) {
+          // in case there is a possible swap
+          return this.createRoute(order, BridgingOrder.notRequired(), SwapOrder.notRequired());
+        }
+      })
+      .filter((route) => {
+        // filters out cases where no destination swap exists
+        return route !== undefined;
+      });
   }
 
   /**
@@ -140,7 +174,7 @@ export class PathComputer {
    * the different bridgeable assets, and forwards to the bridging function
    * @private
    */
-  private async originSwap(): Promise<Route[]> {
+  private async multiChainOriginSwap(): Promise<Route[]> {
     const promises = [];
     // for every enabled exchange on the origin chain
     for (const exchangeId of this.getPossibleExchanges(this.fromChain)) {
@@ -237,9 +271,9 @@ export class PathComputer {
           return this.createRoute(originSwap, bridgeOrder, order);
         }
       })
-      .filter((candidate) => {
+      .filter((route) => {
         // filters out cases where no destination swap exists
-        return candidate !== undefined;
+        return route !== undefined;
       });
   }
 
