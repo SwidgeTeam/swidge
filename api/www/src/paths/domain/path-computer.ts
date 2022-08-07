@@ -117,7 +117,13 @@ export class PathComputer {
     }
 
     // resolve promises and flatten results
-    return flatten(await Promise.all(promises));
+    try {
+      // valid now that we have only one aggregator, will have to change when adding more
+      return flatten(await Promise.all(promises));
+    } catch (e) {
+      // aggregator has no routes..
+      return [];
+    }
   }
 
   /**

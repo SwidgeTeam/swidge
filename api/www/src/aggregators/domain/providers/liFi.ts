@@ -7,6 +7,7 @@ import { TransactionDetails } from '../../../shared/domain/transaction-details';
 import { Route } from '../../../shared/domain/route';
 import { RouteStep } from '../../../shared/domain/route-step';
 import { Token } from '../../../shared/domain/Token';
+import { InsufficientLiquidity } from '../../../swaps/domain/InsufficientLiquidity';
 
 export class LiFi implements Aggregator {
   private enabledChains: string[];
@@ -30,26 +31,34 @@ export class LiFi implements Aggregator {
    * @param request
    */
   async execute(request: AggregatorRequest): Promise<Route> {
-    const response = await this.client.getQuote({
-      fromChain: request.fromChain,
-      fromToken: request.fromToken.address,
-      toChain: request.toChain,
-      toToken: request.toToken.address,
-      fromAmount: request.amountIn.toString(),
-      fromAddress: '0x0000000000000000000000000000000000000000',
-    });
+    try {
+      const response = await this.client.getQuote({
+        fromChain: request.fromChain,
+        fromToken: request.fromToken.address,
+        toChain: request.toChain,
+        toToken: request.toToken.address,
+        fromAmount: request.amountIn.toString(),
+        fromAddress: '0x0000000000000000000000000000000000000000',
+      });
 
-    const transactionDetails = new TransactionDetails(
-      response.transactionRequest.to,
-      response.transactionRequest.data.toString(),
-      BigInteger.fromString(response.transactionRequest.value.toString()),
-      BigInteger.fromString(response.transactionRequest.gasLimit.toString()),
-      BigInteger.fromString(response.transactionRequest.gasPrice.toString()),
-    );
+      const transactionDetails = new TransactionDetails(
+        response.transactionRequest.to,
+        response.transactionRequest.data.toString(),
+        BigInteger.fromString(response.transactionRequest.value.toString()),
+        BigInteger.fromString(response.transactionRequest.gasLimit.toString()),
+        BigInteger.fromString(response.transactionRequest.gasPrice.toString()),
+      );
 
-    const steps = this.createSteps(response);
+      const steps = this.createSteps(response);
 
-    return new Route(BigInteger.fromString(response.estimate.toAmount), transactionDetails, steps);
+      return new Route(
+        BigInteger.fromString(response.estimate.toAmount),
+        transactionDetails,
+        steps,
+      );
+    } catch (e) {
+      throw new InsufficientLiquidity();
+    }
   }
 
   /**
