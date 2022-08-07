@@ -24,6 +24,7 @@ import { PriceFeedFetcher } from '../../../../src/shared/infrastructure/PriceFee
 import { GasPriceFetcher } from '../../../../src/shared/infrastructure/GasPriceFetcher';
 import { Sushiswap } from '../../../../src/swaps/domain/providers/sushiswap';
 import { PriceFeed } from '../../../../src/shared/domain/PriceFeed';
+import { AggregatorOrderComputer } from '../../../../src/aggregators/application/query/aggregator-order-computer';
 
 describe('path-computer', () => {
   it('should compute a single path', async () => {
@@ -70,11 +71,13 @@ describe('path-computer', () => {
       mockSushiRepository,
     );
     const bridgeOrderComputer = new BridgeOrderComputer(myHttpClient, myCachedHttpClient);
+    const aggregatorOrderComputer = new AggregatorOrderComputer(myHttpClient);
 
     // create computer
     const pathComputer = new PathComputer(
       swapOrderComputer,
       bridgeOrderComputer,
+      aggregatorOrderComputer,
       fetcher,
       priceFeedFetcher,
       gasPriceFetcher,

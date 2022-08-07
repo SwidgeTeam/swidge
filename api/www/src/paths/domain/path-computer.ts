@@ -18,11 +18,13 @@ import { PriceFeedFetcher } from '../../shared/infrastructure/PriceFeedFetcher';
 import { GasPriceFetcher } from '../../shared/infrastructure/GasPriceFetcher';
 import { GasConverter } from '../../shared/domain/GasConverter';
 import { PriceFeed } from '../../shared/domain/PriceFeed';
+import { AggregatorOrderComputer } from '../../aggregators/application/query/aggregator-order-computer';
 
 export class PathComputer {
   /** Providers */
   private readonly swapOrderProvider: SwapOrderComputer;
   private readonly bridgeOrderProvider: BridgeOrderComputer;
+  private readonly aggregatorOrderProvider: AggregatorOrderComputer;
   private readonly tokenDetailsFetcher: TokenDetailsFetcher;
   private readonly priceFeedFetcher: PriceFeedFetcher;
   private readonly gasPriceFetcher: GasPriceFetcher;
@@ -44,12 +46,14 @@ export class PathComputer {
   constructor(
     _swapOrderProvider: SwapOrderComputer,
     _bridgeOrderProvider: BridgeOrderComputer,
+    _aggregatorOrderProvider: AggregatorOrderComputer,
     _tokenDetailsFetcher: TokenDetailsFetcher,
     _priceFeedFetcher: PriceFeedFetcher,
     _gasPriceFetcher: GasPriceFetcher,
   ) {
     this.swapOrderProvider = _swapOrderProvider;
     this.bridgeOrderProvider = _bridgeOrderProvider;
+    this.aggregatorOrderProvider = _aggregatorOrderProvider;
     this.tokenDetailsFetcher = _tokenDetailsFetcher;
     this.priceFeedFetcher = _priceFeedFetcher;
     this.gasPriceFetcher = _gasPriceFetcher;

@@ -12,6 +12,7 @@ import { GasPriceFetcher } from '../../../../../src/shared/infrastructure/GasPri
 import { BigInteger } from '../../../../../src/shared/domain/BigInteger';
 import { PriceFeed } from '../../../../../src/shared/domain/PriceFeed';
 import { Fantom, Polygon } from '../../../../../src/shared/enums/ChainIds';
+import { AggregatorOrderComputer } from '../../../../../src/aggregators/application/query/aggregator-order-computer';
 
 describe('get path', () => {
   it('should return error if invalid first swap', async () => {
@@ -21,6 +22,9 @@ describe('get path', () => {
       getEnabledExchanged: () => [1],
     });
     const mockBridgeProvider = createMock<BridgeOrderComputer>({
+      execute: () => null,
+    });
+    const mockAggregatorProvider = createMock<AggregatorOrderComputer>({
       execute: () => null,
     });
     const mockTokenDetailsFetcher = createMock<TokenDetailsFetcher>({
@@ -41,6 +45,7 @@ describe('get path', () => {
     const handler = new GetPathHandler(
       mockSwapProvider,
       mockBridgeProvider,
+      mockAggregatorProvider,
       mockTokenDetailsFetcher,
       priceFeedFetcher,
       gasPriceFetcher,

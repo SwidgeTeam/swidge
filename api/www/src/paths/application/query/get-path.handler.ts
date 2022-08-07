@@ -16,6 +16,7 @@ import { PriceFeedFetcher } from '../../../shared/infrastructure/PriceFeedFetche
 import { GasPriceFetcher } from '../../../shared/infrastructure/GasPriceFetcher';
 import { PriceFeed } from '../../../shared/domain/PriceFeed';
 import { PathNotFound } from '../../domain/path-not-found';
+import { AggregatorOrderComputer } from '../../../aggregators/application/query/aggregator-order-computer';
 
 @QueryHandler(GetPathQuery)
 export class GetPathHandler implements IQueryHandler<GetPathQuery> {
@@ -24,6 +25,7 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
   constructor(
     private readonly swapOrderProvider: SwapOrderComputer,
     private readonly bridgeOrderProvider: BridgeOrderComputer,
+    private readonly aggregatorOrderProvider: AggregatorOrderComputer,
     @Inject(Class.TokenDetailsFetcher) private readonly tokenDetailsFetcher: TokenDetailsFetcher,
     @Inject(Class.PriceFeedFetcher) private readonly priceFeedFetcher: PriceFeedFetcher,
     @Inject(Class.GasPriceFetcher) private readonly gasPriceFetcher: GasPriceFetcher,
@@ -31,6 +33,7 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
     this.pathComputer = new PathComputer(
       swapOrderProvider,
       bridgeOrderProvider,
+      aggregatorOrderProvider,
       tokenDetailsFetcher,
       priceFeedFetcher,
       gasPriceFetcher,
