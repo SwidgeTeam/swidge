@@ -11,7 +11,7 @@ export class AggregatorOrderComputer {
   private readonly liFi: LiFi;
 
   constructor(@Inject(Class.HttpClient) private readonly httpClient: HttpClient) {
-    this.liFi = LiFi.create(this.httpClient);
+    this.liFi = LiFi.create();
   }
 
   public async execute(aggregatorId: string, request: AggregatorRequest): Promise<AggregatorOrder> {

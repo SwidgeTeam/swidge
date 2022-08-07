@@ -1,10 +1,13 @@
+import { BigInteger } from '../../shared/domain/BigInteger';
+import { Token } from '../../shared/domain/Token';
+
 export class AggregatorRequest {
   constructor(
-    private readonly _fromChain,
-    private readonly _toChain,
-    private readonly _fromToken,
-    private readonly _toToken,
-    private readonly _amountIn,
+    private readonly _fromChain: string,
+    private readonly _toChain: string,
+    private readonly _fromToken: Token,
+    private readonly _toToken: Token,
+    private readonly _amountIn: BigInteger,
   ) {}
 
   get fromChain() {
