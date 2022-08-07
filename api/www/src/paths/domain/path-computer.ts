@@ -291,13 +291,13 @@ export class PathComputer {
   ): Route {
     // select amount out
 
-    let amountOut;
+    let amountOut: BigInteger;
     if (destinationSwap.required) {
-      amountOut = destinationSwap.buyAmount.toDecimal(destinationSwap.tokenOut.decimals);
+      amountOut = destinationSwap.buyAmount;
     } else if (bridge.required) {
-      amountOut = bridge.amountOutDecimal;
+      amountOut = bridge.amountOut;
     } else {
-      amountOut = originSwap.buyAmount.toDecimal(originSwap.tokenOut.decimals);
+      amountOut = originSwap.buyAmount;
     }
 
     // create the required steps of the route

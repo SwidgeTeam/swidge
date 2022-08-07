@@ -9,8 +9,9 @@ export class Route {
     private readonly _steps: RouteStep[],
   ) {}
 
-  get amountOut(): BigInteger {
-    return this._amountOut;
+  get amountOut(): string {
+    const lastStep = this._steps[this._steps.length - 1];
+    return this._amountOut.toDecimal(lastStep.tokenOut.decimals);
   }
 
   get transactionDetails(): TransactionDetails {

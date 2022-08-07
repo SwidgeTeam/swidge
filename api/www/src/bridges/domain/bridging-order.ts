@@ -61,14 +61,6 @@ export class BridgingOrder {
     return convertedAmount.minus(bridgingFee);
   }
 
-  get amountOutDecimal(): string {
-    if (this._required) {
-      return this.amountOut.toDecimal(this._tokenOut.decimals);
-    } else {
-      return '';
-    }
-  }
-
   get fee(): BigInteger {
     const convertedAmount = this._amountIn.convertDecimalsFromTo(
       this._tokenIn.decimals,

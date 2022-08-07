@@ -36,7 +36,7 @@ export class GetPathController {
         gasLimit: route.transactionDetails.gasLimit.toString(),
         gasPrice: route.transactionDetails.gasPrice.toString(),
       },
-      amountOut: route.amountOut.toString(),
+      amountOut: route.amountOut,
       steps: route.steps.map((step) => {
         return {
           type: step.type,
