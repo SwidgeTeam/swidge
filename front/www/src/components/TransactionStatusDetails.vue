@@ -18,8 +18,12 @@ defineProps<{
                         class='tooltip rounded-xl shadow-lg p-1 bg-[#31313E] text-white text-sm font-light absolute border border-cyan-700 -bottom-6 -left-20 px-2'>{{
                             tokenName
                         }}</span>
-                    <TokenLogo  :src="tokenLogo"/>
-                    <ChainLogo  :src="chainLogo"/>
+                    <TokenLogo  
+                        :src="tokenLogo"
+                    />
+                    <ChainLogo  
+                        :src="chainLogo"
+                    />
                 </div>
                 <div class="flex justify-center pt-5">{{ amount }}</div>
 </template>
