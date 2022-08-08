@@ -55,7 +55,7 @@ const loadData = async () => {
  * Format date
  * @param timestamp
  */
-const transformDate = (timestamp: number) => {
+const transformDate = (timestamp: string) => {
     const date = new Date(timestamp)
     const year = date.getFullYear()
     const month = date.getMonth()
