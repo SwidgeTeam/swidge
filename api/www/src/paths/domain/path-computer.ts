@@ -25,6 +25,7 @@ import { DeployedAddresses } from '../../shared/DeployedAddresses';
 import { RouterCallEncoder } from '../../shared/domain/router-call-encoder';
 import { BridgeDetails, BridgeProviders } from '../../bridges/domain/providers/bridge-providers';
 import { ExchangeDetails } from '../../swaps/domain/providers/exchange-providers';
+import { OrderStrategy } from './route-order-strategy/order-strategy';
 
 export class PathComputer {
   /** Providers */
@@ -47,8 +48,6 @@ export class PathComputer {
   private priceDestinationCoin: PriceFeed;
   private gasPriceDestination: BigInteger;
   private gasPriceOrigin: BigInteger;
-  /** Result */
-  private routes: Route[];
 
   constructor(
     _swapOrderProvider: SwapOrderComputer,
@@ -88,13 +87,15 @@ export class PathComputer {
     const promiseComputedRoutes = this.getComputedProviderRoutes();
     const promiseAggregatorRoutes = this.getAggregatorsRoutes();
 
-    this.routes = flatten(await Promise.all([promiseComputedRoutes, promiseAggregatorRoutes]));
+    const routes = flatten(await Promise.all([promiseComputedRoutes, promiseAggregatorRoutes]));
 
-    if (this.routes.length === 0) {
+    if (routes.length === 0) {
       throw new PathNotFound();
     }
 
-    return this.routes;
+    const orderStrategy = OrderStrategy.get(OrderStrategy.HIGHEST_RETURN);
+
+    return orderStrategy.order(routes);
   }
 
   /**
