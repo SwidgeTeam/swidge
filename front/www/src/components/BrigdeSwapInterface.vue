@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import ModalNetworkAndTokenSelect from './ModalNetworkAndTokenSelect.vue'
-import GetQuoteResponse from '@/api/models/get-quote-response'
-import { RouterCaller, RouterCallPayload } from '@/contracts/routerCaller'
+import { RouterCaller } from '@/contracts/routerCaller'
 import { useWeb3Store } from '@/store/web3'
-import { BigNumber, ethers, providers } from 'ethers'
+import { ethers, providers } from 'ethers'
 import ModalSwidgeStatus from './ModalSwidgeStatus.vue'
 import { TransactionSteps } from '@/models/TransactionSteps'
 import IToken from '@/domain/tokens/IToken'
 import { useTokensStore } from '@/store/tokens'
 import { usePathsStore } from '@/store/paths'
 import SwapBox from '@/components/SwapBox.vue'
+import Route from '@/domain/paths/path'
 
 const web3Store = useWeb3Store()
 const tokensStore = useTokensStore()
@@ -208,14 +208,13 @@ const onQuote = async () => {
             amount: sourceTokenAmount.value.toString(),
         })
 
-        const path = transactionStore.getPath
-        destinationTokenAmount.value = path.amountOut
+        const route = transactionStore.getPath
+
+        destinationTokenAmount.value = route.amountOut
         isGettingQuote.value = false
-        totalFee.value = (
-            Number(path.originSwap.fee) +
-            Number(path.bridge.fee) +
-            Number(path.destinationSwap.fee)
-        ).toFixed(2).toString()
+        totalFee.value = route.steps.reduce((total, current) => {
+            return total + Number(current.fee)
+        }, 0).toFixed(2).toString()
 
         if (
             Number(sourceTokenAmount.value) > Number(sourceTokenMaxAmount.value)
@@ -249,41 +248,14 @@ const onExecuteTransaction = async () => {
     if (!originToken) {
         throw new Error('Undefined origin token')
     }
-    const path = transactionStore.getPath
-    if (!path) {
+    const route = transactionStore.getPath
+    if (!route) {
         throw new Error('No path')
-    }
-    const amountIn = ethers.utils.parseUnits(
-        sourceTokenAmount.value,
-        originToken.decimals
-    )
-    const contractCallPayload: RouterCallPayload = {
-        router: path.router,
-        amountIn: amountIn,
-        destinationFee: BigNumber.from(path.destinationFee),
-        originSwap: {
-            providerCode: path.originSwap.code,
-            tokenIn: path.originSwap.tokenIn.address,
-            tokenOut: path.originSwap.tokenOut.address,
-            data: path.originSwap.data,
-            required: path.originSwap.required,
-            estimatedGas: path.originSwap.estimatedGas,
-        },
-        bridge: {
-            toChainId: path.bridge.toChainId,
-            tokenIn: path.bridge.tokenIn.address,
-            data: path.bridge.data,
-            required: path.bridge.required,
-        },
-        destinationSwap: {
-            tokenIn: path.destinationSwap.tokenIn.address,
-            tokenOut: path.destinationSwap.tokenOut.address,
-        },
     }
 
     setExecutingButton()
 
-    const contractCall = await RouterCaller.call(contractCallPayload)
+    const contractCall = await RouterCaller.call(route.tx)
 
     openTransactionStatusModal()
 
@@ -292,7 +264,7 @@ const onExecuteTransaction = async () => {
         .then(async (receipt: { transactionHash: string }) => {
             steps.value.origin.completed = true
             if (isCrossTransaction()) {
-                setUpEventListener(path, receipt.transactionHash)
+                setUpEventListener(route, receipt.transactionHash)
             } else {
                 steps.value.completed = true
             }
@@ -328,11 +300,12 @@ const unsetExecutingButton = () => {
  * @param path
  * @param executedTxHash
  */
-const setUpEventListener = (path: GetQuoteResponse, executedTxHash: string) => {
-    const provider = getChainProvider(path.bridge.toChainId)
+const setUpEventListener = (path: Route, executedTxHash: string) => {
+    const toChainId = tokensStore.getDestinationChainId
+    const provider = getChainProvider(toChainId)
 
     const filter = {
-        address: path.router,
+        address: path.tx.to,
         topics: [ethers.utils.id('CrossFinalized(bytes32,uint256)')],
     }
 
@@ -357,8 +330,8 @@ const setUpEventListener = (path: GetQuoteResponse, executedTxHash: string) => {
  * Opens the transaction status modal after an executed transaction
  */
 const openTransactionStatusModal = () => {
-    const path = transactionStore.getPath
-    if (!path) {
+    const route = transactionStore.getPath
+    if (!route) {
         throw new Error('No path')
     }
     steps.value.origin.tokenIn = path.originSwap.tokenIn.name

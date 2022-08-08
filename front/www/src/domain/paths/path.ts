@@ -12,7 +12,7 @@ interface RouteStep {
     fee: string
 }
 
-interface TransactionDetails {
+export interface TransactionDetails {
     to: string
     callData: string
     value: string
