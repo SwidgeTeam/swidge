@@ -22,7 +22,7 @@ defineProps<{
     </div>
     <div
         class="flex justify-center pt-5"
-        :class="Number(amount) === 0 ? 'blur' : ''"
+        :class="amount === '0' ? 'blur' : ''"
     >{{ amount }}
     </div>
 </template>
