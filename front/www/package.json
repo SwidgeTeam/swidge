@@ -1,5 +1,5 @@
 {
-	"name": "@melggit/webapp",
+	"name": "swidge-webapp",
 	"description": "Swidge Webapp",
 	"version": "0.1.0",
 	"main": "src/main.ts",
@@ -15,7 +15,7 @@
 		"blockchain",
 		"dapp"
 	],
-	"author": "Mel Grosser",
+	"author": "Swidge",
 	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/zynth17/vitailse/issues"
