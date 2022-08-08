@@ -11,4 +11,5 @@ export interface Transaction {
     srcAsset: string
     dstAsset: string
     amountIn: string
+    amountOut: string
 }

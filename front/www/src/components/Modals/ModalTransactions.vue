@@ -148,7 +148,7 @@ const formattedAmount = (chainId: string, address: string, amount: string): stri
                 :chain-logo-in="getChainIcon(tx.fromChain)"
                 :chain-logo-out="getChainIcon(tx.toChain)"
                 :amount-in="formattedAmount(tx.fromChain, tx.srcAsset, tx.amountIn)"
-                :amount-out="formattedAmount(tx.toChain, tx.dstAsset, tx.amountIn)"
+                :amount-out="formattedAmount(tx.toChain, tx.dstAsset, tx.amountOut)"
                 :token-name-in="getTokenName(tx.fromChain,tx.srcAsset)"
                 :token-name-out="getTokenName(tx.toChain,tx.dstAsset)"
             />
