@@ -2,8 +2,6 @@
 import ProcessingLabel from './ProcessingLabel.vue'
 import CompletedLabel from './CompletedLabel.vue'
 import StatusArrow from './svg/StatusArrow.vue';
-import TokenLogo from './TokenLogo.vue';
-import ChainLogo from './ChainLogo.vue';
 import TransactionStatusDetails from './TransactionStatusDetails.vue'
 
 const STATUS_PROCESSING = 'ongoing'

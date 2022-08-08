@@ -19,10 +19,10 @@ defineProps<{
                             tokenName
                         }}</span>
                     <TokenLogo  
-                        :src="tokenLogo"
+                        :tokenLogo="tokenLogo"
                     />
                     <ChainLogo  
-                        :src="chainLogo"
+                        :chainLogo="chainLogo"
                     />
                 </div>
                 <div class="flex justify-center pt-5">{{ amount }}</div>
