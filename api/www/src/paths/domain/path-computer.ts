@@ -23,6 +23,8 @@ import { RouteStep } from '../../shared/domain/route-step';
 import { TransactionDetails } from '../../shared/domain/transaction-details';
 import { DeployedAddresses } from '../../shared/DeployedAddresses';
 import { RouterCallEncoder } from '../../shared/domain/router-call-encoder';
+import { BridgeDetails, BridgeProviders } from '../../bridges/domain/providers/bridge-providers';
+import { ExchangeDetails } from '../../swaps/domain/providers/exchange-providers';
 
 export class PathComputer {
   /** Providers */
@@ -316,15 +318,13 @@ export class PathComputer {
         .div(BigInteger.weiInEther())
         .toDecimal(this.priceOriginCoin.decimals);
 
-      const name = '';
-      const logo = '';
-      steps.push(RouteStep.swap(name, logo, originSwap.tokenIn, originSwap.tokenOut, fee));
+      const details = ExchangeDetails.get(originSwap.providerCode);
+      steps.push(RouteStep.swap(details, originSwap.tokenIn, originSwap.tokenOut, fee));
     }
 
     if (bridge.required) {
-      const name = '';
-      const logo = '';
-      steps.push(RouteStep.bridge(name, logo, bridge.tokenIn, bridge.tokenOut, bridge.decimalFee));
+      const details = BridgeDetails.get(BridgeProviders.Multichain);
+      steps.push(RouteStep.bridge(details, bridge.tokenIn, bridge.tokenOut, bridge.decimalFee));
     }
 
     if (destinationSwap.required) {
@@ -334,11 +334,8 @@ export class PathComputer {
         .div(BigInteger.weiInEther())
         .toDecimal(this.priceOriginCoin.decimals);
 
-      const name = '';
-      const logo = '';
-      steps.push(
-        RouteStep.swap(name, logo, destinationSwap.tokenIn, destinationSwap.tokenOut, fee),
-      );
+      const details = ExchangeDetails.get(originSwap.providerCode);
+      steps.push(RouteStep.swap(details, destinationSwap.tokenIn, destinationSwap.tokenOut, fee));
     }
 
     // create transaction details

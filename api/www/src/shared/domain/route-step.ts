@@ -1,33 +1,31 @@
 import { Token } from './Token';
+import { ProviderDetails } from './provider-details';
 
 export class RouteStep {
   public static TYPE_SWAP = 'swap';
   public static TYPE_BRIDGE = 'bridge';
 
   public static swap(
-    name: string,
-    logo: string,
+    providerDetails: ProviderDetails,
     tokenIn: Token,
     tokenOut: Token,
     feeInUSD: string,
   ) {
-    return new RouteStep(RouteStep.TYPE_SWAP, name, logo, tokenIn, tokenOut, feeInUSD);
+    return new RouteStep(RouteStep.TYPE_SWAP, providerDetails, tokenIn, tokenOut, feeInUSD);
   }
 
   public static bridge(
-    name: string,
-    logo: string,
+    providerDetails: ProviderDetails,
     tokenIn: Token,
     tokenOut: Token,
     feeInUSD: string,
   ) {
-    return new RouteStep(RouteStep.TYPE_BRIDGE, name, logo, tokenIn, tokenOut, feeInUSD);
+    return new RouteStep(RouteStep.TYPE_BRIDGE, providerDetails, tokenIn, tokenOut, feeInUSD);
   }
 
   constructor(
     private readonly _type: string,
-    private readonly _name: string,
-    private readonly _logo: string,
+    private readonly _providerDetails: ProviderDetails,
     private readonly _tokenIn: Token,
     private readonly _tokenOut: Token,
     private readonly _feeInUSD: string,
@@ -38,11 +36,11 @@ export class RouteStep {
   }
 
   get name(): string {
-    return this._name;
+    return this._providerDetails.name;
   }
 
   get logo(): string {
-    return this._logo;
+    return this._providerDetails.logo;
   }
 
   get tokenIn(): Token {

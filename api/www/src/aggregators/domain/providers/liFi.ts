@@ -8,6 +8,7 @@ import { Route } from '../../../shared/domain/route';
 import { RouteStep } from '../../../shared/domain/route-step';
 import { Token } from '../../../shared/domain/Token';
 import { InsufficientLiquidity } from '../../../swaps/domain/InsufficientLiquidity';
+import { ProviderDetails } from '../../../shared/domain/provider-details';
 
 export class LiFi implements Aggregator {
   private enabledChains: string[];
@@ -126,13 +127,8 @@ export class LiFi implements Aggregator {
         break;
     }
 
-    return new RouteStep(
-      type,
-      step.toolDetails.name,
-      step.toolDetails.logoURI,
-      fromToken,
-      toToken,
-      feeInUSD.toString(),
-    );
+    const details = new ProviderDetails(step.toolDetails.name, step.toolDetails.logoURI);
+
+    return new RouteStep(type, details, fromToken, toToken, feeInUSD.toString());
   }
 }
