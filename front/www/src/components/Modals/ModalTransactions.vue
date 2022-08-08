@@ -119,7 +119,7 @@ const getTokenIcon = (chainId: string, address: string): string => {
  */
 const formattedAmount = (chainId: string, address: string, amount: string): string => {
     const token = getToken(chainId, address)
-    return token
+    return token && amount
         ? ethers.utils.formatUnits(amount, token.decimals)
         : '0'
 }
