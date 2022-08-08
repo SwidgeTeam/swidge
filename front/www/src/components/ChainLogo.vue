@@ -1,6 +1,6 @@
 <script setup lang="ts">
 defineProps<{
-    ChainLogo: string
+    chainLogo: string
 }>()
 
 </script>
@@ -8,6 +8,6 @@ defineProps<{
 <template>
 <img
         style="width: 48px; height: 48px"
-        :src="ChainLogo"
+        :src="chainLogo"
         class="rounded-full scale-75 absolute -right-6 -top-6 shadow-lg shadow-black"/>
 </template>

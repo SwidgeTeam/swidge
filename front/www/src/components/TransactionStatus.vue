@@ -4,6 +4,7 @@ import CompletedLabel from './CompletedLabel.vue'
 import StatusArrow from './svg/StatusArrow.vue';
 import TokenLogo from './TokenLogo.vue';
 import ChainLogo from './ChainLogo.vue';
+import TransactionStatusDetails from './TransactionStatusDetails.vue'
 
 const STATUS_PROCESSING = 'ongoing'
 const STATUS_COMPLETED = 'completed'
@@ -34,29 +35,25 @@ defineProps<{
         <div
             class="grid grid-cols-3 gap-2 flex flex-wrap justify-between grid-flow-col auto-cols-max w-full mx-16 pt-4">
             <div class="w-full grid place-content-center p-2">
-                <div class="relative scale-100 has-tooltip">
-                    <span
-                        class='tooltip rounded-xl shadow-lg p-1 bg-[#31313E] text-white text-sm font-light absolute border border-cyan-700 -bottom-6 -left-20 px-2'>{{
-                            tokenNameIn
-                        }}</span>
-                    <TokenLogo  :src="tokenLogoIn"/>
-                    <ChainLogo  :src="chainLogoIn"/>
-                </div>
-                <div class="flex justify-center pt-5">{{ amountIn }}</div>
+                <TransactionStatusDetails 
+                :amount="amountIn"
+                :tokenName="tokenNameIn"
+                :tokenLogo="tokenLogoIn"
+                :chainLogo="chainLogoIn"
+            />
             </div>
             <div class="grid place-content-center w-full object-center mb-12">
                 <StatusArrow />
             </div>
-            <div class="w-full grid place-content-center p-2 relative">
+            <div class="w-full grid place-content-center p-2">
                 <div class="relative scale-100 has-tooltip">
-                    <span
-                        class='tooltip rounded-xl shadow-lg p-1 bg-[#31313E] text-white text-sm font-light absolute border border-cyan-700 -bottom-6 -left-20 px-2'>{{
-                            tokenNameOut
-                        }}</span>
-                    <TokenLogo  :src="tokenLogoOut"/>
-                    <ChainLogo  :src="chainLogoOut"/>
-                </div>
-                <div class="flex justify-center pt-5">{{ amountOut }}</div>
+                <TransactionStatusDetails 
+                :amount="amountOut"
+                :tokenName="tokenNameOut"
+                :tokenLogo="tokenLogoOut"
+                :chainLogo="chainLogoOut"
+                />
+            </div>
             </div>
         </div>
     </div>
