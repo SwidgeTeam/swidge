@@ -4,7 +4,7 @@ import {XIcon} from '@heroicons/vue/solid'
 import { Networks } from '@/domain/chains/Networks'
 
 defineProps<{
-  isModalOpen: boolean
+  isNetworkModalOpen: boolean
 }>()
 
 const emits = defineEmits<{
@@ -32,7 +32,7 @@ const getNetworks = () => {
 <template>
   <TransitionRoot
     as="template"
-    :show="isModalOpen"
+    :show="isNetworkModalOpen"
   >
     <Dialog
       as="div"

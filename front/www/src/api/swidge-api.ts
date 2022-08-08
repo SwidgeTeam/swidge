@@ -1,17 +1,18 @@
-import axios from 'axios';
-import HttpClient from './http-base-client';
-import { indexedErrors } from './models/get-quote-error';
-import GetQuoteRequest from './models/get-quote-request';
-import GetQuoteResponse from './models/get-quote-response';
-import { ApiErrorResponse } from "@/api/models/ApiErrorResponse";
-import { TokenList } from '@/domain/tokens/TokenList';
-import IToken from '@/domain/tokens/IToken';
-import { Networks } from '@/domain/chains/Networks';
-import Path from '@/domain/paths/path';
+import axios from 'axios'
+import HttpClient from './http-base-client'
+import { indexedErrors } from './models/get-quote-error'
+import GetQuoteRequest from './models/get-quote-request'
+import GetQuoteResponse from './models/get-quote-response'
+import { ApiErrorResponse } from '@/api/models/ApiErrorResponse'
+import { TransactionsList } from '@/api/models/transactions'
+import { TokenList } from '@/domain/tokens/TokenList'
+import IToken from '@/domain/tokens/IToken'
+import { Networks } from '@/domain/chains/Networks'
+import Path from '@/domain/paths/path'
 
 class SwidgeAPI extends HttpClient {
     public constructor() {
-        super(import.meta.env.VITE_APP_API_HOST);
+        super(import.meta.env.VITE_APP_API_HOST)
     }
 
     public async fetchTokens(): Promise<IToken[]> {
@@ -79,10 +80,23 @@ class SwidgeAPI extends HttpClient {
                 const errorMessage = indexedErrors[getQuoteErrorResponse.message] ?? 'Unhandled error!'
                 throw new Error(errorMessage)
             }
-            throw new Error('UnknowError no axios error')
+            throw new Error('UnknownError no axios error')
+        }
+    }
+
+    public async getTransactions(walletAddress: string): Promise<TransactionsList> {
+        try {
+            const response = await this.instance.get(`/transactions/${walletAddress}`)
+            return response.data
+        } catch (e: unknown) {
+            if (axios.isAxiosError(e)) {
+                const apiErrorResponse = e.response?.data as ApiErrorResponse
+                const errorMessage = apiErrorResponse.message ?? 'Unhandled error!'
+                throw new Error(errorMessage)
+            }
+            throw new Error('UnknownError no axios error')
         }
     }
 }
 
-// TODO: Let's see if worth it to expose just one instance of the API
 export default new SwidgeAPI()
