@@ -8,7 +8,7 @@ import { TransactionsList } from '@/api/models/transactions'
 import { TokenList } from '@/domain/tokens/TokenList'
 import IToken from '@/domain/tokens/IToken'
 import { Networks } from '@/domain/chains/Networks'
-import Path from '@/domain/paths/path'
+import Route from '@/domain/paths/path'
 
 class SwidgeAPI extends HttpClient {
     public constructor() {
@@ -40,40 +40,32 @@ class SwidgeAPI extends HttpClient {
         }
     }
 
-    public async getQuote(getQuotePayload: GetQuoteRequest): Promise<Path> {
+    public async getQuote(getQuotePayload: GetQuoteRequest): Promise<Route[]> {
         try {
             const response = await this.instance.get<GetQuoteResponse>('/path', { params: getQuotePayload })
             const r = response.data
-            return {
-                router: r.router,
-                amountOut: r.amountOut,
-                destinationFee: r.destinationFee,
-                originSwap: {
-                    code: r.originSwap.code,
-                    tokenIn: r.originSwap.tokenIn,
-                    tokenOut: r.originSwap.tokenOut,
-                    data: r.originSwap.data,
-                    amountOut: r.originSwap.amountOut,
-                    required: r.originSwap.required,
-                    estimatedGas: r.originSwap.estimatedGas,
-                    fee: r.originSwap.fee,
-                },
-                bridge: {
-                    tokenIn: r.bridge.tokenIn,
-                    tokenOut: r.bridge.tokenOut,
-                    toChainId: r.bridge.toChainId,
-                    data: r.bridge.data,
-                    required: r.bridge.required,
-                    amountOut: r.bridge.amountOut,
-                    fee: r.bridge.fee,
-                },
-                destinationSwap: {
-                    tokenIn: r.destinationSwap.tokenIn,
-                    tokenOut: r.destinationSwap.tokenOut,
-                    required: r.destinationSwap.required,
-                    fee: r.destinationSwap.fee,
+            return r.routes.map((route) => {
+                return {
+                    amountOut: route.amountOut.toString(),
+                    tx: {
+                        to: route.tx.to,
+                        callData: route.tx.callData,
+                        value: route.tx.value,
+                        gasLimit: route.tx.gasLimit,
+                        gasPrice: route.tx.gasPrice,
+                    },
+                    steps: route.steps.map((step) => {
+                        return {
+                            type: step.type,
+                            name: step.name,
+                            logo: step.logo,
+                            tokenIn: step.tokenIn,
+                            tokenOut: step.tokenOut,
+                            fee: step.fee,
+                        }
+                    })
                 }
-            }
+            })
         } catch (e: unknown) {
             if (axios.isAxiosError(e)) {
                 const getQuoteErrorResponse = e.response?.data as ApiErrorResponse

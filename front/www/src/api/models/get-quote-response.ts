@@ -1,35 +1,31 @@
-interface TokenDetails {
+interface TokenDetailsJson {
     name: string,
     address: string,
 }
 
+interface RouteStepJson {
+    type: string
+    name: string
+    logo: string
+    tokenIn: TokenDetailsJson
+    tokenOut: TokenDetailsJson
+    fee: string
+}
+
+interface TransactionDetailsJson {
+    to: string
+    callData: string
+    value: string
+    gasLimit: string
+    gasPrice: string
+}
+
+interface RouteJson {
+    amountOut: string
+    tx: TransactionDetailsJson
+    steps: RouteStepJson[]
+}
+
 export default interface GetQuoteResponse {
-    router: string,
-    amountOut: string,
-    destinationFee: string,
-    originSwap: {
-        code: string,
-        tokenIn: TokenDetails,
-        tokenOut: TokenDetails,
-        data: string,
-        amountOut: string,
-        required: boolean,
-        estimatedGas: string,
-        fee: string,
-    },
-    bridge: {
-        tokenIn: TokenDetails,
-        tokenOut: TokenDetails,
-        toChainId: string,
-        data: string,
-        required: boolean,
-        amountOut: string,
-        fee: string,
-    },
-    destinationSwap: {
-        tokenIn: TokenDetails,
-        tokenOut: TokenDetails,
-        required: boolean,
-        fee: string,
-    }
+    routes: RouteJson[]
 }

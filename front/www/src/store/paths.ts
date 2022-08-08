@@ -1,20 +1,20 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import SwidgeAPI from '@/api/swidge-api'
 import GetQuoteRequest from '@/api/models/get-quote-request'
-import Path from '@/domain/paths/path';
+import Route from '@/domain/paths/path'
 
 export const usePathsStore = defineStore('paths', {
     state: () => ({
-        path: [] as Path[]
+        routes: [] as Route[]
     }),
     getters: {
-        getPath(): Path {
-            return this.path[0]
+        getPath(): Route {
+            return this.routes[0]
         }
     },
     actions: {
         async quotePath(payload: GetQuoteRequest) {
-            this.path = [await SwidgeAPI.getQuote(payload)]
+            this.routes = await SwidgeAPI.getQuote(payload)
         }
     }
 })

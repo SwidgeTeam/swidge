@@ -3,33 +3,25 @@ interface TokenDetails {
     address: string,
 }
 
-export default interface Path {
-    router: string,
-    amountOut: string,
-    destinationFee: string,
-    originSwap: {
-        code: string,
-        tokenIn: TokenDetails,
-        tokenOut: TokenDetails,
-        data: string,
-        amountOut: string,
-        required: boolean,
-        estimatedGas: string,
-        fee: string,
-    },
-    bridge: {
-        tokenIn: TokenDetails,
-        tokenOut: TokenDetails,
-        toChainId: string,
-        data: string,
-        required: boolean,
-        amountOut: string,
-        fee: string,
-    },
-    destinationSwap: {
-        tokenIn: TokenDetails,
-        tokenOut: TokenDetails,
-        required: boolean,
-        fee: string,
-    }
+interface RouteStep {
+    type: string
+    name: string
+    logo: string
+    tokenIn: TokenDetails
+    tokenOut: TokenDetails
+    fee: string
+}
+
+interface TransactionDetails {
+    to: string
+    callData: string
+    value: string
+    gasLimit: string
+    gasPrice: string
+}
+
+export default interface Route {
+    amountOut: string
+    tx: TransactionDetails
+    steps: RouteStep[]
 }
