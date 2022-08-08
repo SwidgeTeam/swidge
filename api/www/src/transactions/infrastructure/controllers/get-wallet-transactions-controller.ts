@@ -29,6 +29,7 @@ export class GetWalletTransactionsController {
           srcAsset: tx.srcToken,
           dstAsset: tx.dstToken,
           amountIn: tx.amountIn,
+          amountOut: tx.amountOut,
         };
       }),
     });

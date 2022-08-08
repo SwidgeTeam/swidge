@@ -119,7 +119,7 @@ const getTokenIcon = (chainId: string, address: string): string => {
  */
 const formattedAmount = (chainId: string, address: string, amount: string): string => {
     const token = getToken(chainId, address)
-    return token
+    return token && amount
         ? ethers.utils.formatUnits(amount, token.decimals)
         : '0'
 }
@@ -148,7 +148,7 @@ const formattedAmount = (chainId: string, address: string, amount: string): stri
                 :chain-logo-in="getChainIcon(tx.fromChain)"
                 :chain-logo-out="getChainIcon(tx.toChain)"
                 :amount-in="formattedAmount(tx.fromChain, tx.srcAsset, tx.amountIn)"
-                :amount-out="formattedAmount(tx.fromChain, tx.srcAsset, tx.amountIn)"
+                :amount-out="formattedAmount(tx.toChain, tx.dstAsset, tx.amountOut)"
                 :token-name-in="getTokenName(tx.fromChain,tx.srcAsset)"
                 :token-name-out="getTokenName(tx.toChain,tx.dstAsset)"
             />

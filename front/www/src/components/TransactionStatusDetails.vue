@@ -20,5 +20,9 @@ defineProps<{
         <TokenLogo :token-logo="tokenLogo"/>
         <ChainLogo :chain-logo="chainLogo"/>
     </div>
-    <div class="flex justify-center pt-5">{{ amount }}</div>
+    <div
+        class="flex justify-center pt-5"
+        :class="amount === '0' ? 'blur' : ''"
+    >{{ amount }}
+    </div>
 </template>
