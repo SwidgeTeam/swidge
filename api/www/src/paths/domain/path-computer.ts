@@ -44,6 +44,7 @@ export class PathComputer {
   private fromChain: string;
   private toChain: string;
   private amountIn: BigInteger;
+  private totalSlippage: number;
   private priceOriginCoin: PriceFeed;
   private priceDestinationCoin: PriceFeed;
   private gasPriceDestination: BigInteger;
@@ -78,6 +79,7 @@ export class PathComputer {
     this.srcToken = await this.tokenDetailsFetcher.fetch(query.srcToken, this.fromChain);
     this.dstToken = await this.tokenDetailsFetcher.fetch(query.dstToken, this.toChain);
     this.amountIn = BigInteger.fromDecimal(query.amountIn, this.srcToken.decimals);
+    this.totalSlippage = query.slippage;
 
     this.gasPriceOrigin = await this.gasPriceFetcher.fetch(this.fromChain);
     this.gasPriceDestination = await this.gasPriceFetcher.fetch(this.toChain);
