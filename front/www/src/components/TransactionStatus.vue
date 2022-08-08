@@ -3,6 +3,7 @@ import ProcessingLabel from './ProcessingLabel.vue'
 import CompletedLabel from './CompletedLabel.vue'
 import StatusArrow from './svg/StatusArrow.vue'
 import TransactionStatusDetails from './TransactionStatusDetails.vue'
+import TransactionStatusDetailsProcessing from './TransactionStatusDetailsProcessing.vue';
 
 const STATUS_PROCESSING = 'ongoing'
 const STATUS_COMPLETED = 'completed'
@@ -45,7 +46,13 @@ defineProps<{
             </div>
             <div class="w-full grid place-content-center p-2">
                 <div class="relative scale-100 has-tooltip">
-                <TransactionStatusDetails
+                <TransactionStatusDetailsProcessing v-if="status === STATUS_PROCESSING"
+                    :amount="amountOut"
+                    :token-name="tokenNameOut"
+                    :token-logo="tokenLogoOut"
+                    :chain-logo="chainLogoOut"
+                />
+                <TransactionStatusDetails v-if="status === STATUS_COMPLETED"
                     :amount="amountOut"
                     :token-name="tokenNameOut"
                     :token-logo="tokenLogoOut"
