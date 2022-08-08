@@ -32,7 +32,7 @@ DOCKER_USER ?= $(shell id -u)
 DOCKER_COMPOSE_COMMAND ?= docker-compose
 
 DOCKER_COMPOSE = ${DOCKER_COMPOSE_COMMAND} $(1)
-DOCKER_COMPOSE_RUN = ${DOCKER_COMPOSE_COMMAND} run --user ${DOCKER_USER} $(1)
+DOCKER_COMPOSE_RUN = ${DOCKER_COMPOSE_COMMAND} run $(1)
 DOCKER_COMPOSE_EXEC = ${DOCKER_COMPOSE_COMMAND} exec --user ${DOCKER_USER} $(1)
 
 DOCKER_COMMAND ?= docker
@@ -111,13 +111,16 @@ off: up logs
 
 ### Tests
 
+test-front:
+	@$(call DOCKER_COMPOSE_RUN,--rm ${DOCKER_FRONT_SERVICE} test)
+
 test-api:
 	@$(call DOCKER_COMPOSE_RUN,--rm ${DOCKER_API_SERVICE} test)
 
 test-relayer:
 	@$(call DOCKER_COMPOSE_RUN,--rm ${DOCKER_RELAYER_SERVICE} test)
 
-test: test-api test-relayer test-contracts
+test: test-front test-api test-relayer test-contracts
 
 ### Database
 

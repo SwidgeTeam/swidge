@@ -1,5 +1,5 @@
 {
-	"name": "@melggit/webapp",
+	"name": "swidge-webapp",
 	"description": "Swidge Webapp",
 	"version": "0.1.0",
 	"main": "src/main.ts",
@@ -15,7 +15,7 @@
 		"blockchain",
 		"dapp"
 	],
-	"author": "Mel Grosser",
+	"author": "Swidge",
 	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/zynth17/vitailse/issues"
@@ -25,6 +25,8 @@
 		"dev": "vite --host",
 		"build": "vue-tsc --noEmit && vite build",
 		"serve": "vite preview",
+		"test:dev": "vitest --dom",
+		"test": "vitest run",
 		"https-preview": "serve dist",
 		"lint": "eslint --ext .ts,.vue src",
 		"prettier": "prettier --check 'src/**/*.vue'"
@@ -58,16 +60,19 @@
 		"@vitejs/plugin-vue": "^2.3.1",
 		"@vue/compiler-sfc": "^3.2.31",
 		"@vue/server-renderer": "^3.2.31",
+		"@vue/test-utils": "^2.0.2",
 		"critters": "^0.0.16",
 		"eslint": "^8.14.0",
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-vue": "^8.7.1",
+		"happy-dom": "^6.0.4",
 		"https-localhost": "^4.7.1",
 		"prettier": "^2.6.2",
 		"typescript": "^4.6.3",
 		"vite": "^2.9.1",
 		"vite-plugin-pages": "^0.22.0",
 		"vite-plugin-vue-layouts": "^0.6.0",
+		"vitest": "^0.21.0",
 		"vue-eslint-parser": "^8.3.0",
 		"vue-tsc": "^0.33.9"
 	}
