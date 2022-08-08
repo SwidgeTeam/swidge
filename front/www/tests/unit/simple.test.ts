@@ -1,11 +1,11 @@
-import { mount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils'
 
 const Counter = {
     template: `
-      <div>
-        <button @click="count++">Add up</button>
-        <p>Total clicks: {{ count }}</p>
-      </div>
+        <div>
+            <button @click="count++">Add up</button>
+            <p>Total clicks: {{ count }}</p>
+        </div>
     `,
     data() {
         return { count: 0 }

@@ -25,7 +25,8 @@
 		"dev": "vite --host",
 		"build": "vue-tsc --noEmit && vite build",
 		"serve": "vite preview",
-		"test": "vitest --dom",
+		"test:dev": "vitest --dom",
+		"test": "vitest run",
 		"https-preview": "serve dist",
 		"lint": "eslint --ext .ts,.vue src",
 		"prettier": "prettier --check 'src/**/*.vue'"

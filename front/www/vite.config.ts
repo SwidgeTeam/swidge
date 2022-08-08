@@ -8,6 +8,7 @@ import Layouts from 'vite-plugin-vue-layouts'
 export default defineConfig({
     test: {
         globals: true,
+        environment: 'happy-dom',
     },
     plugins: [
         vue(),
