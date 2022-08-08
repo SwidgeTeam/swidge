@@ -273,7 +273,7 @@ export class PathComputer {
     }
     // resolve all promises in order to create the routes
     return (await Promise.all(promises))
-      .map((order) => {
+      .map((order: SwapOrder) => {
         if (order) {
           // in case there is a possible swap
           return this.createRoute(originSwap, bridgeOrder, order);
@@ -282,7 +282,21 @@ export class PathComputer {
       .filter((route) => {
         // filters out cases where no destination swap exists
         return route !== undefined;
-      });
+      })
+      .reduce((final, current) => {
+        // make sure there is no duplicates, may happen when various path dont need all the steps
+        const exists = final.find((route: Route) => {
+          return (
+            route.transactionDetails.to === current.transactionDetails.to &&
+            route.transactionDetails.callData === current.transactionDetails.callData
+          );
+        });
+        if (!exists) {
+          return final.concat([current]);
+        } else {
+          return final;
+        }
+      }, []);
   }
 
   /**
@@ -334,7 +348,7 @@ export class PathComputer {
         .div(BigInteger.weiInEther())
         .toDecimal(this.priceOriginCoin.decimals);
 
-      const details = ExchangeDetails.get(originSwap.providerCode);
+      const details = ExchangeDetails.get(destinationSwap.providerCode);
       steps.push(RouteStep.swap(details, destinationSwap.tokenIn, destinationSwap.tokenOut, fee));
     }
 
