@@ -5,6 +5,9 @@ export class TransactionEntity {
   @PrimaryColumn()
   txHash: string;
 
+  @Column({ length: 70 })
+  destinationTxHash: string;
+
   @Column({ length: 80 })
   walletAddress: string;
 

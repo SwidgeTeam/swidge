@@ -49,8 +49,10 @@ export class TransactionsRepositoryImpl implements TransactionsRepository {
    */
   public async update(payload: UpdateTransactionPayload): Promise<void> {
     await this.httpClient.put(
-      `${this.configService.apiUrl}/transaction/${payload.txHash}`,
+      `${this.configService.apiUrl}/transaction`,
       {
+        txHash: payload.txHash,
+        destinationTxHash: payload.destinationTxHash ? payload.destinationTxHash : '',
         bridgeAmountIn: payload.bridgeAmountIn ? payload.bridgeAmountIn : '',
         bridgeAmountOut: payload.bridgeAmountOut ? payload.bridgeAmountOut : '',
         amountOut: payload.amountOut ? payload.amountOut : '',

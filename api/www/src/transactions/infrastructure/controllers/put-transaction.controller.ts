@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Put, Res, SetMetadata } from '@nestjs/common';
+import { Body, Controller, Put, Res, SetMetadata } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { Response } from 'express';
 import { CustomController } from '../../../shared/infrastructure/CustomController';
@@ -8,6 +8,7 @@ import {
   AuthGuardConfig,
 } from '../../../shared/infrastructure/AuthGuard';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { UpdateTransactionDto } from './update-transaction-dto';
 
 @Controller()
 export class PutTransactionController extends CustomController {
@@ -15,33 +16,19 @@ export class PutTransactionController extends CustomController {
     super();
   }
 
-  @Put('/transaction/:hash')
+  @Put('/transaction')
   @ApiBearerAuth()
   @SetMetadata(AUTH_GUARD_CONFIG, { protected: true } as AuthGuardConfig)
-  async postTransaction(
-    @Param('hash') txHash,
-    @Body('bridgeAmountIn') bridgeAmountIn,
-    @Body('bridgeAmountOut') bridgeAmountOut,
-    @Body('amountOut') amountOut,
-    @Body('bridged') bridged,
-    @Body('completed') completed,
-    @Res() res: Response,
-  ) {
-    const command = new UpdateTransactionCommand();
-    command.txHash = txHash;
-    command.amountOut = amountOut;
-    command.bridgeAmountIn = bridgeAmountIn;
-    command.bridgeAmountOut = bridgeAmountOut;
-    command.bridged = bridged;
-    command.completed = completed;
-
-    const errors = await this.validate(command);
-
-    if (errors) {
-      return res.status(400).json({
-        errors: errors,
-      });
-    }
+  async postTransaction(@Body() body: UpdateTransactionDto, @Res() res: Response) {
+    const command = new UpdateTransactionCommand(
+      body.txHash,
+      body.destinationTxHash,
+      body.amountOut,
+      body.bridgeAmountIn,
+      body.bridgeAmountOut,
+      body.bridged,
+      body.completed,
+    );
 
     await this.commandBus.execute(command);
 

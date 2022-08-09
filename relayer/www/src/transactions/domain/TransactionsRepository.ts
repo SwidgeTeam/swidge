@@ -18,6 +18,7 @@ export interface CreateTransactionPayload {
 
 export interface UpdateTransactionPayload {
   txHash: string;
+  destinationTxHash?: string;
   bridgeAmountIn?: string;
   bridgeAmountOut?: string;
   amountOut?: string;

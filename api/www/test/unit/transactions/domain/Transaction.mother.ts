@@ -23,6 +23,7 @@ export class TransactionMother {
   ) {
     return new Transaction(
       _txHash,
+      '',
       _walletAddress,
       _routerAddress,
       _fromChainId,
