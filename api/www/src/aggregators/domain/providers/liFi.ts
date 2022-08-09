@@ -129,6 +129,14 @@ export class LiFi implements Aggregator {
 
     const details = new ProviderDetails(step.toolDetails.name, step.toolDetails.logoURI);
 
-    return new RouteStep(type, details, fromToken, toToken, feeInUSD.toString());
+    return new RouteStep(
+      type,
+      details,
+      fromToken,
+      toToken,
+      BigInteger.fromString(step.estimate.fromAmount),
+      BigInteger.fromString(step.estimate.toAmount),
+      feeInUSD.toString(),
+    );
   }
 }

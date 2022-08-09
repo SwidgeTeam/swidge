@@ -52,6 +52,10 @@ export class BridgingOrder {
     return this._required;
   }
 
+  get amountIn(): BigInteger {
+    return this._amountIn;
+  }
+
   get amountOut(): BigInteger {
     const convertedAmount = this._amountIn.convertDecimalsFromTo(
       this._tokenIn.decimals,

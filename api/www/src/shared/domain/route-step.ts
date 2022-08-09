@@ -1,5 +1,6 @@
 import { Token } from './Token';
 import { ProviderDetails } from './provider-details';
+import { BigInteger } from './BigInteger';
 
 export class RouteStep {
   public static TYPE_SWAP = 'swap';
@@ -9,18 +10,38 @@ export class RouteStep {
     providerDetails: ProviderDetails,
     tokenIn: Token,
     tokenOut: Token,
+    amountIn: BigInteger,
+    amountOut: BigInteger,
     feeInUSD: string,
   ) {
-    return new RouteStep(RouteStep.TYPE_SWAP, providerDetails, tokenIn, tokenOut, feeInUSD);
+    return new RouteStep(
+      RouteStep.TYPE_SWAP,
+      providerDetails,
+      tokenIn,
+      tokenOut,
+      amountIn,
+      amountOut,
+      feeInUSD,
+    );
   }
 
   public static bridge(
     providerDetails: ProviderDetails,
     tokenIn: Token,
     tokenOut: Token,
+    amountIn: BigInteger,
+    amountOut: BigInteger,
     feeInUSD: string,
   ) {
-    return new RouteStep(RouteStep.TYPE_BRIDGE, providerDetails, tokenIn, tokenOut, feeInUSD);
+    return new RouteStep(
+      RouteStep.TYPE_BRIDGE,
+      providerDetails,
+      tokenIn,
+      tokenOut,
+      amountIn,
+      amountOut,
+      feeInUSD,
+    );
   }
 
   constructor(
@@ -28,6 +49,8 @@ export class RouteStep {
     private readonly _providerDetails: ProviderDetails,
     private readonly _tokenIn: Token,
     private readonly _tokenOut: Token,
+    private readonly _amountIn: BigInteger,
+    private readonly _amountOut: BigInteger,
     private readonly _feeInUSD: string,
   ) {}
 
@@ -49,6 +72,14 @@ export class RouteStep {
 
   get tokenOut(): Token {
     return this._tokenOut;
+  }
+
+  get amountIn(): BigInteger {
+    return this._amountIn;
+  }
+
+  get amountOut(): BigInteger {
+    return this._amountOut;
   }
 
   get feeInUSD(): string {

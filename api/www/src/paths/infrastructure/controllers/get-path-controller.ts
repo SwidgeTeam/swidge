@@ -44,6 +44,8 @@ export class GetPathController {
           logo: step.logo,
           tokenIn: this.mapTokenDetails(step.tokenIn),
           tokenOut: this.mapTokenDetails(step.tokenOut),
+          amountIn: step.amountIn.toString(),
+          amountOut: step.amountOut.toString(),
           fee: step.feeInUSD,
         };
       }),
@@ -54,6 +56,8 @@ export class GetPathController {
     return {
       name: token.name,
       address: token.address,
+      decimals: token.decimals,
+      symbol: token.symbol,
     };
   }
 }

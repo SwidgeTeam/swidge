@@ -336,12 +336,30 @@ export class PathComputer {
         .toDecimal(this.priceOriginCoin.decimals);
 
       const details = ExchangeDetails.get(originSwap.providerCode);
-      steps.push(RouteStep.swap(details, originSwap.tokenIn, originSwap.tokenOut, fee));
+      steps.push(
+        RouteStep.swap(
+          details,
+          originSwap.tokenIn,
+          originSwap.tokenOut,
+          originSwap.amountIn,
+          originSwap.amountOut,
+          fee,
+        ),
+      );
     }
 
     if (bridge.required) {
       const details = BridgeDetails.get(BridgeProviders.Multichain);
-      steps.push(RouteStep.bridge(details, bridge.tokenIn, bridge.tokenOut, bridge.decimalFee));
+      steps.push(
+        RouteStep.bridge(
+          details,
+          bridge.tokenIn,
+          bridge.tokenOut,
+          bridge.amountIn,
+          bridge.amountOut,
+          bridge.decimalFee,
+        ),
+      );
     }
 
     if (destinationSwap.required) {
@@ -352,7 +370,16 @@ export class PathComputer {
         .toDecimal(this.priceOriginCoin.decimals);
 
       const details = ExchangeDetails.get(destinationSwap.providerCode);
-      steps.push(RouteStep.swap(details, destinationSwap.tokenIn, destinationSwap.tokenOut, fee));
+      steps.push(
+        RouteStep.swap(
+          details,
+          destinationSwap.tokenIn,
+          destinationSwap.tokenOut,
+          destinationSwap.amountIn,
+          destinationSwap.amountOut,
+          fee,
+        ),
+      );
     }
 
     // create transaction details
