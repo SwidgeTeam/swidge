@@ -24,8 +24,18 @@ interface TransactionDetailsJson {
     gasPrice: string
 }
 
+interface RouteResumeJson {
+    fromChain: string
+    toChain: string
+    tokenIn: TokenDetailsJson
+    tokenOut: TokenDetailsJson
+    amountIn: string
+    amountOut: string
+}
+
 interface RouteJson {
     amountOut: string
+    resume: RouteResumeJson
     tx: TransactionDetailsJson
     steps: RouteStepJson[]
 }

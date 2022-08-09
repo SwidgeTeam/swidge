@@ -36,6 +36,14 @@ export class GetPathController {
         gasLimit: route.transactionDetails.gasLimit.toString(),
         gasPrice: route.transactionDetails.gasPrice.toString(),
       },
+      resume: {
+        fromChain: route.resume.fromChain,
+        toChain: route.resume.toChain,
+        fromToken: this.mapTokenDetails(route.resume.fromToken),
+        toToken: this.mapTokenDetails(route.resume.toToken),
+        amountIn: route.resume.amountIn,
+        amountOut: route.resume.amountOut,
+      },
       amountOut: route.amountOut,
       steps: route.steps.map((step) => {
         return {

@@ -26,6 +26,7 @@ import { RouterCallEncoder } from '../../shared/domain/router-call-encoder';
 import { BridgeDetails, BridgeProviders } from '../../bridges/domain/providers/bridge-providers';
 import { ExchangeDetails } from '../../swaps/domain/providers/exchange-providers';
 import { OrderStrategy } from './route-order-strategy/order-strategy';
+import { RouteResume } from '../../shared/domain/route-resume';
 
 export class PathComputer {
   /** Providers */
@@ -314,20 +315,9 @@ export class PathComputer {
     bridge: BridgingOrder,
     destinationSwap: SwapOrder,
   ): Route {
-    // select amount out
-
-    let amountOut: BigInteger;
-    if (destinationSwap.required) {
-      amountOut = destinationSwap.amountOut;
-    } else if (bridge.required) {
-      amountOut = bridge.amountOut;
-    } else {
-      amountOut = originSwap.amountOut;
-    }
-
     // create the required steps of the route
 
-    const steps = [];
+    const steps: RouteStep[] = [];
     if (originSwap.required) {
       const fee = originSwap.estimatedGas
         .times(this.gasPriceOrigin)
@@ -408,7 +398,16 @@ export class PathComputer {
       this.gasPriceOrigin,
     );
 
-    return new Route(amountOut, transactionDetails, steps);
+    const resume = new RouteResume(
+      this.fromChain,
+      this.toChain,
+      this.srcToken,
+      this.dstToken,
+      this.amountIn,
+      steps[steps.length - 1].amountOut,
+    );
+
+    return new Route(resume, transactionDetails, steps);
   }
 
   /**

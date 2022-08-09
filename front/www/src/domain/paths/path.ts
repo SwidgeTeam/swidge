@@ -5,13 +5,22 @@ interface TokenDetails {
     symbol: string
 }
 
-interface RouteStep {
+export interface RouteStep {
     type: string
     name: string
     logo: string
     tokenIn: TokenDetails
     tokenOut: TokenDetails
     fee: string
+}
+
+interface RouteResume {
+    fromChain: string
+    toChain: string
+    tokenIn: TokenDetails
+    tokenOut: TokenDetails
+    amountIn: string
+    amountOut: string
 }
 
 export interface TransactionDetails {
@@ -24,6 +33,7 @@ export interface TransactionDetails {
 
 export default interface Route {
     amountOut: string
+    resume: RouteResume
     tx: TransactionDetails
     steps: RouteStep[]
 }
