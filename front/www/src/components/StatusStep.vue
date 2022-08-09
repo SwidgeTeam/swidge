@@ -2,21 +2,27 @@
 import { CheckCircleIcon } from '@heroicons/vue/outline'
 import Spinner from 'vue-spinner/src/ScaleLoader.vue'
 import { computed } from 'vue'
+import { RouteStep } from '@/domain/paths/path'
 
-const props = defineProps({
-    title: { type: String, required: true },
-    tokenIn: { type: String, required: true },
-    tokenOut: { type: String, required: true },
-    amountIn: { type: String, required: true },
-    amountOut: { type: String, required: true },
-    completed: { type: Boolean, required: false, default: false },
+const props = defineProps<{
+    step: RouteStep
+}>()
+
+const title = computed({
+    get: () => {
+        if (props.step.type === 'swap') {
+            return 'Swap on ' + props.step.name
+        }
+        return 'Transfer via ' + props.step.name
+    },
+    set: () => null
 })
 
 const subtitle = computed({
     get: () => {
-        return Number(props.amountIn).toFixed(2) + ' ' + props.tokenIn +
+        return Number(props.step.amountIn).toFixed(2) + ' ' + props.step.tokenIn +
             ' -> ' +
-            Number(props.amountOut).toFixed(2) + ' ' + props.tokenOut
+            Number(props.step.amountOut).toFixed(2) + ' ' + props.step.tokenOut
     },
     set: () => null
 })
@@ -29,7 +35,7 @@ const subtitle = computed({
             :class="{'step-gradient' : props.completed}"
             class="flex flex-col px-6 py-4 col-span-10 gradient-border-selection-main text-xl items-center">
             <div class="justify-center">
-                {{ props.title }}
+                {{ title }}
             </div>
             <div class="justify-center">
                 {{ subtitle }}

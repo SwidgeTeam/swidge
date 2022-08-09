@@ -5,16 +5,15 @@ import { RouterCaller } from '@/contracts/routerCaller'
 import { useWeb3Store } from '@/store/web3'
 import { ethers, providers } from 'ethers'
 import ModalSwidgeStatus from './ModalSwidgeStatus.vue'
-import { TransactionSteps } from '@/models/TransactionSteps'
 import IToken from '@/domain/tokens/IToken'
 import { useTokensStore } from '@/store/tokens'
-import { usePathsStore } from '@/store/paths'
+import { useRoutesStore } from '@/store/routes'
 import SwapBox from '@/components/SwapBox.vue'
 import Route from '@/domain/paths/path'
 
 const web3Store = useWeb3Store()
 const tokensStore = useTokensStore()
-const transactionStore = usePathsStore()
+const routesStore = useRoutesStore()
 
 const { switchToNetwork, getChainProvider, getBalance } = web3Store
 
@@ -31,34 +30,6 @@ const isModalStatusOpen = ref(false)
 const showTransactionAlert = ref(false)
 const transactionAlertMessage = ref<string>('')
 const isExecutingTransaction = ref<boolean>(false)
-
-const steps = ref<TransactionSteps>({
-    origin: {
-        required: false,
-        completed: false,
-        tokenIn: '',
-        tokenOut: '',
-        amountIn: '',
-        amountOut: '',
-    },
-    bridge: {
-        required: false,
-        completed: false,
-        tokenIn: '',
-        tokenOut: '',
-        amountIn: '',
-        amountOut: '',
-    },
-    destination: {
-        required: false,
-        completed: false,
-        tokenIn: '',
-        tokenOut: '',
-        amountIn: '',
-        amountOut: '',
-    },
-    completed: false,
-})
 
 const providersOnUse = ref<providers.BaseProvider[]>([])
 
@@ -200,7 +171,7 @@ const onQuote = async () => {
     }
 
     try {
-        await transactionStore.quotePath({
+        await routesStore.quotePath({
             fromChainId: tokensStore.getOriginChainId,
             srcToken: tokensStore.getOriginTokenAddress,
             toChainId: tokensStore.getDestinationChainId,
@@ -208,7 +179,7 @@ const onQuote = async () => {
             amount: sourceTokenAmount.value.toString(),
         })
 
-        const route = transactionStore.getPath
+        const route = routesStore.getSelectedRoute
 
         destinationTokenAmount.value = route.amountOut
         isGettingQuote.value = false
@@ -248,7 +219,7 @@ const onExecuteTransaction = async () => {
     if (!originToken) {
         throw new Error('Undefined origin token')
     }
-    const route = transactionStore.getPath
+    const route = routesStore.getSelectedRoute
     if (!route) {
         throw new Error('No path')
     }
@@ -262,36 +233,16 @@ const onExecuteTransaction = async () => {
     await contractCall
         .wait()
         .then(async (receipt: { transactionHash: string }) => {
-            steps.value.origin.completed = true
+            routesStore.completeFirstStep()
             if (isCrossTransaction()) {
                 setUpEventListener(route, receipt.transactionHash)
             } else {
-                steps.value.completed = true
+                routesStore.completeRoute()
             }
         })
         .finally(() => {
             unsetExecutingButton()
         })
-}
-
-const isCrossTransaction = () => {
-    return !tokensStore.sameChainAssets
-}
-
-/**
- * Sets the button to `executing` mode
- */
-const setExecutingButton = () => {
-    isExecutingTransaction.value = true
-    isExecuteButtonDisabled.value = true
-}
-
-/**
- * Unsets the button from `executing` mode
- */
-const unsetExecutingButton = () => {
-    isExecutingTransaction.value = false
-    isExecuteButtonDisabled.value = false
 }
 
 /**
@@ -315,9 +266,7 @@ const setUpEventListener = (path: Route, executedTxHash: string) => {
             event.data
         )
         if (executedTxHash === txHash) {
-            steps.value.bridge.completed = true
-            steps.value.destination.completed = true
-            steps.value.completed = true
+            routesStore.completeRoute()
             provider.off(filter)
         }
         // TODO : store finalAmount if we want it visible on the modal
@@ -326,37 +275,30 @@ const setUpEventListener = (path: Route, executedTxHash: string) => {
     providersOnUse.value.push(provider)
 }
 
+const isCrossTransaction = () => {
+    return !tokensStore.sameChainAssets
+}
+
+/**
+ * Sets the button to `executing` mode
+ */
+const setExecutingButton = () => {
+    isExecutingTransaction.value = true
+    isExecuteButtonDisabled.value = true
+}
+
+/**
+ * Unsets the button from `executing` mode
+ */
+const unsetExecutingButton = () => {
+    isExecutingTransaction.value = false
+    isExecuteButtonDisabled.value = false
+}
+
 /**
  * Opens the transaction status modal after an executed transaction
  */
 const openTransactionStatusModal = () => {
-    const route = transactionStore.getPath
-    if (!route) {
-        throw new Error('No path')
-    }
-    steps.value.origin.tokenIn = path.originSwap.tokenIn.name
-    steps.value.origin.tokenOut = path.originSwap.tokenOut.name
-    steps.value.origin.amountIn = sourceTokenAmount.value
-    steps.value.origin.amountOut = path.originSwap.amountOut
-    steps.value.origin.required = path.originSwap.required
-    steps.value.origin.completed = false
-
-    steps.value.bridge.tokenIn = path.bridge.tokenIn.name
-    steps.value.bridge.tokenOut = path.bridge.tokenOut.name
-    steps.value.bridge.amountIn = path.originSwap.amountOut
-    steps.value.bridge.amountOut = path.bridge.amountOut
-    steps.value.bridge.required = path.bridge.required
-    steps.value.bridge.completed = false
-
-    steps.value.destination.tokenIn = path.destinationSwap.tokenIn.name
-    steps.value.destination.tokenOut = path.destinationSwap.tokenOut.name
-    steps.value.destination.amountIn = path.bridge.amountOut
-    steps.value.destination.amountOut = path.amountOut
-    steps.value.destination.required = path.destinationSwap.required
-    steps.value.destination.completed = false
-
-    steps.value.completed = false
-
     isModalStatusOpen.value = true
 }
 
@@ -395,7 +337,6 @@ const closeModalStatus = () => {
         @update-token="handleUpdateTokenFromModal($event)"
     />
     <ModalSwidgeStatus
-        :steps="steps"
         :show="isModalStatusOpen"
         @close-modal="closeModalStatus"
     />

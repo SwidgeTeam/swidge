@@ -11,7 +11,10 @@ export interface RouteStep {
     logo: string
     tokenIn: TokenDetails
     tokenOut: TokenDetails
+    amountIn: string,
+    amountOut: string,
     fee: string
+    completed: boolean
 }
 
 interface RouteResume {
@@ -36,4 +39,5 @@ export default interface Route {
     resume: RouteResume
     tx: TransactionDetails
     steps: RouteStep[]
+    completed: boolean
 }

@@ -41,8 +41,8 @@ export class GetPathController {
         toChain: route.resume.toChain,
         fromToken: this.mapTokenDetails(route.resume.fromToken),
         toToken: this.mapTokenDetails(route.resume.toToken),
-        amountIn: route.resume.amountIn,
-        amountOut: route.resume.amountOut,
+        amountIn: route.resume.amountIn.toDecimal(route.resume.fromToken.decimals),
+        amountOut: route.resume.amountOut.toDecimal(route.resume.toToken.decimals),
       },
       amountOut: route.amountOut,
       steps: route.steps.map((step) => {
@@ -52,8 +52,8 @@ export class GetPathController {
           logo: step.logo,
           tokenIn: this.mapTokenDetails(step.tokenIn),
           tokenOut: this.mapTokenDetails(step.tokenOut),
-          amountIn: step.amountIn.toString(),
-          amountOut: step.amountOut.toString(),
+          amountIn: step.amountIn.toDecimal(step.tokenIn.decimals),
+          amountOut: step.amountOut.toDecimal(step.tokenOut.decimals),
           fee: step.feeInUSD,
         };
       }),
