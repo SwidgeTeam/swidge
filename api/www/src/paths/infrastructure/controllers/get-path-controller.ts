@@ -39,8 +39,8 @@ export class GetPathController {
       resume: {
         fromChain: route.resume.fromChain,
         toChain: route.resume.toChain,
-        fromToken: this.mapTokenDetails(route.resume.fromToken),
-        toToken: this.mapTokenDetails(route.resume.toToken),
+        tokenIn: this.mapTokenDetails(route.resume.fromToken),
+        tokenOut: this.mapTokenDetails(route.resume.toToken),
         amountIn: route.resume.amountIn.toDecimal(route.resume.fromToken.decimals),
         amountOut: route.resume.amountOut.toDecimal(route.resume.toToken.decimals),
       },

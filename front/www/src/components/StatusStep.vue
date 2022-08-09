@@ -20,9 +20,9 @@ const title = computed({
 
 const subtitle = computed({
     get: () => {
-        return Number(props.step.amountIn).toFixed(2) + ' ' + props.step.tokenIn +
+        return Number(props.step.amountIn).toFixed(2) + ' ' + props.step.tokenIn.name +
             ' -> ' +
-            Number(props.step.amountOut).toFixed(2) + ' ' + props.step.tokenOut
+            Number(props.step.amountOut).toFixed(2) + ' ' + props.step.tokenOut.name
     },
     set: () => null
 })
