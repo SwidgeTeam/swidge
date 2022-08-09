@@ -21,6 +21,7 @@ export class Transaction {
     const completed = _fromChainId == _toChainId ? executed : null;
     return new Transaction(
       _txHash,
+      '',
       _walletAddress,
       _routerAddress,
       _fromChainId,
@@ -41,6 +42,7 @@ export class Transaction {
 
   constructor(
     private readonly _txHash: string,
+    private _destinationTxHash: string,
     private readonly _walletAddress: string,
     private readonly _routerAddress: string,
     private readonly _fromChainId: string,
@@ -150,6 +152,11 @@ export class Transaction {
 
   public setAmountOut(amount: BigInteger): Transaction {
     this._amountOut = amount;
+    return this;
+  }
+
+  public setDestinationTxHash(destinationTxHash: string): Transaction {
+    this._destinationTxHash = destinationTxHash;
     return this;
   }
 }

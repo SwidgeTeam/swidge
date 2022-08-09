@@ -164,18 +164,23 @@ export class EventsListener {
           }
         },
       )
-      .on('CrossFinalized', async (txHash: string, amountOut: BigNumber) => {
-        try {
-          this.logger.log('Received CrossFinalized event');
-          await this.updateTransaction(<UpdateTransactionPayload>{
-            txHash: txHash,
-            amountOut: amountOut.toString(),
-            completed: new Date(),
-          });
-        } catch (e) {
-          this.logger.error('Error on CrossFinalized', e);
-        }
-      });
+      .on(
+        'CrossFinalized',
+        async (txHash: string, amountOut: BigNumber, event) => {
+          try {
+            this.logger.log('Received CrossFinalized event');
+            const destinationTxHash = event.transactionHash;
+            await this.updateTransaction(<UpdateTransactionPayload>{
+              txHash: txHash,
+              destinationTxHash: destinationTxHash,
+              amountOut: amountOut.toString(),
+              completed: new Date(),
+            });
+          } catch (e) {
+            this.logger.error('Error on CrossFinalized', e);
+          }
+        },
+      );
   }
 
   private async queueJob(tx: TxJob): Promise<void> {

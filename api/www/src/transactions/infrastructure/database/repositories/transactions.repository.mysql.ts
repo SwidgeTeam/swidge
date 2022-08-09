@@ -49,6 +49,7 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
 
     return new Transaction(
       result.txHash,
+      result.destinationTxHash,
       result.walletAddress,
       result.routerAddress,
       result.fromChainId,
@@ -79,6 +80,7 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
     const items = result.map((row) => {
       return new Transaction(
         row.txHash,
+        row.destinationTxHash,
         row.walletAddress,
         row.routerAddress,
         row.fromChainId,

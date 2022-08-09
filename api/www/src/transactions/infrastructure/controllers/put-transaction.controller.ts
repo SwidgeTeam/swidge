@@ -22,6 +22,7 @@ export class PutTransactionController extends CustomController {
   async postTransaction(@Body() body: UpdateTransactionDto, @Res() res: Response) {
     const command = new UpdateTransactionCommand(
       body.txHash,
+      body.destinationTxHash,
       body.amountOut,
       body.bridgeAmountIn,
       body.bridgeAmountOut,

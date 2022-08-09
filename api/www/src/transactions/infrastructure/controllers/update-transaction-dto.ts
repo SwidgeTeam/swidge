@@ -6,6 +6,10 @@ export class UpdateTransactionDto {
   @IsTxHash()
   txHash: string;
 
+  @ValidateIf((o) => o.destinationTxHash !== '')
+  @IsTxHash()
+  destinationTxHash: string;
+
   @ValidateIf((o) => o.amountOut !== '')
   @IsPositiveIntegerString()
   amountOut: string;
