@@ -230,7 +230,7 @@ export class PathComputer {
       let bridgeAmountIn;
       // check the amount that should input the bridge
       if (originSwap.required) {
-        bridgeAmountIn = originSwap.buyAmount;
+        bridgeAmountIn = originSwap.amountOut;
       } else {
         bridgeAmountIn = this.amountIn;
       }
@@ -318,11 +318,11 @@ export class PathComputer {
 
     let amountOut: BigInteger;
     if (destinationSwap.required) {
-      amountOut = destinationSwap.buyAmount;
+      amountOut = destinationSwap.amountOut;
     } else if (bridge.required) {
       amountOut = bridge.amountOut;
     } else {
-      amountOut = originSwap.buyAmount;
+      amountOut = originSwap.amountOut;
     }
 
     // create the required steps of the route

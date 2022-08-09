@@ -59,8 +59,8 @@ export class ZeroEx implements Exchange {
       ExchangeProviders.ZeroEx,
       request.tokenIn,
       request.tokenOut,
-      response.allowanceTarget,
       encodedData,
+      request.amountIn,
       BigInteger.fromString(response.buyAmount),
       BigInteger.fromString(response.gas),
     );
