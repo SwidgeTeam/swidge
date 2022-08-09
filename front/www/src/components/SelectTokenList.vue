@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import TokenDisplay from './TokenDisplay.vue'
 import NetworkAndTokenNothingFound from './NetworkAndTokenNothingFound.vue'
-import { INetwork } from '@/models/INetwork'
+import { INetwork } from '@/domain/chains/INetwork'
 import { useTokensStore } from '@/store/tokens'
 import IToken from '@/domain/tokens/IToken'
 import { computed } from 'vue'

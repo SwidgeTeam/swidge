@@ -1,4 +1,4 @@
-import { INetwork } from '@/models/INetwork'
+import { INetwork } from '@/domain/chains/INetwork'
 
 export const POLYGON_CHAIN_ID = '137'
 export const FANTOM_CHAIN_ID = '250'
