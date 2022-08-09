@@ -64,6 +64,10 @@ export class Transaction {
     return this._txHash;
   }
 
+  get destinationTxHash(): string {
+    return this._destinationTxHash;
+  }
+
   get walletAddress(): string {
     return this._walletAddress;
   }

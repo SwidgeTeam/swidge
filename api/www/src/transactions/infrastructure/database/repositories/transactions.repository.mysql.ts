@@ -16,6 +16,7 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
   async save(transaction: Transaction): Promise<void> {
     await this.manager.save(TransactionEntity, {
       txHash: transaction.txHash,
+      destinationTxHash: transaction.destinationTxHash,
       walletAddress: transaction.walletAddress,
       routerAddress: transaction.routerAddress,
       fromChainId: transaction.fromChainId,
