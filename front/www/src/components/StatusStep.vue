@@ -32,7 +32,7 @@ const subtitle = computed({
 <template>
     <div class="grid grid-cols-12 gap-2 mb-5 mt-5">
         <div
-            :class="{'step-gradient' : props.completed}"
+            :class="{'step-gradient' : props.step.completed}"
             class="flex flex-col px-6 py-4 col-span-10 gradient-border-selection-main text-xl items-center">
             <div class="justify-center">
                 {{ title }}
@@ -41,7 +41,7 @@ const subtitle = computed({
                 {{ subtitle }}
             </div>
         </div>
-        <div v-if="props.completed" class="flex text-green-500 justify-center items-center col-span-2">
+        <div v-if="props.step.completed" class="flex text-green-500 justify-center items-center col-span-2">
             <CheckCircleIcon class="h-10"/>
         </div>
         <div v-else class="flex justify-center items-center col-span-2">
