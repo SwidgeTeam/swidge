@@ -55,7 +55,7 @@ export class TransactionProcessor {
   private async getNoSwapDetails(job: TransactionJob) {
     const estimatedGas = this.getFunctionEstimateGas();
     return {
-      providerCode: null,
+      providerCode: '0',
       amountIn: job.bridgeAmountOut,
       tokenIn: job.srcToken,
       tokenOut: job.dstToken,
