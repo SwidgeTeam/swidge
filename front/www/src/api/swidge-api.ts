@@ -61,6 +61,8 @@ class SwidgeAPI extends HttpClient {
                             logo: step.logo,
                             tokenIn: step.tokenIn,
                             tokenOut: step.tokenOut,
+                            amountIn: step.amountIn,
+                            amountOut: step.amountOut,
                             fee: step.fee,
                         }
                     })

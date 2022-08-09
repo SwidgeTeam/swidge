@@ -1,6 +1,8 @@
 interface TokenDetailsJson {
     name: string,
     address: string,
+    decimals: number,
+    symbol: string,
 }
 
 interface RouteStepJson {
@@ -9,6 +11,8 @@ interface RouteStepJson {
     logo: string
     tokenIn: TokenDetailsJson
     tokenOut: TokenDetailsJson
+    amountIn: string,
+    amountOut: string,
     fee: string
 }
 

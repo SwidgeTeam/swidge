@@ -1,6 +1,8 @@
 interface TokenDetails {
-    name: string,
-    address: string,
+    name: string
+    address: string
+    decimals: number
+    symbol: string
 }
 
 interface RouteStep {
