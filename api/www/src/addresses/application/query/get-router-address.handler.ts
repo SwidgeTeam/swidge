@@ -4,6 +4,7 @@ import { AddressesRepository } from '../../domain/AddressesRepository';
 import { Inject } from '@nestjs/common';
 import { Class } from '../../../shared/Class';
 import { ContractAddress } from '../../../shared/types';
+import { DeployedAddresses } from '../../../shared/DeployedAddresses';
 
 @QueryHandler(GetRouterAddressQuery)
 export class GetRouterAddressHandler implements IQueryHandler<GetRouterAddressQuery> {
@@ -13,6 +14,6 @@ export class GetRouterAddressHandler implements IQueryHandler<GetRouterAddressQu
   ) {}
 
   execute(): Promise<ContractAddress> {
-    return this.addressRepository.getRouter();
+    return Promise.resolve(DeployedAddresses.Router);
   }
 }
