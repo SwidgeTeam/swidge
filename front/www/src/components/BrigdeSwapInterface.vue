@@ -177,6 +177,7 @@ const onQuote = async () => {
             toChainId: tokensStore.getDestinationChainId,
             dstToken: tokensStore.getDestinationTokenAddress,
             amount: sourceTokenAmount.value.toString(),
+            slippage: 2,
         })
 
         const route = routesStore.getSelectedRoute

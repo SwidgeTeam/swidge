@@ -4,4 +4,5 @@ export default interface GetQuoteRequest {
     toChainId: string
     dstToken: string,
     amount: string
+    slippage: number
 }
