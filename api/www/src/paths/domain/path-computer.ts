@@ -7,8 +7,6 @@ import { BigInteger } from '../../shared/domain/BigInteger';
 import { SwapOrder } from '../../swaps/domain/SwapOrder';
 import { BridgingOrder } from '../../bridges/domain/bridging-order';
 import { TokenDetailsFetcher } from '../../shared/infrastructure/TokenDetailsFetcher';
-import { BridgeOrderComputer } from '../../bridges/application/query/bridge-order-computer';
-import { SwapOrderComputer } from '../../swaps/application/query/swap-order-computer';
 import { BridgingRequest } from '../../bridges/domain/bridging-request';
 import { PathNotFound } from './path-not-found';
 import { flatten } from 'lodash';
@@ -27,11 +25,13 @@ import { BridgeDetails, BridgeProviders } from '../../bridges/domain/providers/b
 import { ExchangeDetails } from '../../swaps/domain/providers/exchange-providers';
 import { OrderStrategy } from './route-order-strategy/order-strategy';
 import { RouteResume } from '../../shared/domain/route-resume';
+import { Bridges } from '../../bridges/domain/bridges';
+import { Exchanges } from '../../swaps/domain/exchanges';
 
 export class PathComputer {
   /** Providers */
-  private readonly swapOrderProvider: SwapOrderComputer;
-  private readonly bridgeOrderProvider: BridgeOrderComputer;
+  private readonly exchanges: Exchanges;
+  private readonly bridges: Bridges;
   private readonly aggregatorOrderProvider: AggregatorOrderComputer;
   private readonly tokenDetailsFetcher: TokenDetailsFetcher;
   private readonly priceFeedFetcher: PriceFeedFetcher;
@@ -52,15 +52,15 @@ export class PathComputer {
   private gasPriceOrigin: BigInteger;
 
   constructor(
-    _swapOrderProvider: SwapOrderComputer,
-    _bridgeOrderProvider: BridgeOrderComputer,
+    _exchanges: Exchanges,
+    _bridges: Bridges,
     _aggregatorOrderProvider: AggregatorOrderComputer,
     _tokenDetailsFetcher: TokenDetailsFetcher,
     _priceFeedFetcher: PriceFeedFetcher,
     _gasPriceFetcher: GasPriceFetcher,
   ) {
-    this.swapOrderProvider = _swapOrderProvider;
-    this.bridgeOrderProvider = _bridgeOrderProvider;
+    this.exchanges = _exchanges;
+    this.bridges = _bridges;
     this.aggregatorOrderProvider = _aggregatorOrderProvider;
     this.tokenDetailsFetcher = _tokenDetailsFetcher;
     this.priceFeedFetcher = _priceFeedFetcher;
@@ -435,7 +435,7 @@ export class PathComputer {
       // otherwise compute swap
       const swapRequest = new SwapRequest(chainId, tokenIn, tokenOut, amount);
       try {
-        swapOrder = await this.swapOrderProvider.execute(exchangeId, swapRequest);
+        swapOrder = await this.exchanges.execute(exchangeId, swapRequest);
       } catch (e) {
         // no possible path, nothing to do ..
       }
@@ -463,7 +463,7 @@ export class PathComputer {
       bridgeAmountIn,
     );
     try {
-      return await this.bridgeOrderProvider.execute(providerId, bridgeRequest);
+      return await this.bridges.execute(providerId, bridgeRequest);
     } catch (e) {
       // not possible, nothing to do..
     }
@@ -492,7 +492,7 @@ export class PathComputer {
    * @private
    */
   private getPossibleExchanges(chainId: string): string[] {
-    return this.swapOrderProvider.getEnabledExchanged(chainId);
+    return this.exchanges.getEnabled(chainId);
   }
 
   /**
@@ -500,7 +500,7 @@ export class PathComputer {
    * @private
    */
   private getPossibleBridges(): string[] {
-    return this.bridgeOrderProvider.getEnabledBridges(this.fromChain, this.toChain);
+    return this.bridges.getEnabled(this.fromChain, this.toChain);
   }
 
   /**
