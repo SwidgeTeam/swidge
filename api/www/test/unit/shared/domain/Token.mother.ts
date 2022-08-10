@@ -7,17 +7,17 @@ export class TokenMother {
   }
 
   public static link() {
-    return this.create('LINK', '0xLINK', 18, 'LINK');
+    return this.create('LINK', faker.finance.ethereumAddress(), 18, 'LINK');
   }
 
   public static sushi() {
-    return this.create('SUSHI', '0xSUSHI', 18, 'SUSHI');
+    return this.create('SUSHI', faker.finance.ethereumAddress(), 18, 'SUSHI');
   }
 
   public static random() {
     return this.create(
       faker.name.firstName(),
-      faker.random.alphaNumeric(42),
+      faker.finance.ethereumAddress(),
       18,
       faker.name.firstName(),
     );
