@@ -1,7 +1,6 @@
 import { Aggregator } from '../aggregator';
 import { AggregatorRequest } from '../aggregator-request';
 import LIFI, { Step } from '@lifi/sdk';
-import { Fantom, Polygon } from '../../../shared/enums/ChainIds';
 import { BigInteger } from '../../../shared/domain/BigInteger';
 import { TransactionDetails } from '../../../shared/domain/transaction-details';
 import { Route } from '../../../shared/domain/route';
@@ -16,7 +15,7 @@ export class LiFi implements Aggregator {
   private client: LIFI;
 
   constructor() {
-    this.enabledChains = [Polygon, Fantom];
+    this.enabledChains = [];
     this.client = new LIFI();
   }
 
