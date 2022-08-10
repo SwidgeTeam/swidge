@@ -29,6 +29,8 @@ export class ZeroEx implements Exchange {
       [Optimism]: 'https://optimism.api.0x.org',
     };
 
+    const slippage = request.slippage / 100;
+
     const response = await this.httpClient
       .get<{
         to: ContractAddress;
@@ -40,7 +42,8 @@ export class ZeroEx implements Exchange {
         `${urls[request.chainId]}/swap/v1/quote` +
           `?sellToken=${request.tokenIn.address}` +
           `&buyToken=${request.tokenOut.address}` +
-          `&sellAmount=${request.amountIn.toString()}`,
+          `&sellAmount=${request.amountIn.toString()}` +
+          `&slippagePercentage=${slippage.toString()}`,
       )
       .catch((error) => {
         // TODO : check error type
