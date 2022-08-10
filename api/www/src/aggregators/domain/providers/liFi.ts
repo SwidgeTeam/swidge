@@ -15,10 +15,6 @@ export class LiFi implements Aggregator {
   private enabledChains: string[];
   private client: LIFI;
 
-  static create() {
-    return new LiFi();
-  }
-
   constructor() {
     this.enabledChains = [Polygon, Fantom];
     this.client = new LIFI();
