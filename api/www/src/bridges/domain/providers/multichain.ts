@@ -104,7 +104,6 @@ export class Multichain implements Bridge {
       encodedData,
       fees,
       limits,
-      true,
     );
   }
 

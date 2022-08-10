@@ -25,7 +25,7 @@ export class BridgingOrder {
     private readonly _data: string,
     private readonly _fees: BridgingFees,
     private readonly _limits: BridgingLimits,
-    private readonly _required: boolean,
+    private readonly _required = true,
   ) {}
 
   get tokenIn(): Token {
