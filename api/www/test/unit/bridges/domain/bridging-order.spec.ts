@@ -5,7 +5,7 @@ import { BridgingFeesMother } from './bridging-fees.mother';
 describe('Bridging order', () => {
   it('should respect maximum limit', () => {
     // Arrange
-    const fees = BridgingFeesMother.create(10, '1', '0', 6);
+    const fees = BridgingFeesMother.withValues(10, '1', '0', 6);
     const amount = BigInteger.fromDecimal('100');
     const order = BridgingOrderMother.randomWithFeesAndAmount(fees, amount);
 
@@ -18,7 +18,7 @@ describe('Bridging order', () => {
 
   it('should accept decimal percentage', () => {
     // Arrange
-    const fees = BridgingFeesMother.create(0.1, '1', '0', 6);
+    const fees = BridgingFeesMother.withValues(0.1, '1', '0', 6);
     const amount = BigInteger.fromDecimal('100');
     const order = BridgingOrderMother.randomWithFeesAndAmount(fees, amount);
 
@@ -31,7 +31,7 @@ describe('Bridging order', () => {
 
   it('should respect minimum limit', () => {
     // Arrange
-    const fees = BridgingFeesMother.create(10, '100', '50', 6);
+    const fees = BridgingFeesMother.withValues(10, '100', '50', 6);
     const amount = BigInteger.fromDecimal('100');
     const order = BridgingOrderMother.randomWithFeesAndAmount(fees, amount);
 
@@ -44,7 +44,7 @@ describe('Bridging order', () => {
 
   it('should respect percentage if inside limits', () => {
     // Arrange
-    const fees = BridgingFeesMother.create(10, '100', '0', 6);
+    const fees = BridgingFeesMother.withValues(10, '100', '0', 6);
     const amount = BigInteger.fromDecimal('100');
     const order = BridgingOrderMother.randomWithFeesAndAmount(fees, amount);
 

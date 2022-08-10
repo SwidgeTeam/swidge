@@ -1,6 +1,7 @@
 import { BridgingFees } from '../../../../src/bridges/domain/BridgingFees';
 import { faker } from '@faker-js/faker';
 import { BigIntegerMother } from '../../shared/domain/big-integer.mother';
+import { BigInteger } from '../../../../src/shared/domain/BigInteger';
 
 export class BridgingFeesMother {
   public static create(percentage, maxFee, minFee, decimals): BridgingFees {
@@ -19,6 +20,15 @@ export class BridgingFeesMother {
         min: 6,
         max: 18,
       }),
+    );
+  }
+
+  public static withValues(percentage, maxFee, minFee, decimals): BridgingFees {
+    return this.create(
+      percentage,
+      BigInteger.fromDecimal(maxFee),
+      BigInteger.fromDecimal(minFee),
+      decimals,
     );
   }
 }
