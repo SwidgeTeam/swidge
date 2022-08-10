@@ -6,7 +6,7 @@ import { TokenDetailsFetcher } from '../../../../src/shared/infrastructure/Token
 import { GetPathQuery } from '../../../../src/paths/application/query/get-path.query';
 import { TokenMother } from '../../shared/domain/Token.mother';
 import { BigInteger } from '../../../../src/shared/domain/BigInteger';
-import { Polygon, } from '../../../../src/shared/enums/ChainIds';
+import { Polygon } from '../../../../src/shared/enums/ChainIds';
 import { GasPriceFetcher } from '../../../../src/shared/infrastructure/GasPriceFetcher';
 import { Sushiswap } from '../../../../src/swaps/domain/providers/sushiswap';
 import { Exchanges } from '../../../../src/swaps/domain/exchanges';
@@ -18,7 +18,7 @@ import { getPriceFeedFetcher } from '../../shared/shared';
 
 describe('path-computer - single chain', () => {
   describe('path-computer - no routes', () => {
-    it('should throw no-path when single chain swap not available', async () => {
+    it('should throw no-path when swap not available', async () => {
       /** Arrange */
       const srcToken = TokenMother.link();
       const dstToken = TokenMother.sushi();
@@ -74,7 +74,7 @@ describe('path-computer - single chain', () => {
   });
 
   describe('path-computer - with routes', () => {
-    it('should compute two different single swap routes', async () => {
+    it('should compute two different routes', async () => {
       /** Arrange */
       const srcToken = TokenMother.link();
       const dstToken = TokenMother.sushi();

@@ -69,6 +69,10 @@ export class BigInteger {
     return this._number.toString();
   }
 
+  public equals(other: BigInteger): boolean {
+    return this._number.eq(other._number);
+  }
+
   public toDecimal(decimals?: number): string {
     if (!decimals) {
       decimals = BigInteger.defaultDecimals;

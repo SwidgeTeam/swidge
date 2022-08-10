@@ -293,7 +293,7 @@ export class PathComputer {
           return (
             route.transactionDetails.to === current.transactionDetails.to &&
             route.transactionDetails.callData === current.transactionDetails.callData &&
-            route.resume.amountOut === current.resume.amountOut
+            route.resume.amountOut.equals(current.resume.amountOut)
           );
         });
         if (!exists) {
