@@ -132,10 +132,12 @@ export class Sushiswap implements Exchange {
       throw new InsufficientLiquidity();
     }
 
+    const slippage = new Percent(request.slippage * 100, '10000');
+
     const call = Router.swapCallParameters(trade[0], {
       ttl: 3600 * 24, // 1 day
       recipient: DeployedAddresses.Router,
-      allowedSlippage: new Percent('1', '100'),
+      allowedSlippage: slippage,
     });
 
     const callData = this.encodeCallData(call);
