@@ -61,6 +61,10 @@ export class BigInteger {
     return this._number.gt(other._number);
   }
 
+  public greaterOrEqualThan(other: BigInteger) {
+    return this._number.gte(other._number);
+  }
+
   public isNegative(): boolean {
     return this._number.isNegative();
   }
