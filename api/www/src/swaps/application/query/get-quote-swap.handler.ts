@@ -12,9 +12,8 @@ import { HttpClient } from '../../../shared/infrastructure/http/httpClient';
 @QueryHandler(GetQuoteSwapQuery)
 export class GetQuoteSwapHandler implements IQueryHandler<GetQuoteSwapQuery> {
   constructor(
-    private readonly httpClient: HttpClient,
-    @Inject(Class.TokenDetailsFetcher)
-    private readonly tokenDetailsFetcher: TokenDetailsFetcher,
+    @Inject(Class.HttpClient) private readonly httpClient: HttpClient,
+    @Inject(Class.TokenDetailsFetcher) private readonly tokenDetailsFetcher: TokenDetailsFetcher,
   ) {}
 
   async execute(query: GetQuoteSwapQuery): Promise<SwapOrder> {
