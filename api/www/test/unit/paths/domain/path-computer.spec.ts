@@ -17,12 +17,11 @@ import { Bridges } from '../../../../src/bridges/domain/bridges';
 import { SwapOrder } from '../../../../src/swaps/domain/SwapOrder';
 import { ExchangeProviders } from '../../../../src/swaps/domain/providers/exchange-providers';
 import { BridgingOrder } from '../../../../src/bridges/domain/bridging-order';
-import { BridgingFeesMother } from '../../bridges/domain/BridgingFees.mother';
+import { BridgingFeesMother } from '../../bridges/domain/bridging-fees.mother';
 import { BridgingLimitsMother } from '../../bridges/domain/bridging-limits.mother';
 import { Tokens } from '../../../../src/shared/enums/Tokens';
 import { Multichain } from '../../../../src/bridges/domain/providers/multichain';
 import { BridgeProviders } from '../../../../src/bridges/domain/providers/bridge-providers';
-import { IHttpClient } from '../../../../src/shared/domain/http/IHttpClient';
 import { HttpClient } from '../../../../src/shared/infrastructure/http/httpClient';
 
 describe('path-computer', () => {

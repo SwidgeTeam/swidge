@@ -1,6 +1,6 @@
 import { BigInteger } from '../../../../src/shared/domain/BigInteger';
-import { BridgingOrderMother } from './BridgingOrder.mother';
-import { BridgingFeesMother } from './BridgingFees.mother';
+import { BridgingOrderMother } from './bridging-order.mother';
+import { BridgingFeesMother } from './bridging-fees.mother';
 
 describe('Bridging order', () => {
   it('should respect maximum limit', () => {
