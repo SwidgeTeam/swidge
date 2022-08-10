@@ -29,7 +29,7 @@ export class GetPathQuery {
     return this._amountIn;
   }
 
-  get isMonoChain(): boolean {
-    return this._fromChainId === this._toChainId;
+  get slippage(): number {
+    return 2;
   }
 }

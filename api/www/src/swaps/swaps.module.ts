@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { SwapOrderComputer } from './application/query/swap-order-computer';
 import httpClientProvider from '../shared/infrastructure/http/httpClient.provider';
 import { GetSwapQuoteController } from './infrastructure/controllers/get-swap-quote.controller';
 import { CqrsModule } from '@nestjs/cqrs';
@@ -14,7 +13,6 @@ import { UpdateSushiPairsHandler } from './application/command/update-sushi-pair
   imports: [CqrsModule],
   controllers: [GetSwapQuoteController, UpdateSushiPairsController],
   providers: [
-    SwapOrderComputer,
     GetQuoteSwapHandler,
     UpdateSushiPairsHandler,
     httpClientProvider(),
@@ -22,6 +20,5 @@ import { UpdateSushiPairsHandler } from './application/command/update-sushi-pair
     tokenDetailsFetcherProvider(),
     sushiPairsRepositoryProvider(),
   ],
-  exports: [SwapOrderComputer],
 })
 export class SwapsModule {}

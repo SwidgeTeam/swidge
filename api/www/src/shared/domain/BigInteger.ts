@@ -61,12 +61,20 @@ export class BigInteger {
     return this._number.gt(other._number);
   }
 
+  public greaterOrEqualThan(other: BigInteger) {
+    return this._number.gte(other._number);
+  }
+
   public isNegative(): boolean {
     return this._number.isNegative();
   }
 
   public toString(): string {
     return this._number.toString();
+  }
+
+  public equals(other: BigInteger): boolean {
+    return this._number.eq(other._number);
   }
 
   public toDecimal(decimals?: number): string {

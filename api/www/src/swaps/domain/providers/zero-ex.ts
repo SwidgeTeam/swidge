@@ -12,10 +12,6 @@ import { ExchangeProviders } from './exchange-providers';
 export class ZeroEx implements Exchange {
   private readonly enabledChains: string[];
 
-  public static create(httpClient: HttpClient) {
-    return new ZeroEx(httpClient);
-  }
-
   constructor(private readonly httpClient: HttpClient) {
     this.enabledChains = [Mainnet, Polygon, Fantom, BSC, Avalanche, Optimism];
   }
@@ -59,8 +55,8 @@ export class ZeroEx implements Exchange {
       ExchangeProviders.ZeroEx,
       request.tokenIn,
       request.tokenOut,
-      response.allowanceTarget,
       encodedData,
+      request.amountIn,
       BigInteger.fromString(response.buyAmount),
       BigInteger.fromString(response.gas),
     );

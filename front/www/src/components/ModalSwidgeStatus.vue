@@ -3,15 +3,15 @@ import { Dialog, DialogOverlay, TransitionChild, TransitionRoot } from '@headles
 import { XIcon } from '@heroicons/vue/outline'
 
 import StatusStep from './StatusStep.vue'
-import { TransactionSteps } from '@/models/TransactionSteps'
 import { computed } from 'vue'
-import { useTokensStore } from '@/store/tokens'
+import { useRoutesStore } from '@/store/routes'
+import Route from '@/domain/paths/path'
+import { Networks } from '@/domain/chains/Networks'
 
-const tokensStore = useTokensStore()
+const routesStore = useRoutesStore()
 
-const props = defineProps<{
+defineProps<{
     show: boolean
-    steps: TransactionSteps
 }>()
 
 const emits = defineEmits<{
@@ -20,21 +20,23 @@ const emits = defineEmits<{
 
 const successMessage = computed({
     get: () => {
-        const amountIn = props.steps.origin.amountIn
-        const tokenIn = props.steps.origin.tokenIn
-        let amountOut, tokenOut
-        if (tokensStore.sameChainAssets) {
-            amountOut = props.steps.origin.amountOut
-            tokenOut = props.steps.origin.tokenOut
-        } else {
-            amountOut = props.steps.destination.amountOut
-            tokenOut = props.steps.destination.tokenOut
-        }
-        return 'You’ve successfully transferred ' + Number(amountIn).toFixed(2) + ' ' + tokenIn + ' on ' + tokensStore.getOriginChainName +
-            ' to ' + Number(amountOut).toFixed(2) + ' ' + tokenOut + ' on ' + tokensStore.getDestinationChainName
+        const route = routesStore.getSelectedRoute
+        const tokenIn = route.resume.tokenIn.name
+        const tokenOut = route.resume.tokenOut.name
+        const amountIn = route.resume.amountIn
+        const amountOut = route.resume.amountOut
+        const fromChainName = Networks.get(route.resume.fromChain).name
+        const toChainName = Networks.get(route.resume.toChain).name
+
+        return 'You’ve successfully transferred ' + Number(amountIn).toFixed(2) + ' ' + tokenIn + ' on ' + fromChainName +
+            ' to ' + Number(amountOut).toFixed(2) + ' ' + tokenOut + ' on ' + toChainName
     },
     set: () => null
 })
+
+const getRoute = (): Route => {
+    return routesStore.getSelectedRoute
+}
 
 </script>
 
@@ -82,36 +84,12 @@ const successMessage = computed({
                         </div>
 
                         <StatusStep
-                            v-if="steps.origin.required"
-                            title="Swap on ZeroEx"
-                            :amount-in="steps.origin.amountIn"
-                            :amount-out="steps.origin.amountOut"
-                            :token-in="steps.origin.tokenIn"
-                            :token-out="steps.origin.tokenOut"
-                            :completed="steps.origin.completed"
+                            v-for="(step, index) in getRoute().steps"
+                            :key="index"
+                            :step="step"
                         />
 
-                        <StatusStep
-                            v-if="steps.bridge.required"
-                            title="Transfer via Multichain"
-                            :amount-in="steps.bridge.amountIn"
-                            :amount-out="steps.bridge.amountOut"
-                            :token-in="steps.bridge.tokenIn"
-                            :token-out="steps.bridge.tokenOut"
-                            :completed="steps.bridge.completed"
-                        />
-
-                        <StatusStep
-                            v-if="steps.destination.required"
-                            title="Swap on ZeroEx"
-                            :amount-in="steps.destination.amountIn"
-                            :amount-out="steps.destination.amountOut"
-                            :token-in="steps.destination.tokenIn"
-                            :token-out="steps.destination.tokenOut"
-                            :completed="steps.destination.completed"
-                        />
-
-                        <div v-if="steps.completed" class="flex flex-col items-center">
+                        <div v-if="getRoute().completed" class="flex flex-col items-center">
                             <div class="text-3xl font-extrabold">Swidge successful!</div>
                             <div class="mt-6">{{ successMessage }}</div>
                             <div class="mt-3">

@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import { ChevronRightIcon, ChevronLeftIcon } from '@heroicons/vue/outline'
 import { ref, watchEffect } from 'vue'
-import {INetwork} from '@/models/INetwork'
+import {INetwork} from '@/domain/chains/INetwork'
 
 const scrollContainer = ref()
 const isRightScrollable = ref()

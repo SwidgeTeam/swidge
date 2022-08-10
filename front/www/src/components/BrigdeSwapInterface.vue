@@ -1,20 +1,19 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import ModalNetworkAndTokenSelect from './ModalNetworkAndTokenSelect.vue'
-import GetQuoteResponse from '@/api/models/get-quote-response'
-import { RouterCaller, RouterCallPayload } from '@/contracts/routerCaller'
+import { RouterCaller } from '@/contracts/routerCaller'
 import { useWeb3Store } from '@/store/web3'
-import { BigNumber, ethers, providers } from 'ethers'
+import { ethers, providers } from 'ethers'
 import ModalSwidgeStatus from './ModalSwidgeStatus.vue'
-import { TransactionSteps } from '@/models/TransactionSteps'
 import IToken from '@/domain/tokens/IToken'
 import { useTokensStore } from '@/store/tokens'
-import { usePathsStore } from '@/store/paths'
+import { useRoutesStore } from '@/store/routes'
 import SwapBox from '@/components/SwapBox.vue'
+import Route from '@/domain/paths/path'
 
 const web3Store = useWeb3Store()
 const tokensStore = useTokensStore()
-const transactionStore = usePathsStore()
+const routesStore = useRoutesStore()
 
 const { switchToNetwork, getChainProvider, getBalance } = web3Store
 
@@ -31,34 +30,6 @@ const isModalStatusOpen = ref(false)
 const showTransactionAlert = ref(false)
 const transactionAlertMessage = ref<string>('')
 const isExecutingTransaction = ref<boolean>(false)
-
-const steps = ref<TransactionSteps>({
-    origin: {
-        required: false,
-        completed: false,
-        tokenIn: '',
-        tokenOut: '',
-        amountIn: '',
-        amountOut: '',
-    },
-    bridge: {
-        required: false,
-        completed: false,
-        tokenIn: '',
-        tokenOut: '',
-        amountIn: '',
-        amountOut: '',
-    },
-    destination: {
-        required: false,
-        completed: false,
-        tokenIn: '',
-        tokenOut: '',
-        amountIn: '',
-        amountOut: '',
-    },
-    completed: false,
-})
 
 const providersOnUse = ref<providers.BaseProvider[]>([])
 
@@ -200,7 +171,7 @@ const onQuote = async () => {
     }
 
     try {
-        await transactionStore.quotePath({
+        await routesStore.quotePath({
             fromChainId: tokensStore.getOriginChainId,
             srcToken: tokensStore.getOriginTokenAddress,
             toChainId: tokensStore.getDestinationChainId,
@@ -208,14 +179,13 @@ const onQuote = async () => {
             amount: sourceTokenAmount.value.toString(),
         })
 
-        const path = transactionStore.getPath
-        destinationTokenAmount.value = path.amountOut
+        const route = routesStore.getSelectedRoute
+
+        destinationTokenAmount.value = route.amountOut
         isGettingQuote.value = false
-        totalFee.value = (
-            Number(path.originSwap.fee) +
-            Number(path.bridge.fee) +
-            Number(path.destinationSwap.fee)
-        ).toFixed(2).toString()
+        totalFee.value = route.steps.reduce((total, current) => {
+            return total + Number(current.fee)
+        }, 0).toFixed(2).toString()
 
         if (
             Number(sourceTokenAmount.value) > Number(sourceTokenMaxAmount.value)
@@ -249,57 +219,60 @@ const onExecuteTransaction = async () => {
     if (!originToken) {
         throw new Error('Undefined origin token')
     }
-    const path = transactionStore.getPath
-    if (!path) {
+    const route = routesStore.getSelectedRoute
+    if (!route) {
         throw new Error('No path')
-    }
-    const amountIn = ethers.utils.parseUnits(
-        sourceTokenAmount.value,
-        originToken.decimals
-    )
-    const contractCallPayload: RouterCallPayload = {
-        router: path.router,
-        amountIn: amountIn,
-        destinationFee: BigNumber.from(path.destinationFee),
-        originSwap: {
-            providerCode: path.originSwap.code,
-            tokenIn: path.originSwap.tokenIn.address,
-            tokenOut: path.originSwap.tokenOut.address,
-            data: path.originSwap.data,
-            required: path.originSwap.required,
-            estimatedGas: path.originSwap.estimatedGas,
-        },
-        bridge: {
-            toChainId: path.bridge.toChainId,
-            tokenIn: path.bridge.tokenIn.address,
-            data: path.bridge.data,
-            required: path.bridge.required,
-        },
-        destinationSwap: {
-            tokenIn: path.destinationSwap.tokenIn.address,
-            tokenOut: path.destinationSwap.tokenOut.address,
-        },
     }
 
     setExecutingButton()
 
-    const contractCall = await RouterCaller.call(contractCallPayload)
+    const contractCall = await RouterCaller.call(route.resume.tokenIn.address, route.tx)
 
     openTransactionStatusModal()
 
     await contractCall
         .wait()
         .then(async (receipt: { transactionHash: string }) => {
-            steps.value.origin.completed = true
+            routesStore.completeFirstStep()
             if (isCrossTransaction()) {
-                setUpEventListener(path, receipt.transactionHash)
+                setUpEventListener(route, receipt.transactionHash)
             } else {
-                steps.value.completed = true
+                routesStore.completeRoute()
             }
         })
         .finally(() => {
             unsetExecutingButton()
         })
+}
+
+/**
+ * Sets up the required listener to check for the events on the destination chain
+ * It allows the frontend to know when the transaction has been completed
+ * @param path
+ * @param executedTxHash
+ */
+const setUpEventListener = (path: Route, executedTxHash: string) => {
+    const toChainId = tokensStore.getDestinationChainId
+    const provider = getChainProvider(toChainId)
+
+    const filter = {
+        address: path.tx.to,
+        topics: [ethers.utils.id('CrossFinalized(bytes32,uint256)')],
+    }
+
+    provider.on(filter, (event: { data: ethers.utils.BytesLike }) => {
+        const [txHash] = ethers.utils.defaultAbiCoder.decode(
+            ['bytes32', 'uint256'],
+            event.data
+        )
+        if (executedTxHash === txHash) {
+            routesStore.completeRoute()
+            provider.off(filter)
+        }
+        // TODO : store finalAmount if we want it visible on the modal
+    })
+
+    providersOnUse.value.push(provider)
 }
 
 const isCrossTransaction = () => {
@@ -323,67 +296,9 @@ const unsetExecutingButton = () => {
 }
 
 /**
- * Sets up the required listener to check for the events on the destination chain
- * It allows the frontend to know when the transaction has been completed
- * @param path
- * @param executedTxHash
- */
-const setUpEventListener = (path: GetQuoteResponse, executedTxHash: string) => {
-    const provider = getChainProvider(path.bridge.toChainId)
-
-    const filter = {
-        address: path.router,
-        topics: [ethers.utils.id('CrossFinalized(bytes32,uint256)')],
-    }
-
-    provider.on(filter, (event: { data: ethers.utils.BytesLike }) => {
-        const [txHash] = ethers.utils.defaultAbiCoder.decode(
-            ['bytes32', 'uint256'],
-            event.data
-        )
-        if (executedTxHash === txHash) {
-            steps.value.bridge.completed = true
-            steps.value.destination.completed = true
-            steps.value.completed = true
-            provider.off(filter)
-        }
-        // TODO : store finalAmount if we want it visible on the modal
-    })
-
-    providersOnUse.value.push(provider)
-}
-
-/**
  * Opens the transaction status modal after an executed transaction
  */
 const openTransactionStatusModal = () => {
-    const path = transactionStore.getPath
-    if (!path) {
-        throw new Error('No path')
-    }
-    steps.value.origin.tokenIn = path.originSwap.tokenIn.name
-    steps.value.origin.tokenOut = path.originSwap.tokenOut.name
-    steps.value.origin.amountIn = sourceTokenAmount.value
-    steps.value.origin.amountOut = path.originSwap.amountOut
-    steps.value.origin.required = path.originSwap.required
-    steps.value.origin.completed = false
-
-    steps.value.bridge.tokenIn = path.bridge.tokenIn.name
-    steps.value.bridge.tokenOut = path.bridge.tokenOut.name
-    steps.value.bridge.amountIn = path.originSwap.amountOut
-    steps.value.bridge.amountOut = path.bridge.amountOut
-    steps.value.bridge.required = path.bridge.required
-    steps.value.bridge.completed = false
-
-    steps.value.destination.tokenIn = path.destinationSwap.tokenIn.name
-    steps.value.destination.tokenOut = path.destinationSwap.tokenOut.name
-    steps.value.destination.amountIn = path.bridge.amountOut
-    steps.value.destination.amountOut = path.amountOut
-    steps.value.destination.required = path.destinationSwap.required
-    steps.value.destination.completed = false
-
-    steps.value.completed = false
-
     isModalStatusOpen.value = true
 }
 
@@ -422,7 +337,6 @@ const closeModalStatus = () => {
         @update-token="handleUpdateTokenFromModal($event)"
     />
     <ModalSwidgeStatus
-        :steps="steps"
         :show="isModalStatusOpen"
         @close-modal="closeModalStatus"
     />

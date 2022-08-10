@@ -14,6 +14,8 @@ export class GetSwapQuoteController {
     @Query('tokenIn') tokenIn: string,
     @Query('tokenOut') tokenOut: string,
     @Query('amountIn') amountIn: string,
+    //@Query('slippage') slippage: string,
+    //@Query('minAmountOut') minAmountOut: string,
     @Res() res: Response,
   ) {
     const query = new GetQuoteSwapQuery(chainId, tokenIn, tokenOut, amountIn);

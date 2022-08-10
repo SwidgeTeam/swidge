@@ -1,30 +1,6 @@
-import { ethers, ContractTransaction, BigNumber } from 'ethers'
-import routerAbi from './router.json'
+import { ContractTransaction, ethers } from 'ethers'
 import IERC20Abi from './IERC20.json'
-
-export interface RouterCallPayload {
-    router: string
-    amountIn: BigNumber
-    destinationFee: BigNumber
-    originSwap: {
-        providerCode: string
-        tokenIn: string
-        tokenOut: string
-        data: string
-        required: boolean
-        estimatedGas: string
-    },
-    bridge: {
-        tokenIn: string
-        toChainId: string
-        data: string
-        required: boolean
-    },
-    destinationSwap: {
-        tokenIn: string
-        tokenOut: string
-    }
-}
+import { TransactionDetails } from '@/domain/paths/path'
 
 export const NATIVE_COIN_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 
@@ -35,58 +11,21 @@ export class RouterCaller {
         return new ethers.providers.Web3Provider(window.ethereum)
     }
 
-    static async call(params: RouterCallPayload): Promise<ContractTransaction> {
+    static async call(tokenIn: string, tx: TransactionDetails): Promise<ContractTransaction> {
         const provider = this.provider()
-        const nativeInput = params.originSwap.tokenIn === NATIVE_COIN_ADDRESS
+        const signer = provider.getSigner()
 
-        // Get Router contract instance
-        const Router = new ethers.Contract(
-            params.router,
-            routerAbi,
-            provider.getSigner()
-        )
-
-        if (!nativeInput) {
-            const tokenIn = params.originSwap.required
-                ? params.originSwap.tokenIn
-                : params.bridge.tokenIn
-            await RouterCaller.approveIfRequired(tokenIn, params.router)
+        if (tokenIn !== NATIVE_COIN_ADDRESS) {
+            await RouterCaller.approveIfRequired(tokenIn, tx.to)
         }
 
-        const feeData = await provider.getFeeData()
-
-        let valueToSend = params.destinationFee
-
-        if (nativeInput) {
-            valueToSend = valueToSend.add(params.amountIn)
-        }
-
-        // Create transaction
-        return Router.initSwidge(
-            params.amountIn,
-            [
-                params.originSwap.providerCode,
-                params.originSwap.tokenIn,
-                params.originSwap.tokenOut,
-                params.originSwap.data,
-                params.originSwap.required,
-            ],
-            [
-                params.bridge.tokenIn,
-                params.bridge.toChainId,
-                params.bridge.data,
-                params.bridge.required,
-            ],
-            [
-                params.destinationSwap.tokenIn,
-                params.destinationSwap.tokenOut
-            ],
-            {
-                gasPrice: feeData.gasPrice,
-                gasLimit: 2000000, // TODO : set more accurate
-                value: valueToSend
-            }
-        )
+        return await signer.sendTransaction({
+            to: tx.to,
+            data: tx.callData,
+            value: tx.value,
+            gasLimit: tx.gasLimit,
+            gasPrice: tx.gasPrice,
+        })
     }
 
     /**

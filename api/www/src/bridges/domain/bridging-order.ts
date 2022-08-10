@@ -25,7 +25,7 @@ export class BridgingOrder {
     private readonly _data: string,
     private readonly _fees: BridgingFees,
     private readonly _limits: BridgingLimits,
-    private readonly _required: boolean,
+    private readonly _required = true,
   ) {}
 
   get tokenIn(): Token {
@@ -52,6 +52,10 @@ export class BridgingOrder {
     return this._required;
   }
 
+  get amountIn(): BigInteger {
+    return this._amountIn;
+  }
+
   get amountOut(): BigInteger {
     const convertedAmount = this._amountIn.convertDecimalsFromTo(
       this._tokenIn.decimals,
@@ -59,14 +63,6 @@ export class BridgingOrder {
     );
     const bridgingFee = this.finalFee(convertedAmount);
     return convertedAmount.minus(bridgingFee);
-  }
-
-  get amountOutDecimal(): string {
-    if (this._required) {
-      return this.amountOut.toDecimal(this._tokenOut.decimals);
-    } else {
-      return '';
-    }
   }
 
   get fee(): BigInteger {

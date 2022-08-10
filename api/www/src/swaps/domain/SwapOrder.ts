@@ -8,25 +8,34 @@ export class SwapOrder {
       '0',
       Token.null(),
       Token.null(),
-      null,
       '0x',
       null,
+      BigInteger.zero(),
       BigInteger.zero(),
       false,
     );
   }
 
   public static sameToken(token: Token) {
-    return new SwapOrder('0', token, token, null, '0x', null, BigInteger.zero(), false);
+    return new SwapOrder(
+      '0',
+      token,
+      token,
+      '0x',
+      null,
+      BigInteger.zero(),
+      BigInteger.zero(),
+      false,
+    );
   }
 
   constructor(
     private readonly _providerCode: string,
     private readonly _tokenIn: Token,
     private readonly _tokenOut: Token,
-    private readonly _approvalAddress: ContractAddress,
     private readonly _data: string,
-    private readonly _buyAmount: BigInteger,
+    private readonly _amountIn: BigInteger,
+    private readonly _amountOut: BigInteger,
     private readonly _estimatedGas: BigInteger,
     private readonly _required = true,
   ) {}
@@ -43,28 +52,20 @@ export class SwapOrder {
     return this._tokenOut;
   }
 
-  get approvalAddress(): string {
-    return this._approvalAddress;
-  }
-
   get data(): string {
     return this._data;
   }
 
-  get buyAmount(): BigInteger {
-    return this._buyAmount;
+  get amountIn(): BigInteger {
+    return this._amountIn;
+  }
+
+  get amountOut(): BigInteger {
+    return this._amountOut;
   }
 
   get estimatedGas(): BigInteger {
     return this._estimatedGas;
-  }
-
-  get buyAmountDecimal(): string {
-    if (this._required) {
-      return this._buyAmount.toDecimal(this._tokenOut.decimals);
-    } else {
-      return '';
-    }
   }
 
   get required(): boolean {
