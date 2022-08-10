@@ -27,12 +27,13 @@ import { OrderStrategy } from './route-order-strategy/order-strategy';
 import { RouteResume } from '../../shared/domain/route-resume';
 import { Bridges } from '../../bridges/domain/bridges';
 import { Exchanges } from '../../swaps/domain/exchanges';
+import { Aggregators } from '../../aggregators/domain/aggregators';
 
 export class PathComputer {
   /** Providers */
   private readonly exchanges: Exchanges;
   private readonly bridges: Bridges;
-  private readonly aggregatorOrderProvider: AggregatorOrderComputer;
+  private readonly aggregators: Aggregators;
   private readonly tokenDetailsFetcher: TokenDetailsFetcher;
   private readonly priceFeedFetcher: PriceFeedFetcher;
   private readonly gasPriceFetcher: GasPriceFetcher;
@@ -54,14 +55,14 @@ export class PathComputer {
   constructor(
     _exchanges: Exchanges,
     _bridges: Bridges,
-    _aggregatorOrderProvider: AggregatorOrderComputer,
+    _aggregators: Aggregators,
     _tokenDetailsFetcher: TokenDetailsFetcher,
     _priceFeedFetcher: PriceFeedFetcher,
     _gasPriceFetcher: GasPriceFetcher,
   ) {
     this.exchanges = _exchanges;
     this.bridges = _bridges;
-    this.aggregatorOrderProvider = _aggregatorOrderProvider;
+    this.aggregators = _aggregators;
     this.tokenDetailsFetcher = _tokenDetailsFetcher;
     this.priceFeedFetcher = _priceFeedFetcher;
     this.gasPriceFetcher = _gasPriceFetcher;
@@ -118,7 +119,7 @@ export class PathComputer {
     // for every integrated aggregator
     for (const aggregatorId of this.getPossibleAggregators()) {
       // ask for their routes
-      const promiseRoute = this.aggregatorOrderProvider.execute(aggregatorId, aggregatorRequest);
+      const promiseRoute = this.aggregators.execute(aggregatorId, aggregatorRequest);
       promises.push(promiseRoute);
     }
 
@@ -508,6 +509,6 @@ export class PathComputer {
    * @private
    */
   private getPossibleAggregators(): string[] {
-    return this.aggregatorOrderProvider.getEnabledAggregators(this.fromChain, this.toChain);
+    return this.aggregators.getEnabled(this.fromChain, this.toChain);
   }
 }

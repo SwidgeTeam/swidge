@@ -18,6 +18,9 @@ import { ExchangeProviders } from '../../../swaps/domain/providers/exchange-prov
 import { ZeroEx } from '../../../swaps/domain/providers/zero-ex';
 import { Sushiswap } from '../../../swaps/domain/providers/sushiswap';
 import { SushiPairsRepository } from '../../../swaps/domain/sushi-pairs-repository';
+import { Aggregators } from '../../../aggregators/domain/aggregators';
+import { AggregatorProviders } from '../../../aggregators/domain/providers/aggregator-providers';
+import { LiFi } from '../../../aggregators/domain/providers/liFi';
 
 @QueryHandler(GetPathQuery)
 export class GetPathHandler implements IQueryHandler<GetPathQuery> {
@@ -41,10 +44,14 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
       [ExchangeProviders.Sushi, new Sushiswap(httpClient, sushiPairsRepository)],
     ]);
 
+    const aggregators = new Aggregators([
+      [AggregatorProviders.LiFi, new LiFi()]
+    ]);
+
     this.pathComputer = new PathComputer(
       exchanges,
       bridges,
-      aggregatorOrderProvider,
+      aggregators,
       tokenDetailsFetcher,
       priceFeedFetcher,
       gasPriceFetcher,
