@@ -1,4 +1,3 @@
-import { ContractAddress } from '../../shared/types';
 import { BigInteger } from '../../shared/domain/BigInteger';
 import { Token } from '../../shared/domain/Token';
 
@@ -10,6 +9,7 @@ export class SwapOrder {
       Token.null(),
       '0x',
       null,
+      BigInteger.zero(),
       BigInteger.zero(),
       BigInteger.zero(),
       false,
@@ -25,6 +25,7 @@ export class SwapOrder {
       null,
       BigInteger.zero(),
       BigInteger.zero(),
+      BigInteger.zero(),
       false,
     );
   }
@@ -36,6 +37,7 @@ export class SwapOrder {
     private readonly _data: string,
     private readonly _amountIn: BigInteger,
     private readonly _amountOut: BigInteger,
+    private readonly _minAmountOut: BigInteger,
     private readonly _estimatedGas: BigInteger,
     private readonly _required = true,
   ) {}
@@ -62,6 +64,10 @@ export class SwapOrder {
 
   get amountOut(): BigInteger {
     return this._amountOut;
+  }
+
+  get minAmountOut(): BigInteger {
+    return this._minAmountOut;
   }
 
   get estimatedGas(): BigInteger {

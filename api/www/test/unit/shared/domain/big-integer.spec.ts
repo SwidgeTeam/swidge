@@ -173,4 +173,16 @@ describe('BigInteger', () => {
     expect(numberOne.equals(numberThree)).toBeTruthy();
     expect(numberTwo.equals(numberFour)).toBeFalsy();
   });
+
+  it('should operate the remaining percentage', () => {
+    // Arrange
+    const total = BigInteger.fromDecimal('100', 18);
+    const percent = 1.5;
+
+    // Act
+    const another = total.times(1000 - percent * 10).div(1000);
+
+    // Assert
+    expect(another.toDecimal(18)).toEqual('98.5');
+  });
 });

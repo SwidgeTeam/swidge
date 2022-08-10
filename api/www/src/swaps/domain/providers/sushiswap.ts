@@ -132,6 +132,10 @@ export class Sushiswap implements Exchange {
       throw new InsufficientLiquidity();
     }
 
+    const expectedAmountOut = BigInteger.fromString(trade[0].outputAmount.numerator.toString());
+
+    const minAmountOut = expectedAmountOut.times(1000 - request.slippage * 10).div(1000);
+
     const slippage = new Percent(request.slippage * 100, '10000');
 
     const call = Router.swapCallParameters(trade[0], {
@@ -148,7 +152,8 @@ export class Sushiswap implements Exchange {
       request.tokenOut,
       callData,
       request.amountIn,
-      BigInteger.fromString(trade[0].outputAmount.numerator.toString()),
+      expectedAmountOut,
+      minAmountOut,
       BigInteger.fromString(gasEstimations[chainId]),
     );
   }

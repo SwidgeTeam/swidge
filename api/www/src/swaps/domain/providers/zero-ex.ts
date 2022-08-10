@@ -37,6 +37,7 @@ export class ZeroEx implements Exchange {
         allowanceTarget: ContractAddress;
         data: string;
         buyAmount: string;
+        guaranteedPrice: string;
         gas: string;
       }>(
         `${urls[request.chainId]}/swap/v1/quote` +
@@ -54,6 +55,10 @@ export class ZeroEx implements Exchange {
 
     const encodedData = AbiEncoder.concatBytes([encodedAddress, response.data]);
 
+    const minPrice = BigInteger.fromDecimal(response.guaranteedPrice, request.tokenIn.decimals);
+
+    const minAmountOut = minPrice.times(request.amountIn);
+
     return new SwapOrder(
       ExchangeProviders.ZeroEx,
       request.tokenIn,
@@ -61,6 +66,7 @@ export class ZeroEx implements Exchange {
       encodedData,
       request.amountIn,
       BigInteger.fromString(response.buyAmount),
+      minAmountOut,
       BigInteger.fromString(response.gas),
     );
   }
