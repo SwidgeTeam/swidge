@@ -1,6 +1,5 @@
 import { SinonStub, SinonStubStatic, stub } from 'sinon';
 import { ZeroEx } from '../../../../src/swaps/domain/providers/zero-ex';
-import { SwapOrderComputer } from '../../../../src/swaps/application/query/swap-order-computer';
 import { PathComputer } from '../../../../src/paths/domain/path-computer';
 import { HttpClient } from '../../../../src/shared/infrastructure/http/httpClient';
 import { CachedHttpClient } from '../../../../src/shared/infrastructure/http/cachedHttpClient';
@@ -63,11 +62,6 @@ describe('path-computer', () => {
     ]);
 
     // instantiate dependencies
-    const swapOrderComputer = new SwapOrderComputer(
-      myHttpClient,
-      myCachedHttpClient,
-      mockSushiRepository,
-    );
     const aggregatorOrderComputer = new AggregatorOrderComputer(myHttpClient);
 
     // create computer

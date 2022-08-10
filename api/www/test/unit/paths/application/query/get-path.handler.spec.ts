@@ -1,9 +1,7 @@
 import { GetPathHandler } from '../../../../../src/paths/application/query/get-path.handler';
 import { GetPathQuery } from '../../../../../src/paths/application/query/get-path.query';
 import { createMock } from 'ts-auto-mock';
-import { SwapOrderComputer } from '../../../../../src/swaps/application/query/swap-order-computer';
 import { Token } from '../../../../../src/shared/domain/Token';
-import { InsufficientLiquidity } from '../../../../../src/swaps/domain/InsufficientLiquidity';
 import { TokenDetailsFetcher } from '../../../../../src/shared/infrastructure/TokenDetailsFetcher';
 import { PriceFeedFetcher } from '../../../../../src/shared/infrastructure/PriceFeedFetcher';
 import { stub } from 'sinon';
@@ -15,10 +13,6 @@ import { Fantom, Polygon } from '../../../../../src/shared/enums/ChainIds';
 describe('get path', () => {
   it('should return error if invalid first swap', async () => {
     // Arrange
-    const mockSwapProvider = createMock<SwapOrderComputer>({
-      execute: () => Promise.reject(new InsufficientLiquidity()),
-      getEnabledExchanged: () => [1],
-    });
     const mockTokenDetailsFetcher = createMock<TokenDetailsFetcher>({
       fetch: () => {
         return Promise.resolve(new Token('', '', 6, 'SYMB'));

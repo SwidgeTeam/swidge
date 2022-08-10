@@ -1,18 +1,18 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { GetQuoteSwapQuery } from './get-quote-swap.query';
-import { SwapOrderComputer } from './swap-order-computer';
 import { SwapRequest } from '../../domain/SwapRequest';
 import { BigInteger } from '../../../shared/domain/BigInteger';
 import { SwapOrder } from '../../domain/SwapOrder';
 import { Inject } from '@nestjs/common';
 import { TokenDetailsFetcher } from '../../../shared/infrastructure/TokenDetailsFetcher';
 import { Class } from '../../../shared/Class';
-import { ExchangeProviders } from '../../domain/providers/exchange-providers';
+import { ZeroEx } from '../../domain/providers/zero-ex';
+import { HttpClient } from '../../../shared/infrastructure/http/httpClient';
 
 @QueryHandler(GetQuoteSwapQuery)
 export class GetQuoteSwapHandler implements IQueryHandler<GetQuoteSwapQuery> {
   constructor(
-    private readonly swapQuery: SwapOrderComputer,
+    private readonly httpClient: HttpClient,
     @Inject(Class.TokenDetailsFetcher)
     private readonly tokenDetailsFetcher: TokenDetailsFetcher,
   ) {}
@@ -27,6 +27,8 @@ export class GetQuoteSwapHandler implements IQueryHandler<GetQuoteSwapQuery> {
       BigInteger.fromString(query.amount),
     );
 
-    return await this.swapQuery.execute(ExchangeProviders.ZeroEx, request);
+    const exchange = new ZeroEx(this.httpClient);
+
+    return await exchange.execute(request);
   }
 }
