@@ -36,6 +36,7 @@ export class LiFi implements Aggregator {
         toToken: request.toToken.address,
         fromAmount: request.amountIn.toString(),
         fromAddress: '0x0000000000000000000000000000000000000000',
+        slippage: request.slippage / 100,
       });
 
       const transactionDetails = new TransactionDetails(

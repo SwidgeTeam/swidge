@@ -117,6 +117,7 @@ export class PathComputer {
       this.srcToken,
       this.dstToken,
       this.amountIn,
+      this.totalSlippage,
     );
     const promises = [];
     // for every integrated aggregator
