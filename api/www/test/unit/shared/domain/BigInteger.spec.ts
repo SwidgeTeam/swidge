@@ -160,4 +160,17 @@ describe('BigInteger', () => {
     expect(numberTwo.greaterThan(numberOne)).toBeFalsy();
     expect(numberTwo.greaterThan(numberTwo)).toBeFalsy();
   });
+
+  it('should equal correctly', () => {
+    // Arrange
+    const numberOne = BigInteger.fromDecimal('20', 6);
+    const numberTwo = BigInteger.fromDecimal('10', 6);
+    const numberThree = BigInteger.fromDecimal('20', 6);
+    const numberFour = BigInteger.fromDecimal('10', 18);
+
+    // Act && Assert
+    expect(numberOne.equals(numberTwo)).toBeFalsy();
+    expect(numberOne.equals(numberThree)).toBeTruthy();
+    expect(numberTwo.equals(numberFour)).toBeFalsy();
+  });
 });
