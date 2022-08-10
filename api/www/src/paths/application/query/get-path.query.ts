@@ -7,6 +7,7 @@ export class GetPathQuery {
     private readonly _srcToken: ContractAddress,
     private readonly _dstToken: ContractAddress,
     private readonly _amountIn: string,
+    private readonly _slippage: number,
   ) {}
 
   get fromChainId(): string {
@@ -30,6 +31,6 @@ export class GetPathQuery {
   }
 
   get slippage(): number {
-    return 2;
+    return this._slippage;
   }
 }

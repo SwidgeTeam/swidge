@@ -24,6 +24,7 @@ export class GetQuoteSwapHandler implements IQueryHandler<GetQuoteSwapQuery> {
       srcToken,
       dstToken,
       BigInteger.fromString(query.amount),
+      query.slippage,
     );
 
     const exchange = new ZeroEx(this.httpClient);

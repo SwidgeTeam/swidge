@@ -7,5 +7,6 @@ export class SwapRequest {
     public readonly tokenIn: Token,
     public readonly tokenOut: Token,
     public readonly amountIn: BigInteger,
+    public readonly slippage: number,
   ) {}
 }

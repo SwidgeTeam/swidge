@@ -45,11 +45,13 @@ export class PathComputer {
   private fromChain: string;
   private toChain: string;
   private amountIn: BigInteger;
-  private totalSlippage: number;
   private priceOriginCoin: PriceFeed;
   private priceDestinationCoin: PriceFeed;
   private gasPriceDestination: BigInteger;
   private gasPriceOrigin: BigInteger;
+  private totalSlippage: number;
+  private originSlippage: number;
+  private destinationSlippage: number;
 
   constructor(
     _exchanges: Exchanges,
@@ -81,6 +83,8 @@ export class PathComputer {
     this.dstToken = await this.tokenDetailsFetcher.fetch(query.dstToken, this.toChain);
     this.amountIn = BigInteger.fromDecimal(query.amountIn, this.srcToken.decimals);
     this.totalSlippage = query.slippage;
+    this.originSlippage = query.slippage / 2;
+    this.destinationSlippage = query.slippage / 2;
 
     this.gasPriceOrigin = await this.gasPriceFetcher.fetch(this.fromChain);
     this.gasPriceDestination = await this.gasPriceFetcher.fetch(this.toChain);
@@ -163,6 +167,7 @@ export class PathComputer {
         this.srcToken,
         this.dstToken,
         this.amountIn,
+        this.totalSlippage,
       );
       // aggregate promises
       promises.push(swapOrderPromise);
@@ -200,6 +205,7 @@ export class PathComputer {
           this.srcToken,
           bridgeTokenIn,
           this.amountIn,
+          this.originSlippage,
         );
         // get the promise of the routes for this path
         const routesPromise = this.bridge(bridgingAsset, swapOrderPromise);
@@ -271,6 +277,7 @@ export class PathComputer {
         bridgeOrder.tokenOut,
         this.dstToken,
         bridgeOrder.amountOut,
+        this.destinationSlippage,
       );
       // save the promise
       promises.push(swapOrderPromise);
@@ -418,6 +425,7 @@ export class PathComputer {
    * @param tokenIn Token that goes in
    * @param tokenOut Token that goes out
    * @param amount Amount to swap
+   * @param slippage Max amount of slippage allowed
    * @private
    */
   private async getSwapOrder(
@@ -426,6 +434,7 @@ export class PathComputer {
     tokenIn: Token,
     tokenOut: Token,
     amount: BigInteger,
+    slippage: number,
   ): Promise<SwapOrder> {
     let swapOrder;
     // if the input and output asset are the same...
@@ -434,7 +443,7 @@ export class PathComputer {
       swapOrder = SwapOrder.sameToken(tokenIn);
     } else {
       // otherwise compute swap
-      const swapRequest = new SwapRequest(chainId, tokenIn, tokenOut, amount);
+      const swapRequest = new SwapRequest(chainId, tokenIn, tokenOut, amount, slippage);
       try {
         swapOrder = await this.exchanges.execute(exchangeId, swapRequest);
       } catch (e) {
