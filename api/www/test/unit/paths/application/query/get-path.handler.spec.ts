@@ -2,7 +2,6 @@ import { GetPathHandler } from '../../../../../src/paths/application/query/get-p
 import { GetPathQuery } from '../../../../../src/paths/application/query/get-path.query';
 import { createMock } from 'ts-auto-mock';
 import { SwapOrderComputer } from '../../../../../src/swaps/application/query/swap-order-computer';
-import { BridgeOrderComputer } from '../../../../../src/bridges/application/query/bridge-order-computer';
 import { Token } from '../../../../../src/shared/domain/Token';
 import { InsufficientLiquidity } from '../../../../../src/swaps/domain/InsufficientLiquidity';
 import { TokenDetailsFetcher } from '../../../../../src/shared/infrastructure/TokenDetailsFetcher';
@@ -19,9 +18,6 @@ describe('get path', () => {
     const mockSwapProvider = createMock<SwapOrderComputer>({
       execute: () => Promise.reject(new InsufficientLiquidity()),
       getEnabledExchanged: () => [1],
-    });
-    const mockBridgeProvider = createMock<BridgeOrderComputer>({
-      execute: () => null,
     });
     const mockTokenDetailsFetcher = createMock<TokenDetailsFetcher>({
       fetch: () => {

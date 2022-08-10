@@ -4,14 +4,12 @@ import { SwapOrderComputer } from '../../../../src/swaps/application/query/swap-
 import { PathComputer } from '../../../../src/paths/domain/path-computer';
 import { HttpClient } from '../../../../src/shared/infrastructure/http/httpClient';
 import { CachedHttpClient } from '../../../../src/shared/infrastructure/http/cachedHttpClient';
-import { BridgeOrderComputer } from '../../../../src/bridges/application/query/bridge-order-computer';
 import { TokenDetailsFetcher } from '../../../../src/shared/infrastructure/TokenDetailsFetcher';
 import { GetPathQuery } from '../../../../src/paths/application/query/get-path.query';
 import { TokenMother } from '../../shared/domain/Token.mother';
 import { SwapOrder } from '../../../../src/swaps/domain/SwapOrder';
 import { ExchangeProviders } from '../../../../src/swaps/domain/providers/exchange-providers';
 import { BigInteger } from '../../../../src/shared/domain/BigInteger';
-import { BigNumber } from 'ethers';
 import { Multichain } from '../../../../src/bridges/domain/providers/multichain';
 import { BridgingOrder } from '../../../../src/bridges/domain/bridging-order';
 import { BridgingFees } from '../../../../src/bridges/domain/BridgingFees';
@@ -70,7 +68,6 @@ describe('path-computer', () => {
       myCachedHttpClient,
       mockSushiRepository,
     );
-    const bridgeOrderComputer = new BridgeOrderComputer(myHttpClient, myCachedHttpClient);
     const aggregatorOrderComputer = new AggregatorOrderComputer(myHttpClient);
 
     // create computer
