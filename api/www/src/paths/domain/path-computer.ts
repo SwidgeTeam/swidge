@@ -292,7 +292,8 @@ export class PathComputer {
         const exists = final.find((route: Route) => {
           return (
             route.transactionDetails.to === current.transactionDetails.to &&
-            route.transactionDetails.callData === current.transactionDetails.callData
+            route.transactionDetails.callData === current.transactionDetails.callData &&
+            route.resume.amountOut === current.resume.amountOut
           );
         });
         if (!exists) {

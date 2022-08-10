@@ -20,7 +20,7 @@ import { BridgingLimitsMother } from '../../bridges/domain/bridging-limits.mothe
 import { Tokens } from '../../../../src/shared/enums/Tokens';
 import { Multichain } from '../../../../src/bridges/domain/providers/multichain';
 import { BridgeProviders } from '../../../../src/bridges/domain/providers/bridge-providers';
-import { getPriceFeedFetcher, getZeroEx } from '../../shared/shared';
+import { getPriceFeedFetcher, getSushi, getZeroEx } from '../../shared/shared';
 
 describe('path-computer - cross chain', () => {
   describe('path-computer - no routes', () => {
@@ -266,6 +266,7 @@ describe('path-computer - cross chain', () => {
       // mock ZeroEx provider
 
       const mockZeroEx = getZeroEx();
+      stub(mockZeroEx, 'isEnabledOn').returns(true);
       stub(mockZeroEx, 'execute')
         .onCall(0)
         .callsFake((request) => {
@@ -360,6 +361,166 @@ describe('path-computer - cross chain', () => {
 
       expect(routes[0].steps[2].tokenIn).toEqual(bridgeTokenOut);
       expect(routes[0].steps[2].tokenOut).toEqual(dstToken);
+    });
+
+    it('should compute four cross chain routes', async () => {
+      /** Arrange */
+      const srcToken = TokenMother.link();
+      const dstToken = TokenMother.sushi();
+      const bridgeTokenIn = TokenMother.random();
+      const bridgeTokenOut = TokenMother.random();
+
+      const fetcher = new TokenDetailsFetcher();
+      const mockTokenFetcher = stub(fetcher, 'fetch');
+      mockTokenFetcher.onCall(0).resolves(srcToken);
+      mockTokenFetcher.onCall(1).resolves(dstToken);
+
+      // mock ZeroEx provider
+      const mockZeroEx = getZeroEx();
+      stub(mockZeroEx, 'isEnabledOn').returns(true);
+      stub(mockZeroEx, 'execute')
+        .onCall(0) // origin swap
+        .callsFake((request) => {
+          return Promise.resolve(
+            new SwapOrder(
+              ExchangeProviders.ZeroEx,
+              request.tokenIn,
+              bridgeTokenIn,
+              '0x',
+              request.amountIn,
+              BigInteger.fromDecimal('1', srcToken.decimals),
+              BigInteger.fromString('0'),
+            ),
+          );
+        })
+        .onCall(1) // destination swap coming from provider one
+        .callsFake((request) => {
+          return Promise.resolve(
+            new SwapOrder(
+              ExchangeProviders.ZeroEx,
+              request.tokenIn,
+              dstToken,
+              '0x',
+              request.amountIn,
+              BigInteger.fromDecimal('30', srcToken.decimals),
+              BigInteger.fromString('0'),
+            ),
+          );
+        })
+        .onCall(2) // destination swap coming from provider two
+        .callsFake((request) => {
+          return Promise.resolve(
+            new SwapOrder(
+              ExchangeProviders.ZeroEx,
+              request.tokenIn,
+              dstToken,
+              '0x',
+              request.amountIn,
+              BigInteger.fromDecimal('40', srcToken.decimals),
+              BigInteger.fromString('0'),
+            ),
+          );
+        });
+
+      // mock Sushi provider
+      const mockSushi = getSushi();
+      stub(mockSushi, 'isEnabledOn').returns(true);
+      stub(mockSushi, 'execute')
+        .onCall(0) // origin swap
+        .callsFake((request) => {
+          return Promise.resolve(
+            new SwapOrder(
+              ExchangeProviders.Sushi,
+              request.tokenIn,
+              bridgeTokenIn,
+              '0x',
+              request.amountIn,
+              BigInteger.fromDecimal('2', srcToken.decimals),
+              BigInteger.fromString('0'),
+            ),
+          );
+        })
+        .onCall(1) // destination swap coming from provider one
+        .callsFake((request) => {
+          return Promise.resolve(
+            new SwapOrder(
+              ExchangeProviders.Sushi,
+              request.tokenIn,
+              dstToken,
+              '0x',
+              request.amountIn,
+              BigInteger.fromDecimal('50', srcToken.decimals),
+              BigInteger.fromString('0'),
+            ),
+          );
+        })
+        .onCall(2) // destination swap coming from provider two
+        .callsFake((request) => {
+          return Promise.resolve(
+            new SwapOrder(
+              ExchangeProviders.Sushi,
+              request.tokenIn,
+              dstToken,
+              '0x',
+              request.amountIn,
+              BigInteger.fromDecimal('60', srcToken.decimals),
+              BigInteger.fromString('0'),
+            ),
+          );
+        });
+
+      // mock Multichain bridge provider
+      const mockMultichain = createMock<Multichain>({
+        execute: (request) => {
+          return Promise.resolve(
+            new BridgingOrder(
+              request.amount,
+              request.tokenIn,
+              bridgeTokenOut,
+              request.toChainId,
+              '0x',
+              BridgingFeesMother.random(),
+              BridgingLimitsMother.random(),
+            ),
+          );
+        },
+        isEnabledOn: () => true,
+      });
+
+      const exchanges = new Exchanges([
+        [ExchangeProviders.ZeroEx, mockZeroEx],
+        [ExchangeProviders.Sushi, mockSushi],
+      ]);
+
+      const bridges = new Bridges([[BridgeProviders.Multichain, mockMultichain]]);
+
+      // mock GasPriceFetcher
+      const gasPriceFetcher = new GasPriceFetcher();
+      stub(gasPriceFetcher, 'fetch').resolves(BigInteger.fromString('100000000'));
+
+      const priceFeedFetcher = getPriceFeedFetcher([
+        { chain: Polygon, result: '500' },
+        { chain: Fantom, result: '1500' },
+      ]);
+
+      // create computer
+      const pathComputer = new PathComputer(
+        exchanges,
+        bridges,
+        new Aggregators([]),
+        fetcher,
+        priceFeedFetcher,
+        gasPriceFetcher,
+      );
+
+      // create pat query
+      const query = new GetPathQuery(Polygon, Fantom, '0xLINK', '0xSUSHI', '1000');
+
+      /** Act */
+      const routes = await pathComputer.compute(query);
+
+      /** Assert */
+      expect(routes.length).toEqual(4);
     });
   });
 });
