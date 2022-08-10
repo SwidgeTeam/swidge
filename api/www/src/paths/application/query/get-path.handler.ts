@@ -6,7 +6,6 @@ import { Class } from '../../../shared/Class';
 import { PathComputer } from '../../domain/path-computer';
 import { PriceFeedFetcher } from '../../../shared/infrastructure/PriceFeedFetcher';
 import { GasPriceFetcher } from '../../../shared/infrastructure/GasPriceFetcher';
-import { AggregatorOrderComputer } from '../../../aggregators/application/query/aggregator-order-computer';
 import { Route } from '../../../shared/domain/route';
 import { Bridges } from '../../../bridges/domain/bridges';
 import { Multichain } from '../../../bridges/domain/providers/multichain';
@@ -27,7 +26,6 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
   private pathComputer: PathComputer;
 
   constructor(
-    private readonly aggregatorOrderProvider: AggregatorOrderComputer,
     @Inject(Class.HttpClient) private readonly httpClient: HttpClient,
     @Inject(Class.CachedHttpClient) private readonly cachedHttpClient: CachedHttpClient,
     @Inject(Class.TokenDetailsFetcher) private readonly tokenDetailsFetcher: TokenDetailsFetcher,

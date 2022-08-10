@@ -14,15 +14,12 @@ import cachedHttpClientProvider from '../shared/infrastructure/http/cachedHttpCl
 import sushiPairsRepositoryProvider from '../swaps/infrastructure/database/repositories/sushi-pairs.repository.provider';
 import priceFeedFetcherProvider from '../shared/infrastructure/PriceFeedFetcher.provider';
 import gasPriceFetcherProvider from '../shared/infrastructure/GasPriceFetcher.provider';
-import { AggregatorsModule } from '../aggregators/aggregators.module';
-import { AggregatorOrderComputer } from '../aggregators/application/query/aggregator-order-computer';
 
 @Module({
   imports: [
     CqrsModule,
     SwapsModule,
     BridgesModule,
-    AggregatorsModule,
     TransactionsModule,
   ],
   controllers: [GetPathController],
@@ -30,7 +27,6 @@ import { AggregatorOrderComputer } from '../aggregators/application/query/aggreg
     GetPathHandler,
     SwapOrderComputer,
     BridgeOrderComputer,
-    AggregatorOrderComputer,
     httpClientProvider(),
     cachedHttpClientProvider(),
     addressesRepositoryProvider(),

@@ -14,7 +14,6 @@ import { PriceFeedFetcher } from '../../shared/infrastructure/PriceFeedFetcher';
 import { GasPriceFetcher } from '../../shared/infrastructure/GasPriceFetcher';
 import { GasConverter } from '../../shared/domain/GasConverter';
 import { PriceFeed } from '../../shared/domain/PriceFeed';
-import { AggregatorOrderComputer } from '../../aggregators/application/query/aggregator-order-computer';
 import { AggregatorRequest } from '../../aggregators/domain/aggregator-request';
 import { Route } from '../../shared/domain/route';
 import { RouteStep } from '../../shared/domain/route-step';
