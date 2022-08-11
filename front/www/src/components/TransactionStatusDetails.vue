@@ -9,6 +9,15 @@ defineProps<{
     chainLogo: string
 }>()
 
+const fixedAmount = (amount: number) => {
+        const fixedamount = Number(amount)
+        if (fixedamount === 0) {
+            return '0'
+        } else {
+            return fixedamount.toFixed(6)
+        }
+} 
+
 </script>
 
 <template>
@@ -21,8 +30,8 @@ defineProps<{
             <ChainLogo :chain-logo="chainLogo"/>
     </div>
     <div
-        class="flex pl-4 mr-1 pt-5 overflow-hidden relative hover:overflow-visible  hover:justify-center"
+        class="flex pt-4 relative overflow-visible justify-center"
         :class="amount === '0' ? 'blur' : ''"
-    >{{ amount }}
+    >{{ fixedAmount(+amount) }}
     </div>
 </template>
