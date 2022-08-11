@@ -399,7 +399,7 @@ export class PathComputer {
 
     // create transaction details
 
-    const callData = this.routerCallEncoder.encode(
+    const callData = this.routerCallEncoder.encodeInitSwidge(
       this.amountIn,
       originSwap,
       bridge,
