@@ -55,7 +55,8 @@ export class LiFi implements Aggregator {
         request.fromToken,
         request.toToken,
         request.amountIn,
-        steps[steps.length - 1].amountOut,
+        BigInteger.fromString(response.estimate.toAmount),
+        BigInteger.fromString(response.estimate.toAmountMin),
       );
 
       return new Route(resume, transactionDetails, steps);

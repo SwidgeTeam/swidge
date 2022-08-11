@@ -26,6 +26,7 @@ export class RouteMother {
       token2,
       BigIntegerMother.random(),
       BigIntegerMother.random(),
+      BigIntegerMother.random(),
     );
     const txDetails = new TransactionDetails(
       faker.random.alphaNumeric(42),
@@ -57,6 +58,7 @@ export class RouteMother {
       '2',
       token1,
       token2,
+      BigIntegerMother.random(),
       BigIntegerMother.random(),
       BigIntegerMother.random(),
     );

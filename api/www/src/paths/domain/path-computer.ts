@@ -334,8 +334,9 @@ export class PathComputer {
     bridge: BridgingOrder,
     destinationSwap: SwapOrder,
   ): Route {
-    // create the required steps of the route
+    let minAmountOut: BigInteger;
 
+    // create the required steps of the route
     const steps: RouteStep[] = [];
     if (originSwap.required) {
       const fee = originSwap.estimatedGas
@@ -355,6 +356,7 @@ export class PathComputer {
           fee,
         ),
       );
+      minAmountOut = originSwap.worstCaseAmountOut;
     }
 
     if (bridge.required) {
@@ -369,6 +371,8 @@ export class PathComputer {
           bridge.decimalFee,
         ),
       );
+
+      minAmountOut = bridge.worstCaseAmountOut;
     }
 
     if (destinationSwap.required) {
@@ -389,6 +393,8 @@ export class PathComputer {
           fee,
         ),
       );
+
+      minAmountOut = destinationSwap.worstCaseAmountOut;
     }
 
     // create transaction details
@@ -426,6 +432,7 @@ export class PathComputer {
       this.dstToken,
       this.amountIn,
       steps[steps.length - 1].amountOut,
+      minAmountOut,
     );
 
     return new Route(resume, transactionDetails, steps);
