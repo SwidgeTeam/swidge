@@ -6,7 +6,8 @@ import { BigInteger } from '../../shared/domain/BigInteger';
 export class BridgingOrder {
   static notRequired() {
     return new BridgingOrder(
-      null,
+      BigInteger.zero(),
+      BigInteger.zero(),
       Token.null(),
       Token.null(),
       '0',
@@ -18,7 +19,8 @@ export class BridgingOrder {
   }
 
   constructor(
-    private readonly _amountIn: BigInteger,
+    private readonly _expectedAmountIn: BigInteger,
+    private readonly _worstCaseAmountIn: BigInteger,
     private readonly _tokenIn: Token,
     private readonly _tokenOut: Token,
     private readonly _toChainId: string,
@@ -53,11 +55,20 @@ export class BridgingOrder {
   }
 
   get amountIn(): BigInteger {
-    return this._amountIn;
+    return this._expectedAmountIn;
   }
 
-  get amountOut(): BigInteger {
-    const convertedAmount = this._amountIn.convertDecimalsFromTo(
+  get expectedAmountOut(): BigInteger {
+    const convertedAmount = this._expectedAmountIn.convertDecimalsFromTo(
+      this._tokenIn.decimals,
+      this._fees.decimals,
+    );
+    const bridgingFee = this.finalFee(convertedAmount);
+    return convertedAmount.minus(bridgingFee);
+  }
+
+  get worstCaseAmountOut(): BigInteger {
+    const convertedAmount = this._worstCaseAmountIn.convertDecimalsFromTo(
       this._tokenIn.decimals,
       this._fees.decimals,
     );
@@ -66,7 +77,7 @@ export class BridgingOrder {
   }
 
   get fee(): BigInteger {
-    const convertedAmount = this._amountIn.convertDecimalsFromTo(
+    const convertedAmount = this._expectedAmountIn.convertDecimalsFromTo(
       this._tokenIn.decimals,
       this._fees.decimals,
     );

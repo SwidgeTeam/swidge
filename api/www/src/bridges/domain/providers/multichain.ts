@@ -74,16 +74,16 @@ export class Multichain implements Bridge {
       tokenOut.decimals,
     );
 
-    // Check if the amount reaching the bridge is in the limits
+    // Check if the minimum amount reaching the bridge is in the limits
     if (
-      request.amount
+      request.minAmountIn
         .convertDecimalsFromTo(tokenIn.decimals, tokenOut.decimals)
         .greaterThan(limits.maximumAmount)
     ) {
       throw new AmountTooBig();
     }
     if (
-      request.amount
+      request.minAmountIn
         .convertDecimalsFromTo(tokenIn.decimals, tokenOut.decimals)
         .lessThan(limits.minimumAmount)
     ) {
@@ -97,7 +97,8 @@ export class Multichain implements Bridge {
 
     // Construct the order
     return new BridgingOrder(
-      request.amount,
+      request.expectedAmountIn,
+      request.minAmountIn,
       tokenIn,
       tokenOut,
       request.toChainId,

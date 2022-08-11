@@ -237,15 +237,22 @@ export class PathComputer {
     // for every usable bridge
     for (const bridgeId of this.getPossibleBridges()) {
       // add the possible bridge order
-      let bridgeAmountIn;
+      let bridgeAmountIn, minBridgeAmountIn;
       // check the amount that should input the bridge
       if (originSwap.required) {
         bridgeAmountIn = originSwap.expectedAmountOut;
+        minBridgeAmountIn = originSwap.worstCaseAmountOut;
       } else {
         bridgeAmountIn = this.amountIn;
+        minBridgeAmountIn = this.amountIn;
       }
       // get the promise of the bridge order
-      const bridgeOrderPromise = this.getBridgeOrder(bridgeId, bridgingAsset, bridgeAmountIn);
+      const bridgeOrderPromise = this.getBridgeOrder(
+        bridgeId,
+        bridgingAsset,
+        bridgeAmountIn,
+        minBridgeAmountIn,
+      );
       // get the promise of the possible routes
       const routesPromise = this.destinationSwap(originSwap, bridgeOrderPromise);
       // aggregate promises
@@ -280,8 +287,8 @@ export class PathComputer {
         bridgeOrder.tokenOut,
         this.dstToken,
         this.destinationSlippage,
-        bridgeOrder.amountOut,
-        bridgeOrder.minAmountOut,
+        bridgeOrder.expectedAmountOut,
+        bridgeOrder.worstCaseAmountOut,
       );
       // save the promise
       promises.push(swapOrderPromise);
@@ -358,7 +365,7 @@ export class PathComputer {
           bridge.tokenIn,
           bridge.tokenOut,
           bridge.amountIn,
-          bridge.amountOut,
+          bridge.expectedAmountOut,
           bridge.decimalFee,
         ),
       );
@@ -472,13 +479,15 @@ export class PathComputer {
    * Returns a possible bridge order
    * @param providerId ID of bridge provider to use
    * @param asset The asset that we want to send across the bridge
-   * @param bridgeAmountIn The amount that we want to cross
+   * @param bridgeAmountIn The amount that we expect will get to the bridge
+   * @param minBridgeAmountIn The minimum amount that we know can get to the bridge
    * @private
    */
   private async getBridgeOrder(
     providerId: string,
     asset: string,
     bridgeAmountIn: BigInteger,
+    minBridgeAmountIn: BigInteger,
   ): Promise<BridgingOrder> {
     const bridgeTokenIn = Tokens[asset][this.fromChain];
     const bridgeRequest = new BridgingRequest(
@@ -486,6 +495,7 @@ export class PathComputer {
       this.toChain,
       bridgeTokenIn,
       bridgeAmountIn,
+      minBridgeAmountIn,
     );
     try {
       return await this.bridges.execute(providerId, bridgeRequest);

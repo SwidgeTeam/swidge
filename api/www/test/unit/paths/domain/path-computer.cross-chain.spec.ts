@@ -51,7 +51,7 @@ describe('path-computer - cross chain', () => {
         execute: (request) => {
           return Promise.resolve(
             new BridgingOrder(
-              request.amount,
+              request.expectedAmountIn,
               request.tokenIn,
               TokenMother.random(),
               request.toChainId,
@@ -202,7 +202,7 @@ describe('path-computer - cross chain', () => {
         execute: (request) => {
           return Promise.resolve(
             new BridgingOrder(
-              request.amount,
+              request.expectedAmountIn,
               request.tokenIn,
               TokenMother.random(),
               request.toChainId,
@@ -302,7 +302,7 @@ describe('path-computer - cross chain', () => {
         execute: (request) => {
           return Promise.resolve(
             new BridgingOrder(
-              request.amount,
+              request.expectedAmountIn,
               request.tokenIn,
               bridgeTokenOut,
               request.toChainId,
@@ -474,7 +474,7 @@ describe('path-computer - cross chain', () => {
         execute: (request) => {
           return Promise.resolve(
             new BridgingOrder(
-              request.amount,
+              request.expectedAmountIn,
               request.tokenIn,
               bridgeTokenOut,
               request.toChainId,
@@ -586,7 +586,7 @@ describe('path-computer - cross chain', () => {
         execute: (request) => {
           return Promise.resolve(
             new BridgingOrder(
-              request.amount,
+              request.expectedAmountIn,
               request.tokenIn,
               bridgeTokenOut,
               request.toChainId,
@@ -722,7 +722,7 @@ describe('path-computer - cross chain', () => {
         execute: (request) => {
           return Promise.resolve(
             new BridgingOrder(
-              request.amount,
+              request.expectedAmountIn,
               request.tokenIn,
               bridgeTokenOut,
               request.toChainId,
