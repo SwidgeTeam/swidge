@@ -2,6 +2,9 @@ import { SwapOrder } from '../../../../src/swaps/domain/SwapOrder';
 import { Token } from '../../../../src/shared/domain/Token';
 import { BigInteger } from '../../../../src/shared/domain/BigInteger';
 import { SwapRequest } from '../../../../src/swaps/domain/SwapRequest';
+import { ExchangeProviders } from '../../../../src/swaps/domain/providers/exchange-providers';
+import { TokenMother } from '../../shared/domain/Token.mother';
+import { BigIntegerMother } from '../../shared/domain/big-integer.mother';
 
 export class SwapOrderMother {
   public static create(
@@ -42,6 +45,27 @@ export class SwapOrderMother {
       expectedAmountOut,
       minAmountOut,
       worstCaseAmountOut,
+      BigInteger.fromString('0'),
+      true,
+    );
+  }
+
+  public static withExpectedAmountsOut(
+    expectedAmountOut: BigInteger,
+    expectedMinAmountOut?: BigInteger,
+  ): SwapOrder {
+    const minAmountOut = expectedMinAmountOut
+      ? expectedMinAmountOut
+      : expectedAmountOut.subtractPercentage(1);
+
+    return this.create(
+      ExchangeProviders.Sushi,
+      TokenMother.random(),
+      TokenMother.random(),
+      BigIntegerMother.random(),
+      expectedAmountOut,
+      minAmountOut,
+      minAmountOut,
       BigInteger.fromString('0'),
       true,
     );
