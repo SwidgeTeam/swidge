@@ -21,6 +21,7 @@ interface TxJob {
   toChain: string;
   dstToken: string;
   srcToken: string;
+  minAmountOut: string;
 }
 
 export class EventsListener {
@@ -121,6 +122,7 @@ export class EventsListener {
           toChain: BigNumber,
           amountIn: BigNumber,
           amountCross: BigNumber,
+          minAmountOut: BigNumber,
           event,
         ) => {
           try {
@@ -158,6 +160,7 @@ export class EventsListener {
               toChain: toChain.toString(),
               srcToken: bridgeTokenOut,
               dstToken: dstToken,
+              minAmountOut: minAmountOut.toString(),
             });
           } catch (e) {
             this.logger.error('Error on CrossInitiated', e);
@@ -206,6 +209,7 @@ export class EventsListener {
         srcToken: { DataType: 'String', StringValue: tx.srcToken },
         dstToken: { DataType: 'String', StringValue: tx.dstToken },
         router: { DataType: 'String', StringValue: tx.router },
+        minAmount: { DataType: 'String', StringValue: tx.minAmountOut },
       },
     });
   }

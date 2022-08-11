@@ -31,6 +31,7 @@ export interface SwapRequest {
   tokenIn: ContractAddress;
   tokenOut: ContractAddress;
   amountIn: string;
+  minAmountOut: string;
 }
 
 export interface TransactionsRepository {

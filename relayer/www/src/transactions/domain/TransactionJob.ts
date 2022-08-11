@@ -6,4 +6,5 @@ export interface TransactionJob {
   toChainId: string;
   bridgeAmountOut: string;
   walletAddress: string;
+  minAmountOut: string;
 }

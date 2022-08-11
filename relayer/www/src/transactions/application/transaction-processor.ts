@@ -76,6 +76,7 @@ export class TransactionProcessor {
       tokenIn: job.srcToken,
       tokenOut: job.dstToken,
       amountIn: job.bridgeAmountOut,
+      minAmountOut: job.minAmountOut,
     });
 
     const fixGas = this.getFunctionEstimateGas();

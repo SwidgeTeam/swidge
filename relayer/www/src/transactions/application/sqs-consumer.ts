@@ -50,6 +50,7 @@ export class SqsConsumer {
           dstToken: message.MessageAttributes.dstToken.StringValue,
           toChainId: message.MessageAttributes.toChain.StringValue,
           walletAddress: message.MessageAttributes.wallet.StringValue,
+          minAmountOut: message.MessageAttributes.minAmount.StringValue,
           bridgeAmountOut: tx.bridgeAmountOut,
         };
         await this.transactionProcessor.execute(transactionJob);

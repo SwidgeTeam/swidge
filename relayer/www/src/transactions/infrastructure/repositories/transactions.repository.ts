@@ -116,7 +116,8 @@ export class TransactionsRepositoryImpl implements TransactionsRepository {
         `?chainId=${request.chainId}` +
         `&tokenIn=${request.tokenIn}` +
         `&tokenOut=${request.tokenOut}` +
-        `&amountIn=${request.amountIn.toString()}`,
+        `&amountIn=${request.amountIn.toString()}` +
+        `&minAmountOut=${request.minAmountOut}`,
       this.headers(),
     );
 
