@@ -31,8 +31,8 @@ export class SwapOrderMother {
 
   public static fromRequest(provider: string, request: SwapRequest, amount: string): SwapOrder {
     const expectedAmountOut = BigInteger.fromDecimal(amount, request.tokenOut.decimals);
-    const minAmountOut = BigInteger.fromDecimal(amount, request.tokenOut.decimals);
-    const worstCaseAmountOut = BigInteger.fromDecimal(amount, request.tokenOut.decimals);
+    const minAmountOut = expectedAmountOut.subtractPercentage(1);
+    const worstCaseAmountOut = minAmountOut.subtractPercentage(1);
 
     return this.create(
       provider,
