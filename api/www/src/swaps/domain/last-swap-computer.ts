@@ -4,6 +4,7 @@ import { SwapOrder } from './SwapOrder';
 import { Token } from '../../shared/domain/Token';
 import { SwapRequest } from './SwapRequest';
 import { LastSwapComputeRequest } from './last-swap-compute-request';
+import descendingOrder from '../../shared/domain/descending-order';
 
 export class LastSwapComputer {
   constructor(private readonly exchanges: Exchanges) {}
@@ -125,15 +126,7 @@ export class LastSwapComputer {
         return order !== undefined;
       })
       .sort((a: SwapOrder, b: SwapOrder) => {
-        const amountA = a.expectedAmountOut;
-        const amountB = b.expectedAmountOut;
-        if (amountA.greaterThan(amountB)) {
-          return -1;
-        } else if (amountA.lessThan(amountB)) {
-          return 1;
-        } else {
-          return 0;
-        }
+        return descendingOrder(a.expectedAmountOut, b.expectedAmountOut);
       });
 
     if (orders.length === 0) {
