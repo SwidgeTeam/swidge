@@ -66,10 +66,6 @@ const gasEstimations = {
 export class Sushiswap implements Exchange {
   private readonly enabledChains: string[];
 
-  public static create(httpClient: IHttpClient, repository: SushiPairsRepository) {
-    return new Sushiswap(httpClient, repository);
-  }
-
   constructor(
     private readonly httpClient: IHttpClient,
     private readonly repository: SushiPairsRepository,
@@ -177,6 +173,17 @@ export class Sushiswap implements Exchange {
     );
   }
 
+  /**
+   * Computes a trade and the specific resulting amounts given the required parameters
+   * This is going to be executed two times in order to know how much will be out
+   * in optimal case and in worst case
+   * @param tokenIn Token input
+   * @param tokenOut Token output
+   * @param pairs Pairs used to check
+   * @param amountIn Amount that goes in
+   * @param slippage Allowed slippage
+   * @private
+   */
   private computeTradeAndAmountOut(
     tokenIn: Token,
     tokenOut: Token,
@@ -192,7 +199,7 @@ export class Sushiswap implements Exchange {
 
     const trade = Trade.bestTradeExactIn(pairs, tokenInAmount, tokenOut);
     const expectedAmountOut = BigInteger.fromString(trade[0].outputAmount.numerator.toString());
-    const minAmountOut = expectedAmountOut.times(1000 - slippage * 10).div(1000);
+    const minAmountOut = expectedAmountOut.subtractPercentage(slippage);
 
     return {
       trade: trade,
