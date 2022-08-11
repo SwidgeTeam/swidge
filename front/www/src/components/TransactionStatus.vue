@@ -32,7 +32,7 @@ defineProps<{
         </div>
         <div
             class="grid grid-cols-3 gap-2 flex flex-wrap justify-between grid-flow-col auto-cols-max w-full mx-16 pt-4">
-            <div class="w-full grid place-content-center p-2">
+            <div class="place-content-center p-2 px-6">
                 <TransactionStatusDetails
                     :amount="amountIn"
                     :token-name="tokenNameIn"
@@ -43,15 +43,15 @@ defineProps<{
             <div class="grid place-content-center w-full object-center mb-12">
                 <StatusArrow />
             </div>
-            <div class="w-full grid place-content-center p-2">
-                <div class="relative scale-100 has-tooltip">
+            <div class="place-content-center p-2 px-6">
+                <div class="display-block scale-100 has-tooltip">
                 <TransactionStatusDetails
                     :amount="amountOut"
                     :token-name="tokenNameOut"
                     :token-logo="tokenLogoOut"
                     :chain-logo="chainLogoOut"
                 />
-            </div>
+                </div>
             </div>
         </div>
     </div>

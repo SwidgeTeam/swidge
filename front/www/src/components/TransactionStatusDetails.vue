@@ -17,11 +17,11 @@ defineProps<{
             class='tooltip rounded-xl shadow-lg p-1 bg-[#31313E] text-white text-sm font-light absolute border border-cyan-700 -bottom-6 -left-20 px-2'>
             {{ tokenName }}
         </span>
-        <TokenLogo :token-logo="tokenLogo"/>
-        <ChainLogo :chain-logo="chainLogo"/>
+            <TokenLogo :token-logo="tokenLogo"/>
+            <ChainLogo :chain-logo="chainLogo"/>
     </div>
     <div
-        class="flex justify-center pt-5"
+        class="flex pl-4 mr-1 pt-5 overflow-hidden relative hover:overflow-visible  hover:justify-center"
         :class="amount === '0' ? 'blur' : ''"
     >{{ amount }}
     </div>

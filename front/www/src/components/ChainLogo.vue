@@ -9,7 +9,7 @@ defineProps<{
     <img
         style="width: 48px; height: 48px"
         :src="chainLogo"
-        class="rounded-full scale-75 absolute -right-6 -top-6 shadow-lg shadow-black"
+        class="rounded-full scale-75 absolute -right-6 -top-6 shadow-lg left-10 shadow-black"
         alt="chain logo"
     />
 </template>
