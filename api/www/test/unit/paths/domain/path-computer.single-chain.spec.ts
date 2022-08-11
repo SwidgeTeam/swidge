@@ -12,9 +12,9 @@ import { Sushiswap } from '../../../../src/swaps/domain/providers/sushiswap';
 import { Exchanges } from '../../../../src/swaps/domain/exchanges';
 import { Aggregators } from '../../../../src/aggregators/domain/aggregators';
 import { Bridges } from '../../../../src/bridges/domain/bridges';
-import { SwapOrder } from '../../../../src/swaps/domain/SwapOrder';
 import { ExchangeProviders } from '../../../../src/swaps/domain/providers/exchange-providers';
 import { getPriceFeedFetcher } from '../../shared/shared';
+import { SwapOrderMother } from '../../swaps/domain/swap-order.mother';
 
 describe('path-computer - single chain', () => {
   describe('path-computer - no routes', () => {
@@ -63,7 +63,7 @@ describe('path-computer - single chain', () => {
       );
 
       // create pat query
-      const query = new GetPathQuery(Polygon, Polygon, '0xLINK', '0xSUSHI', '1000');
+      const query = new GetPathQuery(Polygon, Polygon, '0xLINK', '0xSUSHI', '1000', 2);
 
       /** Act */
       const computeCall = pathComputer.compute(query);
@@ -86,35 +86,21 @@ describe('path-computer - single chain', () => {
 
       // mock ZeroEx provider
       const mockZeroEx = createMock<ZeroEx>({
-        execute: (request) =>
-          Promise.resolve(
-            new SwapOrder(
-              ExchangeProviders.ZeroEx,
-              request.tokenIn,
-              request.tokenOut,
-              '0x',
-              request.amountIn,
-              BigInteger.fromDecimal('2', srcToken.decimals),
-              BigInteger.fromString('0'),
-            ),
-          ),
+        execute: (request) => {
+          return Promise.resolve(
+            SwapOrderMother.fromRequest(ExchangeProviders.ZeroEx, request, '2'),
+          );
+        },
         isEnabledOn: () => true,
       });
 
       // mock Sushi provider
       const mockSushi = createMock<Sushiswap>({
-        execute: (request) =>
-          Promise.resolve(
-            new SwapOrder(
-              ExchangeProviders.Sushi,
-              request.tokenIn,
-              request.tokenOut,
-              '0x',
-              request.amountIn,
-              BigInteger.fromDecimal('4', srcToken.decimals),
-              BigInteger.fromString('0'),
-            ),
-          ),
+        execute: (request) => {
+          return Promise.resolve(
+            SwapOrderMother.fromRequest(ExchangeProviders.Sushi, request, '4'),
+          );
+        },
         isEnabledOn: () => true,
       });
 
@@ -141,7 +127,7 @@ describe('path-computer - single chain', () => {
       );
 
       // create pat query
-      const query = new GetPathQuery(Polygon, Polygon, '0xLINK', '0xSUSHI', '1000');
+      const query = new GetPathQuery(Polygon, Polygon, '0xLINK', '0xSUSHI', '1000', 2);
 
       /** Act */
       const routes = await pathComputer.compute(query);

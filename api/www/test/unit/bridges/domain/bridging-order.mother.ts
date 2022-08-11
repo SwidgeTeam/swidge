@@ -3,12 +3,17 @@ import { BridgingFees } from '../../../../src/bridges/domain/BridgingFees';
 import { BridgingLimits } from '../../../../src/bridges/domain/BridgingLimits';
 import { BigInteger } from '../../../../src/shared/domain/BigInteger';
 import { Tokens } from '../../../../src/shared/enums/Tokens';
+import { Token } from '../../../../src/shared/domain/Token';
 import { USDC } from '../../../../src/shared/enums/TokenSymbols';
 import { Mainnet, Polygon } from '../../../../src/shared/enums/ChainIds';
+import { BridgingRequest } from '../../../../src/bridges/domain/bridging-request';
+import { BridgingFeesMother } from './bridging-fees.mother';
+import { BridgingLimitsMother } from './bridging-limits.mother';
 
 export class BridgingOrderMother {
-  static create(
-    amount: BigInteger,
+  public static create(
+    expectedAmountIn: BigInteger,
+    minAmountIn: BigInteger,
     tokenIn,
     tokenOut,
     chainId: string,
@@ -16,10 +21,20 @@ export class BridgingOrderMother {
     limits: BridgingLimits,
     required: boolean,
   ) {
-    return new BridgingOrder(amount, tokenIn, tokenOut, chainId, '', fees, limits, required);
+    return new BridgingOrder(
+      expectedAmountIn,
+      minAmountIn,
+      tokenIn,
+      tokenOut,
+      chainId,
+      '0x',
+      fees,
+      limits,
+      required,
+    );
   }
 
-  static randomWithFeesAndAmount(fees: BridgingFees, amount: BigInteger) {
+  public static randomWithFeesAndAmount(fees: BridgingFees, amount: BigInteger) {
     const limits = new BridgingLimits(
       BigInteger.fromDecimal('0'),
       BigInteger.fromDecimal('0'),
@@ -28,11 +43,25 @@ export class BridgingOrderMother {
     );
     return this.create(
       amount,
+      amount,
       Tokens[USDC][Mainnet],
       Tokens[USDC][Polygon],
       Polygon,
       fees,
       limits,
+      true,
+    );
+  }
+
+  public static fromRequest(request: BridgingRequest, tokenOut: Token): BridgingOrder {
+    return this.create(
+      request.expectedAmountIn,
+      request.minAmountIn,
+      request.tokenIn,
+      tokenOut,
+      request.toChainId,
+      BridgingFeesMother.random(),
+      BridgingLimitsMother.random(),
       true,
     );
   }
