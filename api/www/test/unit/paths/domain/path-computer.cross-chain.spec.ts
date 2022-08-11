@@ -2,7 +2,6 @@ import { stub } from 'sinon';
 import { createMock } from 'ts-auto-mock';
 import { ZeroEx } from '../../../../src/swaps/domain/providers/zero-ex';
 import { PathComputer } from '../../../../src/paths/domain/path-computer';
-import { TokenDetailsFetcher } from '../../../../src/shared/infrastructure/TokenDetailsFetcher';
 import { GetPathQuery } from '../../../../src/paths/application/query/get-path.query';
 import { TokenMother } from '../../shared/domain/Token.mother';
 import { BigInteger } from '../../../../src/shared/domain/BigInteger';
@@ -17,7 +16,12 @@ import { ExchangeProviders } from '../../../../src/swaps/domain/providers/exchan
 import { Tokens } from '../../../../src/shared/enums/Tokens';
 import { Multichain } from '../../../../src/bridges/domain/providers/multichain';
 import { BridgeProviders } from '../../../../src/bridges/domain/providers/bridge-providers';
-import { getPriceFeedFetcher, getSushi, getZeroEx } from '../../shared/shared';
+import {
+  getPriceFeedFetcher,
+  getSushi,
+  getTokenDetailsFetcher,
+  getZeroEx,
+} from '../../shared/shared';
 import { BridgingOrderMother } from '../../bridges/domain/bridging-order.mother';
 import { SwapOrderMother } from '../../swaps/domain/swap-order.mother';
 
@@ -28,10 +32,7 @@ describe('path-computer - cross chain', () => {
       const srcToken = TokenMother.link();
       const dstToken = TokenMother.sushi();
 
-      const fetcher = new TokenDetailsFetcher();
-      const mockTokenFetcher = stub(fetcher, 'fetch');
-      mockTokenFetcher.onCall(0).resolves(srcToken);
-      mockTokenFetcher.onCall(1).resolves(dstToken);
+      const fetcher = getTokenDetailsFetcher([srcToken, dstToken]);
 
       // mock ZeroEx provider
       const mockZeroEx = createMock<ZeroEx>({
@@ -95,10 +96,7 @@ describe('path-computer - cross chain', () => {
       const srcToken = TokenMother.link();
       const dstToken = TokenMother.sushi();
 
-      const fetcher = new TokenDetailsFetcher();
-      const mockTokenFetcher = stub(fetcher, 'fetch');
-      mockTokenFetcher.onCall(0).resolves(srcToken);
-      mockTokenFetcher.onCall(1).resolves(dstToken);
+      const fetcher = getTokenDetailsFetcher([srcToken, dstToken]);
 
       // mock Sushi provider
       const mockSushi = createMock<Sushiswap>({
@@ -153,10 +151,7 @@ describe('path-computer - cross chain', () => {
       const srcToken = TokenMother.link();
       const dstToken = TokenMother.sushi();
 
-      const fetcher = new TokenDetailsFetcher();
-      const mockTokenFetcher = stub(fetcher, 'fetch');
-      mockTokenFetcher.onCall(0).resolves(srcToken);
-      mockTokenFetcher.onCall(1).resolves(dstToken);
+      const fetcher = getTokenDetailsFetcher([srcToken, dstToken]);
 
       // mock Sushi provider
       const mockZeroEx = getZeroEx();
@@ -222,10 +217,7 @@ describe('path-computer - cross chain', () => {
       const bridgeTokenIn = Tokens.USDC[Polygon];
       const bridgeTokenOut = Tokens.USDC[Fantom];
 
-      const fetcher = new TokenDetailsFetcher();
-      const mockTokenFetcher = stub(fetcher, 'fetch');
-      mockTokenFetcher.onCall(0).resolves(srcToken);
-      mockTokenFetcher.onCall(1).resolves(dstToken);
+      const fetcher = getTokenDetailsFetcher([srcToken, dstToken]);
 
       // mock ZeroEx provider
 
@@ -307,10 +299,7 @@ describe('path-computer - cross chain', () => {
       const dstToken = TokenMother.sushi();
       const bridgeTokenOut = TokenMother.random();
 
-      const fetcher = new TokenDetailsFetcher();
-      const mockTokenFetcher = stub(fetcher, 'fetch');
-      mockTokenFetcher.onCall(0).resolves(srcToken);
-      mockTokenFetcher.onCall(1).resolves(dstToken);
+      const fetcher = getTokenDetailsFetcher([srcToken, dstToken]);
 
       // mock ZeroEx provider
       const mockZeroEx = getZeroEx();
@@ -408,10 +397,7 @@ describe('path-computer - cross chain', () => {
       const dstToken = TokenMother.sushi();
       const bridgeTokenOut = TokenMother.random();
 
-      const fetcher = new TokenDetailsFetcher();
-      const mockTokenFetcher = stub(fetcher, 'fetch');
-      mockTokenFetcher.onCall(0).resolves(srcToken);
-      mockTokenFetcher.onCall(1).resolves(dstToken);
+      const fetcher = getTokenDetailsFetcher([srcToken, dstToken]);
 
       // mock ZeroEx provider
       const mockZeroEx = getZeroEx();
@@ -493,10 +479,7 @@ describe('path-computer - cross chain', () => {
       const dstToken = TokenMother.sushi();
       const bridgeTokenOut = TokenMother.random();
 
-      const fetcher = new TokenDetailsFetcher();
-      const mockTokenFetcher = stub(fetcher, 'fetch');
-      mockTokenFetcher.onCall(0).resolves(srcToken);
-      mockTokenFetcher.onCall(1).resolves(dstToken);
+      const fetcher = getTokenDetailsFetcher([srcToken, dstToken]);
 
       // mock Sushi provider
       const mockSushi = getSushi();

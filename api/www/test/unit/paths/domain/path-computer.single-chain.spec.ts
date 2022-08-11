@@ -2,7 +2,6 @@ import { stub } from 'sinon';
 import { createMock } from 'ts-auto-mock';
 import { ZeroEx } from '../../../../src/swaps/domain/providers/zero-ex';
 import { PathComputer } from '../../../../src/paths/domain/path-computer';
-import { TokenDetailsFetcher } from '../../../../src/shared/infrastructure/TokenDetailsFetcher';
 import { GetPathQuery } from '../../../../src/paths/application/query/get-path.query';
 import { TokenMother } from '../../shared/domain/Token.mother';
 import { BigInteger } from '../../../../src/shared/domain/BigInteger';
@@ -13,7 +12,7 @@ import { Exchanges } from '../../../../src/swaps/domain/exchanges';
 import { Aggregators } from '../../../../src/aggregators/domain/aggregators';
 import { Bridges } from '../../../../src/bridges/domain/bridges';
 import { ExchangeProviders } from '../../../../src/swaps/domain/providers/exchange-providers';
-import { getPriceFeedFetcher } from '../../shared/shared';
+import { getPriceFeedFetcher, getTokenDetailsFetcher } from '../../shared/shared';
 import { SwapOrderMother } from '../../swaps/domain/swap-order.mother';
 
 describe('path-computer - single chain', () => {
@@ -23,10 +22,7 @@ describe('path-computer - single chain', () => {
       const srcToken = TokenMother.link();
       const dstToken = TokenMother.sushi();
 
-      const fetcher = new TokenDetailsFetcher();
-      const mockTokenFetcher = stub(fetcher, 'fetch');
-      mockTokenFetcher.onCall(0).resolves(srcToken);
-      mockTokenFetcher.onCall(1).resolves(dstToken);
+      const fetcher = getTokenDetailsFetcher([srcToken, dstToken]);
 
       // mock ZeroEx provider
       const mockZeroEx = createMock<ZeroEx>({
@@ -79,10 +75,7 @@ describe('path-computer - single chain', () => {
       const srcToken = TokenMother.link();
       const dstToken = TokenMother.sushi();
 
-      const fetcher = new TokenDetailsFetcher();
-      const mockTokenFetcher = stub(fetcher, 'fetch');
-      mockTokenFetcher.onCall(0).resolves(srcToken);
-      mockTokenFetcher.onCall(1).resolves(dstToken);
+      const fetcher = getTokenDetailsFetcher([srcToken, dstToken]);
 
       // mock ZeroEx provider
       const mockZeroEx = createMock<ZeroEx>({

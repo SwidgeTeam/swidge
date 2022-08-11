@@ -7,6 +7,7 @@ import { createMock } from 'ts-auto-mock';
 import { HttpClient } from '../../../src/shared/infrastructure/http/httpClient';
 import { Sushiswap } from '../../../src/swaps/domain/providers/sushiswap';
 import { SushiPairsRepository } from '../../../src/swaps/domain/sushi-pairs-repository';
+import { TokenDetailsFetcher } from '../../../src/shared/infrastructure/TokenDetailsFetcher';
 
 export function getPriceFeedFetcher(responses: { chain: string; result: string }[]) {
   const priceFeedFetcher = new PriceFeedFetcher();
@@ -26,10 +27,19 @@ export function getSushi(): Sushiswap {
   return new Sushiswap(httpClientMock(), sushiRepositoryMock());
 }
 
-function httpClientMock() {
+export function httpClientMock() {
   return createMock<HttpClient>();
 }
 
-function sushiRepositoryMock() {
+export function sushiRepositoryMock() {
   return createMock<SushiPairsRepository>();
+}
+
+export function getTokenDetailsFetcher(results: any[]): TokenDetailsFetcher {
+  const fetcher = new TokenDetailsFetcher();
+  const mockTokenFetcher = stub(fetcher, 'fetch');
+  for (let i = 0; i < results.length; i++) {
+    mockTokenFetcher.onCall(i).resolves(results[i]);
+  }
+  return fetcher;
 }
