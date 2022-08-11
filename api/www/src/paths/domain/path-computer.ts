@@ -167,8 +167,9 @@ export class PathComputer {
         this.fromChain,
         this.srcToken,
         this.dstToken,
-        this.amountIn,
         this.totalSlippage,
+        this.amountIn,
+        this.amountIn,
       );
       // aggregate promises
       promises.push(swapOrderPromise);
@@ -205,8 +206,9 @@ export class PathComputer {
           this.fromChain,
           this.srcToken,
           bridgeTokenIn,
-          this.amountIn,
           this.originSlippage,
+          this.amountIn,
+          this.amountIn,
         );
         // get the promise of the routes for this path
         const routesPromise = this.bridge(bridgingAsset, swapOrderPromise);
@@ -238,7 +240,7 @@ export class PathComputer {
       let bridgeAmountIn;
       // check the amount that should input the bridge
       if (originSwap.required) {
-        bridgeAmountIn = originSwap.amountOut;
+        bridgeAmountIn = originSwap.expectedAmountOut;
       } else {
         bridgeAmountIn = this.amountIn;
       }
@@ -277,8 +279,9 @@ export class PathComputer {
         this.toChain,
         bridgeOrder.tokenOut,
         this.dstToken,
-        bridgeOrder.amountOut,
         this.destinationSlippage,
+        bridgeOrder.amountOut,
+        bridgeOrder.minAmountOut,
       );
       // save the promise
       promises.push(swapOrderPromise);
@@ -341,7 +344,7 @@ export class PathComputer {
           originSwap.tokenIn,
           originSwap.tokenOut,
           originSwap.amountIn,
-          originSwap.amountOut,
+          originSwap.expectedAmountOut,
           fee,
         ),
       );
@@ -375,7 +378,7 @@ export class PathComputer {
           destinationSwap.tokenIn,
           destinationSwap.tokenOut,
           destinationSwap.amountIn,
-          destinationSwap.amountOut,
+          destinationSwap.expectedAmountOut,
           fee,
         ),
       );
@@ -391,7 +394,9 @@ export class PathComputer {
     );
 
     const originNativeWeiOfDestinationGas =
-      this.convertDestinationGasIntoOriginNative(destinationSwap);
+      this.fromChain === this.toChain
+        ? BigInteger.zero()
+        : this.convertDestinationGasIntoOriginNative(destinationSwap);
 
     let value = originNativeWeiOfDestinationGas;
 

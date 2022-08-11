@@ -6,7 +6,8 @@ export class SwapRequest {
     public readonly chainId: string,
     public readonly tokenIn: Token,
     public readonly tokenOut: Token,
-    public readonly amountIn: BigInteger,
     public readonly slippage: number,
+    public readonly amountIn: BigInteger,
+    public readonly minAmountIn: BigInteger,
   ) {}
 }

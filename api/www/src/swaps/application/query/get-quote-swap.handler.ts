@@ -19,12 +19,14 @@ export class GetQuoteSwapHandler implements IQueryHandler<GetQuoteSwapQuery> {
   async execute(query: GetQuoteSwapQuery): Promise<SwapOrder> {
     const srcToken = await this.tokenDetailsFetcher.fetch(query.srcToken, query.chainId);
     const dstToken = await this.tokenDetailsFetcher.fetch(query.dstToken, query.chainId);
+    const amountIn = BigInteger.fromString(query.amount);
     const request = new SwapRequest(
       query.chainId,
       srcToken,
       dstToken,
-      BigInteger.fromString(query.amount),
       query.slippage,
+      amountIn,
+      amountIn,
     );
 
     const exchange = new ZeroEx(this.httpClient);
