@@ -51,13 +51,15 @@ export class ZeroEx implements Exchange {
         throw new InsufficientLiquidity();
       });
 
-    const encodedAddress = AbiEncoder.encodeFunctionArguments(['address'], [response.to]);
+    const expectedAmountOut = BigInteger.fromString(response.buyAmount);
+    const estimatedGas = BigInteger.fromString(response.gas);
 
+    const encodedAddress = AbiEncoder.encodeFunctionArguments(['address'], [response.to]);
     const encodedData = AbiEncoder.concatBytes([encodedAddress, response.data]);
 
     const minPrice = BigInteger.fromDecimal(response.guaranteedPrice, request.tokenIn.decimals);
-
     const minAmountOut = minPrice.times(request.amountIn);
+    const worstCaseAmountOut = minPrice.times(request.minAmountIn);
 
     return new SwapOrder(
       ExchangeProviders.ZeroEx,
@@ -65,9 +67,10 @@ export class ZeroEx implements Exchange {
       request.tokenOut,
       encodedData,
       request.amountIn,
-      BigInteger.fromString(response.buyAmount),
+      expectedAmountOut,
       minAmountOut,
-      BigInteger.fromString(response.gas),
+      worstCaseAmountOut,
+      estimatedGas,
     );
   }
 }

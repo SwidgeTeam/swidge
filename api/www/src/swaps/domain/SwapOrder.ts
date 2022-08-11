@@ -8,7 +8,8 @@ export class SwapOrder {
       Token.null(),
       Token.null(),
       '0x',
-      null,
+      BigInteger.zero(),
+      BigInteger.zero(),
       BigInteger.zero(),
       BigInteger.zero(),
       BigInteger.zero(),
@@ -22,7 +23,8 @@ export class SwapOrder {
       token,
       token,
       '0x',
-      null,
+      BigInteger.zero(),
+      BigInteger.zero(),
       BigInteger.zero(),
       BigInteger.zero(),
       BigInteger.zero(),
@@ -36,8 +38,9 @@ export class SwapOrder {
     private readonly _tokenOut: Token,
     private readonly _data: string,
     private readonly _amountIn: BigInteger,
-    private readonly _amountOut: BigInteger,
-    private readonly _minAmountOut: BigInteger,
+    private readonly _expectedAmountOut: BigInteger,
+    private readonly _expectedMinAmountOut: BigInteger,
+    private readonly _worstCaseAmountOut: BigInteger,
     private readonly _estimatedGas: BigInteger,
     private readonly _required = true,
   ) {}
@@ -62,12 +65,16 @@ export class SwapOrder {
     return this._amountIn;
   }
 
-  get amountOut(): BigInteger {
-    return this._amountOut;
+  get expectedAmountOut(): BigInteger {
+    return this._expectedAmountOut;
   }
 
-  get minAmountOut(): BigInteger {
-    return this._minAmountOut;
+  get expectedMinAmountOut(): BigInteger {
+    return this._expectedMinAmountOut;
+  }
+
+  get worstCaseAmountOut(): BigInteger {
+    return this._worstCaseAmountOut;
   }
 
   get estimatedGas(): BigInteger {

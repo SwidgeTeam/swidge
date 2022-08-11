@@ -430,8 +430,9 @@ export class PathComputer {
    * @param chainId ID of chain
    * @param tokenIn Token that goes in
    * @param tokenOut Token that goes out
-   * @param amount Amount to swap
    * @param slippage Max amount of slippage allowed
+   * @param amountIn Expected amount to swap
+   * @param minAmountIn Minimum amount that will get to the swap
    * @private
    */
   private async getSwapOrder(
@@ -439,8 +440,9 @@ export class PathComputer {
     chainId: string,
     tokenIn: Token,
     tokenOut: Token,
-    amount: BigInteger,
     slippage: number,
+    amountIn: BigInteger,
+    minAmountIn: BigInteger,
   ): Promise<SwapOrder> {
     let swapOrder;
     // if the input and output asset are the same...
@@ -449,7 +451,14 @@ export class PathComputer {
       swapOrder = SwapOrder.sameToken(tokenIn);
     } else {
       // otherwise compute swap
-      const swapRequest = new SwapRequest(chainId, tokenIn, tokenOut, amount, slippage);
+      const swapRequest = new SwapRequest(
+        chainId,
+        tokenIn,
+        tokenOut,
+        slippage,
+        amountIn,
+        minAmountIn,
+      );
       try {
         swapOrder = await this.exchanges.execute(exchangeId, swapRequest);
       } catch (e) {

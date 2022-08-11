@@ -16,6 +16,7 @@ import {
   SwapParameters,
   Token,
   Trade,
+  TradeType,
 } from '@sushiswap/sdk';
 import { SushiPairsRepository } from '../sushi-pairs-repository';
 import { AbiEncoder } from '../../../shared/domain/CallEncoder';
@@ -111,11 +112,6 @@ export class Sushiswap implements Exchange {
           request.tokenIn.name,
         );
 
-    const tokenInAmount = CurrencyAmount.fromRawAmount(
-      tokenIn,
-      JSBI.BigInt(request.amountIn.toString()),
-    );
-
     const tokenOut = request.tokenOut.isNative()
       ? NATIVE[chainId]
       : new Token(
@@ -126,23 +122,45 @@ export class Sushiswap implements Exchange {
           request.tokenOut.name,
         );
 
-    const trade = Trade.bestTradeExactIn(pairs, tokenInAmount, tokenOut);
+    // compute first the trade with the expected `amountIn`
+    const expectedTrade = this.computeTradeAndAmountOut(
+      tokenIn,
+      tokenOut,
+      pairs,
+      request.amountIn,
+      request.slippage,
+    );
+    // then compute, if necessary, what would be the worst case trade with `minAmountIn`
+    const worstCaseTrade =
+      request.amountIn === request.minAmountIn
+        ? expectedTrade
+        : this.computeTradeAndAmountOut(
+            tokenIn,
+            tokenOut,
+            pairs,
+            request.minAmountIn,
+            request.slippage,
+          );
 
-    if (trade.length === 0) {
+    // if there is no trades, we can't support this step on the route
+    if (expectedTrade.trade.length === 0 || worstCaseTrade.trade.length === 0) {
       throw new InsufficientLiquidity();
     }
 
-    const expectedAmountOut = BigInteger.fromString(trade[0].outputAmount.numerator.toString());
-
-    const minAmountOut = expectedAmountOut.times(1000 - request.slippage * 10).div(1000);
-
     const slippage = new Percent(request.slippage * 100, '10000');
 
-    const call = Router.swapCallParameters(trade[0], {
+    // compute the callData for the expected trade
+    const call = Router.swapCallParameters(expectedTrade.trade[0], {
       ttl: 3600 * 24, // 1 day
       recipient: DeployedAddresses.Router,
       allowedSlippage: slippage,
     });
+    // there is a trick here, we don't need the worst-case-trade callData because
+    // callData is only used for the swap on the origin, the callData on the destination swap
+    // computed on the route computing process is never used, and the origin swap will always
+    // have equal `amountIn` and `minAmountIn`, so callData would be the same.
+    // Why is all this done then?
+    // In order to have the expected amountOut computed looking at the pairs liquidity
 
     const callData = this.encodeCallData(call);
 
@@ -152,10 +170,35 @@ export class Sushiswap implements Exchange {
       request.tokenOut,
       callData,
       request.amountIn,
-      expectedAmountOut,
-      minAmountOut,
+      expectedTrade.amountOut,
+      expectedTrade.minAmountOut,
+      worstCaseTrade.minAmountOut,
       BigInteger.fromString(gasEstimations[chainId]),
     );
+  }
+
+  private computeTradeAndAmountOut(
+    tokenIn: Token,
+    tokenOut: Token,
+    pairs: Pair[],
+    amountIn: BigInteger,
+    slippage: number,
+  ): {
+    trade: Trade<Token, Token, TradeType.EXACT_INPUT>[];
+    amountOut: BigInteger;
+    minAmountOut: BigInteger;
+  } {
+    const tokenInAmount = CurrencyAmount.fromRawAmount(tokenIn, JSBI.BigInt(amountIn.toString()));
+
+    const trade = Trade.bestTradeExactIn(pairs, tokenInAmount, tokenOut);
+    const expectedAmountOut = BigInteger.fromString(trade[0].outputAmount.numerator.toString());
+    const minAmountOut = expectedAmountOut.times(1000 - slippage * 10).div(1000);
+
+    return {
+      trade: trade,
+      amountOut: expectedAmountOut,
+      minAmountOut: minAmountOut,
+    };
   }
 
   /**
