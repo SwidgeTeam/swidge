@@ -339,11 +339,11 @@ export class PathComputer {
     // create the required steps of the route
     const steps: RouteStep[] = [];
     if (originSwap.required) {
-      const fee = originSwap.estimatedGas
-        .times(this.gasPriceOrigin)
-        .times(this.priceOriginCoin.lastPrice)
-        .div(BigInteger.weiInEther())
-        .toDecimal(this.priceOriginCoin.decimals);
+      const fee = this.computeUSDFee(
+        originSwap.estimatedGas,
+        this.gasPriceOrigin,
+        this.priceOriginCoin,
+      );
 
       const details = ExchangeDetails.get(originSwap.providerCode);
       steps.push(
@@ -376,11 +376,11 @@ export class PathComputer {
     }
 
     if (destinationSwap.required) {
-      const fee = destinationSwap.estimatedGas
-        .times(this.gasPriceOrigin)
-        .times(this.priceOriginCoin.lastPrice)
-        .div(BigInteger.weiInEther())
-        .toDecimal(this.priceOriginCoin.decimals);
+      const fee = this.computeUSDFee(
+        destinationSwap.estimatedGas,
+        this.gasPriceDestination,
+        this.priceDestinationCoin,
+      );
 
       const details = ExchangeDetails.get(destinationSwap.providerCode);
       steps.push(
@@ -436,6 +436,25 @@ export class PathComputer {
     );
 
     return new Route(resume, transactionDetails, steps);
+  }
+
+  /**
+   * Computes and returns the USD value of the given gas
+   * @param estimatedGas
+   * @param gasPrice
+   * @param coinPrice
+   * @private
+   */
+  private computeUSDFee(
+    estimatedGas: BigInteger,
+    gasPrice: BigInteger,
+    coinPrice: PriceFeed,
+  ): string {
+    return estimatedGas
+      .times(gasPrice)
+      .times(coinPrice.lastPrice)
+      .div(BigInteger.weiInEther())
+      .toDecimal(coinPrice.decimals);
   }
 
   /**
