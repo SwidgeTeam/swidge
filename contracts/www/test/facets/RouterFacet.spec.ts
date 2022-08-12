@@ -319,22 +319,17 @@ describe("RouterFacet", function () {
       /** Arrange */
       const { owner, anyoneElse } = await getAccounts();
 
-      // Create two fake ERC20 tokens
       const fakeTokenOut = await fakeTokenContract();
-
-      // Fake response from executed methods on the output token
-      fakeTokenOut.balanceOf.returnsAtCall(0, 10);
-      fakeTokenOut.balanceOf.returnsAtCall(1, 20);
-
       const [callData, zeroExHandler] = await zeroExEncodedCalldata();
+      const amountIn = ethers.utils.parseEther("1.0");
 
-      zeroExHandler.testFunction.reverts();
-
+      // set provider as the one in use
       await providerUpdater
         .connect(owner)
         .updateSwapper([0, true, zeroEx.address, ZeroAddress]);
 
-      const amountIn = ethers.utils.parseEther("1.0");
+      // set provider to fail
+      zeroExHandler.testFunction.reverts();
 
       /** Act */
       const call = router
@@ -343,6 +338,46 @@ describe("RouterFacet", function () {
           amountIn,
           [0, NativeToken, fakeTokenOut.address, callData, true],
           [RandomAddress, 1337, "0x", false],
+          [RandomAddress, RandomAddress, 999],
+          {
+            value: amountIn,
+          }
+        );
+
+      /** Assert */
+      await expect(call).to.be.reverted;
+    });
+
+    it("Should revert if bridge provider fails", async function () {
+      /** Arrange */
+      const { owner, anyoneElse } = await getAccounts();
+
+      const fakeTokenIn = await fakeTokenContract();
+      const callDataBridge = encodedRandomAddress();
+      const amountIn = ethers.utils.parseEther("1.0");
+      const anyswapMock = await fakeAnyswapRouter();
+      const providerBridgeCode = 0;
+
+      // set our mock provider as the one in use
+      await providerUpdater
+        .connect(owner)
+        .updateBridge([
+          providerBridgeCode,
+          true,
+          anyswap.address,
+          anyswapMock.address,
+        ]);
+
+      // setting the provider to fail
+      anyswapMock.anySwapOutUnderlying.reverts();
+
+      /** Act */
+      const call = router
+        .connect(anyoneElse)
+        .initSwidge(
+          amountIn,
+          [0, RandomAddress, RandomAddress, "0x", false],
+          [fakeTokenIn.address, 1337, callDataBridge, true],
           [RandomAddress, RandomAddress, 999],
           {
             value: amountIn,
@@ -464,4 +499,11 @@ async function fakeAnyswapRouter(): Promise<FakeContract> {
     "function anySwapOutUnderlying(address token, address to, uint amount, uint toChainID) external",
   ];
   return await smock.fake(tokenAbi);
+}
+
+function encodedRandomAddress() {
+  return ethers.utils.defaultAbiCoder.encode(
+    ["address"],
+    [RandomAddress]
+  );
 }
