@@ -65,6 +65,7 @@ describe("Sushi provider", () => {
   });
 
   it("should send value if native token in", async () => {
+    // Waiting for the feature that allows to test sent value to be released //
     /*
     // Arrange
     const { owner } = await getAccounts();
