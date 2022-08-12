@@ -81,19 +81,28 @@ describe("RouterFacet - finalize", function () {
       .to.emit(router, "CrossFinalized")
       .withArgs(
         "0x02b0672e488733a606cc52bd19e865de313c7e1e019fb6204c01a9bdcfa08cca",
-        10
+        10,
+        fakeTokenOut.address
       );
   });
 
-  it("Should revert if the provider fails", async function () {
+  it("Should transfer to user the input assets if provider fails", async function () {
     /** Arrange */
-    const { relayer } = await getAccounts();
+    const { owner, relayer } = await getAccounts();
 
     // Create two fake ERC20 tokens
     const fakeTokenIn = await fakeTokenContract();
     const fakeTokenOut = await fakeTokenContract();
 
-    const [callData] = await zeroExEncodedCalldata();
+    const [callData, zeroExHandler] = await zeroExEncodedCalldata();
+
+    // set provider as the one in use
+    await providerUpdater
+      .connect(owner)
+      .updateSwapper([0, true, zeroEx.address, ZeroAddress]);
+
+    // set provider to fail
+    zeroExHandler.testFunction.reverts();
 
     /** Act */
     const call = router
@@ -106,6 +115,38 @@ describe("RouterFacet - finalize", function () {
       );
 
     /** Assert */
-    await expect(call).to.be.reverted;
+    await expect(call)
+      .to.emit(router, "CrossFinalized")
+      .withArgs(
+        "0x02b0672e488733a606cc52bd19e865de313c7e1e019fb6204c01a9bdcfa08cca",
+        1000000,
+        fakeTokenIn.address
+      );
+  });
+
+  it("Should transfer to user the input assets if no swap is required", async function () {
+    /** Arrange */
+    const { relayer } = await getAccounts();
+
+    const fakeTokenIn = await fakeTokenContract();
+
+    /** Act */
+    const call = router
+      .connect(relayer)
+      .finalizeSwidge(
+        1000000,
+        RandomAddress,
+        "0x02b0672e488733a606cc52bd19e865de313c7e1e019fb6204c01a9bdcfa08cca",
+        [0, fakeTokenIn.address, fakeTokenIn.address, "0x", false]
+      );
+
+    /** Assert */
+    await expect(call)
+      .to.emit(router, "CrossFinalized")
+      .withArgs(
+        "0x02b0672e488733a606cc52bd19e865de313c7e1e019fb6204c01a9bdcfa08cca",
+        1000000,
+        fakeTokenIn.address
+      );
   });
 });

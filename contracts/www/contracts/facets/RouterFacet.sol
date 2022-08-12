@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
 import "../libraries/LibStorage.sol";
 import "../libraries/LibProvider.sol";
+import "../libraries/LibTreasury.sol";
 
 contract RouterFacet {
 
@@ -153,42 +154,44 @@ contract RouterFacet {
     ) external payable {
         LibStorage.enforceIsRelayer();
 
-        uint256 finalAmount;
-        bool swapSuccess;
+        address deliverAsset;
+        uint256 deliverAmount;
+
         // Check if last swap is required,
         // and store user's receiving amount
         if (_swapStep.required) {
-            (swapSuccess, finalAmount,) = LibProvider.swap(
+            bool swapSuccess;
+            (swapSuccess, deliverAmount,) = LibProvider.swap(
                 _swapStep.providerCode,
                 _swapStep.tokenIn,
                 _swapStep.tokenOut,
                 _amount,
                 _swapStep.data
             );
+            if (swapSuccess) {
+                // if swap is successful, asset to transfer is what we swapped for
+                deliverAsset = _swapStep.tokenOut;
+            }
+            else {
+                // if swap failed for any reason when it was required
+                // we have to send input assets to the user
+                deliverAsset = _swapStep.tokenIn;
+                deliverAmount = _amount;
+            }
         }
         else {
-            finalAmount = _amount;
+            // if no swap is required, we send input asset to the user
+            deliverAsset = _swapStep.tokenIn;
+            deliverAmount = _amount;
         }
 
-        if (_swapStep.required && !swapSuccess) {
-            // TODO : send tokens to user
-            return;
-        }
+        LibTreasury.sendAssets(
+            deliverAsset,
+            _receiver,
+            deliverAmount
+        );
 
-        if (_swapStep.tokenOut == nativeToken()) {
-            // Sent native coins
-            payable(_receiver).transfer(finalAmount);
-        }
-        else {
-            // Send tokens to the user
-            TransferHelper.safeTransfer(
-                _swapStep.tokenOut,
-                _receiver,
-                finalAmount
-            );
-        }
-
-        emit CrossFinalized(_originHash, finalAmount);
+        emit CrossFinalized(_originHash, deliverAmount, deliverAsset);
     }
 
     /**
@@ -229,7 +232,8 @@ contract RouterFacet {
      */
     event CrossFinalized(
         bytes32 txHash,
-        uint256 amountOut
+        uint256 amountOut,
+        address assetOut
     );
 
     /**
