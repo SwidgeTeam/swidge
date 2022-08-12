@@ -169,7 +169,12 @@ export class EventsListener {
       )
       .on(
         'CrossFinalized',
-        async (txHash: string, amountOut: BigNumber, event) => {
+        async (
+          txHash: string,
+          amountOut: BigNumber,
+          tokenOut: string,
+          event,
+        ) => {
           try {
             this.logger.log('Received CrossFinalized event');
             const destinationTxHash = event.transactionHash;
