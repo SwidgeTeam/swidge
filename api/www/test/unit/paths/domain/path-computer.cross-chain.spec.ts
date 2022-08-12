@@ -24,6 +24,7 @@ import {
 } from '../../shared/shared';
 import { BridgingOrderMother } from '../../bridges/domain/bridging-order.mother';
 import { SwapOrderMother } from '../../swaps/domain/swap-order.mother';
+import { faker } from '@faker-js/faker';
 
 describe('path-computer - cross chain', () => {
   describe('path-computer - no routes', () => {
@@ -82,7 +83,7 @@ describe('path-computer - cross chain', () => {
       );
 
       // create pat query
-      const query = new GetPathQuery(Polygon, Fantom, '0xLINK', '0xSUSHI', '1000', 2);
+      const query = getPathQuery();
 
       /** Act */
       const computeCall = pathComputer.compute(query);
@@ -137,7 +138,7 @@ describe('path-computer - cross chain', () => {
       );
 
       // create pat query
-      const query = new GetPathQuery(Polygon, Fantom, '0xLINK', '0xSUSHI', '1000', 2);
+      const query = getPathQuery();
 
       /** Act */
       const computeCall = pathComputer.compute(query);
@@ -199,7 +200,7 @@ describe('path-computer - cross chain', () => {
       );
 
       // create pat query
-      const query = new GetPathQuery(Polygon, Fantom, '0xLINK', '0xSUSHI', '1000', 2);
+      const query = getPathQuery();
 
       /** Act */
       const computeCall = pathComputer.compute(query);
@@ -269,7 +270,7 @@ describe('path-computer - cross chain', () => {
       );
 
       // create pat query
-      const query = new GetPathQuery(Polygon, Fantom, '0xLINK', '0xSUSHI', '1000', 2);
+      const query = getPathQuery();
 
       /** Act */
       const routes = await pathComputer.compute(query);
@@ -382,7 +383,7 @@ describe('path-computer - cross chain', () => {
       );
 
       // create pat query
-      const query = new GetPathQuery(Polygon, Fantom, '0xLINK', '0xSUSHI', '1000', 2);
+      const query = getPathQuery();
 
       /** Act */
       const routes = await pathComputer.compute(query);
@@ -464,7 +465,7 @@ describe('path-computer - cross chain', () => {
       );
 
       // create pat query
-      const query = new GetPathQuery(Polygon, Fantom, '0xLINK', '0xSUSHI', '1000', 2);
+      const query = getPathQuery();
 
       /** Act */
       const routes = await pathComputer.compute(query);
@@ -554,7 +555,7 @@ describe('path-computer - cross chain', () => {
       );
 
       // create pat query
-      const query = new GetPathQuery(Polygon, Fantom, '0xLINK', '0xSUSHI', '1000', 2);
+      const query = getPathQuery();
 
       /** Act */
       const routes = await pathComputer.compute(query);
@@ -570,3 +571,15 @@ describe('path-computer - cross chain', () => {
     });
   });
 });
+
+function getPathQuery(): GetPathQuery {
+  return new GetPathQuery(
+    Polygon,
+    Fantom,
+    '0xLINK',
+    '0xSUSHI',
+    '1000',
+    2,
+    faker.finance.ethereumAddress(),
+  );
+}

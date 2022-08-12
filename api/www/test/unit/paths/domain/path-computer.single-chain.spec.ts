@@ -14,6 +14,7 @@ import { Bridges } from '../../../../src/bridges/domain/bridges';
 import { ExchangeProviders } from '../../../../src/swaps/domain/providers/exchange-providers';
 import { getPriceFeedFetcher, getTokenDetailsFetcher } from '../../shared/shared';
 import { SwapOrderMother } from '../../swaps/domain/swap-order.mother';
+import { faker } from '@faker-js/faker';
 
 describe('path-computer - single chain', () => {
   describe('path-computer - no routes', () => {
@@ -59,7 +60,7 @@ describe('path-computer - single chain', () => {
       );
 
       // create pat query
-      const query = new GetPathQuery(Polygon, Polygon, '0xLINK', '0xSUSHI', '1000', 2);
+      const query = getPathQuery();
 
       /** Act */
       const computeCall = pathComputer.compute(query);
@@ -120,7 +121,7 @@ describe('path-computer - single chain', () => {
       );
 
       // create pat query
-      const query = new GetPathQuery(Polygon, Polygon, '0xLINK', '0xSUSHI', '1000', 2);
+      const query = getPathQuery();
 
       /** Act */
       const routes = await pathComputer.compute(query);
@@ -140,3 +141,7 @@ describe('path-computer - single chain', () => {
     });
   });
 });
+
+function getPathQuery(): GetPathQuery {
+  return new GetPathQuery(Polygon, Polygon, '0xLINK', '0xSUSHI', '1000', 2, faker.finance.ethereumAddress());
+}
