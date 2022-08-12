@@ -21,13 +21,7 @@ export class TransactionProcessor {
   async execute(job: TransactionJob) {
     this.logger.log('Received job ', job);
 
-    let swapDetails;
-    if (job.srcToken === job.dstToken) {
-      // If final token is same than the received, no swap required
-      swapDetails = await this.getNoSwapDetails(job);
-    } else {
-      swapDetails = await this.getSwapDetails(job);
-    }
+    const swapDetails = await this.getSwapDetails(job);
 
     const rpc = RpcNode[job.toChainId];
 
@@ -45,24 +39,6 @@ export class TransactionProcessor {
     await this.routerCaller.call(params);
 
     this.logger.log('Tx executed');
-  }
-
-  /**
-   * Compute swap details for contract call when no swap required
-   * @param job
-   * @private
-   */
-  private async getNoSwapDetails(job: TransactionJob) {
-    const estimatedGas = this.getFunctionEstimateGas();
-    return {
-      providerCode: '0',
-      amountIn: job.bridgeAmountOut,
-      tokenIn: job.srcToken,
-      tokenOut: job.dstToken,
-      estimatedGas: estimatedGas,
-      data: '0x',
-      required: false,
-    };
   }
 
   /**

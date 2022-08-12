@@ -117,6 +117,7 @@ export class EventsListener {
           srcToken: string,
           bridgeTokenIn: string,
           bridgeTokenOut: string,
+          receiver: string,
           dstToken: string,
           fromChain: BigNumber,
           toChain: BigNumber,
@@ -154,7 +155,7 @@ export class EventsListener {
 
             await this.queueJob(<TxJob>{
               txHash: txHash,
-              wallet: wallet,
+              wallet: receiver,
               router: routerAddress,
               fromChain: fromChain.toString(),
               toChain: toChain.toString(),

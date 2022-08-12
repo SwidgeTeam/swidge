@@ -1,4 +1,4 @@
-import { ethers, ContractReceipt, BigNumber } from 'ethers';
+import { ethers, ContractReceipt } from 'ethers';
 import { ConfigService } from '../../config/config.service';
 import { ContractAddress } from '../../shared/types';
 import routerAbi from './router.json';
