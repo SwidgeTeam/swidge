@@ -30,11 +30,12 @@ contract RouterFacet {
     }
 
     /**
-     * @dev Defines the details for the destination swap
+     * @dev Defines the payload that needs to be crossed
      */
-    struct DestinationSwap {
+    struct CrossPayload {
         address tokenIn;
         address tokenOut;
+        uint256 minAmountOut;
     }
 
     /**
@@ -45,7 +46,7 @@ contract RouterFacet {
         uint256 _amount,
         SwapStep calldata _swapStep,
         BridgeStep calldata _bridgeStep,
-        DestinationSwap calldata _destinationSwap
+        CrossPayload calldata _crossPayload
     ) external payable {
         // We need either the swap or the bridge step to be required
         require(_swapStep.required || _bridgeStep.required, "No required actions");
@@ -102,12 +103,13 @@ contract RouterFacet {
             emit CrossInitiated(
                 _swapStep.tokenIn,
                 _bridgeStep.tokenIn,
-                _destinationSwap.tokenIn,
-                _destinationSwap.tokenOut,
+                _crossPayload.tokenIn,
+                _crossPayload.tokenOut,
                 block.chainid,
                 _bridgeStep.toChainId,
                 _amount,
-                finalAmount
+                finalAmount,
+                _crossPayload.minAmountOut
             );
         }
         else {
@@ -193,7 +195,8 @@ contract RouterFacet {
         uint256 fromChain,
         uint256 toChain,
         uint256 amountIn,
-        uint256 amountCross
+        uint256 amountCross,
+        uint256 minAmountOut
     );
 
     /**

@@ -45,7 +45,7 @@ describe("RouterFacet", function () {
           1000000,
           [0, RandomAddress, RandomAddress, "0x", false],
           [RandomAddress, 57, "0x", false],
-          [RandomAddress, RandomAddress]
+          [RandomAddress, RandomAddress, 0]
         );
 
       /** Assert */
@@ -77,7 +77,7 @@ describe("RouterFacet", function () {
           1000000,
           [0, fakeTokenIn.address, fakeTokenOut.address, callData, true],
           [RandomAddress, 1337, "0x", false],
-          [RandomAddress, RandomAddress]
+          [RandomAddress, RandomAddress, 0]
         );
 
       /** Assert */
@@ -124,7 +124,7 @@ describe("RouterFacet", function () {
           1000000,
           [providerSwapCode, RandomAddress, RandomAddress, "0x", false],
           [fakeTokenIn.address, 1337, callData, true],
-          [RandomAddress, RandomAddress]
+          [RandomAddress, RandomAddress, 0]
         );
 
       /** Assert */
@@ -164,7 +164,7 @@ describe("RouterFacet", function () {
           1000000,
           [providerSwapCode, RandomAddress, RandomAddress, "0x", false],
           [fakeTokenIn.address, 1337, callData, true],
-          [RandomAddress, RandomAddress]
+          [RandomAddress, RandomAddress, 999]
         );
 
       /** Assert */
@@ -178,7 +178,8 @@ describe("RouterFacet", function () {
           31337,
           1337,
           1000000,
-          1000000
+          1000000,
+          999
         );
     });
 
@@ -231,7 +232,7 @@ describe("RouterFacet", function () {
             true,
           ],
           [fakeTokenOut.address, 1337, callDataBridge, true],
-          [RandomAddress, RandomAddress]
+          [RandomAddress, RandomAddress, 999]
         );
 
       /** Assert */
@@ -245,7 +246,8 @@ describe("RouterFacet", function () {
           31337,
           1337,
           1000000,
-          10
+          10,
+          999
         );
     });
 
@@ -275,7 +277,7 @@ describe("RouterFacet", function () {
           amountIn,
           [0, NativeToken, fakeTokenOut.address, callData, true],
           [RandomAddress, 1337, "0x", false],
-          [RandomAddress, RandomAddress],
+          [RandomAddress, RandomAddress, 999],
           {
             value: amountIn,
           }
