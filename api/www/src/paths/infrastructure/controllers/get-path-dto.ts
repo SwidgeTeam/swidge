@@ -21,4 +21,7 @@ export class GetPathDto {
 
   @IsNumberString()
   slippage: number;
+
+  @IsEthereumAddress()
+  receiverAddress: string;
 }

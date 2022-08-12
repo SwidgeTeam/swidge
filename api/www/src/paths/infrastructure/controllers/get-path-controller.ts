@@ -19,6 +19,7 @@ export class GetPathController {
       getPathDto.dstToken,
       getPathDto.amount,
       getPathDto.slippage,
+      getPathDto.receiverAddress,
     );
 
     const router = await this.queryBus.execute<GetPathQuery, Route[]>(query);

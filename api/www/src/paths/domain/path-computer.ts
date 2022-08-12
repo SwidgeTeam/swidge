@@ -52,6 +52,7 @@ export class PathComputer {
   private totalSlippage: number;
   private originSlippage: number;
   private destinationSlippage: number;
+  private receiverAddress: string;
 
   constructor(
     _exchanges: Exchanges,
@@ -85,6 +86,7 @@ export class PathComputer {
     this.totalSlippage = query.slippage;
     this.originSlippage = query.slippage / 2;
     this.destinationSlippage = query.slippage / 2;
+    this.receiverAddress = query.receiverAddress;
 
     this.gasPriceOrigin = await this.gasPriceFetcher.fetch(this.fromChain);
     this.gasPriceDestination = await this.gasPriceFetcher.fetch(this.toChain);
@@ -404,6 +406,7 @@ export class PathComputer {
       originSwap,
       bridge,
       destinationSwap,
+      this.receiverAddress,
     );
 
     const originNativeWeiOfDestinationGas =

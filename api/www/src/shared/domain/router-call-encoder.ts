@@ -9,16 +9,20 @@ export class RouterCallEncoder {
     originSwap: SwapOrder,
     bridge: BridgingOrder,
     destinationSwap: SwapOrder,
+    receiverAddress: string,
   ): string {
     const abiInterface = new ethers.utils.Interface(this.abiInitSwidge());
     const encodedSelector = abiInterface.getSighash('initSwidge');
+    const minAmountOut = destinationSwap.required
+      ? destinationSwap.worstCaseAmountOut
+      : BigInteger.zero();
 
     const encodedArguments = ethers.utils.defaultAbiCoder.encode(
       [
         'uint256',
         'tuple(uint8,address,address,bytes,bool)',
         'tuple(address,uint256,bytes,bool)',
-        'tuple(address,address)',
+        'tuple(address,address,address,uint256)',
       ],
       [
         amountIn.toString(),
@@ -30,7 +34,12 @@ export class RouterCallEncoder {
           originSwap.required,
         ],
         [bridge.tokenIn.address, bridge.toChainId, bridge.data, bridge.required],
-        [destinationSwap.tokenIn.address, destinationSwap.tokenOut.address],
+        [
+          destinationSwap.tokenIn.address,
+          destinationSwap.tokenOut.address,
+          receiverAddress,
+          minAmountOut.toString(),
+        ],
       ],
     );
 
@@ -106,7 +115,7 @@ export class RouterCallEncoder {
                 type: 'bool',
               },
             ],
-            internalType: 'struct Router.SwapStep',
+            internalType: 'struct RouterFacet.SwapStep',
             name: '_swapStep',
             type: 'tuple',
           },
@@ -133,7 +142,7 @@ export class RouterCallEncoder {
                 type: 'bool',
               },
             ],
-            internalType: 'struct Router.BridgeStep',
+            internalType: 'struct RouterFacet.BridgeStep',
             name: '_bridgeStep',
             type: 'tuple',
           },
@@ -149,9 +158,19 @@ export class RouterCallEncoder {
                 name: 'tokenOut',
                 type: 'address',
               },
+              {
+                internalType: 'address',
+                name: 'receiver',
+                type: 'address',
+              },
+              {
+                internalType: 'uint256',
+                name: 'minAmountOut',
+                type: 'uint256',
+              },
             ],
-            internalType: 'struct Router.DestinationSwap',
-            name: '_destinationSwap',
+            internalType: 'struct RouterFacet.CrossPayload',
+            name: '_crossPayload',
             type: 'tuple',
           },
         ],

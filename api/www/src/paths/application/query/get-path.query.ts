@@ -8,6 +8,7 @@ export class GetPathQuery {
     private readonly _dstToken: ContractAddress,
     private readonly _amountIn: string,
     private readonly _slippage: number,
+    private readonly _receiverAddress: string,
   ) {}
 
   get fromChainId(): string {
@@ -32,5 +33,9 @@ export class GetPathQuery {
 
   get slippage(): number {
     return this._slippage;
+  }
+
+  get receiverAddress(): string {
+    return this._receiverAddress;
   }
 }
