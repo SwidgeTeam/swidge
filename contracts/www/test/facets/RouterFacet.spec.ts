@@ -52,6 +52,28 @@ describe("RouterFacet", function () {
       await expect(call).to.be.revertedWith("No required actions");
     });
 
+    it("Should revert if no input amount is given", async function () {
+      /** Arrange */
+      const { anyoneElse } = await getAccounts();
+
+      // Create two fake ERC20 tokens
+      const fakeTokenIn = await fakeTokenContract();
+      const fakeTokenOut = await fakeTokenContract();
+
+      /** Act */
+      const call = router
+        .connect(anyoneElse)
+        .initSwidge(
+          0,
+          [0, fakeTokenIn.address, fakeTokenOut.address, "0x", true],
+          [RandomAddress, 57, "0x", false],
+          [RandomAddress, RandomAddress, 0]
+        );
+
+      /** Assert */
+      await expect(call).to.be.revertedWith("No input amount");
+    });
+
     it("Should only execute swap if no bridging step is required", async function () {
       /** Arrange */
       const { owner, anyoneElse } = await getAccounts();

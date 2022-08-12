@@ -51,6 +51,9 @@ contract RouterFacet {
         // We need either the swap or the bridge step to be required
         require(_swapStep.required || _bridgeStep.required, "No required actions");
 
+        // We need to work with something..
+        require(_amount != 0, "No input amount");
+
         address tokenToTakeIn;
         // Need to check which token is going to be taken as input
         if (_swapStep.required) {
