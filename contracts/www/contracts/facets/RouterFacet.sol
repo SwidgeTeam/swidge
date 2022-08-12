@@ -36,6 +36,7 @@ contract RouterFacet {
     struct CrossPayload {
         address tokenIn;
         address tokenOut;
+        address receiver;
         uint256 minAmountOut;
     }
 
@@ -114,6 +115,7 @@ contract RouterFacet {
                 _bridgeStep.tokenIn,
                 _crossPayload.tokenIn,
                 _crossPayload.tokenOut,
+                _crossPayload.receiver,
                 block.chainid,
                 _bridgeStep.toChainId,
                 _amount,
@@ -208,6 +210,7 @@ contract RouterFacet {
         address srcToken,
         address bridgeTokenIn,
         address bridgeTokenOut,
+        address receiver,
         address dstToken,
         uint256 fromChain,
         uint256 toChain,
