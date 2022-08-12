@@ -2,6 +2,7 @@ import { PriceFeedFetcher } from '../../../src/shared/infrastructure/PriceFeedFe
 import { stub } from 'sinon';
 import { PriceFeed } from '../../../src/shared/domain/PriceFeed';
 import { BigInteger } from '../../../src/shared/domain/BigInteger';
+import { Logger } from '../../../src/shared/domain/logger';
 import { ZeroEx } from '../../../src/swaps/domain/providers/zero-ex';
 import { createMock } from 'ts-auto-mock';
 import { HttpClient } from '../../../src/shared/infrastructure/http/httpClient';
@@ -42,4 +43,8 @@ export function getTokenDetailsFetcher(results: any[]): TokenDetailsFetcher {
     mockTokenFetcher.onCall(i).resolves(results[i]);
   }
   return fetcher;
+}
+
+export function loggerMock() {
+  return createMock<Logger>();
 }

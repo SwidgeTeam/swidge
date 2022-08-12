@@ -10,6 +10,7 @@ import cachedHttpClientProvider from '../shared/infrastructure/http/cachedHttpCl
 import sushiPairsRepositoryProvider from '../swaps/infrastructure/database/repositories/sushi-pairs.repository.provider';
 import priceFeedFetcherProvider from '../shared/infrastructure/PriceFeedFetcher.provider';
 import gasPriceFetcherProvider from '../shared/infrastructure/GasPriceFetcher.provider';
+import consoleLoggerProvider from '../shared/infrastructure/console-logger-provider';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import gasPriceFetcherProvider from '../shared/infrastructure/GasPriceFetcher.pr
     priceFeedFetcherProvider(),
     gasPriceFetcherProvider(),
     sushiPairsRepositoryProvider(),
+    consoleLoggerProvider(),
   ],
 })
 export class PathsModule {}

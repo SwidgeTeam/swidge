@@ -27,6 +27,7 @@ import { RouteResume } from '../../shared/domain/route-resume';
 import { Bridges } from '../../bridges/domain/bridges';
 import { Exchanges } from '../../swaps/domain/exchanges';
 import { Aggregators } from '../../aggregators/domain/aggregators';
+import { Logger } from '../../shared/domain/logger';
 
 export class PathComputer {
   /** Providers */
@@ -38,6 +39,7 @@ export class PathComputer {
   private readonly gasPriceFetcher: GasPriceFetcher;
   private readonly gasConverter: GasConverter;
   private readonly routerCallEncoder: RouterCallEncoder;
+  private readonly logger: Logger;
   /** Details */
   private readonly bridgingAssets;
   private srcToken: Token;
@@ -61,6 +63,7 @@ export class PathComputer {
     _tokenDetailsFetcher: TokenDetailsFetcher,
     _priceFeedFetcher: PriceFeedFetcher,
     _gasPriceFetcher: GasPriceFetcher,
+    _logger: Logger,
   ) {
     this.exchanges = _exchanges;
     this.bridges = _bridges;
@@ -70,6 +73,7 @@ export class PathComputer {
     this.gasPriceFetcher = _gasPriceFetcher;
     this.gasConverter = new GasConverter();
     this.routerCallEncoder = new RouterCallEncoder();
+    this.logger = _logger;
     this.bridgingAssets = [USDC];
   }
 
@@ -499,6 +503,7 @@ export class PathComputer {
         swapOrder = await this.exchanges.execute(exchangeId, swapRequest);
       } catch (e) {
         // no possible path, nothing to do ..
+        this.logger.warn(e);
       }
     }
     return swapOrder;
@@ -530,6 +535,7 @@ export class PathComputer {
       return await this.bridges.execute(providerId, bridgeRequest);
     } catch (e) {
       // not possible, nothing to do..
+      this.logger.warn(e);
     }
   }
 

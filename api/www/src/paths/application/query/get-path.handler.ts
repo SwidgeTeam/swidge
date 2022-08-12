@@ -20,6 +20,7 @@ import { SushiPairsRepository } from '../../../swaps/domain/sushi-pairs-reposito
 import { Aggregators } from '../../../aggregators/domain/aggregators';
 import { AggregatorProviders } from '../../../aggregators/domain/providers/aggregator-providers';
 import { LiFi } from '../../../aggregators/domain/providers/liFi';
+import { Logger } from '../../../shared/domain/logger';
 
 @QueryHandler(GetPathQuery)
 export class GetPathHandler implements IQueryHandler<GetPathQuery> {
@@ -32,6 +33,7 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
     @Inject(Class.PriceFeedFetcher) private readonly priceFeedFetcher: PriceFeedFetcher,
     @Inject(Class.GasPriceFetcher) private readonly gasPriceFetcher: GasPriceFetcher,
     @Inject(Class.SushiPairsRepository) private readonly sushiPairsRepository: SushiPairsRepository,
+    @Inject(Class.Logger) private readonly logger: Logger,
   ) {
     const bridges = new Bridges([
       [BridgeProviders.Multichain, new Multichain(cachedHttpClient)]
@@ -53,6 +55,7 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
       tokenDetailsFetcher,
       priceFeedFetcher,
       gasPriceFetcher,
+      logger,
     );
   }
 

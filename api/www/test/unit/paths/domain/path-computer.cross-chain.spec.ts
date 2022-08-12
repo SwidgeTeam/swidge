@@ -20,7 +20,7 @@ import {
   getPriceFeedFetcher,
   getSushi,
   getTokenDetailsFetcher,
-  getZeroEx,
+  getZeroEx, loggerMock,
 } from '../../shared/shared';
 import { BridgingOrderMother } from '../../bridges/domain/bridging-order.mother';
 import { SwapOrderMother } from '../../swaps/domain/swap-order.mother';
@@ -80,6 +80,7 @@ describe('path-computer - cross chain', () => {
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
+        loggerMock(),
       );
 
       // create pat query
@@ -135,6 +136,7 @@ describe('path-computer - cross chain', () => {
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
+        loggerMock(),
       );
 
       // create pat query
@@ -197,6 +199,7 @@ describe('path-computer - cross chain', () => {
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
+        loggerMock(),
       );
 
       // create pat query
@@ -267,6 +270,7 @@ describe('path-computer - cross chain', () => {
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
+        loggerMock(),
       );
 
       // create pat query
@@ -380,6 +384,7 @@ describe('path-computer - cross chain', () => {
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
+        loggerMock(),
       );
 
       // create pat query
@@ -462,6 +467,7 @@ describe('path-computer - cross chain', () => {
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
+        loggerMock(),
       );
 
       // create pat query
@@ -552,6 +558,7 @@ describe('path-computer - cross chain', () => {
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
+        loggerMock(),
       );
 
       // create pat query

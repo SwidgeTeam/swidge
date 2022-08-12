@@ -12,7 +12,7 @@ import { Exchanges } from '../../../../src/swaps/domain/exchanges';
 import { Aggregators } from '../../../../src/aggregators/domain/aggregators';
 import { Bridges } from '../../../../src/bridges/domain/bridges';
 import { ExchangeProviders } from '../../../../src/swaps/domain/providers/exchange-providers';
-import { getPriceFeedFetcher, getTokenDetailsFetcher } from '../../shared/shared';
+import { getPriceFeedFetcher, getTokenDetailsFetcher, loggerMock } from '../../shared/shared';
 import { SwapOrderMother } from '../../swaps/domain/swap-order.mother';
 import { faker } from '@faker-js/faker';
 
@@ -57,6 +57,7 @@ describe('path-computer - single chain', () => {
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
+        loggerMock(),
       );
 
       // create pat query
@@ -118,6 +119,7 @@ describe('path-computer - single chain', () => {
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
+        loggerMock(),
       );
 
       // create pat query
@@ -143,5 +145,13 @@ describe('path-computer - single chain', () => {
 });
 
 function getPathQuery(): GetPathQuery {
-  return new GetPathQuery(Polygon, Polygon, '0xLINK', '0xSUSHI', '1000', 2, faker.finance.ethereumAddress());
+  return new GetPathQuery(
+    Polygon,
+    Polygon,
+    '0xLINK',
+    '0xSUSHI',
+    '1000',
+    2,
+    faker.finance.ethereumAddress(),
+  );
 }
