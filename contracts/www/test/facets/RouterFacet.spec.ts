@@ -74,7 +74,7 @@ describe("RouterFacet", function () {
       await expect(call).to.be.revertedWith("No input amount");
     });
 
-    it("Should only execute swap if no bridging step is required", async function () {
+    it("Should only send swap event if no bridging step is required", async function () {
       /** Arrange */
       const { owner, anyoneElse } = await getAccounts();
 
@@ -180,14 +180,12 @@ describe("RouterFacet", function () {
         ]);
 
       /** Act */
-      const call = router
-        .connect(anyoneElse)
-        .initSwidge(
-          1000000,
-          [providerSwapCode, RandomAddress, RandomAddress, "0x", false],
-          [fakeTokenIn.address, 1337, callData, true],
-          [RandomAddress, RandomAddress, 999]
-        );
+      const call = router.connect(anyoneElse).initSwidge(
+        1000000,
+        [providerSwapCode, RandomAddress, RandomAddress, "0x", false], // would fail executing with random addresses
+        [fakeTokenIn.address, 1337, callData, true],
+        [RandomAddress, RandomAddress, 999]
+      );
 
       /** Assert */
       await expect(call)
@@ -315,6 +313,44 @@ describe("RouterFacet", function () {
           "1000000000000000000",
           10
         );
+    });
+
+    it("Should revert if swap provider fails", async function () {
+      /** Arrange */
+      const { owner, anyoneElse } = await getAccounts();
+
+      // Create two fake ERC20 tokens
+      const fakeTokenOut = await fakeTokenContract();
+
+      // Fake response from executed methods on the output token
+      fakeTokenOut.balanceOf.returnsAtCall(0, 10);
+      fakeTokenOut.balanceOf.returnsAtCall(1, 20);
+
+      const [callData, zeroExHandler] = await zeroExEncodedCalldata();
+
+      zeroExHandler.testFunction.reverts();
+
+      await providerUpdater
+        .connect(owner)
+        .updateSwapper([0, true, zeroEx.address, ZeroAddress]);
+
+      const amountIn = ethers.utils.parseEther("1.0");
+
+      /** Act */
+      const call = router
+        .connect(anyoneElse)
+        .initSwidge(
+          amountIn,
+          [0, NativeToken, fakeTokenOut.address, callData, true],
+          [RandomAddress, 1337, "0x", false],
+          [RandomAddress, RandomAddress, 999],
+          {
+            value: amountIn,
+          }
+        );
+
+      /** Assert */
+      await expect(call).to.be.reverted;
     });
   });
 
