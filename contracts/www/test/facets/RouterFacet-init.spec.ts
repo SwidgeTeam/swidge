@@ -32,6 +32,7 @@ describe("RouterFacet - init", function () {
     anyswap = await deployer.deployByName("Anyswap");
     zeroEx = await deployer.deployByName("ZeroEx");
   });
+
   it("Should revert if no swap nor bridge step is required", async function () {
     /** Arrange */
     const { anyoneElse } = await getAccounts();
@@ -43,7 +44,7 @@ describe("RouterFacet - init", function () {
         1000000,
         [0, RandomAddress, RandomAddress, "0x", false],
         [RandomAddress, 57, "0x", false],
-        [RandomAddress, RandomAddress, 0]
+        [RandomAddress, RandomAddress, RandomAddress, 0]
       );
 
     /** Assert */
@@ -65,7 +66,7 @@ describe("RouterFacet - init", function () {
         0,
         [0, fakeTokenIn.address, fakeTokenOut.address, "0x", true],
         [RandomAddress, 57, "0x", false],
-        [RandomAddress, RandomAddress, 0]
+        [RandomAddress, RandomAddress, RandomAddress, 0]
       );
 
     /** Assert */
@@ -97,7 +98,7 @@ describe("RouterFacet - init", function () {
         1000000,
         [0, fakeTokenIn.address, fakeTokenOut.address, callData, true],
         [RandomAddress, 1337, "0x", false],
-        [RandomAddress, RandomAddress, 0]
+        [RandomAddress, RandomAddress, RandomAddress, 0]
       );
 
     /** Assert */
@@ -144,7 +145,7 @@ describe("RouterFacet - init", function () {
         1000000,
         [providerSwapCode, RandomAddress, RandomAddress, "0x", false],
         [fakeTokenIn.address, 1337, callData, true],
-        [RandomAddress, RandomAddress, 0]
+        [RandomAddress, RandomAddress, RandomAddress, 0]
       );
 
     /** Assert */
@@ -155,18 +156,12 @@ describe("RouterFacet - init", function () {
     /** Arrange */
     const { owner, anyoneElse } = await getAccounts();
 
-    // Create two fake ERC20 tokens
     const fakeTokenIn = await fakeTokenContract();
-
-    const callData = ethers.utils.defaultAbiCoder.encode(
-      ["address"],
-      [RandomAddress]
-    );
-
+    const callData = encodedRandomAddress();
     const providerSwapCode = 0;
     const providerBridgeCode = 0;
-
     const anyswapMock = await fakeAnyswapRouter();
+    const receiver = ethers.constants.AddressZero;
 
     await providerUpdater
       .connect(owner)
@@ -182,7 +177,7 @@ describe("RouterFacet - init", function () {
       1000000,
       [providerSwapCode, RandomAddress, RandomAddress, "0x", false], // would fail executing with random addresses
       [fakeTokenIn.address, 1337, callData, true],
-      [RandomAddress, RandomAddress, 999]
+      [RandomAddress, RandomAddress, receiver, 999]
     );
 
     /** Assert */
@@ -193,6 +188,7 @@ describe("RouterFacet - init", function () {
         fakeTokenIn.address,
         RandomAddress,
         RandomAddress,
+        receiver,
         31337,
         1337,
         1000000,
@@ -214,20 +210,15 @@ describe("RouterFacet - init", function () {
     fakeTokenOut.balanceOf.returnsAtCall(1, 20);
 
     const [callDataSwap] = await zeroExEncodedCalldata();
-
-    const callDataBridge = ethers.utils.defaultAbiCoder.encode(
-      ["address"],
-      [RandomAddress]
-    );
-
+    const callDataBridge = encodedRandomAddress();
     const providerSwapCode = 0;
     const providerBridgeCode = 0;
+    const anyswapMock = await fakeAnyswapRouter();
 
     await providerUpdater
       .connect(owner)
       .updateSwapper([providerSwapCode, true, zeroEx.address, ZeroAddress]);
 
-    const anyswapMock = await fakeAnyswapRouter();
     await providerUpdater
       .connect(owner)
       .updateBridge([
@@ -250,7 +241,7 @@ describe("RouterFacet - init", function () {
           true,
         ],
         [fakeTokenOut.address, 1337, callDataBridge, true],
-        [RandomAddress, RandomAddress, 999]
+        [RandomAddress, RandomAddress, RandomAddress, 999]
       );
 
     /** Assert */
@@ -259,6 +250,7 @@ describe("RouterFacet - init", function () {
       .withArgs(
         fakeTokenIn.address,
         fakeTokenOut.address,
+        RandomAddress,
         RandomAddress,
         RandomAddress,
         31337,
@@ -295,7 +287,7 @@ describe("RouterFacet - init", function () {
         amountIn,
         [0, NativeToken, fakeTokenOut.address, callData, true],
         [RandomAddress, 1337, "0x", false],
-        [RandomAddress, RandomAddress, 999],
+        [RandomAddress, RandomAddress, RandomAddress, 999],
         {
           value: amountIn,
         }
@@ -336,7 +328,7 @@ describe("RouterFacet - init", function () {
         amountIn,
         [0, NativeToken, fakeTokenOut.address, callData, true],
         [RandomAddress, 1337, "0x", false],
-        [RandomAddress, RandomAddress, 999],
+        [RandomAddress, RandomAddress, RandomAddress, 999],
         {
           value: amountIn,
         }
@@ -376,7 +368,7 @@ describe("RouterFacet - init", function () {
         amountIn,
         [0, RandomAddress, RandomAddress, "0x", false],
         [fakeTokenIn.address, 1337, callDataBridge, true],
-        [RandomAddress, RandomAddress, 999],
+        [RandomAddress, RandomAddress, RandomAddress, 999],
         {
           value: amountIn,
         }
@@ -395,8 +387,5 @@ async function fakeAnyswapRouter(): Promise<FakeContract> {
 }
 
 function encodedRandomAddress() {
-  return ethers.utils.defaultAbiCoder.encode(
-    ["address"],
-    [RandomAddress]
-  );
+  return ethers.utils.defaultAbiCoder.encode(["address"], [RandomAddress]);
 }
