@@ -57,9 +57,22 @@ export class ZeroEx implements Exchange {
     const encodedAddress = AbiEncoder.encodeFunctionArguments(['address'], [response.to]);
     const encodedData = AbiEncoder.concatBytes([encodedAddress, response.data]);
 
-    const minPrice = BigInteger.fromDecimal(response.guaranteedPrice, request.tokenIn.decimals);
-    const minAmountOut = minPrice.times(request.amountIn);
-    const worstCaseAmountOut = minPrice.times(request.minAmountIn);
+    const minPrice = BigInteger.fromDecimal(
+      Number(response.guaranteedPrice).toFixed(request.tokenIn.decimals),
+      request.tokenIn.decimals,
+    );
+
+    const weiInEther = BigInteger.weiInEther();
+
+    const minAmountOut = request.amountIn
+      .times(minPrice) // multiply by price per unit
+      .div(weiInEther) // reduce the added decimals since we dont operate decimals
+      .convertDecimalsFromTo(request.tokenIn.decimals, request.tokenOut.decimals);
+
+    const worstCaseAmountOut = request.minAmountIn
+      .times(minPrice)
+      .div(weiInEther)
+      .convertDecimalsFromTo(request.tokenIn.decimals, request.tokenOut.decimals);
 
     return new SwapOrder(
       ExchangeProviders.ZeroEx,
