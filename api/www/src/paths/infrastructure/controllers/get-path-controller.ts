@@ -45,6 +45,7 @@ export class GetPathController {
         tokenOut: this.mapTokenDetails(route.resume.toToken),
         amountIn: route.resume.amountIn.toDecimal(route.resume.fromToken.decimals),
         amountOut: route.resume.amountOut.toDecimal(route.resume.toToken.decimals),
+        minAmountOut: route.resume.minAmountOut.toDecimal(route.resume.toToken.decimals),
       },
       amountOut: route.amountOut,
       steps: route.steps.map((step) => {

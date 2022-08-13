@@ -62,17 +62,19 @@ export class ZeroEx implements Exchange {
       request.tokenIn.decimals,
     );
 
-    const weiInEther = BigInteger.weiInEther();
+    const minAmountOut = this.operateOutputAmount(
+      request.amountIn,
+      minPrice,
+      request.tokenIn.decimals,
+      request.tokenOut.decimals,
+    );
 
-    const minAmountOut = request.amountIn
-      .times(minPrice) // multiply by price per unit
-      .div(weiInEther) // reduce the added decimals since we dont operate decimals
-      .convertDecimalsFromTo(request.tokenIn.decimals, request.tokenOut.decimals);
-
-    const worstCaseAmountOut = request.minAmountIn
-      .times(minPrice)
-      .div(weiInEther)
-      .convertDecimalsFromTo(request.tokenIn.decimals, request.tokenOut.decimals);
+    const worstCaseAmountOut = this.operateOutputAmount(
+      request.minAmountIn,
+      minPrice,
+      request.tokenIn.decimals,
+      request.tokenOut.decimals,
+    );
 
     return new SwapOrder(
       ExchangeProviders.ZeroEx,
@@ -85,5 +87,23 @@ export class ZeroEx implements Exchange {
       worstCaseAmountOut,
       estimatedGas,
     );
+  }
+
+  /**
+   * Operates an amount and the price to obtain the output amount
+   * @param inputAmount
+   * @param price
+   * @param decimalsIn
+   * @param decimalsOut
+   * @private
+   */
+  private operateOutputAmount(
+    inputAmount: BigInteger,
+    price: BigInteger,
+    decimalsIn: number,
+    decimalsOut: number,
+  ): BigInteger {
+    const units = BigInteger.fromDecimal('1', decimalsIn);
+    return inputAmount.times(price).div(units).convertDecimalsFromTo(decimalsIn, decimalsOut);
   }
 }
