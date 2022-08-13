@@ -32,8 +32,8 @@ export function httpClientMock(args = {}) {
   return createMock<IHttpClient>(args);
 }
 
-export function sushiRepositoryMock() {
-  return createMock<SushiPairsRepository>();
+export function sushiRepositoryMock(args = {}) {
+  return createMock<SushiPairsRepository>(args);
 }
 
 export function getTokenDetailsFetcher(results: any[]): TokenDetailsFetcher {

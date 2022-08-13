@@ -7,15 +7,15 @@ export class TokenMother {
   }
 
   public static link() {
-    return this.create('LINK', faker.finance.ethereumAddress(), 18, 'LINK');
+    return this.create('LINK', '0xfe8746ad240c1e766561b0d1bf6befdb8ceaea9f', 18, 'LINK');
   }
 
   public static sushi() {
-    return this.create('SUSHI', faker.finance.ethereumAddress(), 18, 'SUSHI');
+    return this.create('SUSHI', '0x6f86ee19cc2ed23f168deba8bcb7be3ff9cb06fa', 18, 'SUSHI');
   }
 
   public static usdc() {
-    return this.create('USDC', faker.finance.ethereumAddress(), 6, 'USDC');
+    return this.create('USDC', '0x1adce3cd2ab61bbfb3605c08118559ecdff1fec4', 6, 'USDC');
   }
 
   public static random() {

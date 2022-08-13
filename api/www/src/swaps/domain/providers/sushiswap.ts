@@ -119,34 +119,23 @@ export class Sushiswap implements Exchange {
         );
 
     // compute first the trade with the expected `amountIn`
-    const expectedTrade = this.computeTradeAndAmountOut(
-      tokenIn,
-      tokenOut,
-      pairs,
-      request.amountIn,
-      request.slippage,
-    );
+    const expectedTrade = this.computeTrade(tokenIn, tokenOut, pairs, request.amountIn);
+
     // then compute, if necessary, what would be the worst case trade with `minAmountIn`
     const worstCaseTrade =
       request.amountIn === request.minAmountIn
         ? expectedTrade
-        : this.computeTradeAndAmountOut(
-            tokenIn,
-            tokenOut,
-            pairs,
-            request.minAmountIn,
-            request.slippage,
-          );
+        : this.computeTrade(tokenIn, tokenOut, pairs, request.minAmountIn);
 
     // if there is no trades, we can't support this step on the route
-    if (expectedTrade.trade.length === 0 || worstCaseTrade.trade.length === 0) {
+    if (expectedTrade.length === 0 || worstCaseTrade.length === 0) {
       throw new InsufficientLiquidity();
     }
 
-    const slippage = new Percent(request.slippage * 100, '10000');
+    const slippage = new Percent(request.slippage * 100, '10000'); // multiply to avoid decimals
 
     // compute the callData for the expected trade
-    const call = Router.swapCallParameters(expectedTrade.trade[0], {
+    const call = Router.swapCallParameters(expectedTrade[0], {
       ttl: 3600 * 24, // 1 day
       recipient: DeployedAddresses.Router,
       allowedSlippage: slippage,
@@ -160,52 +149,46 @@ export class Sushiswap implements Exchange {
 
     const callData = this.encodeCallData(call);
 
+    const expectedAmountOut = BigInteger.fromString(
+      expectedTrade[0].outputAmount.numerator.toString(),
+    );
+    const expectedMinAmountOut = expectedAmountOut.subtractPercentage(request.slippage);
+
+    const worstCaseAmountOut = BigInteger.fromString(
+      worstCaseTrade[0].outputAmount.numerator.toString(),
+    ).subtractPercentage(request.slippage);
+
     return new SwapOrder(
       ExchangeProviders.Sushi,
       request.tokenIn,
       request.tokenOut,
       callData,
       request.amountIn,
-      expectedTrade.amountOut,
-      expectedTrade.minAmountOut,
-      worstCaseTrade.minAmountOut,
+      expectedAmountOut,
+      expectedMinAmountOut,
+      worstCaseAmountOut,
       BigInteger.fromString(gasEstimations[chainId]),
     );
   }
 
   /**
-   * Computes a trade and the specific resulting amounts given the required parameters
-   * This is going to be executed two times in order to know how much will be out
-   * in optimal case and in worst case
+   * Computes a trade given the required parameters
+   * This is going to be executed two times in order
+   * to know the expected trade and the worst case trade
    * @param tokenIn Token input
    * @param tokenOut Token output
    * @param pairs Pairs used to check
    * @param amountIn Amount that goes in
-   * @param slippage Allowed slippage
    * @private
    */
-  private computeTradeAndAmountOut(
+  private computeTrade(
     tokenIn: Token,
     tokenOut: Token,
     pairs: Pair[],
     amountIn: BigInteger,
-    slippage: number,
-  ): {
-    trade: Trade<Token, Token, TradeType.EXACT_INPUT>[];
-    amountOut: BigInteger;
-    minAmountOut: BigInteger;
-  } {
+  ): Trade<Token, Token, TradeType.EXACT_INPUT>[] {
     const tokenInAmount = CurrencyAmount.fromRawAmount(tokenIn, JSBI.BigInt(amountIn.toString()));
-
-    const trade = Trade.bestTradeExactIn(pairs, tokenInAmount, tokenOut);
-    const expectedAmountOut = BigInteger.fromString(trade[0].outputAmount.numerator.toString());
-    const minAmountOut = expectedAmountOut.subtractPercentage(slippage);
-
-    return {
-      trade: trade,
-      amountOut: expectedAmountOut,
-      minAmountOut: minAmountOut,
-    };
+    return Trade.bestTradeExactIn(pairs, tokenInAmount, tokenOut);
   }
 
   /**
