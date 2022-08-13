@@ -14,15 +14,12 @@ export class GetSwapQuoteController {
     @Query('tokenIn') tokenIn: string,
     @Query('tokenOut') tokenOut: string,
     @Query('amountIn') amountIn: string,
-    //@Query('slippage') slippage: string,
-    //@Query('minAmountOut') minAmountOut: string,
+    @Query('minAmountOut') minAmountOut: string,
     @Res() res: Response,
   ) {
-    const query = new GetQuoteSwapQuery(chainId, tokenIn, tokenOut, amountIn);
+    const query = new GetQuoteSwapQuery(chainId, tokenIn, tokenOut, amountIn, minAmountOut);
 
-    const order = await this.queryBus.execute<GetQuoteSwapQuery, SwapOrder>(
-      query,
-    );
+    const order = await this.queryBus.execute<GetQuoteSwapQuery, SwapOrder>(query);
 
     return res.json({
       code: order.providerCode,

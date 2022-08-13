@@ -1,3 +1,7 @@
 export interface Logger {
-  log(text: string): void;
+  log(msg: any): void;
+
+  warn(msg: any): void;
+
+  error(msg: any): void;
 }

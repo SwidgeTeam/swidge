@@ -20,6 +20,7 @@ export class CreateTransactionHandler
     const transaction = Transaction.create(
       command.txHash,
       command.walletAddress,
+      command.receiver,
       command.routerAddress,
       command.fromChainId,
       command.toChainId,

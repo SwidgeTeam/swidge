@@ -52,6 +52,7 @@ describe('aggregators', () => {
       TokenMother.random(),
       TokenMother.random(),
       BigIntegerMother.random(),
+      2,
     );
 
     // Act

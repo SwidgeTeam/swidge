@@ -16,6 +16,7 @@ import {
   SwapParameters,
   Token,
   Trade,
+  TradeType,
 } from '@sushiswap/sdk';
 import { SushiPairsRepository } from '../sushi-pairs-repository';
 import { AbiEncoder } from '../../../shared/domain/CallEncoder';
@@ -65,10 +66,6 @@ const gasEstimations = {
 export class Sushiswap implements Exchange {
   private readonly enabledChains: string[];
 
-  public static create(httpClient: IHttpClient, repository: SushiPairsRepository) {
-    return new Sushiswap(httpClient, repository);
-  }
-
   constructor(
     private readonly httpClient: IHttpClient,
     private readonly repository: SushiPairsRepository,
@@ -111,11 +108,6 @@ export class Sushiswap implements Exchange {
           request.tokenIn.name,
         );
 
-    const tokenInAmount = CurrencyAmount.fromRawAmount(
-      tokenIn,
-      JSBI.BigInt(request.amountIn.toString()),
-    );
-
     const tokenOut = request.tokenOut.isNative()
       ? NATIVE[chainId]
       : new Token(
@@ -126,19 +118,45 @@ export class Sushiswap implements Exchange {
           request.tokenOut.name,
         );
 
-    const trade = Trade.bestTradeExactIn(pairs, tokenInAmount, tokenOut);
+    // compute first the trade with the expected `amountIn`
+    const expectedTrade = this.computeTrade(tokenIn, tokenOut, pairs, request.amountIn);
 
-    if (trade.length === 0) {
+    // then compute, if necessary, what would be the worst case trade with `minAmountIn`
+    const worstCaseTrade =
+      request.amountIn === request.minAmountIn
+        ? expectedTrade
+        : this.computeTrade(tokenIn, tokenOut, pairs, request.minAmountIn);
+
+    // if there is no trades, we can't support this step on the route
+    if (expectedTrade.length === 0 || worstCaseTrade.length === 0) {
       throw new InsufficientLiquidity();
     }
 
-    const call = Router.swapCallParameters(trade[0], {
+    const slippage = new Percent(request.slippage * 100, '10000'); // multiply to avoid decimals
+
+    // compute the callData for the expected trade
+    const call = Router.swapCallParameters(expectedTrade[0], {
       ttl: 3600 * 24, // 1 day
       recipient: DeployedAddresses.Router,
-      allowedSlippage: new Percent('1', '100'),
+      allowedSlippage: slippage,
     });
+    // there is a trick here, we don't need the worst-case-trade callData because
+    // callData is only used for the swap on the origin, the callData on the destination swap
+    // computed on the route computing process is never used, and the origin swap will always
+    // have equal `amountIn` and `minAmountIn`, so callData would be the same.
+    // Why is all this done then?
+    // In order to have the expected amountOut computed looking at the pairs liquidity
 
     const callData = this.encodeCallData(call);
+
+    const expectedAmountOut = BigInteger.fromString(
+      expectedTrade[0].outputAmount.numerator.toString(),
+    );
+    const expectedMinAmountOut = expectedAmountOut.subtractPercentage(request.slippage);
+
+    const worstCaseAmountOut = BigInteger.fromString(
+      worstCaseTrade[0].outputAmount.numerator.toString(),
+    ).subtractPercentage(request.slippage);
 
     return new SwapOrder(
       ExchangeProviders.Sushi,
@@ -146,9 +164,31 @@ export class Sushiswap implements Exchange {
       request.tokenOut,
       callData,
       request.amountIn,
-      BigInteger.fromString(trade[0].outputAmount.numerator.toString()),
+      expectedAmountOut,
+      expectedMinAmountOut,
+      worstCaseAmountOut,
       BigInteger.fromString(gasEstimations[chainId]),
     );
+  }
+
+  /**
+   * Computes a trade given the required parameters
+   * This is going to be executed two times in order
+   * to know the expected trade and the worst case trade
+   * @param tokenIn Token input
+   * @param tokenOut Token output
+   * @param pairs Pairs used to check
+   * @param amountIn Amount that goes in
+   * @private
+   */
+  private computeTrade(
+    tokenIn: Token,
+    tokenOut: Token,
+    pairs: Pair[],
+    amountIn: BigInteger,
+  ): Trade<Token, Token, TradeType.EXACT_INPUT>[] {
+    const tokenInAmount = CurrencyAmount.fromRawAmount(tokenIn, JSBI.BigInt(amountIn.toString()));
+    return Trade.bestTradeExactIn(pairs, tokenInAmount, tokenOut);
   }
 
   /**

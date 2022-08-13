@@ -9,6 +9,7 @@ export class RouteResume {
     private readonly _toToken: Token,
     private readonly _amountIn: BigInteger,
     private readonly _amountOut: BigInteger,
+    private readonly _minAmountOut: BigInteger,
   ) {}
 
   get fromChain(): string {
@@ -33,5 +34,9 @@ export class RouteResume {
 
   get amountOut(): BigInteger {
     return this._amountOut;
+  }
+
+  get minAmountOut(): BigInteger {
+    return this._minAmountOut;
   }
 }

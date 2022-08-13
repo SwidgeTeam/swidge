@@ -2,11 +2,13 @@ import { PriceFeedFetcher } from '../../../src/shared/infrastructure/PriceFeedFe
 import { stub } from 'sinon';
 import { PriceFeed } from '../../../src/shared/domain/PriceFeed';
 import { BigInteger } from '../../../src/shared/domain/BigInteger';
+import { Logger } from '../../../src/shared/domain/logger';
 import { ZeroEx } from '../../../src/swaps/domain/providers/zero-ex';
 import { createMock } from 'ts-auto-mock';
-import { HttpClient } from '../../../src/shared/infrastructure/http/httpClient';
 import { Sushiswap } from '../../../src/swaps/domain/providers/sushiswap';
 import { SushiPairsRepository } from '../../../src/swaps/domain/sushi-pairs-repository';
+import { TokenDetailsFetcher } from '../../../src/shared/infrastructure/TokenDetailsFetcher';
+import { IHttpClient } from '../../../src/shared/domain/http/IHttpClient';
 
 export function getPriceFeedFetcher(responses: { chain: string; result: string }[]) {
   const priceFeedFetcher = new PriceFeedFetcher();
@@ -26,10 +28,23 @@ export function getSushi(): Sushiswap {
   return new Sushiswap(httpClientMock(), sushiRepositoryMock());
 }
 
-function httpClientMock() {
-  return createMock<HttpClient>();
+export function httpClientMock(args = {}) {
+  return createMock<IHttpClient>(args);
 }
 
-function sushiRepositoryMock() {
-  return createMock<SushiPairsRepository>();
+export function sushiRepositoryMock(args = {}) {
+  return createMock<SushiPairsRepository>(args);
+}
+
+export function getTokenDetailsFetcher(results: any[]): TokenDetailsFetcher {
+  const fetcher = new TokenDetailsFetcher();
+  const mockTokenFetcher = stub(fetcher, 'fetch');
+  for (let i = 0; i < results.length; i++) {
+    mockTokenFetcher.onCall(i).resolves(results[i]);
+  }
+  return fetcher;
+}
+
+export function loggerMock() {
+  return createMock<Logger>();
 }

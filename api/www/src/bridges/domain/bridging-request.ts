@@ -6,7 +6,8 @@ export class BridgingRequest {
     private readonly _fromChainId: string,
     private readonly _toChainId: string,
     private readonly _tokenIn: Token,
-    private readonly _amount: BigInteger,
+    private readonly _amountIn: BigInteger,
+    private readonly _minAmountIn: BigInteger,
   ) {}
 
   get fromChainId(): string {
@@ -21,7 +22,11 @@ export class BridgingRequest {
     return this._tokenIn;
   }
 
-  get amount(): BigInteger {
-    return this._amount;
+  get expectedAmountIn(): BigInteger {
+    return this._amountIn;
+  }
+
+  get minAmountIn(): BigInteger {
+    return this._minAmountIn;
   }
 }

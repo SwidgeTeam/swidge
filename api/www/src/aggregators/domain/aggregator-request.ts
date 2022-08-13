@@ -8,6 +8,7 @@ export class AggregatorRequest {
     private readonly _fromToken: Token,
     private readonly _toToken: Token,
     private readonly _amountIn: BigInteger,
+    private readonly _slippage: number,
   ) {}
 
   get fromChain() {
@@ -28,5 +29,9 @@ export class AggregatorRequest {
 
   get amountIn() {
     return this._amountIn;
+  }
+
+  get slippage() {
+    return this._slippage;
   }
 }

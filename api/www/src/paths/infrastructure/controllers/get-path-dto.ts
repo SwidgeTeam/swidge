@@ -1,4 +1,4 @@
-import { IsEthereumAddress, IsNotEmpty, IsString } from 'class-validator';
+import { IsEthereumAddress, IsNotEmpty, IsNumberString, IsString } from 'class-validator';
 import { IsPositiveFloatString } from '../../../shared/infrastructure/validators/floatAmountValidator';
 
 export class GetPathDto {
@@ -18,4 +18,10 @@ export class GetPathDto {
 
   @IsPositiveFloatString()
   amount: string;
+
+  @IsNumberString()
+  slippage: number;
+
+  @IsEthereumAddress()
+  receiverAddress: string;
 }

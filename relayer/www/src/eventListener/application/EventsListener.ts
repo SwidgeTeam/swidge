@@ -21,6 +21,7 @@ interface TxJob {
   toChain: string;
   dstToken: string;
   srcToken: string;
+  minAmountOut: string;
 }
 
 export class EventsListener {
@@ -57,11 +58,16 @@ export class EventsListener {
         'address bridgeTokenIn,' +
         'address bridgeTokenOut,' +
         'address dstToken,' +
+        'address receiver,' +
         'uint256 fromChain,' +
         'uint256 toChain,' +
         'uint256 amountIn,' +
-        'uint256 amountCross)',
-      'event CrossFinalized(bytes32 txHash, uint256 amountOut)',
+        'uint256 amountCross,' +
+        'uint256 minAmountOut)',
+      'event CrossFinalized(' +
+        'bytes32 txHash,' +
+        'uint256 amountOut,' +
+        'address assetOut)',
     ];
 
     const contract = new Contract(routerAddress, abi, provider);
@@ -117,10 +123,12 @@ export class EventsListener {
           bridgeTokenIn: string,
           bridgeTokenOut: string,
           dstToken: string,
+          receiver: string,
           fromChain: BigNumber,
           toChain: BigNumber,
           amountIn: BigNumber,
           amountCross: BigNumber,
+          minAmountOut: BigNumber,
           event,
         ) => {
           try {
@@ -135,6 +143,7 @@ export class EventsListener {
               txHash: txHash,
               walletAddress: wallet,
               routerAddress: routerAddress,
+              receiver: receiver,
               fromChainId: fromChain.toString(),
               toChainId: toChain.toString(),
               srcToken: srcToken,
@@ -152,12 +161,13 @@ export class EventsListener {
 
             await this.queueJob(<TxJob>{
               txHash: txHash,
-              wallet: wallet,
+              wallet: receiver,
               router: routerAddress,
               fromChain: fromChain.toString(),
               toChain: toChain.toString(),
               srcToken: bridgeTokenOut,
               dstToken: dstToken,
+              minAmountOut: minAmountOut.toString(),
             });
           } catch (e) {
             this.logger.error('Error on CrossInitiated', e);
@@ -166,7 +176,12 @@ export class EventsListener {
       )
       .on(
         'CrossFinalized',
-        async (txHash: string, amountOut: BigNumber, event) => {
+        async (
+          txHash: string,
+          amountOut: BigNumber,
+          tokenOut: string,
+          event,
+        ) => {
           try {
             this.logger.log('Received CrossFinalized event');
             const destinationTxHash = event.transactionHash;
@@ -206,6 +221,7 @@ export class EventsListener {
         srcToken: { DataType: 'String', StringValue: tx.srcToken },
         dstToken: { DataType: 'String', StringValue: tx.dstToken },
         router: { DataType: 'String', StringValue: tx.router },
+        minAmount: { DataType: 'String', StringValue: tx.minAmountOut },
       },
     });
   }

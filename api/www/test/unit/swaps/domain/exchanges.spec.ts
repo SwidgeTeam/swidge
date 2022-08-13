@@ -32,19 +32,20 @@ describe('exchanges', () => {
     // Arrange
     const mockExchangeOne: Exchange = createMock<Exchange>({
       isEnabledOn: () => true,
-      execute: (request) => Promise.resolve(SwapOrder.notRequired()),
+      execute: () => Promise.resolve(SwapOrder.notRequired()),
     });
     const mockExchangeTwo: Exchange = createMock<Exchange>({
       isEnabledOn: () => false,
-      execute: (request) => Promise.reject('error'),
+      execute: () => Promise.reject('error'),
     });
 
     const exchanges = new Exchanges([
       ['k1', mockExchangeOne],
       ['k2', mockExchangeTwo],
     ]);
+    const amountIn = BigInteger.fromDecimal('100');
 
-    const request = new SwapRequest('1', Token.null(), Token.null(), BigInteger.fromDecimal('100'));
+    const request = new SwapRequest('1', Token.null(), Token.null(), 1, amountIn, amountIn);
 
     // Act
     const result = await exchanges.execute('k1', request);

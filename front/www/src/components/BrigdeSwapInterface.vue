@@ -177,6 +177,8 @@ const onQuote = async () => {
             toChainId: tokensStore.getDestinationChainId,
             dstToken: tokensStore.getDestinationTokenAddress,
             amount: sourceTokenAmount.value.toString(),
+            slippage: 2,
+            receiverAddress: web3Store.account
         })
 
         const route = routesStore.getSelectedRoute
@@ -257,12 +259,12 @@ const setUpEventListener = (path: Route, executedTxHash: string) => {
 
     const filter = {
         address: path.tx.to,
-        topics: [ethers.utils.id('CrossFinalized(bytes32,uint256)')],
+        topics: [ethers.utils.id('CrossFinalized(bytes32,uint256,address)')],
     }
 
     provider.on(filter, (event: { data: ethers.utils.BytesLike }) => {
         const [txHash] = ethers.utils.defaultAbiCoder.decode(
-            ['bytes32', 'uint256'],
+            ['bytes32', 'uint256', 'address'],
             event.data
         )
         if (executedTxHash === txHash) {

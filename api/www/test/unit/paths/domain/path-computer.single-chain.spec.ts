@@ -2,7 +2,6 @@ import { stub } from 'sinon';
 import { createMock } from 'ts-auto-mock';
 import { ZeroEx } from '../../../../src/swaps/domain/providers/zero-ex';
 import { PathComputer } from '../../../../src/paths/domain/path-computer';
-import { TokenDetailsFetcher } from '../../../../src/shared/infrastructure/TokenDetailsFetcher';
 import { GetPathQuery } from '../../../../src/paths/application/query/get-path.query';
 import { TokenMother } from '../../shared/domain/Token.mother';
 import { BigInteger } from '../../../../src/shared/domain/BigInteger';
@@ -12,9 +11,10 @@ import { Sushiswap } from '../../../../src/swaps/domain/providers/sushiswap';
 import { Exchanges } from '../../../../src/swaps/domain/exchanges';
 import { Aggregators } from '../../../../src/aggregators/domain/aggregators';
 import { Bridges } from '../../../../src/bridges/domain/bridges';
-import { SwapOrder } from '../../../../src/swaps/domain/SwapOrder';
 import { ExchangeProviders } from '../../../../src/swaps/domain/providers/exchange-providers';
-import { getPriceFeedFetcher } from '../../shared/shared';
+import { getPriceFeedFetcher, getTokenDetailsFetcher, loggerMock } from '../../shared/shared';
+import { SwapOrderMother } from '../../swaps/domain/swap-order.mother';
+import { faker } from '@faker-js/faker';
 
 describe('path-computer - single chain', () => {
   describe('path-computer - no routes', () => {
@@ -23,10 +23,7 @@ describe('path-computer - single chain', () => {
       const srcToken = TokenMother.link();
       const dstToken = TokenMother.sushi();
 
-      const fetcher = new TokenDetailsFetcher();
-      const mockTokenFetcher = stub(fetcher, 'fetch');
-      mockTokenFetcher.onCall(0).resolves(srcToken);
-      mockTokenFetcher.onCall(1).resolves(dstToken);
+      const fetcher = getTokenDetailsFetcher([srcToken, dstToken]);
 
       // mock ZeroEx provider
       const mockZeroEx = createMock<ZeroEx>({
@@ -60,10 +57,11 @@ describe('path-computer - single chain', () => {
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
+        loggerMock(),
       );
 
       // create pat query
-      const query = new GetPathQuery(Polygon, Polygon, '0xLINK', '0xSUSHI', '1000');
+      const query = getPathQuery();
 
       /** Act */
       const computeCall = pathComputer.compute(query);
@@ -79,42 +77,25 @@ describe('path-computer - single chain', () => {
       const srcToken = TokenMother.link();
       const dstToken = TokenMother.sushi();
 
-      const fetcher = new TokenDetailsFetcher();
-      const mockTokenFetcher = stub(fetcher, 'fetch');
-      mockTokenFetcher.onCall(0).resolves(srcToken);
-      mockTokenFetcher.onCall(1).resolves(dstToken);
+      const fetcher = getTokenDetailsFetcher([srcToken, dstToken]);
 
       // mock ZeroEx provider
       const mockZeroEx = createMock<ZeroEx>({
-        execute: (request) =>
-          Promise.resolve(
-            new SwapOrder(
-              ExchangeProviders.ZeroEx,
-              request.tokenIn,
-              request.tokenOut,
-              '0x',
-              request.amountIn,
-              BigInteger.fromDecimal('2', srcToken.decimals),
-              BigInteger.fromString('0'),
-            ),
-          ),
+        execute: (request) => {
+          return Promise.resolve(
+            SwapOrderMother.fromRequest(ExchangeProviders.ZeroEx, request, '2'),
+          );
+        },
         isEnabledOn: () => true,
       });
 
       // mock Sushi provider
       const mockSushi = createMock<Sushiswap>({
-        execute: (request) =>
-          Promise.resolve(
-            new SwapOrder(
-              ExchangeProviders.Sushi,
-              request.tokenIn,
-              request.tokenOut,
-              '0x',
-              request.amountIn,
-              BigInteger.fromDecimal('4', srcToken.decimals),
-              BigInteger.fromString('0'),
-            ),
-          ),
+        execute: (request) => {
+          return Promise.resolve(
+            SwapOrderMother.fromRequest(ExchangeProviders.Sushi, request, '4'),
+          );
+        },
         isEnabledOn: () => true,
       });
 
@@ -138,10 +119,11 @@ describe('path-computer - single chain', () => {
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
+        loggerMock(),
       );
 
       // create pat query
-      const query = new GetPathQuery(Polygon, Polygon, '0xLINK', '0xSUSHI', '1000');
+      const query = getPathQuery();
 
       /** Act */
       const routes = await pathComputer.compute(query);
@@ -161,3 +143,15 @@ describe('path-computer - single chain', () => {
     });
   });
 });
+
+function getPathQuery(): GetPathQuery {
+  return new GetPathQuery(
+    Polygon,
+    Polygon,
+    '0xLINK',
+    '0xSUSHI',
+    '1000',
+    2,
+    faker.finance.ethereumAddress(),
+  );
+}

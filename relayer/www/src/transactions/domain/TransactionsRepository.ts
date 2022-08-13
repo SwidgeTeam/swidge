@@ -7,6 +7,7 @@ export interface CreateTransactionPayload {
   txHash: string;
   walletAddress: string;
   routerAddress: string;
+  receiver: string;
   fromChainId: string;
   toChainId: string;
   srcToken: string;
@@ -31,6 +32,7 @@ export interface SwapRequest {
   tokenIn: ContractAddress;
   tokenOut: ContractAddress;
   amountIn: string;
+  minAmountOut: string;
 }
 
 export interface TransactionsRepository {

@@ -12,6 +12,9 @@ export class TransactionEntity {
   walletAddress: string;
 
   @Column({ length: 80 })
+  receiver: string;
+
+  @Column({ length: 80 })
   routerAddress: string;
 
   @Column({ length: 50 })

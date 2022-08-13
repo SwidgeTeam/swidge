@@ -27,6 +27,7 @@ import { RouteResume } from '../../shared/domain/route-resume';
 import { Bridges } from '../../bridges/domain/bridges';
 import { Exchanges } from '../../swaps/domain/exchanges';
 import { Aggregators } from '../../aggregators/domain/aggregators';
+import { Logger } from '../../shared/domain/logger';
 
 export class PathComputer {
   /** Providers */
@@ -38,6 +39,7 @@ export class PathComputer {
   private readonly gasPriceFetcher: GasPriceFetcher;
   private readonly gasConverter: GasConverter;
   private readonly routerCallEncoder: RouterCallEncoder;
+  private readonly logger: Logger;
   /** Details */
   private readonly bridgingAssets;
   private srcToken: Token;
@@ -45,11 +47,14 @@ export class PathComputer {
   private fromChain: string;
   private toChain: string;
   private amountIn: BigInteger;
-  private totalSlippage: number;
   private priceOriginCoin: PriceFeed;
   private priceDestinationCoin: PriceFeed;
   private gasPriceDestination: BigInteger;
   private gasPriceOrigin: BigInteger;
+  private totalSlippage: number;
+  private originSlippage: number;
+  private destinationSlippage: number;
+  private receiverAddress: string;
 
   constructor(
     _exchanges: Exchanges,
@@ -58,6 +63,7 @@ export class PathComputer {
     _tokenDetailsFetcher: TokenDetailsFetcher,
     _priceFeedFetcher: PriceFeedFetcher,
     _gasPriceFetcher: GasPriceFetcher,
+    _logger: Logger,
   ) {
     this.exchanges = _exchanges;
     this.bridges = _bridges;
@@ -67,6 +73,7 @@ export class PathComputer {
     this.gasPriceFetcher = _gasPriceFetcher;
     this.gasConverter = new GasConverter();
     this.routerCallEncoder = new RouterCallEncoder();
+    this.logger = _logger;
     this.bridgingAssets = [USDC];
   }
 
@@ -81,6 +88,9 @@ export class PathComputer {
     this.dstToken = await this.tokenDetailsFetcher.fetch(query.dstToken, this.toChain);
     this.amountIn = BigInteger.fromDecimal(query.amountIn, this.srcToken.decimals);
     this.totalSlippage = query.slippage;
+    this.originSlippage = query.slippage / 2;
+    this.destinationSlippage = query.slippage / 2;
+    this.receiverAddress = query.receiverAddress;
 
     this.gasPriceOrigin = await this.gasPriceFetcher.fetch(this.fromChain);
     this.gasPriceDestination = await this.gasPriceFetcher.fetch(this.toChain);
@@ -113,6 +123,7 @@ export class PathComputer {
       this.srcToken,
       this.dstToken,
       this.amountIn,
+      this.totalSlippage,
     );
     const promises = [];
     // for every integrated aggregator
@@ -162,6 +173,8 @@ export class PathComputer {
         this.fromChain,
         this.srcToken,
         this.dstToken,
+        this.totalSlippage,
+        this.amountIn,
         this.amountIn,
       );
       // aggregate promises
@@ -199,6 +212,8 @@ export class PathComputer {
           this.fromChain,
           this.srcToken,
           bridgeTokenIn,
+          this.originSlippage,
+          this.amountIn,
           this.amountIn,
         );
         // get the promise of the routes for this path
@@ -228,15 +243,22 @@ export class PathComputer {
     // for every usable bridge
     for (const bridgeId of this.getPossibleBridges()) {
       // add the possible bridge order
-      let bridgeAmountIn;
+      let bridgeAmountIn, minBridgeAmountIn;
       // check the amount that should input the bridge
       if (originSwap.required) {
-        bridgeAmountIn = originSwap.amountOut;
+        bridgeAmountIn = originSwap.expectedAmountOut;
+        minBridgeAmountIn = originSwap.worstCaseAmountOut;
       } else {
         bridgeAmountIn = this.amountIn;
+        minBridgeAmountIn = this.amountIn;
       }
       // get the promise of the bridge order
-      const bridgeOrderPromise = this.getBridgeOrder(bridgeId, bridgingAsset, bridgeAmountIn);
+      const bridgeOrderPromise = this.getBridgeOrder(
+        bridgeId,
+        bridgingAsset,
+        bridgeAmountIn,
+        minBridgeAmountIn,
+      );
       // get the promise of the possible routes
       const routesPromise = this.destinationSwap(originSwap, bridgeOrderPromise);
       // aggregate promises
@@ -270,7 +292,9 @@ export class PathComputer {
         this.toChain,
         bridgeOrder.tokenOut,
         this.dstToken,
-        bridgeOrder.amountOut,
+        this.destinationSlippage,
+        bridgeOrder.expectedAmountOut,
+        bridgeOrder.worstCaseAmountOut,
       );
       // save the promise
       promises.push(swapOrderPromise);
@@ -316,15 +340,16 @@ export class PathComputer {
     bridge: BridgingOrder,
     destinationSwap: SwapOrder,
   ): Route {
-    // create the required steps of the route
+    let minAmountOut: BigInteger;
 
+    // create the required steps of the route
     const steps: RouteStep[] = [];
     if (originSwap.required) {
-      const fee = originSwap.estimatedGas
-        .times(this.gasPriceOrigin)
-        .times(this.priceOriginCoin.lastPrice)
-        .div(BigInteger.weiInEther())
-        .toDecimal(this.priceOriginCoin.decimals);
+      const fee = this.computeUSDFee(
+        originSwap.estimatedGas,
+        this.gasPriceOrigin,
+        this.priceOriginCoin,
+      );
 
       const details = ExchangeDetails.get(originSwap.providerCode);
       steps.push(
@@ -333,10 +358,11 @@ export class PathComputer {
           originSwap.tokenIn,
           originSwap.tokenOut,
           originSwap.amountIn,
-          originSwap.amountOut,
+          originSwap.expectedAmountOut,
           fee,
         ),
       );
+      minAmountOut = originSwap.worstCaseAmountOut;
     }
 
     if (bridge.required) {
@@ -347,18 +373,20 @@ export class PathComputer {
           bridge.tokenIn,
           bridge.tokenOut,
           bridge.amountIn,
-          bridge.amountOut,
+          bridge.expectedAmountOut,
           bridge.decimalFee,
         ),
       );
+
+      minAmountOut = bridge.worstCaseAmountOut;
     }
 
     if (destinationSwap.required) {
-      const fee = destinationSwap.estimatedGas
-        .times(this.gasPriceOrigin)
-        .times(this.priceOriginCoin.lastPrice)
-        .div(BigInteger.weiInEther())
-        .toDecimal(this.priceOriginCoin.decimals);
+      const fee = this.computeUSDFee(
+        destinationSwap.estimatedGas,
+        this.gasPriceDestination,
+        this.priceDestinationCoin,
+      );
 
       const details = ExchangeDetails.get(destinationSwap.providerCode);
       steps.push(
@@ -367,23 +395,28 @@ export class PathComputer {
           destinationSwap.tokenIn,
           destinationSwap.tokenOut,
           destinationSwap.amountIn,
-          destinationSwap.amountOut,
+          destinationSwap.expectedAmountOut,
           fee,
         ),
       );
+
+      minAmountOut = destinationSwap.worstCaseAmountOut;
     }
 
     // create transaction details
 
-    const callData = this.routerCallEncoder.encode(
+    const callData = this.routerCallEncoder.encodeInitSwidge(
       this.amountIn,
       originSwap,
       bridge,
       destinationSwap,
+      this.receiverAddress,
     );
 
     const originNativeWeiOfDestinationGas =
-      this.convertDestinationGasIntoOriginNative(destinationSwap);
+      this.fromChain === this.toChain
+        ? BigInteger.zero()
+        : this.convertDestinationGasIntoOriginNative(destinationSwap);
 
     let value = originNativeWeiOfDestinationGas;
 
@@ -406,9 +439,29 @@ export class PathComputer {
       this.dstToken,
       this.amountIn,
       steps[steps.length - 1].amountOut,
+      minAmountOut,
     );
 
     return new Route(resume, transactionDetails, steps);
+  }
+
+  /**
+   * Computes and returns the USD value of the given gas
+   * @param estimatedGas
+   * @param gasPrice
+   * @param coinPrice
+   * @private
+   */
+  private computeUSDFee(
+    estimatedGas: BigInteger,
+    gasPrice: BigInteger,
+    coinPrice: PriceFeed,
+  ): string {
+    return estimatedGas
+      .times(gasPrice)
+      .times(coinPrice.lastPrice)
+      .div(BigInteger.weiInEther())
+      .toDecimal(coinPrice.decimals);
   }
 
   /**
@@ -417,7 +470,9 @@ export class PathComputer {
    * @param chainId ID of chain
    * @param tokenIn Token that goes in
    * @param tokenOut Token that goes out
-   * @param amount Amount to swap
+   * @param slippage Max amount of slippage allowed
+   * @param amountIn Expected amount to swap
+   * @param minAmountIn Minimum amount that will get to the swap
    * @private
    */
   private async getSwapOrder(
@@ -425,7 +480,9 @@ export class PathComputer {
     chainId: string,
     tokenIn: Token,
     tokenOut: Token,
-    amount: BigInteger,
+    slippage: number,
+    amountIn: BigInteger,
+    minAmountIn: BigInteger,
   ): Promise<SwapOrder> {
     let swapOrder;
     // if the input and output asset are the same...
@@ -434,11 +491,19 @@ export class PathComputer {
       swapOrder = SwapOrder.sameToken(tokenIn);
     } else {
       // otherwise compute swap
-      const swapRequest = new SwapRequest(chainId, tokenIn, tokenOut, amount);
+      const swapRequest = new SwapRequest(
+        chainId,
+        tokenIn,
+        tokenOut,
+        slippage,
+        amountIn,
+        minAmountIn,
+      );
       try {
         swapOrder = await this.exchanges.execute(exchangeId, swapRequest);
       } catch (e) {
         // no possible path, nothing to do ..
+        this.logger.warn(e);
       }
     }
     return swapOrder;
@@ -448,13 +513,15 @@ export class PathComputer {
    * Returns a possible bridge order
    * @param providerId ID of bridge provider to use
    * @param asset The asset that we want to send across the bridge
-   * @param bridgeAmountIn The amount that we want to cross
+   * @param bridgeAmountIn The amount that we expect will get to the bridge
+   * @param minBridgeAmountIn The minimum amount that we know can get to the bridge
    * @private
    */
   private async getBridgeOrder(
     providerId: string,
     asset: string,
     bridgeAmountIn: BigInteger,
+    minBridgeAmountIn: BigInteger,
   ): Promise<BridgingOrder> {
     const bridgeTokenIn = Tokens[asset][this.fromChain];
     const bridgeRequest = new BridgingRequest(
@@ -462,11 +529,13 @@ export class PathComputer {
       this.toChain,
       bridgeTokenIn,
       bridgeAmountIn,
+      minBridgeAmountIn,
     );
     try {
       return await this.bridges.execute(providerId, bridgeRequest);
     } catch (e) {
       // not possible, nothing to do..
+      this.logger.warn(e);
     }
   }
 

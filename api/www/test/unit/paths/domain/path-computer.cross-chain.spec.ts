@@ -2,7 +2,6 @@ import { stub } from 'sinon';
 import { createMock } from 'ts-auto-mock';
 import { ZeroEx } from '../../../../src/swaps/domain/providers/zero-ex';
 import { PathComputer } from '../../../../src/paths/domain/path-computer';
-import { TokenDetailsFetcher } from '../../../../src/shared/infrastructure/TokenDetailsFetcher';
 import { GetPathQuery } from '../../../../src/paths/application/query/get-path.query';
 import { TokenMother } from '../../shared/domain/Token.mother';
 import { BigInteger } from '../../../../src/shared/domain/BigInteger';
@@ -14,13 +13,18 @@ import { Aggregators } from '../../../../src/aggregators/domain/aggregators';
 import { Bridges } from '../../../../src/bridges/domain/bridges';
 import { SwapOrder } from '../../../../src/swaps/domain/SwapOrder';
 import { ExchangeProviders } from '../../../../src/swaps/domain/providers/exchange-providers';
-import { BridgingOrder } from '../../../../src/bridges/domain/bridging-order';
-import { BridgingFeesMother } from '../../bridges/domain/bridging-fees.mother';
-import { BridgingLimitsMother } from '../../bridges/domain/bridging-limits.mother';
 import { Tokens } from '../../../../src/shared/enums/Tokens';
 import { Multichain } from '../../../../src/bridges/domain/providers/multichain';
 import { BridgeProviders } from '../../../../src/bridges/domain/providers/bridge-providers';
-import { getPriceFeedFetcher, getSushi, getZeroEx } from '../../shared/shared';
+import {
+  getPriceFeedFetcher,
+  getSushi,
+  getTokenDetailsFetcher,
+  getZeroEx, loggerMock,
+} from '../../shared/shared';
+import { BridgingOrderMother } from '../../bridges/domain/bridging-order.mother';
+import { SwapOrderMother } from '../../swaps/domain/swap-order.mother';
+import { faker } from '@faker-js/faker';
 
 describe('path-computer - cross chain', () => {
   describe('path-computer - no routes', () => {
@@ -29,10 +33,7 @@ describe('path-computer - cross chain', () => {
       const srcToken = TokenMother.link();
       const dstToken = TokenMother.sushi();
 
-      const fetcher = new TokenDetailsFetcher();
-      const mockTokenFetcher = stub(fetcher, 'fetch');
-      mockTokenFetcher.onCall(0).resolves(srcToken);
-      mockTokenFetcher.onCall(1).resolves(dstToken);
+      const fetcher = getTokenDetailsFetcher([srcToken, dstToken]);
 
       // mock ZeroEx provider
       const mockZeroEx = createMock<ZeroEx>({
@@ -49,17 +50,7 @@ describe('path-computer - cross chain', () => {
       // mock Multichain bridge provider
       const mockMultichain = createMock<Multichain>({
         execute: (request) => {
-          return Promise.resolve(
-            new BridgingOrder(
-              request.amount,
-              request.tokenIn,
-              TokenMother.random(),
-              request.toChainId,
-              '0x',
-              BridgingFeesMother.random(),
-              BridgingLimitsMother.random(),
-            ),
-          );
+          return Promise.resolve(BridgingOrderMother.fromRequest(request, TokenMother.random()));
         },
         isEnabledOn: () => true,
       });
@@ -89,10 +80,11 @@ describe('path-computer - cross chain', () => {
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
+        loggerMock(),
       );
 
       // create pat query
-      const query = new GetPathQuery(Polygon, Fantom, '0xLINK', '0xSUSHI', '1000');
+      const query = getPathQuery();
 
       /** Act */
       const computeCall = pathComputer.compute(query);
@@ -106,25 +98,15 @@ describe('path-computer - cross chain', () => {
       const srcToken = TokenMother.link();
       const dstToken = TokenMother.sushi();
 
-      const fetcher = new TokenDetailsFetcher();
-      const mockTokenFetcher = stub(fetcher, 'fetch');
-      mockTokenFetcher.onCall(0).resolves(srcToken);
-      mockTokenFetcher.onCall(1).resolves(dstToken);
+      const fetcher = getTokenDetailsFetcher([srcToken, dstToken]);
 
       // mock Sushi provider
       const mockSushi = createMock<Sushiswap>({
-        execute: (request) =>
-          Promise.reject(
-            new SwapOrder(
-              ExchangeProviders.Sushi,
-              request.tokenIn,
-              TokenMother.random(),
-              '0x',
-              request.amountIn,
-              BigInteger.fromDecimal('2', srcToken.decimals),
-              BigInteger.fromString('0'),
-            ),
-          ),
+        execute: (request) => {
+          return Promise.resolve(
+            SwapOrderMother.fromRequest(ExchangeProviders.Sushi, request, '2'),
+          );
+        },
         isEnabledOn: () => true,
       });
 
@@ -154,10 +136,11 @@ describe('path-computer - cross chain', () => {
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
+        loggerMock(),
       );
 
       // create pat query
-      const query = new GetPathQuery(Polygon, Fantom, '0xLINK', '0xSUSHI', '1000');
+      const query = getPathQuery();
 
       /** Act */
       const computeCall = pathComputer.compute(query);
@@ -171,10 +154,7 @@ describe('path-computer - cross chain', () => {
       const srcToken = TokenMother.link();
       const dstToken = TokenMother.sushi();
 
-      const fetcher = new TokenDetailsFetcher();
-      const mockTokenFetcher = stub(fetcher, 'fetch');
-      mockTokenFetcher.onCall(0).resolves(srcToken);
-      mockTokenFetcher.onCall(1).resolves(dstToken);
+      const fetcher = getTokenDetailsFetcher([srcToken, dstToken]);
 
       // mock Sushi provider
       const mockZeroEx = getZeroEx();
@@ -183,15 +163,7 @@ describe('path-computer - cross chain', () => {
         .onCall(0)
         .callsFake((request) => {
           return Promise.resolve(
-            new SwapOrder(
-              ExchangeProviders.ZeroEx,
-              request.tokenIn,
-              TokenMother.random(),
-              '0x',
-              request.amountIn,
-              BigInteger.fromDecimal('2', srcToken.decimals),
-              BigInteger.fromString('0'),
-            ),
+            SwapOrderMother.fromRequest(ExchangeProviders.ZeroEx, request, '2'),
           );
         })
         .onCall(1)
@@ -200,17 +172,7 @@ describe('path-computer - cross chain', () => {
       // mock Multichain bridge provider
       const mockMultichain = createMock<Multichain>({
         execute: (request) => {
-          return Promise.resolve(
-            new BridgingOrder(
-              request.amount,
-              request.tokenIn,
-              TokenMother.random(),
-              request.toChainId,
-              '0x',
-              BridgingFeesMother.random(),
-              BridgingLimitsMother.random(),
-            ),
-          );
+          return Promise.resolve(BridgingOrderMother.fromRequest(request, TokenMother.random()));
         },
         isEnabledOn: () => true,
       });
@@ -237,10 +199,11 @@ describe('path-computer - cross chain', () => {
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
+        loggerMock(),
       );
 
       // create pat query
-      const query = new GetPathQuery(Polygon, Fantom, '0xLINK', '0xSUSHI', '1000');
+      const query = getPathQuery();
 
       /** Act */
       const computeCall = pathComputer.compute(query);
@@ -258,10 +221,7 @@ describe('path-computer - cross chain', () => {
       const bridgeTokenIn = Tokens.USDC[Polygon];
       const bridgeTokenOut = Tokens.USDC[Fantom];
 
-      const fetcher = new TokenDetailsFetcher();
-      const mockTokenFetcher = stub(fetcher, 'fetch');
-      mockTokenFetcher.onCall(0).resolves(srcToken);
-      mockTokenFetcher.onCall(1).resolves(dstToken);
+      const fetcher = getTokenDetailsFetcher([srcToken, dstToken]);
 
       // mock ZeroEx provider
 
@@ -271,46 +231,20 @@ describe('path-computer - cross chain', () => {
         .onCall(0)
         .callsFake((request) => {
           return Promise.resolve(
-            new SwapOrder(
-              ExchangeProviders.ZeroEx,
-              request.tokenIn,
-              bridgeTokenIn,
-              '0x',
-              request.amountIn,
-              BigInteger.fromDecimal('2', srcToken.decimals),
-              BigInteger.fromString('0'),
-            ),
+            SwapOrderMother.fromRequest(ExchangeProviders.ZeroEx, request, '2'),
           );
         })
         .onCall(1)
         .callsFake((request) => {
           return Promise.resolve(
-            new SwapOrder(
-              ExchangeProviders.ZeroEx,
-              request.tokenIn,
-              dstToken,
-              '0x',
-              request.amountIn,
-              BigInteger.fromDecimal('60', srcToken.decimals),
-              BigInteger.fromString('0'),
-            ),
+            SwapOrderMother.fromRequest(ExchangeProviders.ZeroEx, request, '60'),
           );
         });
 
       // mock Multichain bridge provider
       const mockMultichain = createMock<Multichain>({
         execute: (request) => {
-          return Promise.resolve(
-            new BridgingOrder(
-              request.amount,
-              request.tokenIn,
-              bridgeTokenOut,
-              request.toChainId,
-              '0x',
-              BridgingFeesMother.random(),
-              BridgingLimitsMother.random(),
-            ),
-          );
+          return Promise.resolve(BridgingOrderMother.fromRequest(request, bridgeTokenOut));
         },
         isEnabledOn: () => true,
       });
@@ -336,10 +270,11 @@ describe('path-computer - cross chain', () => {
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
+        loggerMock(),
       );
 
       // create pat query
-      const query = new GetPathQuery(Polygon, Fantom, '0xLINK', '0xSUSHI', '1000');
+      const query = getPathQuery();
 
       /** Act */
       const routes = await pathComputer.compute(query);
@@ -367,13 +302,9 @@ describe('path-computer - cross chain', () => {
       /** Arrange */
       const srcToken = TokenMother.link();
       const dstToken = TokenMother.sushi();
-      const bridgeTokenIn = TokenMother.random();
       const bridgeTokenOut = TokenMother.random();
 
-      const fetcher = new TokenDetailsFetcher();
-      const mockTokenFetcher = stub(fetcher, 'fetch');
-      mockTokenFetcher.onCall(0).resolves(srcToken);
-      mockTokenFetcher.onCall(1).resolves(dstToken);
+      const fetcher = getTokenDetailsFetcher([srcToken, dstToken]);
 
       // mock ZeroEx provider
       const mockZeroEx = getZeroEx();
@@ -382,43 +313,19 @@ describe('path-computer - cross chain', () => {
         .onCall(0) // origin swap
         .callsFake((request) => {
           return Promise.resolve(
-            new SwapOrder(
-              ExchangeProviders.ZeroEx,
-              request.tokenIn,
-              bridgeTokenIn,
-              '0x',
-              request.amountIn,
-              BigInteger.fromDecimal('1', srcToken.decimals),
-              BigInteger.fromString('0'),
-            ),
+            SwapOrderMother.fromRequest(ExchangeProviders.ZeroEx, request, '1'),
           );
         })
         .onCall(1) // destination swap coming from provider one
         .callsFake((request) => {
           return Promise.resolve(
-            new SwapOrder(
-              ExchangeProviders.ZeroEx,
-              request.tokenIn,
-              dstToken,
-              '0x',
-              request.amountIn,
-              BigInteger.fromDecimal('30', srcToken.decimals),
-              BigInteger.fromString('0'),
-            ),
+            SwapOrderMother.fromRequest(ExchangeProviders.ZeroEx, request, '30'),
           );
         })
         .onCall(2) // destination swap coming from provider two
         .callsFake((request) => {
           return Promise.resolve(
-            new SwapOrder(
-              ExchangeProviders.ZeroEx,
-              request.tokenIn,
-              dstToken,
-              '0x',
-              request.amountIn,
-              BigInteger.fromDecimal('40', srcToken.decimals),
-              BigInteger.fromString('0'),
-            ),
+            SwapOrderMother.fromRequest(ExchangeProviders.ZeroEx, request, '40'),
           );
         });
 
@@ -429,60 +336,26 @@ describe('path-computer - cross chain', () => {
         .onCall(0) // origin swap
         .callsFake((request) => {
           return Promise.resolve(
-            new SwapOrder(
-              ExchangeProviders.Sushi,
-              request.tokenIn,
-              bridgeTokenIn,
-              '0x',
-              request.amountIn,
-              BigInteger.fromDecimal('2', srcToken.decimals),
-              BigInteger.fromString('0'),
-            ),
+            SwapOrderMother.fromRequest(ExchangeProviders.Sushi, request, '2'),
           );
         })
         .onCall(1) // destination swap coming from provider one
         .callsFake((request) => {
           return Promise.resolve(
-            new SwapOrder(
-              ExchangeProviders.Sushi,
-              request.tokenIn,
-              dstToken,
-              '0x',
-              request.amountIn,
-              BigInteger.fromDecimal('50', srcToken.decimals),
-              BigInteger.fromString('0'),
-            ),
+            SwapOrderMother.fromRequest(ExchangeProviders.Sushi, request, '50'),
           );
         })
         .onCall(2) // destination swap coming from provider two
         .callsFake((request) => {
           return Promise.resolve(
-            new SwapOrder(
-              ExchangeProviders.Sushi,
-              request.tokenIn,
-              dstToken,
-              '0x',
-              request.amountIn,
-              BigInteger.fromDecimal('60', srcToken.decimals),
-              BigInteger.fromString('0'),
-            ),
+            SwapOrderMother.fromRequest(ExchangeProviders.Sushi, request, '60'),
           );
         });
 
       // mock Multichain bridge provider
       const mockMultichain = createMock<Multichain>({
         execute: (request) => {
-          return Promise.resolve(
-            new BridgingOrder(
-              request.amount,
-              request.tokenIn,
-              bridgeTokenOut,
-              request.toChainId,
-              '0x',
-              BridgingFeesMother.random(),
-              BridgingLimitsMother.random(),
-            ),
-          );
+          return Promise.resolve(BridgingOrderMother.fromRequest(request, bridgeTokenOut));
         },
         isEnabledOn: () => true,
       });
@@ -511,10 +384,11 @@ describe('path-computer - cross chain', () => {
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
+        loggerMock(),
       );
 
       // create pat query
-      const query = new GetPathQuery(Polygon, Fantom, '0xLINK', '0xSUSHI', '1000');
+      const query = getPathQuery();
 
       /** Act */
       const routes = await pathComputer.compute(query);
@@ -527,13 +401,9 @@ describe('path-computer - cross chain', () => {
       /** Arrange */
       const srcToken = TokenMother.link();
       const dstToken = TokenMother.sushi();
-      const bridgeTokenIn = TokenMother.random();
       const bridgeTokenOut = TokenMother.random();
 
-      const fetcher = new TokenDetailsFetcher();
-      const mockTokenFetcher = stub(fetcher, 'fetch');
-      mockTokenFetcher.onCall(0).resolves(srcToken);
-      mockTokenFetcher.onCall(1).resolves(dstToken);
+      const fetcher = getTokenDetailsFetcher([srcToken, dstToken]);
 
       // mock ZeroEx provider
       const mockZeroEx = getZeroEx();
@@ -542,15 +412,7 @@ describe('path-computer - cross chain', () => {
         .onCall(0) // origin swap
         .callsFake((request) => {
           return Promise.resolve(
-            new SwapOrder(
-              ExchangeProviders.ZeroEx,
-              request.tokenIn,
-              bridgeTokenIn,
-              '0x',
-              request.amountIn,
-              BigInteger.fromDecimal('1', srcToken.decimals),
-              BigInteger.fromString('0'),
-            ),
+            SwapOrderMother.fromRequest(ExchangeProviders.ZeroEx, request, '1'),
           );
         })
         .onCall(1) // destination swap coming from provider one
@@ -565,15 +427,7 @@ describe('path-computer - cross chain', () => {
         .onCall(0) // origin swap
         .callsFake((request) => {
           return Promise.resolve(
-            new SwapOrder(
-              ExchangeProviders.Sushi,
-              request.tokenIn,
-              bridgeTokenIn,
-              '0x',
-              request.amountIn,
-              BigInteger.fromDecimal('2', srcToken.decimals),
-              BigInteger.fromString('0'),
-            ),
+            SwapOrderMother.fromRequest(ExchangeProviders.Sushi, request, '2'),
           );
         })
         .onCall(1) // destination swap coming from provider one
@@ -584,17 +438,7 @@ describe('path-computer - cross chain', () => {
       // mock Multichain bridge provider
       const mockMultichain = createMock<Multichain>({
         execute: (request) => {
-          return Promise.resolve(
-            new BridgingOrder(
-              request.amount,
-              request.tokenIn,
-              bridgeTokenOut,
-              request.toChainId,
-              '0x',
-              BridgingFeesMother.random(),
-              BridgingLimitsMother.random(),
-            ),
-          );
+          return Promise.resolve(BridgingOrderMother.fromRequest(request, bridgeTokenOut));
         },
         isEnabledOn: () => true,
       });
@@ -623,10 +467,11 @@ describe('path-computer - cross chain', () => {
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
+        loggerMock(),
       );
 
       // create pat query
-      const query = new GetPathQuery(Polygon, Fantom, '0xLINK', '0xSUSHI', '1000');
+      const query = getPathQuery();
 
       /** Act */
       const routes = await pathComputer.compute(query);
@@ -639,13 +484,9 @@ describe('path-computer - cross chain', () => {
       /** Arrange */
       const srcToken = TokenMother.link();
       const dstToken = TokenMother.sushi();
-      const bridgeTokenIn = TokenMother.random();
       const bridgeTokenOut = TokenMother.random();
 
-      const fetcher = new TokenDetailsFetcher();
-      const mockTokenFetcher = stub(fetcher, 'fetch');
-      mockTokenFetcher.onCall(0).resolves(srcToken);
-      mockTokenFetcher.onCall(1).resolves(dstToken);
+      const fetcher = getTokenDetailsFetcher([srcToken, dstToken]);
 
       // mock Sushi provider
       const mockSushi = getSushi();
@@ -658,15 +499,7 @@ describe('path-computer - cross chain', () => {
         .onCall(0) // origin swap
         .callsFake((request) => {
           return Promise.resolve(
-            new SwapOrder(
-              ExchangeProviders.Sushi,
-              request.tokenIn,
-              bridgeTokenIn,
-              '0x',
-              request.amountIn,
-              BigInteger.fromDecimal('2', srcToken.decimals),
-              BigInteger.fromString('0'),
-            ),
+            SwapOrderMother.fromRequest(ExchangeProviders.Sushi, request, '2'),
           );
         });
 
@@ -677,60 +510,26 @@ describe('path-computer - cross chain', () => {
         .onCall(0) // origin swap
         .callsFake((request) => {
           return Promise.resolve(
-            new SwapOrder(
-              ExchangeProviders.ZeroEx,
-              request.tokenIn,
-              bridgeTokenIn,
-              '0x',
-              request.amountIn,
-              BigInteger.fromDecimal('1', srcToken.decimals),
-              BigInteger.fromString('0'),
-            ),
+            SwapOrderMother.fromRequest(ExchangeProviders.ZeroEx, request, '1'),
           );
         })
         .onCall(1) // destination swap coming from provider one
         .callsFake((request) => {
           return Promise.resolve(
-            new SwapOrder(
-              ExchangeProviders.ZeroEx,
-              request.tokenIn,
-              dstToken,
-              '0x',
-              request.amountIn,
-              BigInteger.fromDecimal('30', srcToken.decimals),
-              BigInteger.fromString('0'),
-            ),
+            SwapOrderMother.fromRequest(ExchangeProviders.ZeroEx, request, '30'),
           );
         })
         .onCall(2) // destination swap coming from provider two
         .callsFake((request) => {
           return Promise.resolve(
-            new SwapOrder(
-              ExchangeProviders.ZeroEx,
-              request.tokenIn,
-              dstToken,
-              '0x',
-              request.amountIn,
-              BigInteger.fromDecimal('40', srcToken.decimals),
-              BigInteger.fromString('0'),
-            ),
+            SwapOrderMother.fromRequest(ExchangeProviders.ZeroEx, request, '40'),
           );
         });
 
       // mock Multichain bridge provider
       const mockMultichain = createMock<Multichain>({
         execute: (request) => {
-          return Promise.resolve(
-            new BridgingOrder(
-              request.amount,
-              request.tokenIn,
-              bridgeTokenOut,
-              request.toChainId,
-              '0x',
-              BridgingFeesMother.random(),
-              BridgingLimitsMother.random(),
-            ),
-          );
+          return Promise.resolve(BridgingOrderMother.fromRequest(request, bridgeTokenOut));
         },
         isEnabledOn: () => true,
       });
@@ -759,10 +558,11 @@ describe('path-computer - cross chain', () => {
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
+        loggerMock(),
       );
 
       // create pat query
-      const query = new GetPathQuery(Polygon, Fantom, '0xLINK', '0xSUSHI', '1000');
+      const query = getPathQuery();
 
       /** Act */
       const routes = await pathComputer.compute(query);
@@ -778,3 +578,15 @@ describe('path-computer - cross chain', () => {
     });
   });
 });
+
+function getPathQuery(): GetPathQuery {
+  return new GetPathQuery(
+    Polygon,
+    Fantom,
+    '0xLINK',
+    '0xSUSHI',
+    '1000',
+    2,
+    faker.finance.ethereumAddress(),
+  );
+}

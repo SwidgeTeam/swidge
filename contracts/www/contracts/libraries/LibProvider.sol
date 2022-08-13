@@ -64,7 +64,7 @@ library LibProvider {
         address _tokenOut,
         uint256 _amountIn,
         bytes memory _data
-    ) internal returns (uint256) {
+    ) internal returns (bool, uint256, string memory) {
         LibStorage.Provider memory _swapper = getSwapper(_code);
 
         if (!_swapper.enabled) {
@@ -78,13 +78,16 @@ library LibProvider {
             )
         );
 
-        if (!success) {
-            string memory _revertMsg = LibBytes.getRevertMsg(data);
-            revert(_revertMsg);
+        string memory revertMsg;
+        uint256 boughtAmount;
+
+        if (success) {
+            (boughtAmount) = abi.decode(data, (uint256));
+        }
+        else {
+            revertMsg = LibBytes.getRevertMsg(data);
         }
 
-        (uint256 boughtAmount) = abi.decode(data, (uint256));
-
-        return boughtAmount;
+        return (success, boughtAmount, revertMsg);
     }
 }

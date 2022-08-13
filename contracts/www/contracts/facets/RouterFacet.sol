@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
 import "../libraries/LibStorage.sol";
 import "../libraries/LibProvider.sol";
+import "../libraries/LibTreasury.sol";
 
 contract RouterFacet {
 
@@ -30,11 +31,13 @@ contract RouterFacet {
     }
 
     /**
-     * @dev Defines the details for the destination swap
+     * @dev Defines the payload that needs to be crossed
      */
-    struct DestinationSwap {
+    struct CrossPayload {
         address tokenIn;
         address tokenOut;
+        address receiver;
+        uint256 minAmountOut;
     }
 
     /**
@@ -45,10 +48,14 @@ contract RouterFacet {
         uint256 _amount,
         SwapStep calldata _swapStep,
         BridgeStep calldata _bridgeStep,
-        DestinationSwap calldata _destinationSwap
+        CrossPayload calldata _crossPayload
     ) external payable {
         // We need either the swap or the bridge step to be required
         require(_swapStep.required || _bridgeStep.required, "No required actions");
+
+        require(_amount != 0, "No input amount");
+
+        require(_crossPayload.receiver != address(0), "Receiver address is empty");
 
         address tokenToTakeIn;
         // Need to check which token is going to be taken as input
@@ -74,13 +81,18 @@ contract RouterFacet {
         // depending on the step to take
         if (_swapStep.required) {
             // Execute the swap
-            finalAmount = LibProvider.swap(
+            bool success;
+            string memory revertMsg;
+            (success, finalAmount, revertMsg) = LibProvider.swap(
                 _swapStep.providerCode,
                 _swapStep.tokenIn,
                 _swapStep.tokenOut,
                 _amount,
                 _swapStep.data
             );
+            if (!success) {
+                revert(revertMsg);
+            }
         }
         else {
             // If swap is not required the amount going
@@ -102,12 +114,14 @@ contract RouterFacet {
             emit CrossInitiated(
                 _swapStep.tokenIn,
                 _bridgeStep.tokenIn,
-                _destinationSwap.tokenIn,
-                _destinationSwap.tokenOut,
+                _crossPayload.tokenIn,
+                _crossPayload.tokenOut,
+                _crossPayload.receiver,
                 block.chainid,
                 _bridgeStep.toChainId,
                 _amount,
-                finalAmount
+                finalAmount,
+                _crossPayload.minAmountOut
             );
         }
         else {
@@ -143,36 +157,46 @@ contract RouterFacet {
     ) external payable {
         LibStorage.enforceIsRelayer();
 
-        uint256 finalAmount;
+        require(_receiver != address(0), "Receiver address is empty");
+
+        address deliverAsset;
+        uint256 deliverAmount;
+
         // Check if last swap is required,
         // and store user's receiving amount
         if (_swapStep.required) {
-            finalAmount = LibProvider.swap(
+            bool swapSuccess;
+            (swapSuccess, deliverAmount,) = LibProvider.swap(
                 _swapStep.providerCode,
                 _swapStep.tokenIn,
                 _swapStep.tokenOut,
                 _amount,
                 _swapStep.data
             );
+            if (swapSuccess) {
+                // if swap is successful, asset to transfer is what we swapped for
+                deliverAsset = _swapStep.tokenOut;
+            }
+            else {
+                // if swap failed for any reason when it was required
+                // we have to send input assets to the user
+                deliverAsset = _swapStep.tokenIn;
+                deliverAmount = _amount;
+            }
         }
         else {
-            finalAmount = _amount;
+            // if no swap is required, we send input asset to the user
+            deliverAsset = _swapStep.tokenIn;
+            deliverAmount = _amount;
         }
 
-        if (_swapStep.tokenOut == nativeToken()) {
-            // Sent native coins
-            payable(_receiver).transfer(finalAmount);
-        }
-        else {
-            // Send tokens to the user
-            TransferHelper.safeTransfer(
-                _swapStep.tokenOut,
-                _receiver,
-                finalAmount
-            );
-        }
+        LibTreasury.sendAssets(
+            deliverAsset,
+            _receiver,
+            deliverAmount
+        );
 
-        emit CrossFinalized(_originHash, finalAmount);
+        emit CrossFinalized(_originHash, deliverAmount, deliverAsset);
     }
 
     /**
@@ -190,10 +214,12 @@ contract RouterFacet {
         address bridgeTokenIn,
         address bridgeTokenOut,
         address dstToken,
+        address receiver,
         uint256 fromChain,
         uint256 toChain,
         uint256 amountIn,
-        uint256 amountCross
+        uint256 amountCross,
+        uint256 minAmountOut
     );
 
     /**
@@ -212,7 +238,8 @@ contract RouterFacet {
      */
     event CrossFinalized(
         bytes32 txHash,
-        uint256 amountOut
+        uint256 amountOut,
+        address assetOut
     );
 
     /**

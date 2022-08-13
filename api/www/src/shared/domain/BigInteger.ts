@@ -84,6 +84,10 @@ export class BigInteger {
     return ethers.utils.formatUnits(this._number, decimals);
   }
 
+  public subtractPercentage(percent: number): BigInteger {
+    return this.times(1000 - percent * 10).div(1000);
+  }
+
   public convertDecimalsFromTo(fromDecimals: number, toDecimals: number): BigInteger {
     let num;
     if (fromDecimals < toDecimals) {

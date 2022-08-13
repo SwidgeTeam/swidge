@@ -15,6 +15,9 @@ export class CreateTransactionCommand {
   walletAddress: string;
 
   @IsEthereumAddress()
+  receiver: string;
+
+  @IsEthereumAddress()
   routerAddress: ContractAddress;
 
   @IsString()

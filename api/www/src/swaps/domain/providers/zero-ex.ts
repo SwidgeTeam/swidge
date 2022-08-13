@@ -6,13 +6,13 @@ import { InsufficientLiquidity } from '../InsufficientLiquidity';
 import { AbiEncoder } from '../../../shared/domain/CallEncoder';
 import { BigInteger } from '../../../shared/domain/BigInteger';
 import { Exchange } from '../exchange';
-import { HttpClient } from '../../../shared/infrastructure/http/httpClient';
 import { ExchangeProviders } from './exchange-providers';
+import { IHttpClient } from '../../../shared/domain/http/IHttpClient';
 
 export class ZeroEx implements Exchange {
   private readonly enabledChains: string[];
 
-  constructor(private readonly httpClient: HttpClient) {
+  constructor(private readonly httpClient: IHttpClient) {
     this.enabledChains = [Mainnet, Polygon, Fantom, BSC, Avalanche, Optimism];
   }
 
@@ -29,27 +29,52 @@ export class ZeroEx implements Exchange {
       [Optimism]: 'https://optimism.api.0x.org',
     };
 
+    const slippage = request.slippage / 100;
+
     const response = await this.httpClient
       .get<{
         to: ContractAddress;
         allowanceTarget: ContractAddress;
         data: string;
         buyAmount: string;
+        guaranteedPrice: string;
         gas: string;
       }>(
         `${urls[request.chainId]}/swap/v1/quote` +
           `?sellToken=${request.tokenIn.address}` +
           `&buyToken=${request.tokenOut.address}` +
-          `&sellAmount=${request.amountIn.toString()}`,
+          `&sellAmount=${request.amountIn.toString()}` +
+          `&slippagePercentage=${slippage.toString()}`,
       )
       .catch((error) => {
         // TODO : check error type
         throw new InsufficientLiquidity();
       });
 
-    const encodedAddress = AbiEncoder.encodeFunctionArguments(['address'], [response.to]);
+    const expectedAmountOut = BigInteger.fromString(response.buyAmount);
+    const estimatedGas = BigInteger.fromString(response.gas);
 
+    const encodedAddress = AbiEncoder.encodeFunctionArguments(['address'], [response.to]);
     const encodedData = AbiEncoder.concatBytes([encodedAddress, response.data]);
+
+    const minPrice = BigInteger.fromDecimal(
+      Number(response.guaranteedPrice).toFixed(request.tokenIn.decimals),
+      request.tokenIn.decimals,
+    );
+
+    const minAmountOut = this.operateOutputAmount(
+      request.amountIn,
+      minPrice,
+      request.tokenIn.decimals,
+      request.tokenOut.decimals,
+    );
+
+    const worstCaseAmountOut = this.operateOutputAmount(
+      request.minAmountIn,
+      minPrice,
+      request.tokenIn.decimals,
+      request.tokenOut.decimals,
+    );
 
     return new SwapOrder(
       ExchangeProviders.ZeroEx,
@@ -57,8 +82,28 @@ export class ZeroEx implements Exchange {
       request.tokenOut,
       encodedData,
       request.amountIn,
-      BigInteger.fromString(response.buyAmount),
-      BigInteger.fromString(response.gas),
+      expectedAmountOut,
+      minAmountOut,
+      worstCaseAmountOut,
+      estimatedGas,
     );
+  }
+
+  /**
+   * Operates an amount and the price to obtain the output amount
+   * @param inputAmount
+   * @param price
+   * @param decimalsIn
+   * @param decimalsOut
+   * @private
+   */
+  private operateOutputAmount(
+    inputAmount: BigInteger,
+    price: BigInteger,
+    decimalsIn: number,
+    decimalsOut: number,
+  ): BigInteger {
+    const units = BigInteger.fromDecimal('1', decimalsIn);
+    return inputAmount.times(price).div(units).convertDecimalsFromTo(decimalsIn, decimalsOut);
   }
 }

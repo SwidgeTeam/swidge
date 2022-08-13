@@ -1,12 +1,26 @@
 import { SwapOrder } from '../../../../src/swaps/domain/SwapOrder';
+import { TokenMother } from '../../shared/domain/Token.mother';
 
 describe('swap-order', () => {
-  it('Should have correct default value', () => {
-    // Arrange
-    const order = SwapOrder.notRequired();
+  describe('not required', () => {
+    it('Should have correct default values', () => {
+      // Arrange
+      const order = SwapOrder.notRequired();
 
-    // Assert
-    expect(order.providerCode).toEqual('0');
-    expect(order.data).toEqual('0x');
+      // Assert
+      expect(order.providerCode).toEqual('0');
+      expect(order.data).toEqual('0x');
+    });
+  });
+
+  describe('same token', () => {
+    it('Should have correct default value', () => {
+      // Arrange
+      const order = SwapOrder.sameToken(TokenMother.random());
+
+      // Assert
+      expect(order.providerCode).toEqual('0');
+      expect(order.data).toEqual('0x');
+    });
   });
 });

@@ -32,11 +32,11 @@ describe('bridges', () => {
     // Arrange
     const mockBridgeOne: Bridge = createMock<Bridge>({
       isEnabledOn: () => true,
-      execute: (request) => Promise.resolve(BridgingOrder.notRequired()),
+      execute: () => Promise.resolve(BridgingOrder.notRequired()),
     });
     const mockBridgeTwo: Bridge = createMock<Bridge>({
       isEnabledOn: () => false,
-      execute: (request) => Promise.reject('error'),
+      execute: () => Promise.reject('error'),
     });
 
     const bridges = new Bridges([
@@ -44,7 +44,13 @@ describe('bridges', () => {
       ['k2', mockBridgeTwo],
     ]);
 
-    const request = new BridgingRequest('1', '2', Token.null(), BigInteger.fromDecimal('100'));
+    const request = new BridgingRequest(
+      '1',
+      '2',
+      Token.null(),
+      BigInteger.fromDecimal('100'),
+      BigInteger.fromDecimal('99'),
+    );
 
     // Act
     const result = await bridges.execute('k1', request);

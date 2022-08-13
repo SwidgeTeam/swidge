@@ -4,5 +4,6 @@ export class GetQuoteSwapQuery {
     public readonly srcToken: string,
     public readonly dstToken: string,
     public readonly amount: string,
+    public readonly minAmountOut: string,
   ) {}
 }
