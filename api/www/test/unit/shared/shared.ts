@@ -5,10 +5,10 @@ import { BigInteger } from '../../../src/shared/domain/BigInteger';
 import { Logger } from '../../../src/shared/domain/logger';
 import { ZeroEx } from '../../../src/swaps/domain/providers/zero-ex';
 import { createMock } from 'ts-auto-mock';
-import { HttpClient } from '../../../src/shared/infrastructure/http/httpClient';
 import { Sushiswap } from '../../../src/swaps/domain/providers/sushiswap';
 import { SushiPairsRepository } from '../../../src/swaps/domain/sushi-pairs-repository';
 import { TokenDetailsFetcher } from '../../../src/shared/infrastructure/TokenDetailsFetcher';
+import { IHttpClient } from '../../../src/shared/domain/http/IHttpClient';
 
 export function getPriceFeedFetcher(responses: { chain: string; result: string }[]) {
   const priceFeedFetcher = new PriceFeedFetcher();
@@ -28,8 +28,8 @@ export function getSushi(): Sushiswap {
   return new Sushiswap(httpClientMock(), sushiRepositoryMock());
 }
 
-export function httpClientMock() {
-  return createMock<HttpClient>();
+export function httpClientMock(args = {}) {
+  return createMock<IHttpClient>(args);
 }
 
 export function sushiRepositoryMock() {

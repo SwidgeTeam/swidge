@@ -6,13 +6,13 @@ import { InsufficientLiquidity } from '../InsufficientLiquidity';
 import { AbiEncoder } from '../../../shared/domain/CallEncoder';
 import { BigInteger } from '../../../shared/domain/BigInteger';
 import { Exchange } from '../exchange';
-import { HttpClient } from '../../../shared/infrastructure/http/httpClient';
 import { ExchangeProviders } from './exchange-providers';
+import { IHttpClient } from '../../../shared/domain/http/IHttpClient';
 
 export class ZeroEx implements Exchange {
   private readonly enabledChains: string[];
 
-  constructor(private readonly httpClient: HttpClient) {
+  constructor(private readonly httpClient: IHttpClient) {
     this.enabledChains = [Mainnet, Polygon, Fantom, BSC, Avalanche, Optimism];
   }
 
