@@ -1,4 +1,4 @@
-import { TransactionMother } from './Transaction.mother';
+import { TransactionMother } from './transaction.mother';
 
 describe('Transaction', () => {
   it('Should return ongoing status when not completed', () => {

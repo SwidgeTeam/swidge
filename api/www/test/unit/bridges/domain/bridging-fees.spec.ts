@@ -1,5 +1,5 @@
 import { BridgingFees } from '../../../../src/bridges/domain/BridgingFees';
-import { BigInteger } from '../../../../src/shared/domain/BigInteger';
+import { BigInteger } from '../../../../src/shared/domain/big-integer';
 
 describe('Bridging fees', () => {
   it('should not accept negative values', () => {

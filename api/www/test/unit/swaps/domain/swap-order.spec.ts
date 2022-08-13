@@ -1,5 +1,5 @@
-import { SwapOrder } from '../../../../src/swaps/domain/SwapOrder';
-import { TokenMother } from '../../shared/domain/Token.mother';
+import { SwapOrder } from '../../../../src/swaps/domain/swap-order';
+import { TokenMother } from '../../shared/domain/token.mother';
 
 describe('swap-order', () => {
   describe('not required', () => {

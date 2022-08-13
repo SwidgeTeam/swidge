@@ -1,9 +1,9 @@
 import { BridgingOrder } from '../../../../src/bridges/domain/bridging-order';
 import { BridgingFees } from '../../../../src/bridges/domain/BridgingFees';
 import { BridgingLimits } from '../../../../src/bridges/domain/BridgingLimits';
-import { BigInteger } from '../../../../src/shared/domain/BigInteger';
+import { BigInteger } from '../../../../src/shared/domain/big-integer';
 import { Tokens } from '../../../../src/shared/enums/Tokens';
-import { Token } from '../../../../src/shared/domain/Token';
+import { Token } from '../../../../src/shared/domain/token';
 import { USDC } from '../../../../src/shared/enums/TokenSymbols';
 import { Mainnet, Polygon } from '../../../../src/shared/enums/ChainIds';
 import { BridgingRequest } from '../../../../src/bridges/domain/bridging-request';

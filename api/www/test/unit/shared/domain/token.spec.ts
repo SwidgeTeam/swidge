@@ -1,4 +1,4 @@
-import { Token } from '../../../../src/shared/domain/Token';
+import { Token } from '../../../../src/shared/domain/token';
 
 describe('Token', () => {
   it('should construct and return value', () => {

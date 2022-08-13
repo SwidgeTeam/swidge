@@ -1,4 +1,4 @@
-import { BigInteger } from '../../../../src/shared/domain/BigInteger';
+import { BigInteger } from '../../../../src/shared/domain/big-integer';
 import { faker } from '@faker-js/faker';
 import { BigIntegerMother } from '../../shared/domain/big-integer.mother';
 import { BridgingLimits } from '../../../../src/bridges/domain/BridgingLimits';

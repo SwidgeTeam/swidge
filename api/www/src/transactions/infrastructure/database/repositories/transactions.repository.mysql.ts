@@ -2,7 +2,7 @@ import { TransactionsRepository } from '../../../domain/TransactionsRepository';
 import { EntityManager, EntityRepository } from 'typeorm';
 import { Transaction } from '../../../domain/Transaction';
 import { TransactionEntity } from '../models/transaction.entity';
-import { BigInteger } from '../../../../shared/domain/BigInteger';
+import { BigInteger } from '../../../../shared/domain/big-integer';
 import { Transactions } from '../../../domain/Transactions';
 
 @EntityRepository(TransactionEntity)

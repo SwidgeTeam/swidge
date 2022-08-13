@@ -1,12 +1,12 @@
 import { Aggregator } from '../aggregator';
 import { AggregatorRequest } from '../aggregator-request';
 import LIFI, { Step } from '@lifi/sdk';
-import { BigInteger } from '../../../shared/domain/BigInteger';
+import { BigInteger } from '../../../shared/domain/big-integer';
 import { TransactionDetails } from '../../../shared/domain/transaction-details';
 import { Route } from '../../../shared/domain/route';
 import { RouteStep } from '../../../shared/domain/route-step';
-import { Token } from '../../../shared/domain/Token';
-import { InsufficientLiquidity } from '../../../swaps/domain/InsufficientLiquidity';
+import { Token } from '../../../shared/domain/token';
+import { InsufficientLiquidity } from '../../../swaps/domain/insufficient-liquidity';
 import { ProviderDetails } from '../../../shared/domain/provider-details';
 import { RouteResume } from '../../../shared/domain/route-resume';
 

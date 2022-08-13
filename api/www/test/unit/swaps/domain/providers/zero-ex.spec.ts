@@ -1,10 +1,10 @@
 import { ZeroEx } from '../../../../../src/swaps/domain/providers/zero-ex';
 import { httpClientMock } from '../../../shared/shared';
-import { SwapRequest } from '../../../../../src/swaps/domain/SwapRequest';
+import { SwapRequest } from '../../../../../src/swaps/domain/swap-request';
 import { Polygon } from '../../../../../src/shared/enums/ChainIds';
-import { TokenMother } from '../../../shared/domain/Token.mother';
+import { TokenMother } from '../../../shared/domain/token.mother';
 import { BigIntegerMother } from '../../../shared/domain/big-integer.mother';
-import { BigInteger } from '../../../../../src/shared/domain/BigInteger';
+import { BigInteger } from '../../../../../src/shared/domain/big-integer';
 import { faker } from '@faker-js/faker';
 import { ethers } from 'ethers';
 

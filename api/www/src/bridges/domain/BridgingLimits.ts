@@ -1,4 +1,4 @@
-import { BigInteger } from '../../shared/domain/BigInteger';
+import { BigInteger } from '../../shared/domain/big-integer';
 
 export class BridgingLimits {
   constructor(

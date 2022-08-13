@@ -2,9 +2,9 @@ import { Bridges } from '../../../../src/bridges/domain/bridges';
 import { createMock } from 'ts-auto-mock';
 import { Bridge } from '../../../../src/bridges/domain/bridge';
 import { BridgingOrder } from '../../../../src/bridges/domain/bridging-order';
-import { Token } from '../../../../src/shared/domain/Token';
+import { Token } from '../../../../src/shared/domain/token';
 import { BridgingRequest } from '../../../../src/bridges/domain/bridging-request';
-import { BigInteger } from '../../../../src/shared/domain/BigInteger';
+import { BigInteger } from '../../../../src/shared/domain/big-integer';
 
 describe('bridges', () => {
   it('should filter enabled bridge correctly', () => {

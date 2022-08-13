@@ -1,7 +1,7 @@
 import { BridgingFees } from '../../../../src/bridges/domain/BridgingFees';
 import { faker } from '@faker-js/faker';
 import { BigIntegerMother } from '../../shared/domain/big-integer.mother';
-import { BigInteger } from '../../../../src/shared/domain/BigInteger';
+import { BigInteger } from '../../../../src/shared/domain/big-integer';
 
 export class BridgingFeesMother {
   public static create(percentage, maxFee, minFee, decimals): BridgingFees {

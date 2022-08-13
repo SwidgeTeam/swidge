@@ -2,8 +2,8 @@ import { EntityManager, EntityRepository, LessThan } from 'typeorm';
 import { SushiPairsEntity } from '../models/sushi-pairs.entity';
 import { SushiPairsRepository } from '../../../domain/sushi-pairs-repository';
 import { ethers } from 'ethers';
-import { Token } from '../../../../shared/domain/Token';
-import { BigInteger } from '../../../../shared/domain/BigInteger';
+import { Token } from '../../../../shared/domain/token';
+import { BigInteger } from '../../../../shared/domain/big-integer';
 import { SushiPair } from '../../../domain/sushi-pair';
 import { SushiPairs } from '../../../domain/sushi-pairs';
 

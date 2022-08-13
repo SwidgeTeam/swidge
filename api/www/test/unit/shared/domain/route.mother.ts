@@ -5,7 +5,7 @@ import { RouteResume } from '../../../../src/shared/domain/route-resume';
 import { faker } from '@faker-js/faker';
 import { BigIntegerMother } from './big-integer.mother';
 import { ProviderDetailsMother } from './provider-details.mother';
-import { TokenMother } from './Token.mother';
+import { TokenMother } from './token.mother';
 
 export class RouteMother {
   public static create(

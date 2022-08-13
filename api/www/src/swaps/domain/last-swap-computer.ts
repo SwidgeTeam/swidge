@@ -1,8 +1,8 @@
 import { Exchanges } from './exchanges';
-import { BigInteger } from '../../shared/domain/BigInteger';
-import { SwapOrder } from './SwapOrder';
-import { Token } from '../../shared/domain/Token';
-import { SwapRequest } from './SwapRequest';
+import { BigInteger } from '../../shared/domain/big-integer';
+import { SwapOrder } from './swap-order';
+import { Token } from '../../shared/domain/token';
+import { SwapRequest } from './swap-request';
 import { LastSwapComputeRequest } from './last-swap-compute-request';
 import descendingOrder from '../../shared/domain/descending-order';
 

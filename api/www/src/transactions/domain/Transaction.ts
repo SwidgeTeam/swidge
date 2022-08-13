@@ -1,5 +1,5 @@
 import { ContractAddress } from '../../shared/types';
-import { BigInteger } from '../../shared/domain/BigInteger';
+import { BigInteger } from '../../shared/domain/big-integer';
 
 export class Transaction {
   private COMPLETED_STATUS = 'completed';

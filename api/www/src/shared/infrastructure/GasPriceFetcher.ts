@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 import { RpcNode } from '../enums/RpcNode';
-import { BigInteger } from '../domain/BigInteger';
+import { BigInteger } from '../domain/big-integer';
 
 export class GasPriceFetcher {
   public async fetch(chainId: string): Promise<BigInteger> {

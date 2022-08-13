@@ -2,7 +2,7 @@ import { ethers } from 'ethers';
 import { RpcNode } from '../enums/RpcNode';
 import { PriceFeeds } from '../PriceFeeds';
 import { PriceFeed } from '../domain/PriceFeed';
-import { BigInteger } from '../domain/BigInteger';
+import { BigInteger } from '../domain/big-integer';
 
 export class PriceFeedFetcher {
   public async fetch(chainId: string): Promise<PriceFeed> {

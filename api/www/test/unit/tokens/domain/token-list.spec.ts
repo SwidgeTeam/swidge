@@ -1,5 +1,5 @@
 import { TokenList } from '../../../../src/tokens/domain/TokenItem';
-import { TokenListItemMother } from './TokenListItem.mother';
+import { TokenListItemMother } from './token-list-item.mother';
 
 describe('token-list', () => {
   it('should find a token', async () => {

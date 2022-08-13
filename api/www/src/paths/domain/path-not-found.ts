@@ -1,4 +1,4 @@
-import { DomainException } from '../../shared/domain/DomainException';
+import { DomainException } from '../../shared/domain/domain-exception';
 
 export class PathNotFound extends DomainException {
   constructor() {

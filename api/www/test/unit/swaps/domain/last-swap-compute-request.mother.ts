@@ -1,8 +1,8 @@
 import { LastSwapComputeRequest } from '../../../../src/swaps/domain/last-swap-compute-request';
 import { Polygon } from '../../../../src/shared/enums/ChainIds';
-import { BigInteger } from '../../../../src/shared/domain/BigInteger';
-import { Token } from '../../../../src/shared/domain/Token';
-import { TokenMother } from '../../shared/domain/Token.mother';
+import { BigInteger } from '../../../../src/shared/domain/big-integer';
+import { Token } from '../../../../src/shared/domain/token';
+import { TokenMother } from '../../shared/domain/token.mother';
 import { BigIntegerMother } from '../../shared/domain/big-integer.mother';
 
 export class LastSwapComputeRequestMother {

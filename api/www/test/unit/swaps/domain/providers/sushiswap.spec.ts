@@ -1,12 +1,12 @@
 import { httpClientMock, sushiRepositoryMock } from '../../../shared/shared';
-import { SwapRequest } from '../../../../../src/swaps/domain/SwapRequest';
+import { SwapRequest } from '../../../../../src/swaps/domain/swap-request';
 import { Polygon } from '../../../../../src/shared/enums/ChainIds';
-import { TokenMother } from '../../../shared/domain/Token.mother';
+import { TokenMother } from '../../../shared/domain/token.mother';
 import { Sushiswap } from '../../../../../src/swaps/domain/providers/sushiswap';
 import { SushiPairs } from '../../../../../src/swaps/domain/sushi-pairs';
 import { SushiPairMother } from '../sushi-pair.mother';
 import { BigIntegerMother } from '../../../shared/domain/big-integer.mother';
-import { BigInteger } from '../../../../../src/shared/domain/BigInteger';
+import { BigInteger } from '../../../../../src/shared/domain/big-integer';
 
 describe('sushiswap', () => {
   it('should throw exception if no possible trade', () => {

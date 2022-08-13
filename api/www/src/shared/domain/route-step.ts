@@ -1,6 +1,6 @@
-import { Token } from './Token';
+import { Token } from './token';
 import { ProviderDetails } from './provider-details';
-import { BigInteger } from './BigInteger';
+import { BigInteger } from './big-integer';
 
 export class RouteStep {
   public static TYPE_SWAP = 'swap';

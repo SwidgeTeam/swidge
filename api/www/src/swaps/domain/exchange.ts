@@ -1,5 +1,5 @@
-import { SwapOrder } from './SwapOrder';
-import { SwapRequest } from './SwapRequest';
+import { SwapOrder } from './swap-order';
+import { SwapRequest } from './swap-request';
 
 export interface Exchange {
   execute: (request: SwapRequest) => Promise<SwapOrder>;

@@ -1,7 +1,7 @@
-import { SwapRequest } from '../SwapRequest';
-import { SwapOrder } from '../SwapOrder';
+import { SwapRequest } from '../swap-request';
+import { SwapOrder } from '../swap-order';
 import { BSC, Fantom, Mainnet, Polygon } from '../../../shared/enums/ChainIds';
-import { BigInteger } from '../../../shared/domain/BigInteger';
+import { BigInteger } from '../../../shared/domain/big-integer';
 import { ethers } from 'ethers';
 import { Exchange } from '../exchange';
 import { IHttpClient } from '../../../shared/domain/http/IHttpClient';
@@ -19,14 +19,14 @@ import {
   TradeType,
 } from '@sushiswap/sdk';
 import { SushiPairsRepository } from '../sushi-pairs-repository';
-import { AbiEncoder } from '../../../shared/domain/CallEncoder';
+import { AbiEncoder } from '../../../shared/domain/call-encoder';
 import { DeployedAddresses } from '../../../shared/DeployedAddresses';
 import { SushiPairs } from '../sushi-pairs';
 import { SushiPair } from '../sushi-pair';
 import { randomUUID } from 'crypto';
-import { Token as OwnToken } from '../../../shared/domain/Token';
+import { Token as OwnToken } from '../../../shared/domain/token';
 import { TokenAddresses } from '../../../shared/enums/TokenAddresses';
-import { InsufficientLiquidity } from '../InsufficientLiquidity';
+import { InsufficientLiquidity } from '../insufficient-liquidity';
 
 export interface GraphPair {
   name: string;

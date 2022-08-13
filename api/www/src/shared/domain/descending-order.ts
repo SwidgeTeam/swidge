@@ -1,4 +1,4 @@
-import { BigInteger } from './BigInteger';
+import { BigInteger } from './big-integer';
 
 export default (first: BigInteger, second: BigInteger) => {
   if (first.greaterThan(second)) {

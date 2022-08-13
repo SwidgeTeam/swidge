@@ -1,7 +1,7 @@
-import { SwapOrder } from '../../../../src/swaps/domain/SwapOrder';
+import { SwapOrder } from '../../../../src/swaps/domain/swap-order';
 import { BridgingOrder } from '../../../../src/bridges/domain/bridging-order';
 import { RouterCallEncoder } from '../../../../src/shared/domain/router-call-encoder';
-import { BigInteger } from '../../../../src/shared/domain/BigInteger';
+import { BigInteger } from '../../../../src/shared/domain/big-integer';
 
 describe('router-call-encoder', () => {
   it('should encode a default `initSwidge` callData correctly', () => {

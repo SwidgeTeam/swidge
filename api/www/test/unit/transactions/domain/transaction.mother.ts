@@ -1,6 +1,6 @@
 import { Transaction } from '../../../../src/transactions/domain/Transaction';
 import { ContractAddress } from '../../../../src/shared/types';
-import { BigInteger } from '../../../../src/shared/domain/BigInteger';
+import { BigInteger } from '../../../../src/shared/domain/big-integer';
 import { faker } from '@faker-js/faker';
 
 export class TransactionMother {

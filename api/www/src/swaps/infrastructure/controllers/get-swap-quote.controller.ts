@@ -2,7 +2,7 @@ import { Controller, Get, Query, Res } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
 import { GetQuoteSwapQuery } from '../../application/query/get-quote-swap.query';
 import { Response } from 'express';
-import { SwapOrder } from '../../domain/SwapOrder';
+import { SwapOrder } from '../../domain/swap-order';
 
 @Controller()
 export class GetSwapQuoteController {

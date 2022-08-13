@@ -1,4 +1,4 @@
-import { AbiEncoder } from '../../../src/shared/domain/CallEncoder';
+import { AbiEncoder } from '../../../src/shared/domain/call-encoder';
 import { ethers } from 'ethers';
 
 describe('AbiEndoder', () => {

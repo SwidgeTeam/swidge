@@ -1,8 +1,8 @@
 import { SushiPair } from '../../../../src/swaps/domain/sushi-pair';
-import { BigInteger } from '../../../../src/shared/domain/BigInteger';
-import { Token } from '../../../../src/shared/domain/Token';
+import { BigInteger } from '../../../../src/shared/domain/big-integer';
+import { Token } from '../../../../src/shared/domain/token';
 import { Polygon } from '../../../../src/shared/enums/ChainIds';
-import { TokenMother } from '../../shared/domain/Token.mother';
+import { TokenMother } from '../../shared/domain/token.mother';
 
 export class SushiPairMother {
   public static create(

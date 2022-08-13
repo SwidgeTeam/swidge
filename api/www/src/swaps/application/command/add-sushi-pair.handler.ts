@@ -1,12 +1,12 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { SushiPairsRepository } from '../../domain/sushi-pairs-repository';
 import { SushiPair } from '../../domain/sushi-pair';
-import { BigInteger } from '../../../shared/domain/BigInteger';
+import { BigInteger } from '../../../shared/domain/big-integer';
 import { Inject } from '@nestjs/common';
 import { Class } from '../../../shared/Class';
 import { HttpClient } from '../../../shared/infrastructure/http/httpClient';
 import { GraphPair, theGraphEndpoints } from '../../domain/providers/sushiswap';
-import { Token } from '../../../shared/domain/Token';
+import { Token } from '../../../shared/domain/token';
 import { ethers } from 'ethers';
 import { AddSushiPairCommand } from './add-sushi-pair.command';
 import { randomUUID } from 'crypto';

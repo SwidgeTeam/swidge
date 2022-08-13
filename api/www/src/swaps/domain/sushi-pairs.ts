@@ -1,6 +1,6 @@
 import { Collection } from '../../shared/Collection';
 import { SushiPair } from './sushi-pair';
-import { Token } from '../../shared/domain/Token';
+import { Token } from '../../shared/domain/token';
 
 export class SushiPairs extends Collection {
   type() {

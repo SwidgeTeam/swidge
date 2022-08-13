@@ -1,4 +1,4 @@
-import { TokenMother } from '../../shared/domain/Token.mother';
+import { TokenMother } from '../../shared/domain/token.mother';
 import { getSushi } from '../../shared/shared';
 import { Polygon } from '../../../../src/shared/enums/ChainIds';
 import { LastSwapComputer } from '../../../../src/swaps/domain/last-swap-computer';
@@ -7,7 +7,7 @@ import { BigIntegerMother } from '../../shared/domain/big-integer.mother';
 import { Exchanges } from '../../../../src/swaps/domain/exchanges';
 import { ExchangeProviders } from '../../../../src/swaps/domain/providers/exchange-providers';
 import { stub, spy } from 'sinon';
-import { BigInteger } from '../../../../src/shared/domain/BigInteger';
+import { BigInteger } from '../../../../src/shared/domain/big-integer';
 import { SwapOrderMother } from './swap-order.mother';
 import { LastSwapComputeRequestMother } from './last-swap-compute-request.mother';
 

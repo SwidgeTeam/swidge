@@ -1,7 +1,7 @@
 import { PriceFeedFetcher } from '../../../src/shared/infrastructure/PriceFeedFetcher';
 import { stub } from 'sinon';
 import { PriceFeed } from '../../../src/shared/domain/PriceFeed';
-import { BigInteger } from '../../../src/shared/domain/BigInteger';
+import { BigInteger } from '../../../src/shared/domain/big-integer';
 import { Logger } from '../../../src/shared/domain/logger';
 import { ZeroEx } from '../../../src/swaps/domain/providers/zero-ex';
 import { createMock } from 'ts-auto-mock';

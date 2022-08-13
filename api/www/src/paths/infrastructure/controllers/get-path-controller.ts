@@ -3,7 +3,7 @@ import { QueryBus } from '@nestjs/cqrs';
 import { Response } from 'express';
 import { GetPathQuery } from '../../application/query/get-path.query';
 import { GetPathDto } from './get-path-dto';
-import { Token } from '../../../shared/domain/Token';
+import { Token } from '../../../shared/domain/token';
 import { Route } from '../../../shared/domain/route';
 
 @Controller()

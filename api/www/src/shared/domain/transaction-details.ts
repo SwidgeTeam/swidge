@@ -1,4 +1,4 @@
-import { BigInteger } from './BigInteger';
+import { BigInteger } from './big-integer';
 import { ContractAddress } from '../types';
 
 export class TransactionDetails {

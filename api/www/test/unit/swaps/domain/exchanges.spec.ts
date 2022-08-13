@@ -1,10 +1,10 @@
 import { Exchange } from '../../../../src/swaps/domain/exchange';
 import { createMock } from 'ts-auto-mock';
-import { Token } from '../../../../src/shared/domain/Token';
-import { BigInteger } from '../../../../src/shared/domain/BigInteger';
+import { Token } from '../../../../src/shared/domain/token';
+import { BigInteger } from '../../../../src/shared/domain/big-integer';
 import { Exchanges } from '../../../../src/swaps/domain/exchanges';
-import { SwapOrder } from '../../../../src/swaps/domain/SwapOrder';
-import { SwapRequest } from '../../../../src/swaps/domain/SwapRequest';
+import { SwapOrder } from '../../../../src/swaps/domain/swap-order';
+import { SwapRequest } from '../../../../src/swaps/domain/swap-request';
 
 describe('exchanges', () => {
   it('should filter enabled exchanges correctly', () => {

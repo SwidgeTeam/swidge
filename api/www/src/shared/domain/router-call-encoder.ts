@@ -1,6 +1,6 @@
-import { SwapOrder } from '../../swaps/domain/SwapOrder';
+import { SwapOrder } from '../../swaps/domain/swap-order';
 import { BridgingOrder } from '../../bridges/domain/bridging-order';
-import { BigInteger } from './BigInteger';
+import { BigInteger } from './big-integer';
 import { ethers } from 'ethers';
 
 export class RouterCallEncoder {

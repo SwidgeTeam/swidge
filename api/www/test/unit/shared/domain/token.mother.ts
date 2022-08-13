@@ -1,4 +1,4 @@
-import { Token } from '../../../../src/shared/domain/Token';
+import { Token } from '../../../../src/shared/domain/token';
 import { faker } from '@faker-js/faker';
 
 export class TokenMother {

@@ -1,5 +1,5 @@
-import { GasConverter } from '../../../../src/shared/domain/GasConverter';
-import { BigInteger } from '../../../../src/shared/domain/BigInteger';
+import { GasConverter } from '../../../../src/shared/domain/gas-converter';
+import { BigInteger } from '../../../../src/shared/domain/big-integer';
 
 describe('GasConverter', () => {
   it('should correctly convert from destination to origin Wei', async () => {

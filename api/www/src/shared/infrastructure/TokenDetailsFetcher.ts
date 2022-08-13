@@ -1,5 +1,5 @@
 import { ContractAddress } from '../types';
-import { Token } from '../domain/Token';
+import { Token } from '../domain/token';
 import { ethers } from 'ethers';
 import { RpcNode } from '../enums/RpcNode';
 import { NATIVE_TOKEN_ADDRESS, Natives } from '../enums/Natives';

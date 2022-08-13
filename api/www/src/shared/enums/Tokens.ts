@@ -1,6 +1,6 @@
 import { Mainnet, Polygon, Fantom, BSC, Avalanche, Optimism } from './ChainIds';
 import { USDC } from './TokenSymbols';
-import { Token } from '../domain/Token';
+import { Token } from '../domain/token';
 import { TokenAddresses } from './TokenAddresses';
 
 export const Tokens = {

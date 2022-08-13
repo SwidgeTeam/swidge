@@ -1,10 +1,10 @@
-import { SwapRequest } from '../SwapRequest';
-import { SwapOrder } from '../SwapOrder';
+import { SwapRequest } from '../swap-request';
+import { SwapOrder } from '../swap-order';
 import { Avalanche, BSC, Fantom, Mainnet, Polygon, Optimism } from '../../../shared/enums/ChainIds';
 import { ContractAddress } from '../../../shared/types';
-import { InsufficientLiquidity } from '../InsufficientLiquidity';
-import { AbiEncoder } from '../../../shared/domain/CallEncoder';
-import { BigInteger } from '../../../shared/domain/BigInteger';
+import { InsufficientLiquidity } from '../insufficient-liquidity';
+import { AbiEncoder } from '../../../shared/domain/call-encoder';
+import { BigInteger } from '../../../shared/domain/big-integer';
 import { Exchange } from '../exchange';
 import { ExchangeProviders } from './exchange-providers';
 import { IHttpClient } from '../../../shared/domain/http/IHttpClient';

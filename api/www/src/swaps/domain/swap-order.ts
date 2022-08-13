@@ -1,5 +1,5 @@
-import { BigInteger } from '../../shared/domain/BigInteger';
-import { Token } from '../../shared/domain/Token';
+import { BigInteger } from '../../shared/domain/big-integer';
+import { Token } from '../../shared/domain/token';
 
 export class SwapOrder {
   public static notRequired() {

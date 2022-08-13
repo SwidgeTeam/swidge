@@ -10,9 +10,9 @@ import { ExchangeProviders } from '../../domain/providers/exchange-providers';
 import { Sushiswap } from '../../domain/providers/sushiswap';
 import { SushiPairsRepository } from '../../domain/sushi-pairs-repository';
 import { LastSwapComputer } from '../../domain/last-swap-computer';
-import { BigInteger } from '../../../shared/domain/BigInteger';
+import { BigInteger } from '../../../shared/domain/big-integer';
 import { LastSwapComputeRequest } from '../../domain/last-swap-compute-request';
-import { SwapOrder } from '../../domain/SwapOrder';
+import { SwapOrder } from '../../domain/swap-order';
 
 @QueryHandler(GetQuoteSwapQuery)
 export class GetQuoteSwapHandler implements IQueryHandler<GetQuoteSwapQuery> {

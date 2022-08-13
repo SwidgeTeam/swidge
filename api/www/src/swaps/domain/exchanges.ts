@@ -1,6 +1,6 @@
 import { Exchange } from './exchange';
-import { SwapRequest } from './SwapRequest';
-import { SwapOrder } from './SwapOrder';
+import { SwapRequest } from './swap-request';
+import { SwapOrder } from './swap-order';
 
 type Entry = [string, Exchange];
 

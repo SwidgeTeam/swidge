@@ -1,4 +1,4 @@
-import { BigInteger } from '../../../../src/shared/domain/BigInteger';
+import { BigInteger } from '../../../../src/shared/domain/big-integer';
 import { BridgingOrderMother } from './bridging-order.mother';
 import { BridgingFeesMother } from './bridging-fees.mother';
 

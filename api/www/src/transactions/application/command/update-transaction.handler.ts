@@ -2,7 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { TransactionsRepository } from '../../domain/TransactionsRepository';
 import { Inject } from '@nestjs/common';
 import { Class } from '../../../shared/Class';
-import { BigInteger } from '../../../shared/domain/BigInteger';
+import { BigInteger } from '../../../shared/domain/big-integer';
 import { UpdateTransactionCommand } from './update-transaction.command';
 
 @CommandHandler(UpdateTransactionCommand)

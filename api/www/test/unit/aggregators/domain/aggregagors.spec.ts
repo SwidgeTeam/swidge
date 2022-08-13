@@ -3,7 +3,7 @@ import { Aggregators } from '../../../../src/aggregators/domain/aggregators';
 import { createMock } from 'ts-auto-mock';
 import { AggregatorRequest } from '../../../../src/aggregators/domain/aggregator-request';
 import { RouteMother } from '../../shared/domain/route.mother';
-import { TokenMother } from '../../shared/domain/Token.mother';
+import { TokenMother } from '../../shared/domain/token.mother';
 import { BigIntegerMother } from '../../shared/domain/big-integer.mother';
 
 describe('aggregators', () => {

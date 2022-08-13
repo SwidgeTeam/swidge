@@ -1,5 +1,5 @@
-import { Token } from '../../shared/domain/Token';
-import { BigInteger } from '../../shared/domain/BigInteger';
+import { Token } from '../../shared/domain/token';
+import { BigInteger } from '../../shared/domain/big-integer';
 
 export class LastSwapComputeRequest {
   constructor(

@@ -1,12 +1,12 @@
 import { BridgingRequest } from '../bridging-request';
 import { BridgingOrder } from '../bridging-order';
-import { Token } from '../../../shared/domain/Token';
+import { Token } from '../../../shared/domain/token';
 import { BridgingFees } from '../BridgingFees';
-import { BigInteger } from '../../../shared/domain/BigInteger';
+import { BigInteger } from '../../../shared/domain/big-integer';
 import { BridgingLimits } from '../BridgingLimits';
 import { AmountTooBig } from '../AmountTooBig';
 import { AmountTooSmall } from '../AmountTooSmall';
-import { AbiEncoder } from '../../../shared/domain/CallEncoder';
+import { AbiEncoder } from '../../../shared/domain/call-encoder';
 import { Bridge } from '../bridge';
 import { CachedHttpClient } from '../../../shared/infrastructure/http/cachedHttpClient';
 import { Avalanche, BSC, Fantom, Mainnet, Optimism, Polygon } from '../../../shared/enums/ChainIds';

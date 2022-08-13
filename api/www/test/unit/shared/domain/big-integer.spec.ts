@@ -1,4 +1,4 @@
-import { BigInteger } from '../../../../src/shared/domain/BigInteger';
+import { BigInteger } from '../../../../src/shared/domain/big-integer';
 
 describe('BigInteger', () => {
   it('should have 18 decimals by default', () => {

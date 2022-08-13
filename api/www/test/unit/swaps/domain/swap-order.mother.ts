@@ -1,9 +1,9 @@
-import { SwapOrder } from '../../../../src/swaps/domain/SwapOrder';
-import { Token } from '../../../../src/shared/domain/Token';
-import { BigInteger } from '../../../../src/shared/domain/BigInteger';
-import { SwapRequest } from '../../../../src/swaps/domain/SwapRequest';
+import { SwapOrder } from '../../../../src/swaps/domain/swap-order';
+import { Token } from '../../../../src/shared/domain/token';
+import { BigInteger } from '../../../../src/shared/domain/big-integer';
+import { SwapRequest } from '../../../../src/swaps/domain/swap-request';
 import { ExchangeProviders } from '../../../../src/swaps/domain/providers/exchange-providers';
-import { TokenMother } from '../../shared/domain/Token.mother';
+import { TokenMother } from '../../shared/domain/token.mother';
 import { BigIntegerMother } from '../../shared/domain/big-integer.mother';
 
 export class SwapOrderMother {
