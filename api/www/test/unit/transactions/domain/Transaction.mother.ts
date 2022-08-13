@@ -1,11 +1,13 @@
 import { Transaction } from '../../../../src/transactions/domain/Transaction';
 import { ContractAddress } from '../../../../src/shared/types';
 import { BigInteger } from '../../../../src/shared/domain/BigInteger';
+import { faker } from '@faker-js/faker';
 
 export class TransactionMother {
   public static create(
     _txHash: string,
     _walletAddress: string,
+    _receiver: string,
     _routerAddress: ContractAddress,
     _fromChainId: string,
     _toChainId: string,
@@ -25,6 +27,7 @@ export class TransactionMother {
       _txHash,
       '',
       _walletAddress,
+      _receiver,
       _routerAddress,
       _fromChainId,
       _toChainId,
@@ -45,8 +48,9 @@ export class TransactionMother {
   public static randomOnGoing() {
     return this.create(
       '',
-      '',
-      '',
+      faker.finance.ethereumAddress(),
+      faker.finance.ethereumAddress(),
+      faker.finance.ethereumAddress(),
       '137',
       '250',
       '0xLINK',
@@ -66,8 +70,9 @@ export class TransactionMother {
   public static randomCompleted() {
     return this.create(
       '',
-      '',
-      '',
+      faker.finance.ethereumAddress(),
+      faker.finance.ethereumAddress(),
+      faker.finance.ethereumAddress(),
       '137',
       '250',
       '0xLINK',
