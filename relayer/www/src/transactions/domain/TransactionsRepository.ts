@@ -7,6 +7,7 @@ export interface CreateTransactionPayload {
   txHash: string;
   walletAddress: string;
   routerAddress: string;
+  receiver: string;
   fromChainId: string;
   toChainId: string;
   srcToken: string;

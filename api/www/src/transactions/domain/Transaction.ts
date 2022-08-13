@@ -8,6 +8,7 @@ export class Transaction {
   public static create(
     _txHash: string,
     _walletAddress: string,
+    _receiver: string,
     _routerAddress: ContractAddress,
     _fromChainId: string,
     _toChainId: string,
@@ -23,6 +24,7 @@ export class Transaction {
       _txHash,
       '',
       _walletAddress,
+      _receiver,
       _routerAddress,
       _fromChainId,
       _toChainId,
@@ -44,6 +46,7 @@ export class Transaction {
     private readonly _txHash: string,
     private _destinationTxHash: string,
     private readonly _walletAddress: string,
+    private readonly _receiver: string,
     private readonly _routerAddress: string,
     private readonly _fromChainId: string,
     private readonly _toChainId: string,
@@ -70,6 +73,10 @@ export class Transaction {
 
   get walletAddress(): string {
     return this._walletAddress;
+  }
+
+  get receiver(): string {
+    return this._receiver;
   }
 
   get routerAddress(): string {

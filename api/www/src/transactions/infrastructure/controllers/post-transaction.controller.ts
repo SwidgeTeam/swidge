@@ -18,6 +18,7 @@ export class PostTransactionController extends CustomController {
   async postTransaction(
     @Body('txHash') txHash,
     @Body('walletAddress') walletAddress,
+    @Body('receiver') receiver,
     @Body('fromChainId') fromChainId,
     @Body('toChainId') toChainId,
     @Body('srcToken') srcToken,
@@ -31,6 +32,7 @@ export class PostTransactionController extends CustomController {
     const command = new CreateTransactionCommand();
     command.txHash = txHash;
     command.walletAddress = walletAddress;
+    command.receiver = receiver;
     command.fromChainId = fromChainId;
     command.toChainId = toChainId;
     command.srcToken = srcToken;

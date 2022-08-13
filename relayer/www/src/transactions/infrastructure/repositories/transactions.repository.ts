@@ -29,8 +29,9 @@ export class TransactionsRepositoryImpl implements TransactionsRepository {
       `${this.configService.apiUrl}/transaction`,
       {
         txHash: payload.txHash,
-        walletAddress: payload.walletAddress,
         routerAddress: payload.routerAddress,
+        walletAddress: payload.walletAddress,
+        receiver: payload.receiver,
         fromChainId: payload.fromChainId,
         toChainId: payload.toChainId,
         srcToken: payload.srcToken,

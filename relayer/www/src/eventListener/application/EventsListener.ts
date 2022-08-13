@@ -138,6 +138,7 @@ export class EventsListener {
               txHash: txHash,
               walletAddress: wallet,
               routerAddress: routerAddress,
+              receiver: receiver,
               fromChainId: fromChain.toString(),
               toChainId: toChain.toString(),
               srcToken: srcToken,
