@@ -73,6 +73,28 @@ describe("RouterFacet - init", function () {
     await expect(call).to.be.revertedWith("No input amount");
   });
 
+  it("Should revert if no receiver address is given", async function () {
+    /** Arrange */
+    const { anyoneElse } = await getAccounts();
+
+    // Create two fake ERC20 tokens
+    const fakeTokenIn = await fakeTokenContract();
+    const fakeTokenOut = await fakeTokenContract();
+
+    /** Act */
+    const call = router
+      .connect(anyoneElse)
+      .initSwidge(
+        10,
+        [0, fakeTokenIn.address, fakeTokenOut.address, "0x", true],
+        [RandomAddress, 57, "0x", false],
+        [RandomAddress, RandomAddress, ethers.constants.AddressZero, 0]
+      );
+
+    /** Assert */
+    await expect(call).to.be.revertedWith("Receiver address is empty");
+  });
+
   it("Should only send swap event if no bridging step is required", async function () {
     /** Arrange */
     const { owner, anyoneElse } = await getAccounts();
@@ -161,7 +183,7 @@ describe("RouterFacet - init", function () {
     const providerSwapCode = 0;
     const providerBridgeCode = 0;
     const anyswapMock = await fakeAnyswapRouter();
-    const receiver = ethers.constants.AddressZero;
+    const receiver = RandomAddress;
 
     await providerUpdater
       .connect(owner)

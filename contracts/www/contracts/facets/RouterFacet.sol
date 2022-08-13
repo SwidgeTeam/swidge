@@ -53,8 +53,9 @@ contract RouterFacet {
         // We need either the swap or the bridge step to be required
         require(_swapStep.required || _bridgeStep.required, "No required actions");
 
-        // We need to work with something..
         require(_amount != 0, "No input amount");
+
+        require(_crossPayload.receiver != address(0), "Receiver address is empty");
 
         address tokenToTakeIn;
         // Need to check which token is going to be taken as input
@@ -155,6 +156,8 @@ contract RouterFacet {
         SwapStep calldata _swapStep
     ) external payable {
         LibStorage.enforceIsRelayer();
+
+        require(_receiver != address(0), "Receiver address is empty");
 
         address deliverAsset;
         uint256 deliverAmount;

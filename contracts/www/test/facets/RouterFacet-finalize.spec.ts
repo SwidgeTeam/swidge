@@ -48,6 +48,24 @@ describe("RouterFacet - finalize", function () {
     await expect(call).to.be.revertedWith("Must be relayer");
   });
 
+  it("Should revert if no receiver address is given", async function () {
+    /** Arrange */
+    const { relayer } = await getAccounts();
+
+    /** Act */
+    const call = router
+      .connect(relayer)
+      .finalizeSwidge(
+        1000000,
+        ethers.constants.AddressZero,
+        "0x02b0672e488733a606cc52bd19e865de313c7e1e019fb6204c01a9bdcfa08cca",
+        [1, RandomAddress, RandomAddress, "0x", false]
+      );
+
+    /** Assert */
+    await expect(call).to.be.revertedWith("Receiver address is empty");
+  });
+
   it("Should execute the swap if relayer is the caller", async function () {
     /** Arrange */
     const { owner, relayer } = await getAccounts();
