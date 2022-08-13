@@ -1,18 +1,16 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class addTransactionFields1660042427372 implements MigrationInterface {
-  name = 'addTransactionFields1660042427372';
+export class addDestinationTxHash1660042427372 implements MigrationInterface {
+  name = 'addDestinationTxHash1660042427372';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `ALTER TABLE \`transactions\`
-        ADD \`destinationTxHash\` varchar(70) NULL,
-        ADD \`receiver\` varchar(80) NOT NULL`,
+          ADD \`destinationTxHash\` varchar(70) NULL`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`ALTER TABLE \`transactions\` DROP COLUMN \`destinationTxHash\``);
-    await queryRunner.query(`ALTER TABLE \`transactions\` DROP COLUMN \`receiver\``);
   }
 }
