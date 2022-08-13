@@ -58,11 +58,16 @@ export class EventsListener {
         'address bridgeTokenIn,' +
         'address bridgeTokenOut,' +
         'address dstToken,' +
+        'address receiver,' +
         'uint256 fromChain,' +
         'uint256 toChain,' +
         'uint256 amountIn,' +
-        'uint256 amountCross)',
-      'event CrossFinalized(bytes32 txHash, uint256 amountOut)',
+        'uint256 amountCross,' +
+        'uint256 minAmountOut)',
+      'event CrossFinalized(' +
+        'bytes32 txHash,' +
+        'uint256 amountOut,' +
+        'address assetOut)',
     ];
 
     const contract = new Contract(routerAddress, abi, provider);
@@ -117,8 +122,8 @@ export class EventsListener {
           srcToken: string,
           bridgeTokenIn: string,
           bridgeTokenOut: string,
-          receiver: string,
           dstToken: string,
+          receiver: string,
           fromChain: BigNumber,
           toChain: BigNumber,
           amountIn: BigNumber,
