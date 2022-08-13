@@ -22,7 +22,7 @@ localhost:
 fantom:
   diamond: "0x1a6e1ef1d28A7d9feD016c88f4d1858367564781"
   facet:
-    RouterFacet: "0x90470bEA95918287aeF1fA166A36d841D52F033a"
+    RouterFacet: "0x79E4BaA3E906656Fb823Ecd4F7BAd189469FD2e8"
     RelayerUpdaterFacet: "0x323C4B3a99118669f6ac31582C85B608FfD6e34e"
     DiamondLoupeFacet: "0x2a744014Ca5354d98dd752F1a61A4Ee8110f4a6a"
     ProviderUpdaterFacet: "0x9bD7d9cd5eF16C03A3bf011478656E2d450F6794"
@@ -48,7 +48,7 @@ fantom:
 polygon:
   diamond: "0x1a6e1ef1d28A7d9feD016c88f4d1858367564781"
   facet:
-    RouterFacet: "0x8823123F8b47189124863803DeA2F81CeFE77e3E"
+    RouterFacet: "0xdb95982CA34906260b80ac1DC22c78C9A8756fe6"
     RelayerUpdaterFacet: "0xc446F424e1f95ea1ADf0b77fFae23f17A0569378"
     DiamondLoupeFacet: "0xF01741149641A9d03FA72447F35839C85CA1c806"
     ProviderUpdaterFacet: "0x2b881CdE037890d387a650f8ca6Ee3f6C45A2CC5"
@@ -74,7 +74,7 @@ polygon:
 bsc:
   diamond: "0x1a6e1ef1d28A7d9feD016c88f4d1858367564781"
   facet:
-    RouterFacet: "0xC1521b1880e095c44D0C4F7B3fd084103eA54E10"
+    RouterFacet: "0x9031DaA015C311DE595C1aFA2f805B6b497f7CBd"
     RelayerUpdaterFacet: "0xFFe588b6c0fC789c8ac23d7fb3AFC031C61D9227"
     DiamondLoupeFacet: "0x56CE178868B653480cD65AaF81C01b30C005a299"
     ProviderUpdaterFacet: "0xb5A87Cd4C9C83f75cE9a25299bf66523B7410952"
@@ -100,7 +100,7 @@ bsc:
 avalanche:
   diamond: "0x1a6e1ef1d28A7d9feD016c88f4d1858367564781"
   facet:
-    RouterFacet: "0x323C4B3a99118669f6ac31582C85B608FfD6e34e"
+    RouterFacet: "0x68FC9040e507C329208eeA45C7E9E0946EB81501"
     RelayerUpdaterFacet: "0xFFe588b6c0fC789c8ac23d7fb3AFC031C61D9227"
     DiamondLoupeFacet: "0x56CE178868B653480cD65AaF81C01b30C005a299"
     ProviderUpdaterFacet: "0xb5A87Cd4C9C83f75cE9a25299bf66523B7410952"
@@ -126,7 +126,7 @@ avalanche:
 optimism:
   diamond: "0x1a6e1ef1d28a7d9fed016c88f4d1858367564781"
   facet:
-    RouterFacet: "0x323C4B3a99118669f6ac31582C85B608FfD6e34e"
+    RouterFacet: "0x2a744014Ca5354d98dd752F1a61A4Ee8110f4a6a"
     RelayerUpdaterFacet: "0xFFe588b6c0fC789c8ac23d7fb3AFC031C61D9227"
     DiamondLoupeFacet: "0x56CE178868B653480cD65AaF81C01b30C005a299"
     ProviderUpdaterFacet: "0xb5A87Cd4C9C83f75cE9a25299bf66523B7410952"
