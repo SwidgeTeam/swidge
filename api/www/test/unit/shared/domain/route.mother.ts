@@ -29,7 +29,8 @@ export class RouteMother {
       BigIntegerMother.random(),
     );
     const txDetails = new TransactionDetails(
-      faker.random.alphaNumeric(42),
+      faker.finance.ethereumAddress(),
+      faker.finance.ethereumAddress(),
       faker.random.alphaNumeric(200),
       BigIntegerMother.random(),
       BigIntegerMother.random(),
@@ -63,7 +64,8 @@ export class RouteMother {
       BigIntegerMother.random(),
     );
     const txDetails = new TransactionDetails(
-      faker.random.alphaNumeric(42),
+      faker.finance.ethereumAddress(),
+      faker.finance.ethereumAddress(),
       faker.random.alphaNumeric(200),
       BigIntegerMother.random(),
       BigIntegerMother.random(),

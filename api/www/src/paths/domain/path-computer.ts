@@ -426,6 +426,7 @@ export class PathComputer {
 
     const transactionDetails = new TransactionDetails(
       DeployedAddresses.Router,
+      DeployedAddresses.Router,
       callData,
       value,
       BigInteger.fromString('2000000'), // TODO set more accurate

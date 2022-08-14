@@ -33,6 +33,7 @@ export class GetPathController {
     return {
       tx: {
         to: route.transactionDetails.to,
+        approvalAddress: route.transactionDetails.approvalAddress,
         callData: route.transactionDetails.callData,
         value: route.transactionDetails.value.toString(),
         gasLimit: route.transactionDetails.gasLimit.toString(),
