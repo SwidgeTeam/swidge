@@ -21,9 +21,21 @@ describe('CachedHttpClient', () => {
     const client = CachedHttpClient.create();
 
     // Act
-    const callOne = await client.get('/some-path?with=arguments');
-    const callTwo = await client.get('/some-path?with=arguments');
-    const callThree = await client.get('/some-path?with=arguments');
+    const callOne = await client.get('/some-path', {
+      params: {
+        with: 'arguments',
+      },
+    });
+    const callTwo = await client.get('/some-path', {
+      params: {
+        with: 'arguments',
+      },
+    });
+    const callThree = await client.get('/some-path', {
+      params: {
+        with: 'arguments',
+      },
+    });
 
     // Assert
     expect(callStub.callCount).toEqual(1);
@@ -31,9 +43,38 @@ describe('CachedHttpClient', () => {
     expect(callTwo).toEqual({ foo: 'bar' });
     expect(callThree).toEqual({ foo: 'bar' });
     expect(callStub.firstCall.args).toEqual([
-      '/some-path?with=arguments',
+      '/some-path',
       {
         headers: undefined,
+        params: {
+          with: 'arguments',
+        },
+      },
+    ]);
+  });
+
+  it('should only make the request on the first call even without params', async () => {
+    // Arrange
+    const callStub = stub(myAxios, 'get').resolves({
+      foo: 'bar',
+    });
+    const client = CachedHttpClient.create();
+
+    // Act
+    const callOne = await client.get('/some-path');
+    const callTwo = await client.get('/some-path');
+    const callThree = await client.get('/some-path');
+
+    // Assert
+    expect(callStub.callCount).toEqual(1);
+    expect(callOne).toEqual({ foo: 'bar' });
+    expect(callTwo).toEqual({ foo: 'bar' });
+    expect(callThree).toEqual({ foo: 'bar' });
+    expect(callStub.firstCall.args).toEqual([
+      '/some-path',
+      {
+        headers: undefined,
+        params: undefined,
       },
     ]);
   });

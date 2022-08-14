@@ -242,7 +242,8 @@ export class Sushiswap implements Exchange {
         pairs: GraphPair[];
       };
     }>(theGraphEndpoints[chainId], {
-      query: `
+      params: {
+        query: `
         {
           pairs(
             where: {
@@ -270,6 +271,7 @@ export class Sushiswap implements Exchange {
             reserve1
           }
         }`,
+      },
     });
 
     const items = [];

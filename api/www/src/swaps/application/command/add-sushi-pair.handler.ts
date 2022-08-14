@@ -29,7 +29,8 @@ export class AddSushiPairHandler implements ICommandHandler<AddSushiPairCommand>
         pairs: GraphPair[];
       };
     }>(theGraphEndpoints[chainId], {
-      query: `
+      params: {
+        query: `
         {
           pairs(
             where: {
@@ -54,6 +55,7 @@ export class AddSushiPairHandler implements ICommandHandler<AddSushiPairCommand>
             reserve1
           }
         }`,
+      },
     });
 
     const row = result.data.pairs[0];

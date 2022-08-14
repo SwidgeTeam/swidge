@@ -1,5 +1,5 @@
 import axios, { Axios, AxiosError, AxiosResponse } from 'axios';
-import { IHttpClient, Parameters, URL, Headers } from '../../domain/http/IHttpClient';
+import { IHttpClient, URL, Config } from '../../domain/http/IHttpClient';
 
 export class HttpClient implements IHttpClient {
   private readonly axios: Axios;
@@ -18,60 +18,57 @@ export class HttpClient implements IHttpClient {
   /**
    * Requests a GET
    * @param url
-   * @param headers
+   * @param config
    */
-  public get<Response>(url: URL, headers?: Headers): Promise<Response> {
+  public get<Response>(url: URL, config?: Config): Promise<Response> {
     return this.axios.get(url, {
-      headers: headers,
+      headers: config ? config.headers : undefined,
+      params: config ? config.params : undefined,
     });
   }
 
   /**
    * Requests a POST
    * @param url
-   * @param params
-   * @param headers
+   * @param config
    */
-  public post<Response>(url: URL, params: Parameters, headers?: Headers): Promise<Response> {
-    return this.axios.post(url, params, {
-      headers: headers,
+  public post<Response>(url: URL, config?: Config): Promise<Response> {
+    return this.axios.post(url, config.params, {
+      headers: config ? config.headers : undefined,
     });
   }
 
   /**
    * Requests PATCH
    * @param url
-   * @param params
-   * @param headers
+   * @param config
    */
-  public patch<Response>(url: URL, params: Parameters, headers?: Headers): Promise<Response> {
-    return this.axios.patch(url, params, {
-      headers: headers,
+  public patch<Response>(url: URL, config?: Config): Promise<Response> {
+    return this.axios.patch(url, config.params, {
+      headers: config ? config.headers : undefined,
     });
   }
 
   /**
    * Requests a PUT
    * @param url
-   * @param params
-   * @param headers
+   * @param config
    */
-  public put<Response>(url: URL, params: Parameters, headers?: Headers): Promise<Response> {
-    return this.axios.put(url, params, {
-      headers: headers,
+  public put<Response>(url: URL, config?: Config): Promise<Response> {
+    return this.axios.put(url, config.params, {
+      headers: config ? config.headers : undefined,
     });
   }
 
   /**
    * Requests a DELETE
    * @param url
-   * @param headers
-   * @param params
+   * @param config
    */
-  public delete<Response>(url: URL, headers?: Headers, params?: Parameters): Promise<Response> {
+  public delete<Response>(url: URL, config?: Config): Promise<Response> {
     return this.axios.delete(url, {
-      headers: headers,
-      data: params,
+      headers: config ? config.headers : undefined,
+      data: config ? config.params : undefined,
     });
   }
 

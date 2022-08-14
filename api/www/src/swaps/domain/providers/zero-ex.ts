@@ -39,13 +39,14 @@ export class ZeroEx implements Exchange {
         buyAmount: string;
         guaranteedPrice: string;
         gas: string;
-      }>(
-        `${urls[request.chainId]}/swap/v1/quote` +
-          `?sellToken=${request.tokenIn.address}` +
-          `&buyToken=${request.tokenOut.address}` +
-          `&sellAmount=${request.amountIn.toString()}` +
-          `&slippagePercentage=${slippage.toString()}`,
-      )
+      }>(`${urls[request.chainId]}/swap/v1/quote`, {
+        params: {
+          sellToken: request.tokenIn.address,
+          buyToken: request.tokenOut.address,
+          sellAmount: request.amountIn.toString(),
+          slippagePercentage: slippage.toString(),
+        },
+      })
       .catch((error) => {
         // TODO : check error type
         throw new InsufficientLiquidity();

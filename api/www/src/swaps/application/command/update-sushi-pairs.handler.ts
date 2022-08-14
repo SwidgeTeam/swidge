@@ -77,7 +77,8 @@ export class UpdateSushiPairsHandler implements ICommandHandler<UpdateSushiPairs
         pairs: GraphPair[];
       };
     }>(theGraphEndpoints[pair.chainId], {
-      query: `
+      params: {
+        query: `
         {
           pairs(
             where: {
@@ -89,6 +90,7 @@ export class UpdateSushiPairsHandler implements ICommandHandler<UpdateSushiPairs
             reserve1
           }
         }`,
+      },
     });
 
     const data = result.data.pairs[0];
@@ -113,7 +115,8 @@ export class UpdateSushiPairsHandler implements ICommandHandler<UpdateSushiPairs
         pairs: GraphPair[];
       };
     }>(theGraphEndpoints[chainId], {
-      query: `
+      params: {
+        query: `
         {
           pairs(
             orderBy: volumeUSD
@@ -136,6 +139,7 @@ export class UpdateSushiPairsHandler implements ICommandHandler<UpdateSushiPairs
             reserve1
           }
         }`,
+      },
     });
 
     const items = [];

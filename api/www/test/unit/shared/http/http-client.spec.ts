@@ -1,10 +1,5 @@
 import { spy, restore, stub } from 'sinon';
-import axios, {
-  Axios,
-  AxiosError,
-  AxiosRequestConfig,
-  AxiosResponse,
-} from 'axios';
+import axios, { Axios, AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { HttpClient } from '../../../../src/shared/infrastructure/http/httpClient';
 
 describe('HttpClient', () => {
@@ -95,11 +90,7 @@ describe('HttpClient', () => {
         };
       }
 
-      function assertMessageOnOutputError(
-        axios: Axios,
-        error: AxiosError,
-        message: string,
-      ) {
+      function assertMessageOnOutputError(axios: Axios, error: AxiosError, message: string) {
         // Arrange
         HttpClient.create();
 
@@ -128,7 +119,9 @@ describe('HttpClient', () => {
 
         // Act
         await client.get('/some-path?with=arguments', {
-          some: 'header',
+          headers: {
+            some: 'header',
+          },
         });
 
         // Assert
@@ -148,16 +141,15 @@ describe('HttpClient', () => {
         const client = HttpClient.create();
 
         // Act
-        await client.post(
-          '/some-path',
-          {
+        await client.post('/some-path', {
+          headers: {
+            some: 'header',
+          },
+          params: {
             something: 'here',
             else: 'there',
           },
-          {
-            some: 'header',
-          },
-        );
+        });
 
         // Assert
         expect(callStub.firstCall.args).toEqual([
@@ -180,16 +172,15 @@ describe('HttpClient', () => {
         const client = HttpClient.create();
 
         // Act
-        await client.put(
-          '/some-path',
-          {
+        await client.put('/some-path', {
+          headers: {
+            some: 'header',
+          },
+          params: {
             something: 'here',
             else: 'there',
           },
-          {
-            some: 'header',
-          },
-        );
+        });
 
         // Assert
         expect(callStub.firstCall.args).toEqual([
@@ -212,16 +203,15 @@ describe('HttpClient', () => {
         const client = HttpClient.create();
 
         // Act
-        await client.patch(
-          '/some-path',
-          {
+        await client.patch('/some-path', {
+          headers: {
+            some: 'header',
+          },
+          params: {
             something: 'here',
             else: 'there',
           },
-          {
-            some: 'header',
-          },
-        );
+        });
 
         // Assert
         expect(callStub.firstCall.args).toEqual([
@@ -244,27 +234,26 @@ describe('HttpClient', () => {
         const client = HttpClient.create();
 
         // Act
-        await client.delete(
-          '/some-path',
-          {
+        await client.delete('/some-path', {
+          headers: {
             some: 'header',
           },
-          {
+          params: {
             something: 'here',
             else: 'there',
           },
-        );
+        });
 
         // Assert
         expect(callStub.firstCall.args).toEqual([
           '/some-path',
           {
+            headers: {
+              some: 'header',
+            },
             data: {
               something: 'here',
               else: 'there',
-            },
-            headers: {
-              some: 'header',
             },
           },
         ]);

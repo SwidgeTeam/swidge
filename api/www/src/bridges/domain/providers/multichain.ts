@@ -111,7 +111,13 @@ export class Multichain implements Bridge {
   private async getTokenDetails(fromChainId: string, sourceToken: Token): Promise<TokenDetails> {
     // Obtain full list of tokens available to swap on this chain
     const tokenList = await this.httpClient.get(
-      `https://bridgeapi.anyswap.exchange/v3/serverinfoV3?chainId=${fromChainId}&version=STABLEV3`,
+      `https://bridgeapi.anyswap.exchange/v3/serverinfoV3`,
+      {
+        params: {
+          chainId: fromChainId,
+          version: 'STABLEV3',
+        },
+      },
     );
     // Return details of `sourceToken` in `toChainId`
     return tokenList[sourceToken.address.toLowerCase()];
