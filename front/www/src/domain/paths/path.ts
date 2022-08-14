@@ -28,6 +28,7 @@ interface RouteResume {
 
 export interface TransactionDetails {
     to: string
+    approvalAddress: string
     callData: string
     value: string
     gasLimit: string

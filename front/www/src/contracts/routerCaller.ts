@@ -16,7 +16,7 @@ export class RouterCaller {
         const signer = provider.getSigner()
 
         if (tokenIn !== NATIVE_COIN_ADDRESS) {
-            await RouterCaller.approveIfRequired(tokenIn, tx.to)
+            await RouterCaller.approveIfRequired(tokenIn, tx.approvalAddress)
         }
 
         return await signer.sendTransaction({

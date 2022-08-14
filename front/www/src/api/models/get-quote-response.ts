@@ -18,6 +18,7 @@ interface RouteStepJson {
 
 interface TransactionDetailsJson {
     to: string
+    approvalAddress: string
     callData: string
     value: string
     gasLimit: string

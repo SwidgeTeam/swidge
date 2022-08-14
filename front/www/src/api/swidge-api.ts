@@ -49,6 +49,7 @@ class SwidgeAPI extends HttpClient {
                     amountOut: route.amountOut.toString(),
                     tx: {
                         to: route.tx.to,
+                        approvalAddress: route.tx.approvalAddress,
                         callData: route.tx.callData,
                         value: route.tx.value,
                         gasLimit: route.tx.gasLimit,
