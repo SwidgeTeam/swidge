@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { ChainsModule } from './chains/chains.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HealthModule } from './health/health.module';
 import { PathsModule } from './paths/paths.module';
@@ -12,7 +11,6 @@ import { TokensModule } from './tokens/tokens.module';
   imports: [
     TypeOrmModule.forRoot(databaseConfiguration()),
     AddressesModule,
-    ChainsModule,
     HealthModule,
     PathsModule,
     SwapsModule,
