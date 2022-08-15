@@ -5,7 +5,7 @@ on:
     branches: [ 'master' ]
     paths:
       - 'relayer/www/**'
-      - '.github/workflows/relayer.yml'
+      - '.github/workflows/relayer-deploy.yml'
 
 env:
   root-path: relayer/www

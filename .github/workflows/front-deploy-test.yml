@@ -5,15 +5,15 @@ on:
     branches: [ 'release/**' ]
     paths:
       - 'front/www/**'
-      - '.github/workflows/front.yml'
-      - '.github/workflows/front-test.yml'
+      - '.github/workflows/front-deploy.yml'
+      - '.github/workflows/front-deploy-test.yml'
 
   pull_request:
     branches: [ 'release/**' ]
     paths:
       - 'front/www/**'
-      - '.github/workflows/front.yml'
-      - '.github/workflows/front-test.yml'
+      - '.github/workflows/front-deploy.yml'
+      - '.github/workflows/front-deploy-test.yml'
 
 
 jobs:

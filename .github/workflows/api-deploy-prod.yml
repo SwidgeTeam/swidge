@@ -5,12 +5,12 @@ on:
     branches: [ 'master' ]
     paths:
       - 'api/www/**'
-      - '.github/workflows/api.yml'
-      - '.github/workflows/api-prod.yml'
+      - '.github/workflows/api-deploy.yml'
+      - '.github/workflows/api-deploy-prod.yml'
 
 jobs:
   workflow-api:
-    uses: ./.github/workflows/api.yml
+    uses: ./.github/workflows/api-deploy.yml
     secrets:
       EC2_SSH_KEY_API: ${{ secrets.PROD_EC2_SSH_KEY_API }}
       EC2_HOST_API: ${{ secrets.PROD_EC2_HOST_API }}

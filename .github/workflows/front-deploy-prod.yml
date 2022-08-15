@@ -5,8 +5,8 @@ on:
     branches: [ 'master' ]
     paths:
       - 'front/www/**'
-      - '.github/workflows/front.yml'
-      - '.github/workflows/front-prod.yml'
+      - '.github/workflows/front-deploy.yml'
+      - '.github/workflows/front-deploy-prod.yml'
 
 jobs:
   workflow-front:
