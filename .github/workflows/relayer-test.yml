@@ -1,0 +1,38 @@
+name: Test relayer
+
+on:
+  push:
+    branches-ignore:  [ 'master' ]
+    paths:
+      - 'relayer/www/**'
+      - '.github/workflows/relayer-test.yml'
+
+env:
+  root-path: relayer/www
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [ 16.x ]
+
+    defaults:
+      run:
+        working-directory: ./${{ env.root-path }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Run Tests
+        run: yarn test
