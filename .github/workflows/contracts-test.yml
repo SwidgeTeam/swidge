@@ -1,14 +1,10 @@
-name: Test Frontend
+name: Test contracts
 
 on:
   push:
-    branches-ignore:  [ 'master', 'release/**' ]
     paths:
-      - 'front/www/**'
-      - '.github/workflows/front-test.yml'
-
-env:
-  root-path: front/www
+      - 'contracts/www/**'
+      - '.github/workflows/contracts-test.yml'
 
 jobs:
   build:
@@ -20,18 +16,24 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./${{ env.root-path }}
+        working-directory: ./contracts/www
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies
         run: yarn install
 
+      - name: Build contracts
+        run: yarn build
+
       - name: Run Tests
         run: yarn test
+
+
