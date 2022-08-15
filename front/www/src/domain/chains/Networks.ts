@@ -72,6 +72,12 @@ export class Networks {
         return Array.from(this.networks.values())
     }
 
+    public static live(): INetwork[] {
+        return Networks.all().filter(network => {
+            return network.live
+        })
+    }
+
     public static ids(): string[] {
         return Array.from(this.networks.keys())
     }
