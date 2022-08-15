@@ -44,6 +44,18 @@ export const useTokensStore = defineStore('tokens', {
             }
         },
         /**
+         * Returns a token given chainId and address
+         * @param state
+         */
+        getTokensByAddress(state) {
+            return (address: string): IToken[] | undefined => {
+                return state.tokens
+                    .filter(token => {
+                        return token.address.toLowerCase() === address.toLowerCase()
+                    })
+            }
+        },
+        /**
          * Returns the selected origin chain ID
          */
         getOriginChainId(): string {

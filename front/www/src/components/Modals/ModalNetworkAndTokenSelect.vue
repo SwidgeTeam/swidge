@@ -10,7 +10,6 @@ import { ethers } from 'ethers'
 import { useTokensStore } from '@/store/tokens'
 import IERC20Abi from '@/contracts/IERC20.json'
 import { INetwork } from '@/domain/chains/INetwork'
-import { flatten } from 'lodash'
 
 const tokensStore = useTokensStore()
 
@@ -28,6 +27,7 @@ const searchTerm = ref('')
 const selectedNetworkId = ref('')
 const searchComponent = ref<any | null>(null)
 const matchingTokens = ref<IToken[]>([])
+const checkingNetworks = ref<number>(0)
 
 const getNetworks = () => {
     return Networks.live()
@@ -40,6 +40,7 @@ const getNetworks = () => {
 const handleSetToken = (token: IToken) => {
     searchTerm.value = ''
     selectedNetworkId.value = ''
+    matchingTokens.value = []
     emits('update-token', token)
 }
 
@@ -49,6 +50,7 @@ const handleSetToken = (token: IToken) => {
  */
 const handleImportToken = (token: IToken) => {
     tokensStore.importToken(token)
+    handleSetToken(token)
 }
 
 /**
@@ -57,6 +59,7 @@ const handleImportToken = (token: IToken) => {
 const onCloseModal = () => {
     searchTerm.value = ''
     selectedNetworkId.value = ''
+    matchingTokens.value = []
     emits('close-modal')
 }
 
@@ -69,26 +72,30 @@ const handleModalClick = () => {
  * fetch matching tokens if it's an address
  * @param term
  */
-const updateSearchTerm = async (term: string) => {
+const updateSearchTerm = (term: string) => {
     searchTerm.value = term
+    matchingTokens.value = []
 
-    if (isTermAnAddress()) {
-        matchingTokens.value = await loadMatchingTokens()
+    if (showCustomTokens()) {
+        loadMatchingTokens()
     }
 }
 
 /**
  * Tries to fetch the matching tokens of a specific address
  */
-const loadMatchingTokens = async (): Promise<IToken[]> => {
+const loadMatchingTokens = () => {
     const address = searchTerm.value.toLowerCase().trim()
-    const promises: Promise<any>[] = []
-    Networks.live().forEach(network => {
-        promises.push(fetchToken(network, address))
+    const liveNetworks = Networks.live()
+    checkingNetworks.value = liveNetworks.length
+    liveNetworks.forEach(network => {
+        fetchToken(network, address).then(token => {
+            if (token) {
+                matchingTokens.value.push(token)
+            }
+            checkingNetworks.value--
+        })
     })
-
-    return flatten(await Promise.all(promises))
-        .filter(token => token)
 }
 
 /**
@@ -128,7 +135,7 @@ const fetchToken = async (network: INetwork, address: string): Promise<IToken | 
  * Returns the list of tokens that have to be shown on the modal
  */
 const listTokens = () => {
-    if (isTermAnAddress()) {
+    if (showCustomTokens()) {
         return matchingTokens.value
     } else {
         return filteredTokens()
@@ -146,6 +153,21 @@ const isTermAnAddress = () => {
         // not an address, just a term
         return false
     }
+}
+
+/**
+ * Whether to show the custom fetched tokens
+ */
+const showCustomTokens = () => {
+    return isTermAnAddress() && !existsAddressOnList()
+}
+
+/**
+ * Checks if an address exists on the list
+ */
+const existsAddressOnList = (): boolean => {
+    const tokens = tokensStore.getTokensByAddress(searchTerm.value)
+    return tokens ? tokens.length > 0 : false
 }
 
 /**
@@ -169,6 +191,7 @@ const filteredTokens = () => {
         tokens = tokens
             .filter(token => {
                 return (
+                    token.address.toLowerCase().includes(pattern) ||
                     token.name.toLowerCase().includes(pattern) ||
                     token.symbol.toLowerCase().includes(pattern) ||
                     token.chainName.toLowerCase().includes(pattern)
@@ -199,7 +222,8 @@ const filteredTokens = () => {
         <SelectTokenList
             :is-origin="isOrigin"
             :tokens="listTokens()"
-            :custom-tokens="isTermAnAddress()"
+            :custom-tokens="showCustomTokens()"
+            :loading-custom-tokens="checkingNetworks > 0"
             :chain-list="getNetworks()"
             :search-term="searchTerm"
             :selected-network-id="selectedNetworkId"

@@ -11,6 +11,7 @@ const props = defineProps<{
     searchTerm: string
     isOrigin: boolean
     customTokens: boolean
+    loadingCustomTokens: boolean
 }>()
 
 const emits = defineEmits<{
@@ -54,6 +55,9 @@ const clickOnToken = (token: IToken) => {
                     />
                 </li>
             </ul>
+            <div v-if="loadingCustomTokens">
+                loading
+            </div>
         </div>
     </div>
 </template>
