@@ -10,7 +10,7 @@ on:
 
 jobs:
   workflow-front:
-    uses: ./.github/workflows/front.yml
+    uses: ./.github/workflows/front-deploy.yml
     with:
       api-url: https://api.swidge.xyz
     secrets:
