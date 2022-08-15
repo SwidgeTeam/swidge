@@ -3,6 +3,7 @@ import TokenDisplay from './TokenDisplay.vue'
 import NetworkAndTokenNothingFound from './NetworkAndTokenNothingFound.vue'
 import { INetwork } from '@/domain/chains/INetwork'
 import IToken from '@/domain/tokens/IToken'
+import Spinner from 'vue-spinner/src/ScaleLoader.vue'
 
 const props = defineProps<{
     chainList: INetwork[]
@@ -56,7 +57,7 @@ const clickOnToken = (token: IToken) => {
                 </li>
             </ul>
             <div v-if="loadingCustomTokens">
-                loading
+                <Spinner color="#5b5b5b"/>
             </div>
         </div>
     </div>

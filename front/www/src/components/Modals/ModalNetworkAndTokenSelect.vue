@@ -213,7 +213,7 @@ const filteredTokens = () => {
         <SearchInputBox
             ref="searchComponent"
             :search-term="searchTerm"
-            placeholder="Search by token or network"
+            placeholder="Search by token, network or address"
             @update:search-term="updateSearchTerm"/>
         <NetworkLineSelector
             v-model:selected-network-id="selectedNetworkId"
