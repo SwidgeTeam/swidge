@@ -4,18 +4,27 @@ import NetworkAndTokenNothingFound from './NetworkAndTokenNothingFound.vue'
 import { INetwork } from '@/domain/chains/INetwork'
 import IToken from '@/domain/tokens/IToken'
 
-defineProps<{
+const props = defineProps<{
     chainList: INetwork[]
     tokens: IToken[]
     selectedNetworkId: string
     searchTerm: string
     isOrigin: boolean
+    customTokens: boolean
 }>()
 
 const emits = defineEmits<{
     (event: 'set-token', token: IToken): void
+    (event: 'import-token', token: IToken): void
 }>()
 
+const clickOnToken = (token: IToken) => {
+    if (props.customTokens) {
+        emits('import-token', token)
+    } else {
+        emits('set-token', token)
+    }
+}
 
 </script>
 
@@ -38,7 +47,7 @@ const emits = defineEmits<{
                     v-for="(token, index) in tokens"
                     :key="index"
                     class="hover:bg-cards-background-dark-grey py-3 rounded-xl cursor-pointer"
-                    @click="emits('set-token', token)"
+                    @click="() => clickOnToken(token)"
                 >
                     <TokenDisplay
                         :token="token"

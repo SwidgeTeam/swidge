@@ -33,12 +33,27 @@ const getNetworks = () => {
     return Networks.live()
 }
 
+/**
+ * Handles the event of a token being selected
+ * @param token
+ */
 const handleSetToken = (token: IToken) => {
     searchTerm.value = ''
     selectedNetworkId.value = ''
     emits('update-token', token)
 }
 
+/**
+ * Handles the event of a token being imported
+ * @param token
+ */
+const handleImportToken = (token: IToken) => {
+    // TODO show dialog to confirm import
+}
+
+/**
+ * Handle modal closing
+ */
 const onCloseModal = () => {
     searchTerm.value = ''
     selectedNetworkId.value = ''
@@ -184,9 +199,11 @@ const filteredTokens = () => {
         <SelectTokenList
             :is-origin="isOrigin"
             :tokens="listTokens()"
+            :custom-tokens="isTermAnAddress()"
             :chain-list="getNetworks()"
             :search-term="searchTerm"
             :selected-network-id="selectedNetworkId"
-            @set-token="handleSetToken($event)"/>
+            @set-token="handleSetToken($event)"
+            @import-token="handleImportToken($event)"/>
     </Modal>
 </template>
