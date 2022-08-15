@@ -1,6 +1,6 @@
 export type URL = string;
 export type Headers = Record<string, string>;
-export type Parameters = Record<string, unknown>;
+export type Parameters = Record<string, unknown> | string;
 
 export interface Config {
   params?: Parameters;
