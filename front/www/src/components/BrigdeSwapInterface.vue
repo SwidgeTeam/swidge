@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { ContractCaller } from '@/contracts/contractCaller'
+import ModalNetworkAndTokenSelect from './Modals/ModalNetworkAndTokenSelect.vue'
 import { ethers, providers } from 'ethers'
 import { useWeb3Store } from '@/store/web3'
 import { useTokensStore } from '@/store/tokens'
 import { useRoutesStore } from '@/store/routes'
 import { useTransactionStore } from '@/store/transaction'
 import ModalSwidgeStatus from './ModalSwidgeStatus.vue'
-import ModalNetworkAndTokenSelect from './ModalNetworkAndTokenSelect.vue'
 import SwapBox from '@/components/SwapBox.vue'
-import { ContractCaller } from '@/contracts/contractCaller'
 import IToken from '@/domain/tokens/IToken'
 import Route, { TransactionDetails } from '@/domain/paths/path'
-import { TransactionReceipt } from '@ethersproject/abstract-provider'
 import Aggregators from '@/domain/aggregators/aggregators'
+import { TransactionReceipt } from '@ethersproject/abstract-provider'
 
 const web3Store = useWeb3Store()
 const tokensStore = useTokensStore()
