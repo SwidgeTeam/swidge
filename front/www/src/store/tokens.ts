@@ -2,6 +2,8 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 import swidgeApi from '@/api/swidge-api'
 import IToken from '@/domain/tokens/IToken'
 
+const CUSTOM_TOKENS_STORAGE_KEY = 'custom-tokens'
+
 export const useTokensStore = defineStore('tokens', {
     state: () => ({
         tokens: [] as IToken[],
@@ -133,6 +135,25 @@ export const useTokensStore = defineStore('tokens', {
          */
         async fetchTokens() {
             this.tokens = await swidgeApi.fetchTokens()
+            const customTokens = getCustomTokens()
+            if (customTokens) {
+                this.tokens.push(...customTokens)
+            }
+        },
+        /**
+         * Imports a token into the list if it doesn't exist already
+         * @param token
+         */
+        importToken(token: IToken) {
+            const customTokens = getCustomTokens()
+            const exists = customTokens.find(t => {
+                return t.address === token.address && t.chainId === t.chainId
+            })
+            if (!exists) {
+                customTokens.push(token)
+                localStorage.setItem(CUSTOM_TOKENS_STORAGE_KEY, JSON.stringify(customTokens))
+                this.tokens.push(token)
+            }
         },
         /**
          * Sets a specific token as selected on origin
@@ -167,6 +188,13 @@ export const useTokensStore = defineStore('tokens', {
         }
     }
 })
+
+function getCustomTokens(): IToken[] {
+    const rawCustomTokens = localStorage.getItem(CUSTOM_TOKENS_STORAGE_KEY)
+    return rawCustomTokens
+        ? JSON.parse(rawCustomTokens)
+        : []
+}
 
 if (import.meta.hot)
     import.meta.hot.accept(acceptHMRUpdate(useTokensStore, import.meta.hot))

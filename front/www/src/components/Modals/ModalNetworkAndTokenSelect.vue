@@ -48,7 +48,7 @@ const handleSetToken = (token: IToken) => {
  * @param token
  */
 const handleImportToken = (token: IToken) => {
-    // TODO show dialog to confirm import
+    tokensStore.importToken(token)
 }
 
 /**
