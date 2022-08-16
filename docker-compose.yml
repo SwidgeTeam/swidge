@@ -52,6 +52,8 @@ services:
       RPC_NODE_OPTIMISM: ${optimism_RPC_NODE}
       SWAGGER_USER: ${SWAGGER_USER}
       SWAGGER_PASS: ${SWAGGER_PASS}
+      SOCKET_API_KEY: ${SOCKET_API_KEY}
+      RANGO_API_KEY: ${RANGO_API_KEY}
     ports:
       - ${API_PORT}:3000
     volumes:
