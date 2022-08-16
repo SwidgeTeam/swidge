@@ -153,5 +153,6 @@ function getPathQuery(): GetPathQuery {
     '1000',
     2,
     faker.finance.ethereumAddress(),
+    faker.finance.ethereumAddress(),
   );
 }

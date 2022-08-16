@@ -5,6 +5,7 @@ import { AggregatorRequest } from '../../../../src/aggregators/domain/aggregator
 import { RouteMother } from '../../shared/domain/route.mother';
 import { TokenMother } from '../../shared/domain/token.mother';
 import { BigIntegerMother } from '../../shared/domain/big-integer.mother';
+import { faker } from '@faker-js/faker';
 
 describe('aggregators', () => {
   it('should filter enabled aggregators correctly', () => {
@@ -34,11 +35,11 @@ describe('aggregators', () => {
     const routeTwo = RouteMother.randomCrossChain();
     const mockAggregatorOne: Aggregator = createMock<Aggregator>({
       isEnabledOn: () => true,
-      execute: (request) => Promise.resolve(routeOne),
+      execute: () => Promise.resolve(routeOne),
     });
     const mockAggregatorTwo: Aggregator = createMock<Aggregator>({
       isEnabledOn: () => false,
-      execute: (request) => Promise.resolve(routeTwo),
+      execute: () => Promise.resolve(routeTwo),
     });
 
     const aggregators = new Aggregators([
@@ -53,6 +54,8 @@ describe('aggregators', () => {
       TokenMother.random(),
       BigIntegerMother.random(),
       2,
+      faker.finance.ethereumAddress(),
+      faker.finance.ethereumAddress(),
     );
 
     // Act
