@@ -18,6 +18,14 @@ const resetInput = () => {
     emits('update:searchTerm', "");
     searchBox.value?.focus()
 }
+const focusInput = () => {
+    searchBox.value?.focus()
+}
+
+defineExpose({
+  focusInput
+})
+
 </script>
 
 <template>
