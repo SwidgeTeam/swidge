@@ -128,7 +128,7 @@ export class LiFi implements Aggregator {
         type = RouteStep.TYPE_SWAP;
         break;
       case 'cross':
-        type = RouteStep.TYPE_SWAP;
+        type = RouteStep.TYPE_BRIDGE;
         break;
     }
 
