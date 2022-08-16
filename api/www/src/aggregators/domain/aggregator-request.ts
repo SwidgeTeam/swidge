@@ -9,6 +9,8 @@ export class AggregatorRequest {
     private readonly _toToken: Token,
     private readonly _amountIn: BigInteger,
     private readonly _slippage: number,
+    private readonly _senderAddress: string,
+    private readonly _receiverAddress: string,
   ) {}
 
   get fromChain() {
@@ -33,5 +35,13 @@ export class AggregatorRequest {
 
   get slippage() {
     return this._slippage;
+  }
+
+  get senderAddress(): string {
+    return this._senderAddress;
+  }
+
+  get receiverAddress(): string {
+    return this._receiverAddress;
   }
 }

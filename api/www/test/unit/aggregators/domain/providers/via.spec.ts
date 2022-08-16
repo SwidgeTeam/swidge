@@ -21,6 +21,8 @@ describe('aggregators', () => {
       TokenMother.fantomUsdc(),
       BigInteger.fromDecimal('100'),
       2,
+      '0xc99F374E96Fb1c2eEAFe92596bEd04aa1397971c',
+      '0xc99F374E96Fb1c2eEAFe92596bEd04aa1397971c',
     );
 
     // Act
