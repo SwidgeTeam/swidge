@@ -35,6 +35,7 @@ interface RouteResumeJson {
 }
 
 interface RouteJson {
+    aggregatorId: string
     amountOut: string
     resume: RouteResumeJson
     tx: TransactionDetailsJson

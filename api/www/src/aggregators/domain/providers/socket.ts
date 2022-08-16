@@ -9,6 +9,7 @@ import { RouteResume } from '../../../shared/domain/route-resume';
 import { RouteStep } from '../../../shared/domain/route-step';
 import { Token } from '../../../shared/domain/token';
 import { ProviderDetails } from '../../../shared/domain/provider-details';
+import { AggregatorProviders } from './aggregator-providers';
 
 // whole Route details
 interface SocketRoute {
@@ -116,7 +117,7 @@ export class Socket implements Aggregator {
     const txDetails = await this.getTxDetails(route);
     const steps = this.buildSteps(route.userTxs[0].steps);
 
-    return new Route(resume, txDetails, steps);
+    return new Route(AggregatorProviders.Socket, resume, txDetails, steps);
   }
 
   /**

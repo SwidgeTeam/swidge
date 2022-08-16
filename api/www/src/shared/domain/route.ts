@@ -4,10 +4,15 @@ import { RouteResume } from './route-resume';
 
 export class Route {
   constructor(
+    private readonly _aggregatorId: string,
     private readonly _resume: RouteResume,
-    private readonly _transactionDetails: TransactionDetails,
+    private readonly _transactionDetails: TransactionDetails | null,
     private readonly _steps: RouteStep[],
   ) {}
+
+  get aggregatorId(): string {
+    return this._aggregatorId;
+  }
 
   get amountOut(): string {
     return this._resume.amountOut.toDecimal(this._resume.toToken.decimals);
@@ -17,7 +22,7 @@ export class Route {
     return this._resume;
   }
 
-  get transactionDetails(): TransactionDetails {
+  get transactionDetails(): TransactionDetails | undefined {
     return this._transactionDetails;
   }
 

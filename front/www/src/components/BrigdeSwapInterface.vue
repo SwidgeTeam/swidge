@@ -9,7 +9,8 @@ import IToken from '@/domain/tokens/IToken'
 import { useTokensStore } from '@/store/tokens'
 import { useRoutesStore } from '@/store/routes'
 import SwapBox from '@/components/SwapBox.vue'
-import Route from '@/domain/paths/path'
+import Route, { TransactionDetails } from '@/domain/paths/path'
+import { Erc20Caller } from '@/contracts/erc20Caller';
 
 const web3Store = useWeb3Store()
 const tokensStore = useTokensStore()
@@ -226,9 +227,26 @@ const onExecuteTransaction = async () => {
         throw new Error('No path')
     }
 
+    if(route.tx){
+        await ownExecution(route.resume.tokenIn.address, route.tx)
+    }
+    else {
+        // quote approval tx calldata
+
+        // approve
+
+        // quote tx calldata
+
+        // execute
+    }
+}
+
+const ownExecution = async (tokenIn: string, tx: TransactionDetails) => {
+    await Erc20Caller.approveIfRequired(tokenIn, tx.to)
+
     setExecutingButton()
 
-    const contractCall = await RouterCaller.call(route.resume.tokenIn.address, route.tx)
+    const contractCall = await RouterCaller.call(tx)
 
     openTransactionStatusModal()
 
@@ -237,7 +255,7 @@ const onExecuteTransaction = async () => {
         .then(async (receipt: { transactionHash: string }) => {
             routesStore.completeFirstStep()
             if (isCrossTransaction()) {
-                setUpEventListener(route, receipt.transactionHash)
+                setUpEventListener(tx, receipt.transactionHash)
             } else {
                 routesStore.completeRoute()
             }
@@ -250,15 +268,15 @@ const onExecuteTransaction = async () => {
 /**
  * Sets up the required listener to check for the events on the destination chain
  * It allows the frontend to know when the transaction has been completed
- * @param path
+ * @param tx
  * @param executedTxHash
  */
-const setUpEventListener = (path: Route, executedTxHash: string) => {
+const setUpEventListener = (tx: TransactionDetails, executedTxHash: string) => {
     const toChainId = tokensStore.getDestinationChainId
     const provider = getChainProvider(toChainId)
 
     const filter = {
-        address: path.tx.to,
+        address: tx.to,
         topics: [ethers.utils.id('CrossFinalized(bytes32,uint256,address)')],
     }
 

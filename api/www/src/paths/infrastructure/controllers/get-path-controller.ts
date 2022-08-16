@@ -30,15 +30,19 @@ export class GetPathController {
   }
 
   private mapRoute(route: Route) {
+    const txDetails = route.transactionDetails;
+    const tx = txDetails
+      ? {
+          to: txDetails.to,
+          approvalAddress: txDetails.approvalAddress,
+          callData: txDetails.callData,
+          value: txDetails.value.toString(),
+          gasLimit: txDetails.gasLimit.toString(),
+          gasPrice: txDetails.gasPrice.toString(),
+        }
+      : null;
     return {
-      tx: {
-        to: route.transactionDetails.to,
-        approvalAddress: route.transactionDetails.approvalAddress,
-        callData: route.transactionDetails.callData,
-        value: route.transactionDetails.value.toString(),
-        gasLimit: route.transactionDetails.gasLimit.toString(),
-        gasPrice: route.transactionDetails.gasPrice.toString(),
-      },
+      aggregatorId: route.aggregatorId,
       resume: {
         fromChain: route.resume.fromChain,
         toChain: route.resume.toChain,
@@ -48,6 +52,7 @@ export class GetPathController {
         amountOut: route.resume.amountOut.toDecimal(route.resume.toToken.decimals),
         minAmountOut: route.resume.minAmountOut.toDecimal(route.resume.toToken.decimals),
       },
+      tx: tx,
       amountOut: route.amountOut,
       steps: route.steps.map((step) => {
         return {

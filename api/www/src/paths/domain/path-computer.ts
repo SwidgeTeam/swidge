@@ -28,6 +28,7 @@ import { Bridges } from '../../bridges/domain/bridges';
 import { Exchanges } from '../../swaps/domain/exchanges';
 import { Aggregators } from '../../aggregators/domain/aggregators';
 import { Logger } from '../../shared/domain/logger';
+import { AggregatorProviders } from '../../aggregators/domain/providers/aggregator-providers';
 
 export class PathComputer {
   /** Providers */
@@ -443,7 +444,7 @@ export class PathComputer {
       minAmountOut,
     );
 
-    return new Route(resume, transactionDetails, steps);
+    return new Route(AggregatorProviders.Swidge, resume, transactionDetails, steps);
   }
 
   /**

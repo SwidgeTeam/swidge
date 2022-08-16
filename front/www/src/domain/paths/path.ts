@@ -37,8 +37,9 @@ export interface TransactionDetails {
 
 export default interface Route {
     amountOut: string
+    aggregatorId: string
     resume: RouteResume
-    tx: TransactionDetails
+    tx: TransactionDetails | null
     steps: RouteStep[]
     completed: boolean
 }
