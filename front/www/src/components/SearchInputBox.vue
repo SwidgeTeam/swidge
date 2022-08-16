@@ -46,7 +46,7 @@ defineExpose({
       type="text"
       :value="searchTerm"
       name="searchTerm"
-      class="block w-full pl-10 rounded-md font-roboto border-light-grey-2 bg-cards-background-dark-grey focus:ring-indigo-500 focus:border-indigo-500 text-light-grey-1"
+      class="block w-full pl-10 rounded-md font-roboto border-light-grey-2 bg-cards-background-dark-grey ring-1 ring-indigo-500 border-indigo-500 focus:ring-indigo-500 focus:border-indigo-500 text-light-grey-1"
       :placeholder="placeholder"
       @input="onInput" />
   </div>
