@@ -1,5 +1,8 @@
 <script setup lang='ts'>
 import { SearchIcon } from '@heroicons/vue/solid'
+import {TrashIcon} from '@heroicons/vue/outline'
+import { ref } from 'vue'
+const searchBox = ref<HTMLInputElement | null>(null)
 defineProps<{
   searchTerm: string
   placeholder: string
@@ -7,10 +10,13 @@ defineProps<{
 const emits = defineEmits<{
   (event: 'update:searchTerm', searchTerm: string): void,
 }>()
-
 const onInput = (event: Event) => {
     if (!(event.target instanceof HTMLInputElement)) return
     emits('update:searchTerm', event.target.value)
+}
+const resetInput = () => {
+    emits('update:searchTerm', "");
+    searchBox.value?.focus()
 }
 </script>
 
@@ -19,11 +25,16 @@ const onInput = (event: Event) => {
     <div
       class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
       <SearchIcon
-class="w-6 h-6 text-light-grey-1"
+        class="w-6 h-6 text-light-grey-1"
         aria-hidden="true" />
     </div>
+    <TrashIcon v-if="searchTerm!=''"
+      class="absolute w-4 top-3 right-3 cursor-pointer"
+      @click="resetInput"
+    />
     <input
-id="searchTerm"
+      id="searchTerm"
+      ref="searchBox"
       type="text"
       :value="searchTerm"
       name="searchTerm"
