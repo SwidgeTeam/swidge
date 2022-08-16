@@ -9,8 +9,11 @@ import { RouteStep } from '../../../shared/domain/route-step';
 import { IActionStep, IRouteAction } from '@viaprotocol/router-sdk/dist/types';
 import { Token } from '../../../shared/domain/token';
 import { ProviderDetails } from '../../../shared/domain/provider-details';
+import { SteppedAggregator } from '../stepped-aggregator';
+import { TransactionDetails } from '../../../shared/domain/transaction-details';
+import { ApprovalTransactionDetails } from '../approval-transaction-details';
 
-export class ViaExchange {
+export class ViaExchange implements SteppedAggregator {
   private enabledChains: string[];
   private client: Via;
 
@@ -29,7 +32,7 @@ export class ViaExchange {
   }
 
   /**
-   * Entrypoint to quote a Route from Socket.tech
+   * Entrypoint to quote a Route from Via.exchange
    * @param request
    */
   async execute(request: AggregatorRequest) {
@@ -52,9 +55,6 @@ export class ViaExchange {
 
     const route = response.routes[0];
 
-    console.log(route.actions[0].steps);
-    console.log(route.actions[1].steps);
-
     const resume = new RouteResume(
       request.fromChain,
       request.toChain,
@@ -72,25 +72,55 @@ export class ViaExchange {
     return new Route(AggregatorProviders.Via, resume, null, steps);
   }
 
-  public async buildApprovalTx() {
+  /**
+   * Builds the required transaction to approve the assets
+   * @param routeId
+   * @param senderAddress
+   */
+  public async buildApprovalTx(
+    routeId: string,
+    senderAddress: string,
+  ): Promise<ApprovalTransactionDetails> {
     const txApproval = await this.client.buildApprovalTx({
-      routeId: 'e805a720-6b84-4883-b597-c92fb91763ef',
-      owner: '0xa640E24a40adD20eF5605dA21C860EAC098a29Cc',
+      routeId: routeId,
+      owner: senderAddress,
       numAction: 0,
     });
 
-    console.log(txApproval);
+    return new ApprovalTransactionDetails(txApproval.to, txApproval.data);
   }
 
-  public async buildTx() {
+  /**
+   * Builds the transaction for the aggregator
+   * @param routeId
+   * @param senderAddress
+   * @param receiverAddress
+   */
+  public async buildTx(
+    routeId: string,
+    senderAddress: string,
+    receiverAddress: string,
+  ): Promise<TransactionDetails> {
     const tx = await this.client.buildTx({
-      routeId: 'e805a720-6b84-4883-b597-c92fb91763ef',
-      fromAddress: '0xa640E24a40adD20eF5605dA21C860EAC098a29Cc',
-      receiveAddress: '0xa640E24a40adD20eF5605dA21C860EAC098a29Cc',
+      routeId: routeId,
+      fromAddress: senderAddress,
+      receiveAddress: receiverAddress,
       numAction: 0,
     });
+
+    return new TransactionDetails(
+      tx.to,
+      tx.data,
+      BigInteger.fromString(tx.value.toString()),
+      BigInteger.fromString(tx.gas.toString()),
+    );
   }
 
+  /**
+   * Builds the whole set of steps
+   * @param actions
+   * @private
+   */
   private buildSteps(actions: IRouteAction[]): RouteStep[] {
     const items: RouteStep[] = [];
     for (const action of actions) {
@@ -101,6 +131,11 @@ export class ViaExchange {
     return items;
   }
 
+  /**
+   * Builds a single step
+   * @param step
+   * @private
+   */
   private buildStep(step: IActionStep): RouteStep {
     const fromToken = new Token(
       step.fromToken.name,
@@ -117,7 +152,7 @@ export class ViaExchange {
     const details = new ProviderDetails(step.tool.name, step.tool.logoURI);
     const amountIn = BigInteger.fromString(step.fromTokenAmount.toString());
     const amountOut = BigInteger.fromString(step.toTokenAmount.toString());
-    const feeInUSD = step.gasFees.feesInUsd.toString();
+    //const feeInUSD = step.gasFees.feesInUsd.toString();
 
     let type;
     switch (step.type) {
@@ -129,6 +164,6 @@ export class ViaExchange {
         break;
     }
 
-    return new RouteStep(type, details, fromToken, toToken, amountIn, amountOut, feeInUSD);
+    return new RouteStep(type, details, fromToken, toToken, amountIn, amountOut, '');
   }
 }
