@@ -47,6 +47,7 @@ export class GetPathController {
         id: route.aggregator.id,
         routeId: route.aggregator.routeId,
         requireCallDataQuote: route.aggregator.requiresCallDataQuoting,
+        trackingId: route.aggregator.trackingId,
       },
       resume: {
         fromChain: route.resume.fromChain,

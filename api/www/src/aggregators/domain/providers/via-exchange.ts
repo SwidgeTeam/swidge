@@ -50,7 +50,7 @@ export class ViaExchange implements SteppedAggregator {
       limit: 1,
     });
 
-    if (!response || response.routes.length === 0) {
+    if (!response || response.routes.length === 0 || response.routes[0].actions.length === 0) {
       throw new InsufficientLiquidity();
     }
 
@@ -67,7 +67,12 @@ export class ViaExchange implements SteppedAggregator {
     );
 
     const steps = this.buildSteps(route.actions);
-    const aggregatorDetails = new AggregatorDetails(AggregatorProviders.Via, route.routeId, true);
+    const aggregatorDetails = new AggregatorDetails(
+      AggregatorProviders.Via,
+      route.routeId,
+      true,
+      route.actions[0].uuid,
+    );
 
     return new Route(aggregatorDetails, resume, steps);
   }

@@ -3,6 +3,7 @@ export class AggregatorDetails {
     private readonly _id: string,
     private readonly _routeId = '',
     private readonly _requiresCallDataQuoting = false,
+    private readonly _trackingId = '',
   ) {}
 
   get id(): string {
@@ -15,5 +16,9 @@ export class AggregatorDetails {
 
   get requiresCallDataQuoting(): boolean {
     return this._requiresCallDataQuoting;
+  }
+
+  get trackingId(): string {
+    return this._trackingId;
   }
 }
