@@ -31,11 +31,11 @@ export class RouteMother {
     );
     const txDetails = new TransactionDetails(
       faker.finance.ethereumAddress(),
-      faker.finance.ethereumAddress(),
       faker.random.alphaNumeric(200),
       BigIntegerMother.random(),
       BigIntegerMother.random(),
       BigIntegerMother.random(),
+      faker.finance.ethereumAddress(),
     );
     const steps = [
       new RouteStep(
@@ -66,11 +66,11 @@ export class RouteMother {
     );
     const txDetails = new TransactionDetails(
       faker.finance.ethereumAddress(),
-      faker.finance.ethereumAddress(),
       faker.random.alphaNumeric(200),
       BigIntegerMother.random(),
       BigIntegerMother.random(),
       BigIntegerMother.random(),
+      faker.finance.ethereumAddress(),
     );
     const steps = [
       new RouteStep(

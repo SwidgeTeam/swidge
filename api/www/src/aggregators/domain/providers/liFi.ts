@@ -42,11 +42,11 @@ export class LiFi implements Aggregator {
 
       const transactionDetails = new TransactionDetails(
         response.transactionRequest.to,
-        response.estimate.approvalAddress,
         response.transactionRequest.data.toString(),
         BigInteger.fromString(response.transactionRequest.value.toString()),
         BigInteger.fromString(response.transactionRequest.gasLimit.toString()),
         BigInteger.fromString(response.transactionRequest.gasPrice.toString()),
+        response.estimate.approvalAddress,
       );
 
       const steps = this.createSteps(response);
