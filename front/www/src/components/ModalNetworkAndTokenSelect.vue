@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import { Dialog, DialogOverlay, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { XIcon } from '@heroicons/vue/solid'
-import {Component, ref } from 'vue'
+import { ref } from 'vue'
 import SearchInputBox from './SearchInputBox.vue'
 import NetworkLineSelector from './NetworkLineSelector.vue'
 import SelectTokenList from './SelectTokenList.vue'
@@ -40,7 +40,6 @@ const onCloseModal = () => {
 }
 
 const focusAlways = () => {
-        console.log("test")
         searchComponent.value?.focusInput()
 }
 
