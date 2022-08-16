@@ -7,7 +7,7 @@ export class TransactionDetails {
     private readonly _callData: string,
     private readonly _value: BigInteger,
     private readonly _gasLimit: BigInteger,
-    private readonly _gasPrice: BigInteger,
+    private readonly _gasPrice?: BigInteger,
     private readonly _approvalAddress?: ContractAddress,
   ) {}
 
