@@ -1,17 +1,18 @@
 import { TransactionDetails } from './transaction-details';
 import { RouteStep } from './route-step';
 import { RouteResume } from './route-resume';
+import { AggregatorDetails } from './aggregator-details';
 
 export class Route {
   constructor(
-    private readonly _aggregatorId: string,
+    private readonly _aggregator: AggregatorDetails,
     private readonly _resume: RouteResume,
-    private readonly _transactionDetails: TransactionDetails | null,
     private readonly _steps: RouteStep[],
+    private readonly _transactionDetails?: TransactionDetails,
   ) {}
 
-  get aggregatorId(): string {
-    return this._aggregatorId;
+  get aggregator(): AggregatorDetails {
+    return this._aggregator;
   }
 
   get amountOut(): string {

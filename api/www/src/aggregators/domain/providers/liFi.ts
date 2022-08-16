@@ -10,6 +10,7 @@ import { InsufficientLiquidity } from '../../../swaps/domain/insufficient-liquid
 import { ProviderDetails } from '../../../shared/domain/provider-details';
 import { RouteResume } from '../../../shared/domain/route-resume';
 import { AggregatorProviders } from './aggregator-providers';
+import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
 
 export class LiFi implements Aggregator {
   private enabledChains: string[];
@@ -61,7 +62,9 @@ export class LiFi implements Aggregator {
         BigInteger.fromString(response.estimate.toAmountMin),
       );
 
-      return new Route(AggregatorProviders.LiFi, resume, transactionDetails, steps);
+      const aggregatorDetails = new AggregatorDetails(AggregatorProviders.LiFi);
+
+      return new Route(aggregatorDetails, resume, steps, transactionDetails);
     } catch (e) {
       throw new InsufficientLiquidity();
     }

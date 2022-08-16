@@ -47,7 +47,11 @@ class SwidgeAPI extends HttpClient {
             const r = response.data
             return r.routes.map((r) => {
                 const route: Route = {
-                    aggregatorId: r.aggregatorId,
+                    aggregator: {
+                        id: r.aggregator.id,
+                        routeId: r.aggregator.routeId,
+                        requireCallDataQuote: r.aggregator.requireCallDataQuote,
+                    },
                     resume: {
                         fromChain: r.resume.fromChain,
                         toChain: r.resume.toChain,
@@ -55,8 +59,6 @@ class SwidgeAPI extends HttpClient {
                         tokenOut: r.resume.tokenOut,
                         amountIn: r.resume.amountIn,
                         amountOut: r.resume.amountOut,
-                        routeId: r.resume.routeId,
-                        requireCallDataQuote: r.resume.requireCallDataQuote,
                     },
                     steps: r.steps.map((step) => {
                         return {
@@ -73,7 +75,7 @@ class SwidgeAPI extends HttpClient {
                     }),
                     completed: false,
                 }
-                if (!route.resume.requireCallDataQuote) {
+                if (!route.aggregator.requireCallDataQuote) {
                     route.tx = {
                         to: r.tx.to,
                         approvalAddress: r.tx.approvalAddress,

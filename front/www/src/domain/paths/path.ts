@@ -18,8 +18,6 @@ export interface RouteStep {
 }
 
 interface RouteResume {
-    routeId: string
-    requireCallDataQuote: boolean
     fromChain: string
     toChain: string
     tokenIn: TokenDetails
@@ -38,11 +36,17 @@ export interface TransactionDetails {
 }
 
 export default interface Route {
-    aggregatorId: string
+    aggregator: AggregatorDetails
     resume: RouteResume
-    tx?: TransactionDetails
     steps: RouteStep[]
+    tx?: TransactionDetails
     completed: boolean
+}
+
+interface AggregatorDetails {
+    id: string
+    routeId: string
+    requireCallDataQuote: boolean
 }
 
 export interface ApprovalTransactionDetails {

@@ -228,7 +228,7 @@ const onExecuteTransaction = async () => {
         throw new Error('No path')
     }
 
-    if (!route.resume.requireCallDataQuote) {
+    if (!route.aggregator.requireCallDataQuote) {
         if (!route.tx) {
             throw new Error('trying to execute an empty transaction')
         }
@@ -243,8 +243,8 @@ const onExecuteTransaction = async () => {
 
         // quote approval tx calldata
         const approvalTx = await swidgeApi.getApprovalTx({
-            aggregatorId: route.aggregatorId,
-            routeId: route.resume.routeId,
+            aggregatorId: route.aggregator.id,
+            routeId: route.aggregator.routeId,
             senderAddress: web3Store.account
         })
 

@@ -26,8 +26,6 @@ interface TransactionDetailsJson {
 }
 
 interface RouteResumeJson {
-    routeId: string
-    requireCallDataQuote: boolean
     fromChain: string
     toChain: string
     tokenIn: TokenDetailsJson
@@ -37,11 +35,17 @@ interface RouteResumeJson {
 }
 
 interface RouteJson {
-    aggregatorId: string
     amountOut: string
+    aggregator: AggregatorDetailsJson
     resume: RouteResumeJson
     tx: TransactionDetailsJson
     steps: RouteStepJson[]
+}
+
+interface AggregatorDetailsJson {
+    id: string
+    routeId: string
+    requireCallDataQuote: boolean
 }
 
 export default interface GetQuoteResponse {

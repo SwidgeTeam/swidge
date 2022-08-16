@@ -1,5 +1,4 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { GetPathQuery } from '../../../paths/application/query/get-path.query';
 import BuildTxApprovalQuery from './build-tx-approval-query';
 import { Inject } from '@nestjs/common';
 import { Class } from '../../../shared/Class';

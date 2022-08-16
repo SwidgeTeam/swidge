@@ -12,6 +12,7 @@ import { ProviderDetails } from '../../../shared/domain/provider-details';
 import { SteppedAggregator } from '../stepped-aggregator';
 import { TransactionDetails } from '../../../shared/domain/transaction-details';
 import { ApprovalTransactionDetails } from '../approval-transaction-details';
+import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
 
 export class ViaExchange implements SteppedAggregator {
   private enabledChains: string[];
@@ -63,13 +64,12 @@ export class ViaExchange implements SteppedAggregator {
       request.amountIn,
       BigInteger.fromString(route.toTokenAmount.toString()),
       BigInteger.fromString(route.toTokenAmount.toString()),
-      route.routeId,
-      true,
     );
 
     const steps = this.buildSteps(route.actions);
+    const aggregatorDetails = new AggregatorDetails(AggregatorProviders.Via, route.routeId, true);
 
-    return new Route(AggregatorProviders.Via, resume, null, steps);
+    return new Route(aggregatorDetails, resume, steps);
   }
 
   /**

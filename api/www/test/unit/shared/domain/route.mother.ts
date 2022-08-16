@@ -7,6 +7,7 @@ import { BigIntegerMother } from './big-integer.mother';
 import { ProviderDetailsMother } from './provider-details.mother';
 import { TokenMother } from './token.mother';
 import { AggregatorProviders } from '../../../../src/aggregators/domain/providers/aggregator-providers';
+import { AggregatorDetails } from '../../../../src/shared/domain/aggregator-details';
 
 export class RouteMother {
   public static create(
@@ -14,7 +15,8 @@ export class RouteMother {
     txDetails: TransactionDetails,
     steps: RouteStep[],
   ): Route {
-    return new Route(AggregatorProviders.Swidge, resume, txDetails, steps);
+    const aggregatorDetails = new AggregatorDetails(AggregatorProviders.Swidge);
+    return new Route(aggregatorDetails, resume, steps, txDetails);
   }
 
   public static randomSingleSwap(): Route {

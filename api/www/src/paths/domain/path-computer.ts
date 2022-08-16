@@ -29,6 +29,7 @@ import { Exchanges } from '../../swaps/domain/exchanges';
 import { Aggregators } from '../../aggregators/domain/aggregators';
 import { Logger } from '../../shared/domain/logger';
 import { AggregatorProviders } from '../../aggregators/domain/providers/aggregator-providers';
+import { AggregatorDetails } from '../../shared/domain/aggregator-details';
 
 export class PathComputer {
   /** Providers */
@@ -448,7 +449,9 @@ export class PathComputer {
       minAmountOut,
     );
 
-    return new Route(AggregatorProviders.Swidge, resume, transactionDetails, steps);
+    const aggregatorDetails = new AggregatorDetails(AggregatorProviders.Swidge);
+
+    return new Route(aggregatorDetails, resume, steps, transactionDetails);
   }
 
   /**
