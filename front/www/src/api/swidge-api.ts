@@ -8,7 +8,8 @@ import { TransactionsList } from '@/api/models/transactions'
 import { TokenList } from '@/domain/tokens/TokenList'
 import IToken from '@/domain/tokens/IToken'
 import { Networks } from '@/domain/chains/Networks'
-import Route from '@/domain/paths/path'
+import Route, { ApprovalTransactionDetails } from '@/domain/paths/path'
+import GetApprovalTxResponseJson from '@/api/models/get-approval-tx-response';
 
 class SwidgeAPI extends HttpClient {
     public constructor() {
@@ -98,6 +99,24 @@ class SwidgeAPI extends HttpClient {
         try {
             const response = await this.instance.get(`/transactions/${walletAddress}`)
             return response.data
+        } catch (e: unknown) {
+            if (axios.isAxiosError(e)) {
+                const apiErrorResponse = e.response?.data as ApiErrorResponse
+                const errorMessage = apiErrorResponse.message ?? 'Unhandled error!'
+                throw new Error(errorMessage)
+            }
+            throw new Error('UnknownError no axios error')
+        }
+    }
+
+    async getApprovalTx(query: {
+        aggregatorId: string
+        routeId: string
+        senderAddress: string
+    }): Promise<ApprovalTransactionDetails> {
+        try {
+            const response = await this.instance.get<GetApprovalTxResponseJson>('/build-tx-approval', { params: query })
+            return response.data.tx
         } catch (e: unknown) {
             if (axios.isAxiosError(e)) {
                 const apiErrorResponse = e.response?.data as ApiErrorResponse

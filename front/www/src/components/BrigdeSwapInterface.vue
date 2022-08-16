@@ -10,7 +10,7 @@ import { useTokensStore } from '@/store/tokens'
 import { useRoutesStore } from '@/store/routes'
 import SwapBox from '@/components/SwapBox.vue'
 import Route, { TransactionDetails } from '@/domain/paths/path'
-import { Erc20Caller } from '@/contracts/erc20Caller';
+import swidgeApi from '@/api/swidge-api';
 
 const web3Store = useWeb3Store()
 const tokensStore = useTokensStore()
@@ -184,7 +184,7 @@ const onQuote = async () => {
 
         const route = routesStore.getSelectedRoute
 
-        destinationTokenAmount.value = route.amountOut
+        destinationTokenAmount.value = route.resume.amountOut
         isGettingQuote.value = false
         totalFee.value = route.steps.reduce((total, current) => {
             return total + Number(current.fee)
@@ -227,13 +227,34 @@ const onExecuteTransaction = async () => {
         throw new Error('No path')
     }
 
-    if(route.tx){
+    if (!route.resume.requireCallDataQuote) {
+        if (!route.tx) {
+            throw new Error('trying to execute an empty transaction')
+        }
         await ownExecution(route.resume.tokenIn.address, route.tx)
-    }
-    else {
+    } else {
+        const provider = new ethers.providers.Web3Provider(window.ethereum)
+        const signer = provider.getSigner()
+        const feeData = await provider.getFeeData()
+        if (!feeData.gasPrice) {
+            throw new Error('error fetching gas')
+        }
+
         // quote approval tx calldata
+        const approvalTx = await swidgeApi.getApprovalTx({
+            aggregatorId: route.aggregatorId,
+            routeId: route.resume.routeId,
+            senderAddress: web3Store.account
+        })
 
         // approve
+        await signer.sendTransaction({
+            to: approvalTx.to,
+            data: approvalTx.data,
+            value: approvalTx.value,
+            gasLimit: approvalTx.gasLimit,
+            gasPrice: feeData.gasPrice,
+        })
 
         // quote tx calldata
 
@@ -242,11 +263,9 @@ const onExecuteTransaction = async () => {
 }
 
 const ownExecution = async (tokenIn: string, tx: TransactionDetails) => {
-    await Erc20Caller.approveIfRequired(tokenIn, tx.to)
-
     setExecutingButton()
 
-    const contractCall = await RouterCaller.call(tx)
+    const contractCall = await RouterCaller.call(tokenIn, tx)
 
     openTransactionStatusModal()
 

@@ -44,3 +44,10 @@ export default interface Route {
     steps: RouteStep[]
     completed: boolean
 }
+
+export interface ApprovalTransactionDetails {
+    to: string;
+    data: string;
+    value: string;
+    gasLimit: string;
+}
