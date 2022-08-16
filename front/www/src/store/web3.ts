@@ -119,7 +119,6 @@ export const useWeb3Store = defineStore('web3', () => {
         const { ethereum } = window
         ethereum.on('accountsChanged', async () => {
             history.replaceState(null, '', '/')
-            window.location.reload()
         })
         ethereum.on('chainChanged', async () => {
             await checkIsCorrectNetwork()
