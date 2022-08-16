@@ -55,6 +55,7 @@ export class PathComputer {
   private totalSlippage: number;
   private originSlippage: number;
   private destinationSlippage: number;
+  private senderAddress: string;
   private receiverAddress: string;
 
   constructor(
@@ -91,6 +92,7 @@ export class PathComputer {
     this.totalSlippage = query.slippage;
     this.originSlippage = query.slippage / 2;
     this.destinationSlippage = query.slippage / 2;
+    this.senderAddress = query.senderAddress;
     this.receiverAddress = query.receiverAddress;
 
     this.gasPriceOrigin = await this.gasPriceFetcher.fetch(this.fromChain);
@@ -125,6 +127,8 @@ export class PathComputer {
       this.dstToken,
       this.amountIn,
       this.totalSlippage,
+      this.senderAddress,
+      this.receiverAddress,
     );
     const promises = [];
     // for every integrated aggregator

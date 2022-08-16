@@ -19,6 +19,7 @@ export class GetPathController {
       getPathDto.dstToken,
       getPathDto.amount,
       getPathDto.slippage,
+      getPathDto.senderAddress,
       getPathDto.receiverAddress,
     );
 
