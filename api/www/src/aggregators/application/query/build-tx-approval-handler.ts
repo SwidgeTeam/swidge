@@ -10,7 +10,7 @@ import { ViaExchange } from '../../domain/providers/via-exchange';
 import { SteppedAggregators } from '../../domain/stepped-aggregators';
 import { ApprovalTransactionDetails } from '../../domain/approval-transaction-details';
 
-@QueryHandler(GetPathQuery)
+@QueryHandler(BuildTxApprovalQuery)
 export class BuildTxApprovalHandler implements IQueryHandler<BuildTxApprovalQuery> {
   private aggregators: SteppedAggregators;
 

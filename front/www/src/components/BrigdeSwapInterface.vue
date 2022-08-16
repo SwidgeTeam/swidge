@@ -179,6 +179,7 @@ const onQuote = async () => {
             dstToken: tokensStore.getDestinationTokenAddress,
             amount: sourceTokenAmount.value.toString(),
             slippage: 2,
+            senderAddress: web3Store.account || ethers.constants.AddressZero,
             receiverAddress: web3Store.account || ethers.constants.AddressZero
         })
 
