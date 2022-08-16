@@ -13,6 +13,7 @@ import { AggregatorProviders } from './aggregator-providers';
 
 // whole Route details
 interface SocketRoute {
+  routeId: string;
   toAmount: string;
   userTxs: SocketUserTx[];
 }
@@ -113,6 +114,8 @@ export class Socket implements Aggregator {
       request.amountIn,
       amountOut,
       amountOut,
+      route.routeId,
+      true,
     );
     const txDetails = await this.getTxDetails(route);
     const steps = this.buildSteps(route.userTxs[0].steps);

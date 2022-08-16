@@ -45,6 +45,8 @@ export class GetPathController {
     return {
       aggregatorId: route.aggregatorId,
       resume: {
+        routeId: route.resume.routeId,
+        requireCallDataQuote: route.resume.requiresCallDataQuoting,
         fromChain: route.resume.fromChain,
         toChain: route.resume.toChain,
         tokenIn: this.mapTokenDetails(route.resume.fromToken),

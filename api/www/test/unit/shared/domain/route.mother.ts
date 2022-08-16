@@ -6,6 +6,7 @@ import { faker } from '@faker-js/faker';
 import { BigIntegerMother } from './big-integer.mother';
 import { ProviderDetailsMother } from './provider-details.mother';
 import { TokenMother } from './token.mother';
+import { AggregatorProviders } from '../../../../src/aggregators/domain/providers/aggregator-providers';
 
 export class RouteMother {
   public static create(
@@ -13,7 +14,7 @@ export class RouteMother {
     txDetails: TransactionDetails,
     steps: RouteStep[],
   ): Route {
-    return new Route(resume, txDetails, steps);
+    return new Route(AggregatorProviders.Swidge, resume, txDetails, steps);
   }
 
   public static randomSingleSwap(): Route {

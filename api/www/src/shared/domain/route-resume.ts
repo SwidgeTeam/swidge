@@ -10,6 +10,8 @@ export class RouteResume {
     private readonly _amountIn: BigInteger,
     private readonly _amountOut: BigInteger,
     private readonly _minAmountOut: BigInteger,
+    private readonly _routeId = '',
+    private readonly _requiresCallDataQuoting = false,
   ) {}
 
   get fromChain(): string {
@@ -38,5 +40,13 @@ export class RouteResume {
 
   get minAmountOut(): BigInteger {
     return this._minAmountOut;
+  }
+
+  get routeId(): string {
+    return this._routeId;
+  }
+
+  get requiresCallDataQuoting(): boolean {
+    return this._requiresCallDataQuoting;
   }
 }

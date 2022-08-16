@@ -44,30 +44,20 @@ class SwidgeAPI extends HttpClient {
         try {
             const response = await this.instance.get<GetQuoteResponse>('/path', { params: getQuotePayload })
             const r = response.data
-            return r.routes.map((route) => {
-                const tx = route.tx
-                    ? {
-                        to: route.tx.to,
-                        approvalAddress: route.tx.approvalAddress,
-                        callData: route.tx.callData,
-                        value: route.tx.value,
-                        gasLimit: route.tx.gasLimit,
-                        gasPrice: route.tx.gasPrice,
-                    }
-                    : null
-                return {
-                    aggregatorId: route.aggregatorId,
-                    amountOut: route.amountOut.toString(),
-                    tx: tx,
+            return r.routes.map((r) => {
+                const route: Route = {
+                    aggregatorId: r.aggregatorId,
                     resume: {
-                        fromChain: route.resume.fromChain,
-                        toChain: route.resume.toChain,
-                        tokenIn: route.resume.tokenIn,
-                        tokenOut: route.resume.tokenOut,
-                        amountIn: route.resume.amountIn,
-                        amountOut: route.resume.amountOut,
+                        fromChain: r.resume.fromChain,
+                        toChain: r.resume.toChain,
+                        tokenIn: r.resume.tokenIn,
+                        tokenOut: r.resume.tokenOut,
+                        amountIn: r.resume.amountIn,
+                        amountOut: r.resume.amountOut,
+                        routeId: r.resume.routeId,
+                        requireCallDataQuote: r.resume.requireCallDataQuote,
                     },
-                    steps: route.steps.map((step) => {
+                    steps: r.steps.map((step) => {
                         return {
                             type: step.type,
                             name: step.name,
@@ -82,6 +72,17 @@ class SwidgeAPI extends HttpClient {
                     }),
                     completed: false,
                 }
+                if (!route.resume.requireCallDataQuote) {
+                    route.tx = {
+                        to: r.tx.to,
+                        approvalAddress: r.tx.approvalAddress,
+                        callData: r.tx.callData,
+                        value: r.tx.value,
+                        gasLimit: r.tx.gasLimit,
+                        gasPrice: r.tx.gasPrice,
+                    }
+                }
+                return route
             })
         } catch (e: unknown) {
             if (axios.isAxiosError(e)) {

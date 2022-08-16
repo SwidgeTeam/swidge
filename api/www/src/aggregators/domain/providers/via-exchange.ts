@@ -63,6 +63,8 @@ export class ViaExchange {
       request.amountIn,
       BigInteger.fromString(route.toTokenAmount.toString()),
       BigInteger.fromString(route.toTokenAmount.toString()),
+      route.routeId,
+      true,
     );
 
     const steps = this.buildSteps(route.actions);

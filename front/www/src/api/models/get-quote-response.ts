@@ -26,6 +26,8 @@ interface TransactionDetailsJson {
 }
 
 interface RouteResumeJson {
+    routeId: string
+    requireCallDataQuote: boolean
     fromChain: string
     toChain: string
     tokenIn: TokenDetailsJson
