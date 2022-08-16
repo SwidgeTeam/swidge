@@ -178,7 +178,7 @@ const onQuote = async () => {
             dstToken: tokensStore.getDestinationTokenAddress,
             amount: sourceTokenAmount.value.toString(),
             slippage: 2,
-            receiverAddress: web3Store.account
+            receiverAddress: web3Store.account || ethers.constants.AddressZero
         })
 
         const route = routesStore.getSelectedRoute
