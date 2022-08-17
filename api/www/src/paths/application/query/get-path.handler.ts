@@ -21,6 +21,7 @@ import { Aggregators } from '../../../aggregators/domain/aggregators';
 import { AggregatorProviders } from '../../../aggregators/domain/providers/aggregator-providers';
 import { LiFi } from '../../../aggregators/domain/providers/liFi';
 import { Logger } from '../../../shared/domain/logger';
+import { ViaExchange } from '../../../aggregators/domain/providers/via-exchange';
 
 @QueryHandler(GetPathQuery)
 export class GetPathHandler implements IQueryHandler<GetPathQuery> {
@@ -45,7 +46,8 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
     ]);
 
     const aggregators = new Aggregators([
-      [AggregatorProviders.LiFi, new LiFi()]
+      [AggregatorProviders.LiFi, new LiFi()],
+      [AggregatorProviders.Via, new ViaExchange()],
     ]);
 
     this.pathComputer = new PathComputer(

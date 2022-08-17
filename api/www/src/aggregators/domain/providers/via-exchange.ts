@@ -13,13 +13,14 @@ import { SteppedAggregator } from '../stepped-aggregator';
 import { TransactionDetails } from '../../../shared/domain/transaction-details';
 import { ApprovalTransactionDetails } from '../approval-transaction-details';
 import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
+import { Fantom, Polygon } from '../../../shared/enums/ChainIds';
 
 export class ViaExchange implements SteppedAggregator {
   private enabledChains: string[];
   private client: Via;
 
   constructor() {
-    this.enabledChains = [];
+    this.enabledChains = [Polygon, Fantom];
     const DEFAULT_API_KEY = 'e3db93a3-ae1c-41e5-8229-b8c1ecef5583';
     this.client = new Via({
       apiKey: DEFAULT_API_KEY,
@@ -39,10 +40,10 @@ export class ViaExchange implements SteppedAggregator {
   async execute(request: AggregatorRequest) {
     const response = await this.client.getRoutes({
       fromChainId: Number(request.fromChain),
-      fromTokenAddress: request.fromToken.address,
-      fromAmount: Math.pow(10, 18),
+      fromTokenAddress: this.getTokenAddress(request.fromToken),
+      fromAmount: Number(request.amountIn.toString()),
       toChainId: Number(request.toChain),
-      toTokenAddress: request.toToken.address,
+      toTokenAddress: this.getTokenAddress(request.toToken),
       fromAddress: request.senderAddress,
       toAddress: request.receiverAddress,
       multiTx: false, // whether to return routes with multiple user transactions
@@ -170,5 +171,18 @@ export class ViaExchange implements SteppedAggregator {
     }
 
     return new RouteStep(type, details, fromToken, toToken, amountIn, amountOut, '');
+  }
+
+  /**
+   * Returns the correct address for Via
+   * @param token
+   * @private
+   */
+  private getTokenAddress(token: Token): string {
+    if (token.isNative()) {
+      return '0x0000000000000000000000000000000000000000';
+    }
+
+    return token.address;
   }
 }
