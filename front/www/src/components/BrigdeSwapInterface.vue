@@ -9,8 +9,8 @@ import IToken from '@/domain/tokens/IToken'
 import { useTokensStore } from '@/store/tokens'
 import { useRoutesStore } from '@/store/routes'
 import SwapBox from '@/components/SwapBox.vue'
-import Route, { TransactionDetails } from '@/domain/paths/path'
-import swidgeApi from '@/api/swidge-api';
+import { TransactionDetails } from '@/domain/paths/path'
+import swidgeApi from '@/api/swidge-api'
 
 const web3Store = useWeb3Store()
 const tokensStore = useTokensStore()
