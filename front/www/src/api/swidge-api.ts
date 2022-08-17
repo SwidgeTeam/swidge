@@ -8,7 +8,8 @@ import { TransactionsList } from '@/api/models/transactions'
 import { TokenList } from '@/domain/tokens/TokenList'
 import IToken from '@/domain/tokens/IToken'
 import { Networks } from '@/domain/chains/Networks'
-import Route from '@/domain/paths/path'
+import Route, { ApprovalTransactionDetails } from '@/domain/paths/path'
+import GetApprovalTxResponseJson from '@/api/models/get-approval-tx-response';
 
 class SwidgeAPI extends HttpClient {
     public constructor() {
@@ -44,26 +45,22 @@ class SwidgeAPI extends HttpClient {
         try {
             const response = await this.instance.get<GetQuoteResponse>('/path', { params: getQuotePayload })
             const r = response.data
-            return r.routes.map((route) => {
-                return {
-                    amountOut: route.amountOut.toString(),
-                    tx: {
-                        to: route.tx.to,
-                        approvalAddress: route.tx.approvalAddress,
-                        callData: route.tx.callData,
-                        value: route.tx.value,
-                        gasLimit: route.tx.gasLimit,
-                        gasPrice: route.tx.gasPrice,
+            return r.routes.map((r) => {
+                const route: Route = {
+                    aggregator: {
+                        id: r.aggregator.id,
+                        routeId: r.aggregator.routeId,
+                        requireCallDataQuote: r.aggregator.requireCallDataQuote,
                     },
                     resume: {
-                        fromChain: route.resume.fromChain,
-                        toChain: route.resume.toChain,
-                        tokenIn: route.resume.tokenIn,
-                        tokenOut: route.resume.tokenOut,
-                        amountIn: route.resume.amountIn,
-                        amountOut: route.resume.amountOut,
+                        fromChain: r.resume.fromChain,
+                        toChain: r.resume.toChain,
+                        tokenIn: r.resume.tokenIn,
+                        tokenOut: r.resume.tokenOut,
+                        amountIn: r.resume.amountIn,
+                        amountOut: r.resume.amountOut,
                     },
-                    steps: route.steps.map((step) => {
+                    steps: r.steps.map((step) => {
                         return {
                             type: step.type,
                             name: step.name,
@@ -78,6 +75,17 @@ class SwidgeAPI extends HttpClient {
                     }),
                     completed: false,
                 }
+                if (!route.aggregator.requireCallDataQuote) {
+                    route.tx = {
+                        to: r.tx.to,
+                        approvalAddress: r.tx.approvalAddress,
+                        callData: r.tx.callData,
+                        value: r.tx.value,
+                        gasLimit: r.tx.gasLimit,
+                        gasPrice: r.tx.gasPrice,
+                    }
+                }
+                return route
             })
         } catch (e: unknown) {
             if (axios.isAxiosError(e)) {
@@ -93,6 +101,24 @@ class SwidgeAPI extends HttpClient {
         try {
             const response = await this.instance.get(`/transactions/${walletAddress}`)
             return response.data
+        } catch (e: unknown) {
+            if (axios.isAxiosError(e)) {
+                const apiErrorResponse = e.response?.data as ApiErrorResponse
+                const errorMessage = apiErrorResponse.message ?? 'Unhandled error!'
+                throw new Error(errorMessage)
+            }
+            throw new Error('UnknownError no axios error')
+        }
+    }
+
+    async getApprovalTx(query: {
+        aggregatorId: string
+        routeId: string
+        senderAddress: string
+    }): Promise<ApprovalTransactionDetails> {
+        try {
+            const response = await this.instance.get<GetApprovalTxResponseJson>('/build-tx-approval', { params: query })
+            return response.data.tx
         } catch (e: unknown) {
             if (axios.isAxiosError(e)) {
                 const apiErrorResponse = e.response?.data as ApiErrorResponse

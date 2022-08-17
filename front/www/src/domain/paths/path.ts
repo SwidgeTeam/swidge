@@ -36,9 +36,22 @@ export interface TransactionDetails {
 }
 
 export default interface Route {
-    amountOut: string
+    aggregator: AggregatorDetails
     resume: RouteResume
-    tx: TransactionDetails
     steps: RouteStep[]
+    tx?: TransactionDetails
     completed: boolean
+}
+
+interface AggregatorDetails {
+    id: string
+    routeId: string
+    requireCallDataQuote: boolean
+}
+
+export interface ApprovalTransactionDetails {
+    to: string;
+    data: string;
+    value: string;
+    gasLimit: string;
 }

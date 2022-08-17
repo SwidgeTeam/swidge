@@ -9,7 +9,8 @@ import IToken from '@/domain/tokens/IToken'
 import { useTokensStore } from '@/store/tokens'
 import { useRoutesStore } from '@/store/routes'
 import SwapBox from '@/components/SwapBox.vue'
-import Route from '@/domain/paths/path'
+import Route, { TransactionDetails } from '@/domain/paths/path'
+import swidgeApi from '@/api/swidge-api';
 
 const web3Store = useWeb3Store()
 const tokensStore = useTokensStore()
@@ -178,12 +179,13 @@ const onQuote = async () => {
             dstToken: tokensStore.getDestinationTokenAddress,
             amount: sourceTokenAmount.value.toString(),
             slippage: 2,
+            senderAddress: web3Store.account || ethers.constants.AddressZero,
             receiverAddress: web3Store.account || ethers.constants.AddressZero
         })
 
         const route = routesStore.getSelectedRoute
 
-        destinationTokenAmount.value = route.amountOut
+        destinationTokenAmount.value = route.resume.amountOut
         isGettingQuote.value = false
         totalFee.value = route.steps.reduce((total, current) => {
             return total + Number(current.fee)
@@ -226,9 +228,45 @@ const onExecuteTransaction = async () => {
         throw new Error('No path')
     }
 
+    if (!route.aggregator.requireCallDataQuote) {
+        if (!route.tx) {
+            throw new Error('trying to execute an empty transaction')
+        }
+        await ownExecution(route.resume.tokenIn.address, route.tx)
+    } else {
+        const provider = new ethers.providers.Web3Provider(window.ethereum)
+        const signer = provider.getSigner()
+        const feeData = await provider.getFeeData()
+        if (!feeData.gasPrice) {
+            throw new Error('error fetching gas')
+        }
+
+        // quote approval tx calldata
+        const approvalTx = await swidgeApi.getApprovalTx({
+            aggregatorId: route.aggregator.id,
+            routeId: route.aggregator.routeId,
+            senderAddress: web3Store.account
+        })
+
+        // approve
+        await signer.sendTransaction({
+            to: approvalTx.to,
+            data: approvalTx.data,
+            value: approvalTx.value,
+            gasLimit: approvalTx.gasLimit,
+            gasPrice: feeData.gasPrice,
+        })
+
+        // quote tx calldata
+
+        // execute
+    }
+}
+
+const ownExecution = async (tokenIn: string, tx: TransactionDetails) => {
     setExecutingButton()
 
-    const contractCall = await RouterCaller.call(route.resume.tokenIn.address, route.tx)
+    const contractCall = await RouterCaller.call(tokenIn, tx)
 
     openTransactionStatusModal()
 
@@ -237,7 +275,7 @@ const onExecuteTransaction = async () => {
         .then(async (receipt: { transactionHash: string }) => {
             routesStore.completeFirstStep()
             if (isCrossTransaction()) {
-                setUpEventListener(route, receipt.transactionHash)
+                setUpEventListener(tx, receipt.transactionHash)
             } else {
                 routesStore.completeRoute()
             }
@@ -250,15 +288,15 @@ const onExecuteTransaction = async () => {
 /**
  * Sets up the required listener to check for the events on the destination chain
  * It allows the frontend to know when the transaction has been completed
- * @param path
+ * @param tx
  * @param executedTxHash
  */
-const setUpEventListener = (path: Route, executedTxHash: string) => {
+const setUpEventListener = (tx: TransactionDetails, executedTxHash: string) => {
     const toChainId = tokensStore.getDestinationChainId
     const provider = getChainProvider(toChainId)
 
     const filter = {
-        address: path.tx.to,
+        address: tx.to,
         topics: [ethers.utils.id('CrossFinalized(bytes32,uint256,address)')],
     }
 

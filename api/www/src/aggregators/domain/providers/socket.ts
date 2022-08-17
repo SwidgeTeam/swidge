@@ -9,9 +9,12 @@ import { RouteResume } from '../../../shared/domain/route-resume';
 import { RouteStep } from '../../../shared/domain/route-step';
 import { Token } from '../../../shared/domain/token';
 import { ProviderDetails } from '../../../shared/domain/provider-details';
+import { AggregatorProviders } from './aggregator-providers';
+import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
 
 // whole Route details
 interface SocketRoute {
+  routeId: string;
   toAmount: string;
   userTxs: SocketUserTx[];
 }
@@ -20,6 +23,10 @@ interface SocketRoute {
 interface SocketUserTx {
   steps: SocketUserTxStep[];
   serviceTime: number;
+  gasFees: {
+    gasAmount: string;
+    gasLimit: number;
+  };
 }
 
 // details of one step of the TX
@@ -115,8 +122,9 @@ export class Socket implements Aggregator {
     );
     const txDetails = await this.getTxDetails(route);
     const steps = this.buildSteps(route.userTxs[0].steps);
+    const aggregatorDetails = new AggregatorDetails(AggregatorProviders.Socket);
 
-    return new Route(resume, txDetails, steps);
+    return new Route(aggregatorDetails, resume, steps, txDetails);
   }
 
   /**
@@ -124,7 +132,7 @@ export class Socket implements Aggregator {
    * @param route
    * @private
    */
-  private async getTxDetails(route: any): Promise<TransactionDetails> {
+  private async getTxDetails(route: SocketRoute): Promise<TransactionDetails> {
     const response = await this.client.post<{
       result: {
         txData: string;
@@ -145,13 +153,18 @@ export class Socket implements Aggregator {
       ? response.result.approvalData.allowanceTarget
       : null;
 
+    const routeFees = route.userTxs[0].gasFees;
+    const estimatedGas = BigInteger.fromString(routeFees.gasAmount);
+    const gasLimit = BigInteger.fromString(routeFees.gasLimit.toString());
+    const gasPrice = estimatedGas.div(routeFees.gasLimit);
+
     return new TransactionDetails(
       response.result.txTarget,
-      approvalAddress,
       response.result.txData,
       BigInteger.fromString(response.result.value),
-      BigInteger.fromString(response.result.value),
-      BigInteger.fromString(response.result.value),
+      gasLimit,
+      gasPrice,
+      approvalAddress,
     );
   }
 

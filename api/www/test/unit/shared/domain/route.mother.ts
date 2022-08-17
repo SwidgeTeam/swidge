@@ -6,6 +6,8 @@ import { faker } from '@faker-js/faker';
 import { BigIntegerMother } from './big-integer.mother';
 import { ProviderDetailsMother } from './provider-details.mother';
 import { TokenMother } from './token.mother';
+import { AggregatorProviders } from '../../../../src/aggregators/domain/providers/aggregator-providers';
+import { AggregatorDetails } from '../../../../src/shared/domain/aggregator-details';
 
 export class RouteMother {
   public static create(
@@ -13,7 +15,8 @@ export class RouteMother {
     txDetails: TransactionDetails,
     steps: RouteStep[],
   ): Route {
-    return new Route(resume, txDetails, steps);
+    const aggregatorDetails = new AggregatorDetails(AggregatorProviders.Swidge);
+    return new Route(aggregatorDetails, resume, steps, txDetails);
   }
 
   public static randomSingleSwap(): Route {
@@ -30,11 +33,11 @@ export class RouteMother {
     );
     const txDetails = new TransactionDetails(
       faker.finance.ethereumAddress(),
-      faker.finance.ethereumAddress(),
       faker.random.alphaNumeric(200),
       BigIntegerMother.random(),
       BigIntegerMother.random(),
       BigIntegerMother.random(),
+      faker.finance.ethereumAddress(),
     );
     const steps = [
       new RouteStep(
@@ -65,11 +68,11 @@ export class RouteMother {
     );
     const txDetails = new TransactionDetails(
       faker.finance.ethereumAddress(),
-      faker.finance.ethereumAddress(),
       faker.random.alphaNumeric(200),
       BigIntegerMother.random(),
       BigIntegerMother.random(),
       BigIntegerMother.random(),
+      faker.finance.ethereumAddress(),
     );
     const steps = [
       new RouteStep(

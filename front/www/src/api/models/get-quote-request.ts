@@ -5,5 +5,6 @@ export default interface GetQuoteRequest {
     dstToken: string,
     amount: string
     slippage: number,
+    senderAddress: string,
     receiverAddress: string,
 }

@@ -1,3 +1,6 @@
 export enum AggregatorProviders {
-  LiFi = '0',
+  Swidge = '0',
+  LiFi = '1',
+  Socket = '2',
+  Via = '3',
 }

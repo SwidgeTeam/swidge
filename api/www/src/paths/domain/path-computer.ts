@@ -28,6 +28,8 @@ import { Bridges } from '../../bridges/domain/bridges';
 import { Exchanges } from '../../swaps/domain/exchanges';
 import { Aggregators } from '../../aggregators/domain/aggregators';
 import { Logger } from '../../shared/domain/logger';
+import { AggregatorProviders } from '../../aggregators/domain/providers/aggregator-providers';
+import { AggregatorDetails } from '../../shared/domain/aggregator-details';
 
 export class PathComputer {
   /** Providers */
@@ -54,6 +56,7 @@ export class PathComputer {
   private totalSlippage: number;
   private originSlippage: number;
   private destinationSlippage: number;
+  private senderAddress: string;
   private receiverAddress: string;
 
   constructor(
@@ -90,6 +93,7 @@ export class PathComputer {
     this.totalSlippage = query.slippage;
     this.originSlippage = query.slippage / 2;
     this.destinationSlippage = query.slippage / 2;
+    this.senderAddress = query.senderAddress;
     this.receiverAddress = query.receiverAddress;
 
     this.gasPriceOrigin = await this.gasPriceFetcher.fetch(this.fromChain);
@@ -124,6 +128,8 @@ export class PathComputer {
       this.dstToken,
       this.amountIn,
       this.totalSlippage,
+      this.senderAddress,
+      this.receiverAddress,
     );
     const promises = [];
     // for every integrated aggregator
@@ -426,11 +432,11 @@ export class PathComputer {
 
     const transactionDetails = new TransactionDetails(
       DeployedAddresses.Router,
-      DeployedAddresses.Router,
       callData,
       value,
       BigInteger.fromString('2000000'), // TODO set more accurate
       this.gasPriceOrigin,
+      DeployedAddresses.Router,
     );
 
     const resume = new RouteResume(
@@ -443,7 +449,9 @@ export class PathComputer {
       minAmountOut,
     );
 
-    return new Route(resume, transactionDetails, steps);
+    const aggregatorDetails = new AggregatorDetails(AggregatorProviders.Swidge);
+
+    return new Route(aggregatorDetails, resume, steps, transactionDetails);
   }
 
   /**

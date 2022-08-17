@@ -9,6 +9,8 @@ import { Token } from '../../../shared/domain/token';
 import { InsufficientLiquidity } from '../../../swaps/domain/insufficient-liquidity';
 import { ProviderDetails } from '../../../shared/domain/provider-details';
 import { RouteResume } from '../../../shared/domain/route-resume';
+import { AggregatorProviders } from './aggregator-providers';
+import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
 
 export class LiFi implements Aggregator {
   private enabledChains: string[];
@@ -41,11 +43,11 @@ export class LiFi implements Aggregator {
 
       const transactionDetails = new TransactionDetails(
         response.transactionRequest.to,
-        response.estimate.approvalAddress,
         response.transactionRequest.data.toString(),
         BigInteger.fromString(response.transactionRequest.value.toString()),
         BigInteger.fromString(response.transactionRequest.gasLimit.toString()),
         BigInteger.fromString(response.transactionRequest.gasPrice.toString()),
+        response.estimate.approvalAddress,
       );
 
       const steps = this.createSteps(response);
@@ -60,7 +62,9 @@ export class LiFi implements Aggregator {
         BigInteger.fromString(response.estimate.toAmountMin),
       );
 
-      return new Route(resume, transactionDetails, steps);
+      const aggregatorDetails = new AggregatorDetails(AggregatorProviders.LiFi);
+
+      return new Route(aggregatorDetails, resume, steps, transactionDetails);
     } catch (e) {
       throw new InsufficientLiquidity();
     }
@@ -127,7 +131,7 @@ export class LiFi implements Aggregator {
         type = RouteStep.TYPE_SWAP;
         break;
       case 'cross':
-        type = RouteStep.TYPE_SWAP;
+        type = RouteStep.TYPE_BRIDGE;
         break;
     }
 

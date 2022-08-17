@@ -1,18 +1,12 @@
 import { ContractTransaction, ethers } from 'ethers'
-import IERC20Abi from './IERC20.json'
 import { TransactionDetails } from '@/domain/paths/path'
+import IERC20Abi from './IERC20.json'
 
 export const NATIVE_COIN_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 
 export class RouterCaller {
-
-    static provider() {
-        // Get user account
-        return new ethers.providers.Web3Provider(window.ethereum)
-    }
-
     static async call(tokenIn: string, tx: TransactionDetails): Promise<ContractTransaction> {
-        const provider = this.provider()
+        const provider = new ethers.providers.Web3Provider(window.ethereum)
         const signer = provider.getSigner()
 
         if (tokenIn !== NATIVE_COIN_ADDRESS) {
@@ -34,7 +28,7 @@ export class RouterCaller {
      * @param spender
      */
     static async approveIfRequired(tokenAddress: string, spender: string) {
-        const provider = this.provider()
+        const provider = new ethers.providers.Web3Provider(window.ethereum)
         const signer = provider.getSigner()
 
         // Get token contract
