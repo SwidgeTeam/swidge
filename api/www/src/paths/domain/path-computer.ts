@@ -141,13 +141,10 @@ export class PathComputer {
     }
 
     // resolve promises and flatten results
-    try {
-      // valid now that we have only one aggregator, will have to change when adding more
-      return flatten(await Promise.all(promises));
-    } catch (e) {
-      // aggregator has no routes..
-      return [];
-    }
+    const results = (await Promise.allSettled(promises))
+      .filter((result) => result.status === 'fulfilled')
+      .map((result: PromiseFulfilledResult<Route>) => result.value);
+    return flatten(results);
   }
 
   /**

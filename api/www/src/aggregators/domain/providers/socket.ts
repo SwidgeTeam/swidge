@@ -62,16 +62,15 @@ interface SocketApprovalData {
 }
 
 export class Socket implements Aggregator {
-  private enabledChains: string[];
+  private enabledChains = [];
   private client: IHttpClient;
   private readonly apiKey: string;
   private readonly apiBaseUrl: string;
   private routerCallEncoder: RouterCallEncoder;
 
-  constructor(httpClient: IHttpClient) {
-    this.enabledChains = [];
+  constructor(httpClient: IHttpClient, apiKey: string) {
     this.client = httpClient;
-    this.apiKey = '645b2c8c-5825-4930-baf3-d9b997fcd88c'; // public testing key
+    this.apiKey = apiKey;
     this.apiBaseUrl = 'https://api.socket.tech/v2';
     this.routerCallEncoder = new RouterCallEncoder();
   }
@@ -97,7 +96,7 @@ export class Socket implements Aggregator {
         toChainId: request.toChain,
         toTokenAddress: request.toToken.address,
         fromAmount: request.amountIn.toString(),
-        userAddress: '0x0000000000000000000000000000000000000000',
+        userAddress: request.senderAddress,
         uniqueRoutesPerBridge: true,
         sort: 'output',
         singleTxOnly: true,

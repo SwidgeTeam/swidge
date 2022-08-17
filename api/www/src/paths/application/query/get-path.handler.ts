@@ -23,6 +23,7 @@ import { LiFi } from '../../../aggregators/domain/providers/liFi';
 import { Logger } from '../../../shared/domain/logger';
 import { ViaExchange } from '../../../aggregators/domain/providers/via-exchange';
 import { ConfigService } from '../../../config/config.service';
+import { Socket } from '../../../aggregators/domain/providers/socket';
 
 @QueryHandler(GetPathQuery)
 export class GetPathHandler implements IQueryHandler<GetPathQuery> {
@@ -50,6 +51,7 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
 
     const aggregators = new Aggregators([
       [AggregatorProviders.LiFi, new LiFi()],
+      [AggregatorProviders.Socket, new Socket(httpClient, configService.getSocketApiKey())],
       [AggregatorProviders.Via, ViaExchange.create(configService.getViaApiKey())],
     ]);
 

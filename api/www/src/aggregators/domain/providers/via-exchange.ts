@@ -13,10 +13,9 @@ import { SteppedAggregator } from '../stepped-aggregator';
 import { TransactionDetails } from '../../../shared/domain/transaction-details';
 import { ApprovalTransactionDetails } from '../approval-transaction-details';
 import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
-import { Fantom, Polygon } from '../../../shared/enums/ChainIds';
 
 export class ViaExchange implements SteppedAggregator {
-  private enabledChains: string[];
+  private enabledChains = [];
   private client: Via;
 
   public static create(apiKey: string): ViaExchange {
@@ -30,7 +29,6 @@ export class ViaExchange implements SteppedAggregator {
   }
 
   constructor(client: Via) {
-    this.enabledChains = [Polygon, Fantom];
     this.client = client;
   }
 
