@@ -3,7 +3,7 @@ import { QueryBus } from '@nestjs/cqrs';
 import { Response } from 'express';
 import { GetTxApprovalCalldataDto } from './get-tx-approval-calldata-dto';
 import BuildTxApprovalQuery from '../../application/query/build-tx-approval-query';
-import { TransactionDetails } from '../../../shared/domain/transaction-details';
+import { ApprovalTransactionDetails } from '../../domain/approval-transaction-details';
 
 @Controller()
 export class GetTxApprovalCalldataController {
@@ -17,13 +17,12 @@ export class GetTxApprovalCalldataController {
       params.senderAddress,
     );
 
-    const tx = await this.queryBus.execute<BuildTxApprovalQuery, TransactionDetails>(query);
+    const tx = await this.queryBus.execute<BuildTxApprovalQuery, ApprovalTransactionDetails>(query);
 
     return res.json({
       tx: {
         to: tx.to,
-        data: tx.callData,
-        value: tx.value.toString(),
+        callData: tx.callData,
         gasLimit: tx.gasLimit.toString(),
       },
     });

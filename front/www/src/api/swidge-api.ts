@@ -9,7 +9,7 @@ import { TokenList } from '@/domain/tokens/TokenList'
 import IToken from '@/domain/tokens/IToken'
 import { Networks } from '@/domain/chains/Networks'
 import Route, { ApprovalTransactionDetails } from '@/domain/paths/path'
-import GetApprovalTxResponseJson from '@/api/models/get-approval-tx-response';
+import GetApprovalTxResponseJson from '@/api/models/get-approval-tx-response'
 
 class SwidgeAPI extends HttpClient {
     public constructor() {
@@ -78,11 +78,14 @@ class SwidgeAPI extends HttpClient {
                 if (!route.aggregator.requireCallDataQuote) {
                     route.tx = {
                         to: r.tx.to,
-                        approvalAddress: r.tx.approvalAddress,
                         callData: r.tx.callData,
                         value: r.tx.value,
                         gasLimit: r.tx.gasLimit,
-                        gasPrice: r.tx.gasPrice,
+                    }
+                    route.approvalTx = {
+                        to: r.approvalTx.to,
+                        callData: r.approvalTx.callData,
+                        gasLimit: r.approvalTx.gasLimit,
                     }
                 }
                 return route
@@ -118,7 +121,11 @@ class SwidgeAPI extends HttpClient {
     }): Promise<ApprovalTransactionDetails> {
         try {
             const response = await this.instance.get<GetApprovalTxResponseJson>('/build-tx-approval', { params: query })
-            return response.data.tx
+            return {
+                to: response.data.tx.to,
+                callData: response.data.tx.callData,
+                gasLimit: response.data.tx.gasLimit,
+            }
         } catch (e: unknown) {
             if (axios.isAxiosError(e)) {
                 const apiErrorResponse = e.response?.data as ApiErrorResponse

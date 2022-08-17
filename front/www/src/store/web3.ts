@@ -3,7 +3,8 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 import { ref } from 'vue'
 import { Networks } from '@/domain/chains/Networks'
 import IERC20Abi from '@/contracts/IERC20.json'
-import { NATIVE_COIN_ADDRESS } from '@/contracts/routerCaller'
+
+export const NATIVE_COIN_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 
 export const useWeb3Store = defineStore('web3', () => {
     const account = ref('')

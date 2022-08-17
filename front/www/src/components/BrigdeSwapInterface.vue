@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import ModalNetworkAndTokenSelect from './ModalNetworkAndTokenSelect.vue'
-import { RouterCaller } from '@/contracts/routerCaller'
+import { ContractCaller } from '@/contracts/contractCaller'
 import { useWeb3Store } from '@/store/web3'
 import { ethers, providers } from 'ethers'
 import ModalSwidgeStatus from './ModalSwidgeStatus.vue'
@@ -9,7 +9,7 @@ import IToken from '@/domain/tokens/IToken'
 import { useTokensStore } from '@/store/tokens'
 import { useRoutesStore } from '@/store/routes'
 import SwapBox from '@/components/SwapBox.vue'
-import { TransactionDetails } from '@/domain/paths/path'
+import Route, { TransactionDetails } from '@/domain/paths/path'
 import swidgeApi from '@/api/swidge-api'
 
 const web3Store = useWeb3Store()
@@ -219,54 +219,22 @@ const onQuote = async () => {
  * Executes and stores the transaction
  */
 const onExecuteTransaction = async () => {
-    const originToken = tokensStore.getOriginToken()
-    if (!originToken) {
-        throw new Error('Undefined origin token')
-    }
     const route = routesStore.getSelectedRoute
     if (!route) {
-        throw new Error('No path')
+        throw new Error('No route')
     }
 
     if (!route.aggregator.requireCallDataQuote) {
-        if (!route.tx) {
-            throw new Error('trying to execute an empty transaction')
-        }
-        await ownExecution(route.resume.tokenIn.address, route.tx)
+        executeRoute(route)
     } else {
-        const provider = new ethers.providers.Web3Provider(window.ethereum)
-        const signer = provider.getSigner()
-        const feeData = await provider.getFeeData()
-        if (!feeData.gasPrice) {
-            throw new Error('error fetching gas')
-        }
-
-        // quote approval tx calldata
-        const approvalTx = await swidgeApi.getApprovalTx({
-            aggregatorId: route.aggregator.id,
-            routeId: route.aggregator.routeId,
-            senderAddress: web3Store.account
-        })
-
-        // approve
-        await signer.sendTransaction({
-            to: approvalTx.to,
-            data: approvalTx.data,
-            value: approvalTx.value,
-            gasLimit: approvalTx.gasLimit,
-            gasPrice: feeData.gasPrice,
-        })
-
-        // quote tx calldata
-
-        // execute
+        executeSteppedRoute(route)
     }
 }
 
-const ownExecution = async (tokenIn: string, tx: TransactionDetails) => {
+const executeRoute = async (route: Route) => {
     setExecutingButton()
 
-    const contractCall = await RouterCaller.call(tokenIn, tx)
+    const contractCall = await ContractCaller.executeRoute(route)
 
     openTransactionStatusModal()
 
@@ -275,7 +243,7 @@ const ownExecution = async (tokenIn: string, tx: TransactionDetails) => {
         .then(async (receipt: { transactionHash: string }) => {
             routesStore.completeFirstStep()
             if (isCrossTransaction()) {
-                setUpEventListener(tx, receipt.transactionHash)
+                setUpEventListener(route.tx as TransactionDetails, receipt.transactionHash)
             } else {
                 routesStore.completeRoute()
             }
@@ -283,6 +251,23 @@ const ownExecution = async (tokenIn: string, tx: TransactionDetails) => {
         .finally(() => {
             unsetExecutingButton()
         })
+}
+
+const executeSteppedRoute = async (route: Route) => {
+    // quote approval tx calldata
+    const approvalTx = await swidgeApi.getApprovalTx({
+        aggregatorId: route.aggregator.id,
+        routeId: route.aggregator.routeId,
+        senderAddress: web3Store.account
+    })
+
+    // approve
+    await ContractCaller.executeApproval(approvalTx)
+
+    // quote tx calldata
+
+    // execute
+
 }
 
 /**
