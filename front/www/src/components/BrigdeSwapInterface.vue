@@ -275,7 +275,8 @@ const executeSteppedRoute = async (route: Route): Promise<void> => {
     const mainTx = await swidgeApi.getTx({
         aggregatorId: route.aggregator.id,
         routeId: route.aggregator.routeId,
-        senderAddress: web3Store.account
+        senderAddress: web3Store.account,
+        receiverAddress: web3Store.account,
     })
 
     openTransactionStatusModal()

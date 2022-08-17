@@ -34,11 +34,13 @@ export class GetPathController {
     let approvalTx, tx;
 
     if (!route.aggregator.requiresCallDataQuoting) {
-      approvalTx = {
-        to: route.approvalTransaction.to,
-        callData: route.approvalTransaction.callData,
-        gasLimit: route.approvalTransaction.gasLimit.toString(),
-      };
+      approvalTx = route.approvalTransaction
+        ? {
+            to: route.approvalTransaction.to,
+            callData: route.approvalTransaction.callData,
+            gasLimit: route.approvalTransaction.gasLimit.toString(),
+          }
+        : null;
       tx = {
         to: route.transaction.to,
         callData: route.transaction.callData,

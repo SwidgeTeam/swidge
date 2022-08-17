@@ -83,10 +83,12 @@ class SwidgeAPI extends HttpClient {
                         value: r.tx.value,
                         gasLimit: r.tx.gasLimit,
                     }
-                    route.approvalTx = {
-                        to: r.approvalTx.to,
-                        callData: r.approvalTx.callData,
-                        gasLimit: r.approvalTx.gasLimit,
+                    if (r.approvalTx) {
+                        route.approvalTx = {
+                            to: r.approvalTx.to,
+                            callData: r.approvalTx.callData,
+                            gasLimit: r.approvalTx.gasLimit,
+                        }
                     }
                 }
                 return route
@@ -141,6 +143,7 @@ class SwidgeAPI extends HttpClient {
         aggregatorId: string
         routeId: string
         senderAddress: string
+        receiverAddress: string
     }): Promise<TransactionDetails> {
         try {
             const response = await this.instance.get<GetTxResponse>('/build-tx', { params: query })

@@ -44,7 +44,7 @@ interface RouteJson {
     resume: RouteResumeJson
     steps: RouteStepJson[]
     tx: TransactionDetailsJson
-    approvalTx: ApprovalTransactionDetailsJson
+    approvalTx: ApprovalTransactionDetailsJson | null
 }
 
 interface AggregatorDetailsJson {
