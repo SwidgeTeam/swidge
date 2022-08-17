@@ -8,8 +8,9 @@ import { TransactionsList } from '@/api/models/transactions'
 import { TokenList } from '@/domain/tokens/TokenList'
 import IToken from '@/domain/tokens/IToken'
 import { Networks } from '@/domain/chains/Networks'
-import Route, { ApprovalTransactionDetails } from '@/domain/paths/path'
+import Route, { ApprovalTransactionDetails, TransactionDetails } from '@/domain/paths/path'
 import GetApprovalTxResponseJson from '@/api/models/get-approval-tx-response'
+import GetTxResponse from '@/api/models/get-tx-response'
 
 class SwidgeAPI extends HttpClient {
     public constructor() {
@@ -123,6 +124,29 @@ class SwidgeAPI extends HttpClient {
             const response = await this.instance.get<GetApprovalTxResponseJson>('/build-tx-approval', { params: query })
             return {
                 to: response.data.tx.to,
+                callData: response.data.tx.callData,
+                gasLimit: response.data.tx.gasLimit,
+            }
+        } catch (e: unknown) {
+            if (axios.isAxiosError(e)) {
+                const apiErrorResponse = e.response?.data as ApiErrorResponse
+                const errorMessage = apiErrorResponse.message ?? 'Unhandled error!'
+                throw new Error(errorMessage)
+            }
+            throw new Error('UnknownError no axios error')
+        }
+    }
+
+    async getTx(query: {
+        aggregatorId: string
+        routeId: string
+        senderAddress: string
+    }): Promise<TransactionDetails> {
+        try {
+            const response = await this.instance.get<GetTxResponse>('/build-tx', { params: query })
+            return {
+                to: response.data.tx.to,
+                value: response.data.tx.value,
                 callData: response.data.tx.callData,
                 gasLimit: response.data.tx.gasLimit,
             }

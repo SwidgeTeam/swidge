@@ -1,5 +1,7 @@
 import { ContractTransaction, ethers } from 'ethers'
 import Route, { ApprovalTransactionDetails, TransactionDetails } from '@/domain/paths/path'
+import { TransactionReceipt } from '@ethersproject/abstract-provider'
+import { JsonRpcSigner } from '@ethersproject/providers/src.ts/json-rpc-provider'
 
 export class ContractCaller {
     /**
@@ -12,7 +14,7 @@ export class ContractCaller {
         }
 
         const provider = new ethers.providers.Web3Provider(window.ethereum)
-        const signer = provider.getSigner()
+        const signer: JsonRpcSigner = provider.getSigner()
         const feeData = await provider.getFeeData()
 
         if (!feeData.gasPrice) {
@@ -42,7 +44,7 @@ export class ContractCaller {
      * Executes an approval transaction
      * @param approvalTx
      */
-    static async executeApproval(approvalTx: ApprovalTransactionDetails) {
+    static async executeApproval(approvalTx: ApprovalTransactionDetails): Promise<TransactionReceipt> {
         const provider = new ethers.providers.Web3Provider(window.ethereum)
         const signer = provider.getSigner()
         const feeData = await provider.getFeeData()
@@ -65,7 +67,7 @@ export class ContractCaller {
      * Executes the main transaction for the process
      * @param tx
      */
-    static async executeTransaction(tx: TransactionDetails) {
+    static async executeTransaction(tx: TransactionDetails): Promise<TransactionReceipt> {
         const provider = new ethers.providers.Web3Provider(window.ethereum)
         const signer = provider.getSigner()
         const feeData = await provider.getFeeData()

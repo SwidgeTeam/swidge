@@ -11,6 +11,8 @@ import { useRoutesStore } from '@/store/routes'
 import SwapBox from '@/components/SwapBox.vue'
 import Route, { TransactionDetails } from '@/domain/paths/path'
 import swidgeApi from '@/api/swidge-api'
+import { TransactionReceipt } from '@ethersproject/abstract-provider';
+import { Aggregators } from '@/domain/aggregators/aggregators';
 
 const web3Store = useWeb3Store()
 const tokensStore = useTokensStore()
@@ -216,7 +218,7 @@ const onQuote = async () => {
 }
 
 /**
- * Executes and stores the transaction
+ * Executes the transaction process
  */
 const onExecuteTransaction = async () => {
     const route = routesStore.getSelectedRoute
@@ -224,36 +226,41 @@ const onExecuteTransaction = async () => {
         throw new Error('No route')
     }
 
-    if (!route.aggregator.requireCallDataQuote) {
-        executeRoute(route)
-    } else {
-        executeSteppedRoute(route)
-    }
-}
-
-const executeRoute = async (route: Route) => {
     setExecutingButton()
 
-    const contractCall = await ContractCaller.executeRoute(route)
+    let promise
+
+    if (!route.aggregator.requireCallDataQuote) {
+        promise = executeRoute(route)
+    } else {
+        promise = executeSteppedRoute(route)
+    }
+
+    await promise.finally(() => {
+        unsetExecutingButton()
+    })
+}
+
+/**
+ * Executes the route when the aggregator already sent all the callData
+ * @param route
+ */
+const executeRoute = async (route: Route): Promise<void> => {
+    const mainContractCall = await ContractCaller.executeRoute(route)
 
     openTransactionStatusModal()
 
-    await contractCall
-        .wait()
-        .then(async (receipt: { transactionHash: string }) => {
-            routesStore.completeFirstStep()
-            if (isCrossTransaction()) {
-                setUpEventListener(route.tx as TransactionDetails, receipt.transactionHash)
-            } else {
-                routesStore.completeRoute()
-            }
-        })
-        .finally(() => {
-            unsetExecutingButton()
+    return mainContractCall.wait()
+        .then((receipt: TransactionReceipt) => {
+            onInitialTxCompleted(route, receipt)
         })
 }
 
-const executeSteppedRoute = async (route: Route) => {
+/**
+ * Executes the route when the aggregator requires quoting the callData
+ * @param route
+ */
+const executeSteppedRoute = async (route: Route): Promise<void> => {
     // quote approval tx calldata
     const approvalTx = await swidgeApi.getApprovalTx({
         aggregatorId: route.aggregator.id,
@@ -265,9 +272,37 @@ const executeSteppedRoute = async (route: Route) => {
     await ContractCaller.executeApproval(approvalTx)
 
     // quote tx calldata
+    const mainTx = await swidgeApi.getTx({
+        aggregatorId: route.aggregator.id,
+        routeId: route.aggregator.routeId,
+        senderAddress: web3Store.account
+    })
 
-    // execute
+    openTransactionStatusModal()
 
+    return ContractCaller.executeTransaction(mainTx)
+        .then((receipt: TransactionReceipt) => {
+            onInitialTxCompleted(route, receipt)
+        })
+}
+
+/**
+ * Manages the process once the tx has been executed
+ * @param route
+ * @param receipt
+ */
+const onInitialTxCompleted = (route: Route, receipt: TransactionReceipt) => {
+    routesStore.completeFirstStep()
+    if (isCrossTransaction()) {
+        if (route.aggregator.id === Aggregators.Swidge.toString()) {
+            setUpEventListener(route.tx as TransactionDetails, receipt.transactionHash)
+        }
+        else {
+            // TODO setTimeout for checking status
+        }
+    } else {
+        routesStore.completeRoute()
+    }
 }
 
 /**
