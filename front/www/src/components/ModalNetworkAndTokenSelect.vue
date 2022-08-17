@@ -19,6 +19,7 @@ const emits = defineEmits<{
 
 const searchTerm = ref('')
 const selectedNetworkId = ref('')
+const searchComponent = ref<any| null>(null)
 
 const getNetworks = () => {
     return Networks.all().filter(network => {
@@ -36,6 +37,10 @@ const onCloseModal = () => {
     searchTerm.value = ''
     selectedNetworkId.value = ''
     emits('close-modal')
+}
+
+const focusAlways = () => {
+        searchComponent.value?.focusInput()
 }
 
 </script>
@@ -73,13 +78,15 @@ const onCloseModal = () => {
                     leave-from="opacity-100 translate-y-0 sm:scale-100"
                     leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
                     <div
+                        v-on:click=focusAlways()
                         class="inline-block w-full max-w-xl px-10 py-12 text-left relative align-middle transition-all transform shadow-xl bg-[#222129] rounded-2xl">
                         <XIcon
                             class="absolute w-5 top-6 right-6 cursor-pointer"
                             @click="onCloseModal()"/>
                         <SearchInputBox
                             v-model:search-term="searchTerm"
-                            placeholder="Search by token or network"/>
+                            placeholder="Search by token or network"
+                            ref="searchComponent"/>
                         <NetworkLineSelector
                             v-model:selected-network-id="selectedNetworkId"
                             :networks="getNetworks()"
