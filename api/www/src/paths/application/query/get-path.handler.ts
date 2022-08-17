@@ -22,12 +22,14 @@ import { AggregatorProviders } from '../../../aggregators/domain/providers/aggre
 import { LiFi } from '../../../aggregators/domain/providers/liFi';
 import { Logger } from '../../../shared/domain/logger';
 import { ViaExchange } from '../../../aggregators/domain/providers/via-exchange';
+import { ConfigService } from '../../../config/config.service';
 
 @QueryHandler(GetPathQuery)
 export class GetPathHandler implements IQueryHandler<GetPathQuery> {
   private pathComputer: PathComputer;
 
   constructor(
+    private readonly configService: ConfigService,
     @Inject(Class.HttpClient) private readonly httpClient: HttpClient,
     @Inject(Class.CachedHttpClient) private readonly cachedHttpClient: CachedHttpClient,
     @Inject(Class.TokenDetailsFetcher) private readonly tokenDetailsFetcher: TokenDetailsFetcher,
@@ -40,6 +42,7 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
       [BridgeProviders.Multichain, new Multichain(cachedHttpClient)]
     ]);
 
+
     const exchanges = new Exchanges([
       [ExchangeProviders.ZeroEx, new ZeroEx(httpClient)],
       [ExchangeProviders.Sushi, new Sushiswap(httpClient, sushiPairsRepository)],
@@ -47,7 +50,7 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
 
     const aggregators = new Aggregators([
       [AggregatorProviders.LiFi, new LiFi()],
-      [AggregatorProviders.Via, new ViaExchange()],
+      [AggregatorProviders.Via, ViaExchange.create(configService.getViaApiKey())],
     ]);
 
     this.pathComputer = new PathComputer(

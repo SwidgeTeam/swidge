@@ -8,17 +8,19 @@ import { AggregatorProviders } from '../../domain/providers/aggregator-providers
 import { ViaExchange } from '../../domain/providers/via-exchange';
 import { SteppedAggregators } from '../../domain/stepped-aggregators';
 import { ApprovalTransactionDetails } from '../../domain/approval-transaction-details';
+import { ConfigService } from '../../../config/config.service';
 
 @QueryHandler(BuildTxApprovalQuery)
 export class BuildTxApprovalHandler implements IQueryHandler<BuildTxApprovalQuery> {
   private aggregators: SteppedAggregators;
 
   constructor(
+    private readonly configService: ConfigService,
     @Inject(Class.HttpClient) private readonly httpClient: HttpClient,
     @Inject(Class.Logger) private readonly logger: Logger,
   ) {
     this.aggregators = new SteppedAggregators([
-      [AggregatorProviders.Via, new ViaExchange()],
+      [AggregatorProviders.Via, ViaExchange.create(configService.getViaApiKey())],
     ]);
   }
 

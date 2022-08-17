@@ -19,14 +19,19 @@ export class ViaExchange implements SteppedAggregator {
   private enabledChains: string[];
   private client: Via;
 
-  constructor() {
-    this.enabledChains = [Polygon, Fantom];
-    const DEFAULT_API_KEY = 'e3db93a3-ae1c-41e5-8229-b8c1ecef5583';
-    this.client = new Via({
-      apiKey: DEFAULT_API_KEY,
+  public static create(apiKey: string): ViaExchange {
+    const client = new Via({
+      apiKey: apiKey,
       url: 'https://router-api.via.exchange',
       timeout: 30000,
     });
+
+    return new ViaExchange(client);
+  }
+
+  constructor(client: Via) {
+    this.enabledChains = [Polygon, Fantom];
+    this.client = client;
   }
 
   isEnabledOn(fromChainId: string, toChainId: string): boolean {
