@@ -4,6 +4,14 @@ import { BigInteger } from './big-integer';
 import { ethers } from 'ethers';
 
 export class RouterCallEncoder {
+  /**
+   * Encode execution of origin function
+   * @param amountIn
+   * @param originSwap
+   * @param bridge
+   * @param destinationSwap
+   * @param receiverAddress
+   */
   public encodeInitSwidge(
     amountIn: BigInteger,
     originSwap: SwapOrder,
@@ -46,6 +54,13 @@ export class RouterCallEncoder {
     return ethers.utils.hexConcat([encodedSelector, encodedArguments]);
   }
 
+  /**
+   * Encode execution of destination function
+   * @param amountIn
+   * @param receiver
+   * @param originHash
+   * @param destinationSwap
+   */
   public encodeFinalizeSwidge(
     amountIn: BigInteger,
     receiver: string,
@@ -69,6 +84,23 @@ export class RouterCallEncoder {
           destinationSwap.required,
         ],
       ],
+    );
+
+    return ethers.utils.hexConcat([encodedSelector, encodedArguments]);
+  }
+
+  /**
+   * Encode token approval
+   * @param spender
+   * @param amount
+   */
+  public encodeApproval(spender: string, amount: BigInteger) {
+    const abiInterface = new ethers.utils.Interface(this.abiErc20());
+    const encodedSelector = abiInterface.getSighash('approve');
+
+    const encodedArguments = ethers.utils.defaultAbiCoder.encode(
+      ['address', 'uint256'],
+      [spender, amount.toString()],
     );
 
     return ethers.utils.hexConcat([encodedSelector, encodedArguments]);
@@ -241,6 +273,95 @@ export class RouterCallEncoder {
         name: 'finalizeSwidge',
         outputs: [],
         stateMutability: 'payable',
+        type: 'function',
+      },
+    ];
+  }
+
+  /**
+   * ABI of IERC20
+   * @private
+   */
+  private abiErc20() {
+    return [
+      {
+        inputs: [],
+        name: 'decimals',
+        outputs: [
+          {
+            internalType: 'uint8',
+            name: '',
+            type: 'uint8',
+          },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        inputs: [
+          {
+            internalType: 'address',
+            name: 'spender',
+            type: 'address',
+          },
+          {
+            internalType: 'uint256',
+            name: 'amount',
+            type: 'uint256',
+          },
+        ],
+        outputs: [
+          {
+            internalType: 'bool',
+            name: '',
+            type: 'bool',
+          },
+        ],
+        name: 'approve',
+        stateMutability: 'nonpayable',
+        type: 'function',
+      },
+      {
+        inputs: [
+          {
+            internalType: 'address',
+            name: 'account',
+            type: 'address',
+          },
+        ],
+        name: 'balanceOf',
+        outputs: [
+          {
+            internalType: 'uint256',
+            name: '',
+            type: 'uint256',
+          },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        inputs: [
+          {
+            internalType: 'address',
+            name: 'owner',
+            type: 'address',
+          },
+          {
+            internalType: 'address',
+            name: 'spender',
+            type: 'address',
+          },
+        ],
+        name: 'allowance',
+        outputs: [
+          {
+            internalType: 'uint256',
+            name: '',
+            type: 'uint256',
+          },
+        ],
+        stateMutability: 'view',
         type: 'function',
       },
     ];

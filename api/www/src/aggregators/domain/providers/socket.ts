@@ -11,6 +11,8 @@ import { Token } from '../../../shared/domain/token';
 import { ProviderDetails } from '../../../shared/domain/provider-details';
 import { AggregatorProviders } from './aggregator-providers';
 import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
+import { ApprovalTransactionDetails } from '../approval-transaction-details';
+import { RouterCallEncoder } from '../../../shared/domain/router-call-encoder';
 
 // whole Route details
 interface SocketRoute {
@@ -64,12 +66,14 @@ export class Socket implements Aggregator {
   private client: IHttpClient;
   private readonly apiKey: string;
   private readonly apiBaseUrl: string;
+  private routerCallEncoder: RouterCallEncoder;
 
   constructor(httpClient: IHttpClient) {
     this.enabledChains = [];
     this.client = httpClient;
     this.apiKey = '645b2c8c-5825-4930-baf3-d9b997fcd88c'; // public testing key
     this.apiBaseUrl = 'https://api.socket.tech/v2';
+    this.routerCallEncoder = new RouterCallEncoder();
   }
 
   isEnabledOn(fromChainId: string, toChainId: string): boolean {
@@ -120,11 +124,35 @@ export class Socket implements Aggregator {
       amountOut,
       amountOut,
     );
-    const txDetails = await this.getTxDetails(route);
+    const responseTxDetails = await this.getTxDetails(route);
+
+    let approvalTxDetails;
+
+    if (responseTxDetails.approvalData) {
+      // if there's approvalData means we have to approve some token
+      approvalTxDetails = new ApprovalTransactionDetails(
+        request.fromToken.address,
+        this.routerCallEncoder.encodeApproval(
+          responseTxDetails.approvalData.allowanceTarget,
+          request.amountIn,
+        ),
+      );
+    }
+
+    const routeFees = route.userTxs[0].gasFees;
+    const gasLimit = BigInteger.fromString(routeFees.gasLimit.toString());
+
+    const txDetails = new TransactionDetails(
+      responseTxDetails.txTarget,
+      responseTxDetails.txData,
+      BigInteger.fromString(responseTxDetails.value),
+      gasLimit,
+    );
+
     const steps = this.buildSteps(route.userTxs[0].steps);
     const aggregatorDetails = new AggregatorDetails(AggregatorProviders.Socket);
 
-    return new Route(aggregatorDetails, resume, steps, txDetails);
+    return new Route(aggregatorDetails, resume, steps, approvalTxDetails, txDetails);
   }
 
   /**
@@ -132,7 +160,12 @@ export class Socket implements Aggregator {
    * @param route
    * @private
    */
-  private async getTxDetails(route: SocketRoute): Promise<TransactionDetails> {
+  private async getTxDetails(route: SocketRoute): Promise<{
+    txData: string;
+    txTarget: string;
+    value: string;
+    approvalData: SocketApprovalData | null;
+  }> {
     const response = await this.client.post<{
       result: {
         txData: string;
@@ -149,23 +182,7 @@ export class Socket implements Aggregator {
       params: JSON.stringify({ route: route }),
     });
 
-    const approvalAddress = response.result.approvalData
-      ? response.result.approvalData.allowanceTarget
-      : null;
-
-    const routeFees = route.userTxs[0].gasFees;
-    const estimatedGas = BigInteger.fromString(routeFees.gasAmount);
-    const gasLimit = BigInteger.fromString(routeFees.gasLimit.toString());
-    const gasPrice = estimatedGas.div(routeFees.gasLimit);
-
-    return new TransactionDetails(
-      response.result.txTarget,
-      response.result.txData,
-      BigInteger.fromString(response.result.value),
-      gasLimit,
-      gasPrice,
-      approvalAddress,
-    );
+    return response.result;
   }
 
   /**

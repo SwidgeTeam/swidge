@@ -62,7 +62,7 @@ describe('aggregators', () => {
     const route = await aggregators.execute('k1', request);
 
     // Assert
-    expect(route.transactionDetails.to).toEqual(routeOne.transactionDetails.to);
-    expect(route.transactionDetails.callData).toEqual(routeOne.transactionDetails.callData);
+    expect(route.transaction.to).toEqual(routeOne.transaction.to);
+    expect(route.transaction.callData).toEqual(routeOne.transaction.callData);
   });
 });

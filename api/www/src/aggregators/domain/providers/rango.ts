@@ -1,7 +1,6 @@
 import { Aggregator } from '../aggregator';
 import { AggregatorRequest } from '../aggregator-request';
 import { RangoClient } from 'rango-sdk-basic';
-import { ConfigService } from '../../../config/config.service';
 import { Route } from '../../../shared/domain/route';
 import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
 import { AggregatorProviders } from './aggregator-providers';
@@ -18,9 +17,9 @@ export class Rango implements Aggregator {
   private enabledChains: string[];
   private client: RangoClient;
 
-  constructor(configService: ConfigService) {
+  constructor(client: RangoClient) {
     this.enabledChains = [];
-    this.client = new RangoClient(configService.getRangoApiKey());
+    this.client = client;
   }
 
   isEnabledOn(fromChainId: string, toChainId: string): boolean {
@@ -31,7 +30,7 @@ export class Rango implements Aggregator {
    * Entrypoint to quote a Route from Rango.exchange
    * @param request
    */
-  async execute(request: AggregatorRequest) {
+  async execute(request: AggregatorRequest): Promise<Route> {
     const response = await this.client.quote({
       from: {
         blockchain: this.getBlockchainCode(request.fromChain),
@@ -50,7 +49,12 @@ export class Rango implements Aggregator {
       throw new InsufficientLiquidity();
     }
 
-    const aggregatorDetails = new AggregatorDetails(AggregatorProviders.Rango);
+    const aggregatorDetails = new AggregatorDetails(
+      AggregatorProviders.Rango,
+      '',
+      false,
+      response.requestId,
+    );
     const amountOut = BigInteger.fromString(response.route.outputAmount);
     const resume = new RouteResume(
       request.fromChain,

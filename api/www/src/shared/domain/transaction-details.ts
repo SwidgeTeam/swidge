@@ -7,8 +7,6 @@ export class TransactionDetails {
     private readonly _callData: string,
     private readonly _value: BigInteger,
     private readonly _gasLimit: BigInteger,
-    private readonly _gasPrice?: BigInteger,
-    private readonly _approvalAddress?: ContractAddress,
   ) {}
 
   get to(): ContractAddress {
@@ -25,13 +23,5 @@ export class TransactionDetails {
 
   get gasLimit(): BigInteger {
     return this._gasLimit;
-  }
-
-  get gasPrice(): BigInteger {
-    return this._gasPrice;
-  }
-
-  get approvalAddress(): ContractAddress {
-    return this._approvalAddress;
   }
 }

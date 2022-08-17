@@ -30,6 +30,7 @@ import { Aggregators } from '../../aggregators/domain/aggregators';
 import { Logger } from '../../shared/domain/logger';
 import { AggregatorProviders } from '../../aggregators/domain/providers/aggregator-providers';
 import { AggregatorDetails } from '../../shared/domain/aggregator-details';
+import { ApprovalTransactionDetails } from '../../aggregators/domain/approval-transaction-details';
 
 export class PathComputer {
   /** Providers */
@@ -321,8 +322,8 @@ export class PathComputer {
         // make sure there is no duplicates, may happen when various path dont need all the steps
         const exists = final.find((route: Route) => {
           return (
-            route.transactionDetails.to === current.transactionDetails.to &&
-            route.transactionDetails.callData === current.transactionDetails.callData &&
+            route.transaction.to === current.transaction.to &&
+            route.transaction.callData === current.transaction.callData &&
             route.resume.amountOut.equals(current.resume.amountOut)
           );
         });
@@ -430,13 +431,18 @@ export class PathComputer {
       value = originNativeWeiOfDestinationGas.plus(this.amountIn);
     }
 
+    const approvalTransaction = this.srcToken.isNative()
+      ? null
+      : new ApprovalTransactionDetails(
+          this.srcToken.address,
+          this.routerCallEncoder.encodeApproval(DeployedAddresses.Router, this.amountIn),
+        );
+
     const transactionDetails = new TransactionDetails(
       DeployedAddresses.Router,
       callData,
       value,
       BigInteger.fromString('2000000'), // TODO set more accurate
-      this.gasPriceOrigin,
-      DeployedAddresses.Router,
     );
 
     const resume = new RouteResume(
@@ -451,7 +457,7 @@ export class PathComputer {
 
     const aggregatorDetails = new AggregatorDetails(AggregatorProviders.Swidge);
 
-    return new Route(aggregatorDetails, resume, steps, transactionDetails);
+    return new Route(aggregatorDetails, resume, steps, approvalTransaction, transactionDetails);
   }
 
   /**

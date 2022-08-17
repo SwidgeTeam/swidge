@@ -165,9 +165,8 @@ describe('aggregators', () => {
     const route = await socket.execute(request);
 
     // Assert
-    expect(route.transactionDetails.to).toEqual(txTo);
-    expect(route.transactionDetails.approvalAddress).toEqual(txApprove);
-    expect(route.transactionDetails.callData).toEqual('0xdata');
+    expect(route.transaction.to).toEqual(txTo);
+    expect(route.transaction.callData).toEqual('0xdata');
     expect(route.steps.length).toEqual(2);
     expect(route.steps[0].type).toEqual('swap');
     expect(route.steps[0].amountOut.toString()).toEqual('150000000');
