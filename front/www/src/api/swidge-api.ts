@@ -77,11 +77,13 @@ class SwidgeAPI extends HttpClient {
                     completed: false,
                 }
                 if (!route.aggregator.requireCallDataQuote) {
-                    route.tx = {
-                        to: r.tx.to,
-                        callData: r.tx.callData,
-                        value: r.tx.value,
-                        gasLimit: r.tx.gasLimit,
+                    if (r.tx) {
+                        route.tx = {
+                            to: r.tx.to,
+                            callData: r.tx.callData,
+                            value: r.tx.value,
+                            gasLimit: r.tx.gasLimit,
+                        }
                     }
                     if (r.approvalTx) {
                         route.approvalTx = {

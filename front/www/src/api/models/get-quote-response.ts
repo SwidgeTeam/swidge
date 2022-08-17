@@ -43,8 +43,8 @@ interface RouteJson {
     aggregator: AggregatorDetailsJson
     resume: RouteResumeJson
     steps: RouteStepJson[]
-    tx: TransactionDetailsJson
     approvalTx: ApprovalTransactionDetailsJson | null
+    tx: TransactionDetailsJson | null
 }
 
 interface AggregatorDetailsJson {
