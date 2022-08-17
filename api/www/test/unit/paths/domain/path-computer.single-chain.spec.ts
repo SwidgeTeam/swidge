@@ -141,6 +141,61 @@ describe('path-computer - single chain', () => {
       expect(routes[1].resume.amountIn).toEqual(BigInteger.fromDecimal('1000', srcToken.decimals));
       expect(routes[1].amountOut).toEqual('2.0');
     });
+
+    it('should compute route without approval if native token in', async () => {
+      /** Arrange */
+      const srcToken = TokenMother.polygonMatic();
+      const dstToken = TokenMother.sushi();
+
+      const fetcher = getTokenDetailsFetcher([srcToken, dstToken]);
+
+      // mock ZeroEx provider
+      const mockZeroEx = createMock<ZeroEx>({
+        execute: (request) => {
+          return Promise.resolve(
+            SwapOrderMother.fromRequest(ExchangeProviders.ZeroEx, request, '2'),
+          );
+        },
+        isEnabledOn: () => true,
+      });
+
+      const exchanges = new Exchanges([
+        [ExchangeProviders.ZeroEx, mockZeroEx],
+      ]);
+
+      // mock GasPriceFetcher
+      const gasPriceFetcher = new GasPriceFetcher();
+      stub(gasPriceFetcher, 'fetch').resolves(BigInteger.fromString('100000000'));
+
+      // mock PriceFeedFetcher
+      const priceFeedFetcher = getPriceFeedFetcher([{ chain: Polygon, result: '500' }]);
+
+      // create computer
+      const pathComputer = new PathComputer(
+        exchanges,
+        new Bridges([]),
+        new Aggregators([]),
+        fetcher,
+        priceFeedFetcher,
+        gasPriceFetcher,
+        loggerMock(),
+      );
+
+      // create pat query
+      const query = getPathQuery();
+
+      /** Act */
+      const routes = await pathComputer.compute(query);
+
+      /** Assert */
+      expect(routes.length).toEqual(1);
+
+      expect(routes[0].resume.fromToken).toEqual(srcToken);
+      expect(routes[0].resume.toToken).toEqual(dstToken);
+      expect(routes[0].approvalTransaction).toEqual(null);
+      expect(routes[0].resume.amountIn).toEqual(BigInteger.fromDecimal('1000', srcToken.decimals));
+      expect(routes[0].amountOut).toEqual('2.0');
+    });
   });
 });
 
