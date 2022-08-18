@@ -25,6 +25,11 @@ export interface TwoSteppedAggregator {
 }
 
 export interface ExternalAggregator {
-  executedTransaction: (txHash: string, trackingId: string) => Promise<void>;
+  executedTransaction: (
+    txHash: string,
+    trackingId: string,
+    fromAddress: string,
+    toAddress: string,
+  ) => Promise<void>;
   checkStatus: (request: StatusCheckRequest) => Promise<StatusCheckResponse>;
 }

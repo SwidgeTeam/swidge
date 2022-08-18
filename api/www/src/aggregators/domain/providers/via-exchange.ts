@@ -16,7 +16,7 @@ import { Aggregator, ExternalAggregator, TwoSteppedAggregator } from '../aggrega
 import {
   ExternalTransactionStatus,
   StatusCheckRequest,
-  StatusCheckResponse
+  StatusCheckResponse,
 } from '../status-check';
 
 export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAggregator {
@@ -131,6 +131,10 @@ export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAg
     );
   }
 
+  /**
+   * Checks and returns the current status of the transaction
+   * @param request
+   */
   async checkStatus(request: StatusCheckRequest): Promise<StatusCheckResponse> {
     const statusResponse = await this.client.checkTx({
       actionUuid: request.trackingId,
@@ -157,8 +161,26 @@ export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAg
     };
   }
 
-  executedTransaction(txHash: string, trackingId: string): Promise<void> {
-    return Promise.resolve(undefined);
+  /**
+   * Sets the transaction as executed
+   * @param txHash
+   * @param trackingId
+   * @param fromAddress
+   * @param toAddress
+   */
+  async executedTransaction(
+    txHash: string,
+    trackingId: string,
+    fromAddress: string,
+    toAddress: string,
+  ): Promise<void> {
+    await this.client.startRoute({
+      fromAddress: fromAddress,
+      toAddress: toAddress,
+      txHash: txHash,
+      routeId: trackingId,
+    });
+    return;
   }
 
   /**
