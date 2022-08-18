@@ -1,5 +1,7 @@
 <script setup lang='ts'>
 import Modal from '@/components/Modals/Modal.vue'
+import SettingsButtonSlippage from '../Buttons/SettingsButtonSlippage.vue'
+import SettingsButtonGas from '../Buttons/SettingsButtonGas.vue'
 
 
 defineProps({
@@ -29,15 +31,15 @@ const onCloseModal = () => {
         </div>
         <div class="pl-4 mt-6 text-xl font-light relative">
             Slippage
-            <div class="absolute -right-1 -top-2 ">
-                <button class="w-16 h-12 mx-2 px-4 py-2 text-center border rounded-lg border-slate-600 focus:bg-gray-300 focus:text-slate-800 focus:font-semibold">1%</button>
-                <button class="w-16 h-12 mx-2 px-4 py-2 text-center border rounded-lg border-slate-600 focus:bg-gray-300 focus:text-slate-800  focus:font-semibold">2%</button>
+            <div class="absolute -right-1 -top-2 flex">
+                <SettingsButtonSlippage content="1%" input="1" name="slippage" value="1" />
+                <SettingsButtonSlippage content="2%" input="2" name="slippage" value="2" class="mr-1" />
                 <input 
                     class="w-16 h-12 ml-2 mr-1 px-2 py-2 text-center border rounded-lg border-slate-600 bg-inherit caret-inherit relative" 
                     type="text"
                     placeholder="Enter"
                     >
-                    
+                
             </div>
         </div>
         <div  class="mt-12 mb-12">
@@ -49,9 +51,9 @@ const onCloseModal = () => {
         <div  class="pl-4 mt-6 text-xl font-light relative">
             Gas price
             <div class="absolute -right-1 -top-2">
-                <button class="h-12 mx-2 px-4 py-2 text-center border rounded-lg border-slate-600 focus:bg-gray-300 focus:text-slate-800 focus:font-semibold">Slow</button>
-                <button class="h-12 mx-2 px-4 py-2 text-center border rounded-lg border-slate-600 focus:bg-gray-300 focus:text-slate-800  focus:font-semibold">Medium</button>
-                <button class="h-12 mx-2 px-4 py-2 text-center border rounded-lg border-slate-600 focus:bg-gray-300 focus:text-slate-800  focus:font-semibold">Fast</button>
+                <SettingsButtonGas content="Slow"/>
+                <SettingsButtonGas content="Medium"/>
+                <SettingsButtonGas content="Fast"/>
             </div>
         </div>
     </Modal>
