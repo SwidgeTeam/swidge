@@ -11,7 +11,6 @@ export class TwoSteppedAggregators {
 
   /**
    * Returns a specific aggregator by ID
-   * @return A stepped aggregator
    * @param aggregatorId
    */
   public get(aggregatorId: string): TwoSteppedAggregator {
