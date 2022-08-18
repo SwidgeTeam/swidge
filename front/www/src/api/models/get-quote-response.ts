@@ -50,7 +50,8 @@ interface RouteJson {
 interface AggregatorDetailsJson {
     id: string
     routeId: string
-    requireCallDataQuote: boolean
+    requiresCallDataQuoting: boolean
+    bothQuotesInOne: boolean
     trackingId: string
 }
 
