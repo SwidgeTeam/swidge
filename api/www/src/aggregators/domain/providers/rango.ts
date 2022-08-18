@@ -11,7 +11,7 @@ import { ProviderDetails } from '../../../shared/domain/provider-details';
 import { InsufficientLiquidity } from '../../../swaps/domain/insufficient-liquidity';
 import { QuotePath } from 'rango-sdk-basic/lib/types/api/common';
 import { Avalanche, BSC, Fantom, Mainnet, Optimism, Polygon } from '../../../shared/enums/ChainIds';
-import { TransactionDetails } from 'src/shared/domain/transaction-details';
+import { TransactionDetails } from '../../../shared/domain/transaction-details';
 import { ApprovalTransactionDetails } from '../approval-transaction-details';
 import BothTxs from '../both-txs';
 import { Aggregator, OneSteppedAggregator } from '../aggregator';
