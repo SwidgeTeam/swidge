@@ -174,16 +174,7 @@ const onQuote = async () => {
     }
 
     try {
-        await routesStore.quotePath({
-            fromChainId: tokensStore.getOriginChainId,
-            srcToken: tokensStore.getOriginTokenAddress,
-            toChainId: tokensStore.getDestinationChainId,
-            dstToken: tokensStore.getDestinationTokenAddress,
-            amount: sourceTokenAmount.value.toString(),
-            slippage: 2,
-            senderAddress: web3Store.account || ethers.constants.AddressZero,
-            receiverAddress: web3Store.account || ethers.constants.AddressZero
-        })
+        await routesStore.quotePath(sourceTokenAmount.value, 2)
 
         const route = routesStore.getSelectedRoute
 
@@ -235,7 +226,7 @@ const onExecuteTransaction = async () => {
         promise = executeRoute(route)
     } else {
         promise = aggregator.bothQuotesInOne
-            ? executeSingleQuoteExecution(route)
+            ? executeSingleQuoteExecution()
             : executeDoubleQuoteExecution(route)
     }
 
@@ -267,55 +258,39 @@ const executeRoute = async (route: Route): Promise<TransactionReceipt> => {
 
 /**
  * Executes the route when the aggregator requires quoting the callData
- * @param route
  */
-const executeSingleQuoteExecution = async (route: Route): Promise<TransactionReceipt> => {
-    const txs = await swidgeApi.getBothTxs({
-        aggregatorId: route.aggregator.id,
-        routeId: route.aggregator.routeId,
-        senderAddress: web3Store.account,
-        receiverAddress: web3Store.account
-    })
+const executeSingleQuoteExecution = async (): Promise<TransactionReceipt> => {
+    await routesStore.fetchBothTxs(sourceTokenAmount.value, 2)
+    const approvalTx = routesStore.getApprovalTx
+    const mainTx = routesStore.mainTx
 
-    if (!txs.mainTx) {
+    if (!mainTx) {
         throw new Error('trying to execute an empty transaction')
     }
-
-    if (txs.approvalTx) {
-        await ContractCaller.executeApproval(txs.approvalTx)
+    if (approvalTx) {
+        await ContractCaller.executeApproval(approvalTx)
     }
-
-    openTransactionStatusModal()
-
-    return ContractCaller.executeTransaction(txs.mainTx)
-}
-
-/**
- * Executes the route when the aggregator requires quoting the callData
- * @param route
- */
-const executeDoubleQuoteExecution = async (route: Route): Promise<TransactionReceipt> => {
-    // quote approval tx calldata
-    const approvalTx = await swidgeApi.getApprovalTx({
-        aggregatorId: route.aggregator.id,
-        routeId: route.aggregator.routeId,
-        senderAddress: web3Store.account
-    })
-
-    // approve
-    await ContractCaller.executeApproval(approvalTx)
-
-    // quote tx calldata
-    const mainTx = await swidgeApi.getMainTx({
-        aggregatorId: route.aggregator.id,
-        routeId: route.aggregator.routeId,
-        senderAddress: web3Store.account,
-        receiverAddress: web3Store.account,
-    })
 
     openTransactionStatusModal()
 
     return ContractCaller.executeTransaction(mainTx)
+}
+
+/**
+ * Executes the route when the aggregator requires quoting the callData
+ */
+const executeDoubleQuoteExecution = async (): Promise<TransactionReceipt> => {
+    await routesStore.fetchApprovalTx()
+
+    if (routesStore.getApprovalTx) {
+        await ContractCaller.executeApproval(routesStore.getApprovalTx)
+    }
+
+    await routesStore.fetchMainTx()
+
+    openTransactionStatusModal()
+
+    return ContractCaller.executeTransaction(routesStore.getMainTx)
 }
 
 /**

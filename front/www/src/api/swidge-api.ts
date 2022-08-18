@@ -12,6 +12,7 @@ import Route, { ApprovalTransactionDetails, TransactionDetails } from '@/domain/
 import GetApprovalTxResponseJson from '@/api/models/get-approval-tx-response'
 import GetMainTxResponse from '@/api/models/get-main-tx-response'
 import GetBothTxsResponse from '@/api/models/get-both-txs-response'
+import GetBothTxsRequest from '@/api/models/get-both-txs-request'
 
 class SwidgeAPI extends HttpClient {
     public constructor() {
@@ -166,12 +167,7 @@ class SwidgeAPI extends HttpClient {
         }
     }
 
-    async getBothTxs(query: {
-        aggregatorId: string
-        routeId: string
-        senderAddress: string
-        receiverAddress: string
-    }): Promise<{
+    async getBothTxs(query: GetBothTxsRequest): Promise<{
         trackingId: string,
         approvalTx: ApprovalTransactionDetails,
         mainTx: TransactionDetails,
