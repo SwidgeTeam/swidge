@@ -247,13 +247,10 @@ const executeRoute = async (route: Route): Promise<TransactionReceipt> => {
     if (!route.tx) {
         throw new Error('trying to execute an empty transaction')
     }
-
     if (route.approvalTx) {
         await ContractCaller.executeApproval(route.approvalTx)
     }
-
     openTransactionStatusModal()
-
     return ContractCaller.executeTransaction(route.tx)
 }
 
@@ -264,16 +261,13 @@ const executeSingleQuoteExecution = async (): Promise<TransactionReceipt> => {
     await transactionStore.fetchBothTxs(sourceTokenAmount.value, 2)
     const approvalTx = transactionStore.getApprovalTx
     const mainTx = transactionStore.mainTx
-
     if (!mainTx) {
         throw new Error('trying to execute an empty transaction')
     }
     if (approvalTx) {
         await ContractCaller.executeApproval(approvalTx)
     }
-
     openTransactionStatusModal()
-
     return ContractCaller.executeTransaction(mainTx)
 }
 
@@ -282,16 +276,17 @@ const executeSingleQuoteExecution = async (): Promise<TransactionReceipt> => {
  */
 const executeDoubleQuoteExecution = async (): Promise<TransactionReceipt> => {
     await transactionStore.fetchApprovalTx()
-
-    if (transactionStore.getApprovalTx) {
-        await ContractCaller.executeApproval(transactionStore.getApprovalTx)
+    const approvalTx = transactionStore.getApprovalTx
+    if (approvalTx) {
+        await ContractCaller.executeApproval(approvalTx)
     }
-
     await transactionStore.fetchMainTx()
-
+    const mainTx = transactionStore.mainTx
+    if(!mainTx){
+        throw new Error('trying to execute an empty transaction')
+    }
     openTransactionStatusModal()
-
-    return ContractCaller.executeTransaction(transactionStore.getMainTx)
+    return ContractCaller.executeTransaction(mainTx)
 }
 
 /**
@@ -306,6 +301,7 @@ const onInitialTxCompleted = (route: Route, receipt: TransactionReceipt) => {
             setUpEventListener(route.tx as TransactionDetails, receipt.transactionHash)
         } else {
             transactionStore.informExecutedTx(receipt.transactionHash)
+            transactionStore.startCheckingStatus()
         }
     } else {
         routesStore.completeRoute()

@@ -13,6 +13,7 @@ import GetApprovalTxResponseJson from '@/api/models/get-approval-tx-response'
 import GetMainTxResponse from '@/api/models/get-main-tx-response'
 import GetBothTxsResponse from '@/api/models/get-both-txs-response'
 import GetBothTxsRequest from '@/api/models/get-both-txs-request'
+import { StatusCheckResponse } from '@/api/models/get-status-check';
 
 class SwidgeAPI extends HttpClient {
     public constructor() {
@@ -207,6 +208,20 @@ class SwidgeAPI extends HttpClient {
     }): Promise<void> {
         try {
             await this.instance.post('/tx-executed', params)
+        } catch (e: unknown) {
+            if (axios.isAxiosError(e)) {
+                const apiErrorResponse = e.response?.data as ApiErrorResponse
+                const errorMessage = apiErrorResponse.message ?? 'Unhandled error!'
+                throw new Error(errorMessage)
+            }
+            throw new Error('UnknownError no axios error')
+        }
+    }
+
+    checkTxStatus(): Promise<StatusCheckResponse> {
+        try {
+            return this.instance.get('/tx-status')
+                .then(response => response.data)
         } catch (e: unknown) {
             if (axios.isAxiosError(e)) {
                 const apiErrorResponse = e.response?.data as ApiErrorResponse

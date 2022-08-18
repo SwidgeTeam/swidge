@@ -3,13 +3,15 @@ import { ApprovalTransactionDetails, TransactionDetails } from '@/domain/paths/p
 import { useTokensStore } from '@/store/tokens'
 import { useWeb3Store } from '@/store/web3'
 import swidgeApi from '@/api/swidge-api'
-import { useRoutesStore } from '@/store/routes';
+import { useRoutesStore } from '@/store/routes'
+import { TransactionStatus } from '@/api/models/get-status-check';
 
 export const useTransactionStore = defineStore('transaction', {
     state: () => ({
         approvalTx: {} as ApprovalTransactionDetails,
         mainTx: {} as TransactionDetails,
         trackingId: '',
+        statusCheckInterval: 0,
     }),
     getters: {
         getApprovalTx(): ApprovalTransactionDetails {
@@ -86,7 +88,23 @@ export const useTransactionStore = defineStore('transaction', {
                 txHash: txHash,
                 trackingId: this.trackingId,
             })
-        }
+        },
+        /**
+         * Sets an interval to check the status of the TX until it succeeds or fails
+         */
+        startCheckingStatus: function () {
+            this.statusCheckInterval = window.setInterval(() => {
+                swidgeApi.checkTxStatus().then(response => {
+                    if (response.status === TransactionStatus.Success) {
+                        const routesStore = useRoutesStore()
+                        routesStore.completeRoute()
+                        clearInterval(this.statusCheckInterval)
+                    } else if (response.status === TransactionStatus.Failed) {
+                        // TODO do something
+                    }
+                })
+            }, 5000)
+        },
     }
 })
 
