@@ -1,4 +1,5 @@
 export default interface GetBothTxsResponse {
+    trackingId: string
     approvalTx: {
         to: string;
         callData: string;

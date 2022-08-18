@@ -172,12 +172,14 @@ class SwidgeAPI extends HttpClient {
         senderAddress: string
         receiverAddress: string
     }): Promise<{
+        trackingId: string,
         approvalTx: ApprovalTransactionDetails,
         mainTx: TransactionDetails,
     }> {
         try {
             const response = await this.instance.get<GetBothTxsResponse>('/build-both-txs', { params: query })
             return {
+                trackingId: response.data.trackingId,
                 approvalTx: {
                     to: response.data.approvalTx.to,
                     callData: response.data.approvalTx.callData,
