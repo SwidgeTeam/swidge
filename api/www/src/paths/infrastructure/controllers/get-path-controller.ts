@@ -31,18 +31,26 @@ export class GetPathController {
   }
 
   private mapRoute(route: Route) {
-    const txDetails = route.transactionDetails;
-    const tx = txDetails
-      ? {
-          to: txDetails.to,
-          approvalAddress: txDetails.approvalAddress,
-          callData: txDetails.callData,
-          value: txDetails.value.toString(),
-          gasLimit: txDetails.gasLimit.toString(),
-          gasPrice: txDetails.gasPrice.toString(),
-        }
-      : null;
+    let approvalTx, tx;
+
+    if (!route.aggregator.requiresCallDataQuoting) {
+      approvalTx = route.approvalTransaction
+        ? {
+            to: route.approvalTransaction.to,
+            callData: route.approvalTransaction.callData,
+            gasLimit: route.approvalTransaction.gasLimit.toString(),
+          }
+        : null;
+      tx = {
+        to: route.transaction.to,
+        callData: route.transaction.callData,
+        value: route.transaction.value.toString(),
+        gasLimit: route.transaction.gasLimit.toString(),
+      };
+    }
+
     return {
+      amountOut: route.amountOut,
       aggregator: {
         id: route.aggregator.id,
         routeId: route.aggregator.routeId,
@@ -58,8 +66,6 @@ export class GetPathController {
         amountOut: route.resume.amountOut.toDecimal(route.resume.toToken.decimals),
         minAmountOut: route.resume.minAmountOut.toDecimal(route.resume.toToken.decimals),
       },
-      tx: tx,
-      amountOut: route.amountOut,
       steps: route.steps.map((step) => {
         return {
           type: step.type,
@@ -72,6 +78,8 @@ export class GetPathController {
           fee: step.feeInUSD,
         };
       }),
+      approvalTx,
+      tx,
     };
   }
 

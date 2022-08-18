@@ -11,15 +11,19 @@ import sushiPairsRepositoryProvider from '../swaps/infrastructure/database/repos
 import priceFeedFetcherProvider from '../shared/infrastructure/PriceFeedFetcher.provider';
 import gasPriceFetcherProvider from '../shared/infrastructure/GasPriceFetcher.provider';
 import consoleLoggerProvider from '../shared/infrastructure/console-logger-provider';
+import { ConfigModule } from '../config/config.module';
+import { ConfigService } from '../config/config.service';
 
 @Module({
   imports: [
     CqrsModule,
     TransactionsModule,
+    ConfigModule,
   ],
   controllers: [GetPathController],
   providers: [
     GetPathHandler,
+    ConfigService,
     httpClientProvider(),
     cachedHttpClientProvider(),
     addressesRepositoryProvider(),

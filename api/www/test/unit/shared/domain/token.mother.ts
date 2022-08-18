@@ -14,6 +14,10 @@ export class TokenMother {
     return this.create('LINK', '0x53e0bca35ec356bd5dddfebbd1fc0fd03fabad39', 18, 'LINK');
   }
 
+  public static polygonMatic() {
+    return this.create('MATIC', '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', 18, 'MATIC');
+  }
+
   public static sushi() {
     return this.create('SUSHI', '0x6f86ee19cc2ed23f168deba8bcb7be3ff9cb06fa', 18, 'SUSHI');
   }

@@ -11,14 +11,18 @@ import { ProviderDetails } from '../../../shared/domain/provider-details';
 import { RouteResume } from '../../../shared/domain/route-resume';
 import { AggregatorProviders } from './aggregator-providers';
 import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
+import { ApprovalTransactionDetails } from '../approval-transaction-details';
+import { RouterCallEncoder } from '../../../shared/domain/router-call-encoder';
 
 export class LiFi implements Aggregator {
   private enabledChains: string[];
   private client: LIFI;
+  private routerCallEncoder: RouterCallEncoder;
 
   constructor() {
     this.enabledChains = [];
     this.client = new LIFI();
+    this.routerCallEncoder = new RouterCallEncoder();
   }
 
   isEnabledOn(fromChainId: string, toChainId: string): boolean {
@@ -37,17 +41,25 @@ export class LiFi implements Aggregator {
         toChain: request.toChain,
         toToken: request.toToken.address,
         fromAmount: request.amountIn.toString(),
-        fromAddress: '0x0000000000000000000000000000000000000000',
+        fromAddress: request.senderAddress,
         slippage: request.slippage / 100,
       });
+
+      const approvalTransaction = request.fromToken.isNative()
+        ? null
+        : new ApprovalTransactionDetails(
+            request.fromToken.address,
+            this.routerCallEncoder.encodeApproval(
+              response.estimate.approvalAddress,
+              request.amountIn,
+            ),
+          );
 
       const transactionDetails = new TransactionDetails(
         response.transactionRequest.to,
         response.transactionRequest.data.toString(),
         BigInteger.fromString(response.transactionRequest.value.toString()),
         BigInteger.fromString(response.transactionRequest.gasLimit.toString()),
-        BigInteger.fromString(response.transactionRequest.gasPrice.toString()),
-        response.estimate.approvalAddress,
       );
 
       const steps = this.createSteps(response);
@@ -64,7 +76,7 @@ export class LiFi implements Aggregator {
 
       const aggregatorDetails = new AggregatorDetails(AggregatorProviders.LiFi);
 
-      return new Route(aggregatorDetails, resume, steps, transactionDetails);
+      return new Route(aggregatorDetails, resume, steps, approvalTransaction, transactionDetails);
     } catch (e) {
       throw new InsufficientLiquidity();
     }

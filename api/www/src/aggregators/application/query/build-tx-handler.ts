@@ -1,5 +1,4 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import BuildTxApprovalQuery from './build-tx-approval-query';
 import { Inject } from '@nestjs/common';
 import { Class } from '../../../shared/Class';
 import { HttpClient } from '../../../shared/infrastructure/http/httpClient';
@@ -7,11 +6,12 @@ import { Logger } from '../../../shared/domain/logger';
 import { AggregatorProviders } from '../../domain/providers/aggregator-providers';
 import { ViaExchange } from '../../domain/providers/via-exchange';
 import { SteppedAggregators } from '../../domain/stepped-aggregators';
-import { ApprovalTransactionDetails } from '../../domain/approval-transaction-details';
+import BuildTxQuery from './build-tx-query';
+import { TransactionDetails } from '../../../shared/domain/transaction-details';
 import { ConfigService } from '../../../config/config.service';
 
-@QueryHandler(BuildTxApprovalQuery)
-export class BuildTxApprovalHandler implements IQueryHandler<BuildTxApprovalQuery> {
+@QueryHandler(BuildTxQuery)
+export class BuildTxHandler implements IQueryHandler<BuildTxQuery> {
   private aggregators: SteppedAggregators;
 
   constructor(
@@ -24,8 +24,8 @@ export class BuildTxApprovalHandler implements IQueryHandler<BuildTxApprovalQuer
     ]);
   }
 
-  execute(query: BuildTxApprovalQuery): Promise<ApprovalTransactionDetails> {
+  execute(query: BuildTxQuery): Promise<TransactionDetails> {
     const aggregator = this.aggregators.get(query.aggregatorId);
-    return aggregator.buildApprovalTx(query.routeId, query.senderAddress);
+    return aggregator.buildTx(query.routeId, query.senderAddress, query.receiverAddress);
   }
 }

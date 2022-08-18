@@ -16,7 +16,7 @@ export class RouteMother {
     steps: RouteStep[],
   ): Route {
     const aggregatorDetails = new AggregatorDetails(AggregatorProviders.Swidge);
-    return new Route(aggregatorDetails, resume, steps, txDetails);
+    return new Route(aggregatorDetails, resume, steps, null, txDetails);
   }
 
   public static randomSingleSwap(): Route {
@@ -36,8 +36,6 @@ export class RouteMother {
       faker.random.alphaNumeric(200),
       BigIntegerMother.random(),
       BigIntegerMother.random(),
-      BigIntegerMother.random(),
-      faker.finance.ethereumAddress(),
     );
     const steps = [
       new RouteStep(
@@ -71,8 +69,6 @@ export class RouteMother {
       faker.random.alphaNumeric(200),
       BigIntegerMother.random(),
       BigIntegerMother.random(),
-      BigIntegerMother.random(),
-      faker.finance.ethereumAddress(),
     );
     const steps = [
       new RouteStep(

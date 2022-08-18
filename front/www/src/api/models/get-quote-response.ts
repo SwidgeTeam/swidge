@@ -1,8 +1,8 @@
 interface TokenDetailsJson {
-    name: string,
-    address: string,
-    decimals: number,
-    symbol: string,
+    name: string
+    address: string
+    decimals: number
+    symbol: string
 }
 
 interface RouteStepJson {
@@ -11,18 +11,22 @@ interface RouteStepJson {
     logo: string
     tokenIn: TokenDetailsJson
     tokenOut: TokenDetailsJson
-    amountIn: string,
-    amountOut: string,
+    amountIn: string
+    amountOut: string
     fee: string
+}
+
+export interface ApprovalTransactionDetailsJson {
+    to: string
+    callData: string
+    gasLimit: string
 }
 
 interface TransactionDetailsJson {
     to: string
-    approvalAddress: string
     callData: string
     value: string
     gasLimit: string
-    gasPrice: string
 }
 
 interface RouteResumeJson {
@@ -38,14 +42,16 @@ interface RouteJson {
     amountOut: string
     aggregator: AggregatorDetailsJson
     resume: RouteResumeJson
-    tx: TransactionDetailsJson
     steps: RouteStepJson[]
+    approvalTx: ApprovalTransactionDetailsJson | null
+    tx: TransactionDetailsJson | null
 }
 
 interface AggregatorDetailsJson {
     id: string
     routeId: string
     requireCallDataQuote: boolean
+    trackingId: string
 }
 
 export default interface GetQuoteResponse {

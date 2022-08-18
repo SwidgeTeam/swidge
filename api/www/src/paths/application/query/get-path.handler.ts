@@ -21,12 +21,16 @@ import { Aggregators } from '../../../aggregators/domain/aggregators';
 import { AggregatorProviders } from '../../../aggregators/domain/providers/aggregator-providers';
 import { LiFi } from '../../../aggregators/domain/providers/liFi';
 import { Logger } from '../../../shared/domain/logger';
+import { ViaExchange } from '../../../aggregators/domain/providers/via-exchange';
+import { ConfigService } from '../../../config/config.service';
+import { Socket } from '../../../aggregators/domain/providers/socket';
 
 @QueryHandler(GetPathQuery)
 export class GetPathHandler implements IQueryHandler<GetPathQuery> {
   private pathComputer: PathComputer;
 
   constructor(
+    private readonly configService: ConfigService,
     @Inject(Class.HttpClient) private readonly httpClient: HttpClient,
     @Inject(Class.CachedHttpClient) private readonly cachedHttpClient: CachedHttpClient,
     @Inject(Class.TokenDetailsFetcher) private readonly tokenDetailsFetcher: TokenDetailsFetcher,
@@ -39,13 +43,16 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
       [BridgeProviders.Multichain, new Multichain(cachedHttpClient)]
     ]);
 
+
     const exchanges = new Exchanges([
       [ExchangeProviders.ZeroEx, new ZeroEx(httpClient)],
       [ExchangeProviders.Sushi, new Sushiswap(httpClient, sushiPairsRepository)],
     ]);
 
     const aggregators = new Aggregators([
-      [AggregatorProviders.LiFi, new LiFi()]
+      [AggregatorProviders.LiFi, new LiFi()],
+      [AggregatorProviders.Socket, new Socket(httpClient, configService.getSocketApiKey())],
+      [AggregatorProviders.Via, ViaExchange.create(configService.getViaApiKey())],
     ]);
 
     this.pathComputer = new PathComputer(

@@ -15,17 +15,21 @@ import { ApprovalTransactionDetails } from '../approval-transaction-details';
 import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
 
 export class ViaExchange implements SteppedAggregator {
-  private enabledChains: string[];
+  private enabledChains = [];
   private client: Via;
 
-  constructor() {
-    this.enabledChains = [];
-    const DEFAULT_API_KEY = 'e3db93a3-ae1c-41e5-8229-b8c1ecef5583';
-    this.client = new Via({
-      apiKey: DEFAULT_API_KEY,
+  public static create(apiKey: string): ViaExchange {
+    const client = new Via({
+      apiKey: apiKey,
       url: 'https://router-api.via.exchange',
       timeout: 30000,
     });
+
+    return new ViaExchange(client);
+  }
+
+  constructor(client: Via) {
+    this.client = client;
   }
 
   isEnabledOn(fromChainId: string, toChainId: string): boolean {
@@ -39,10 +43,10 @@ export class ViaExchange implements SteppedAggregator {
   async execute(request: AggregatorRequest) {
     const response = await this.client.getRoutes({
       fromChainId: Number(request.fromChain),
-      fromTokenAddress: request.fromToken.address,
-      fromAmount: Math.pow(10, 18),
+      fromTokenAddress: this.getTokenAddress(request.fromToken),
+      fromAmount: Number(request.amountIn.toString()),
       toChainId: Number(request.toChain),
-      toTokenAddress: request.toToken.address,
+      toTokenAddress: this.getTokenAddress(request.toToken),
       fromAddress: request.senderAddress,
       toAddress: request.receiverAddress,
       multiTx: false, // whether to return routes with multiple user transactions
@@ -170,5 +174,18 @@ export class ViaExchange implements SteppedAggregator {
     }
 
     return new RouteStep(type, details, fromToken, toToken, amountIn, amountOut, '');
+  }
+
+  /**
+   * Returns the correct address for Via
+   * @param token
+   * @private
+   */
+  private getTokenAddress(token: Token): string {
+    if (token.isNative()) {
+      return '0x0000000000000000000000000000000000000000';
+    }
+
+    return token.address;
   }
 }

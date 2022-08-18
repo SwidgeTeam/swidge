@@ -11,8 +11,8 @@ export interface RouteStep {
     logo: string
     tokenIn: TokenDetails
     tokenOut: TokenDetails
-    amountIn: string,
-    amountOut: string,
+    amountIn: string
+    amountOut: string
     fee: string
     completed: boolean
 }
@@ -26,19 +26,24 @@ interface RouteResume {
     amountOut: string
 }
 
+export interface ApprovalTransactionDetails {
+    to: string
+    callData: string
+    gasLimit: string
+}
+
 export interface TransactionDetails {
     to: string
-    approvalAddress: string
     callData: string
     value: string
     gasLimit: string
-    gasPrice: string
 }
 
 export default interface Route {
     aggregator: AggregatorDetails
     resume: RouteResume
     steps: RouteStep[]
+    approvalTx?: ApprovalTransactionDetails
     tx?: TransactionDetails
     completed: boolean
 }
@@ -47,11 +52,4 @@ interface AggregatorDetails {
     id: string
     routeId: string
     requireCallDataQuote: boolean
-}
-
-export interface ApprovalTransactionDetails {
-    to: string;
-    data: string;
-    value: string;
-    gasLimit: string;
 }

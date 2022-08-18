@@ -5,7 +5,6 @@ import { BigInteger } from '../../../../../src/shared/domain/big-integer';
 import { httpClientMock } from '../../../shared/shared';
 import { faker } from '@faker-js/faker';
 import { BigIntegerMother } from '../../../shared/domain/big-integer.mother';
-import { HttpClient } from '../../../../../src/shared/infrastructure/http/httpClient';
 
 describe('aggregators', () => {
   it('should throw exception if request fails', async () => {
@@ -13,7 +12,7 @@ describe('aggregators', () => {
     const httpClient = httpClientMock({
       get: () => Promise.reject('error'),
     });
-    const socket = new Socket(httpClient);
+    const socket = new Socket(httpClient, '');
     const request = getAggregatorRequest();
 
     // Act
@@ -31,7 +30,7 @@ describe('aggregators', () => {
           success: false,
         }),
     });
-    const socket = new Socket(httpClient);
+    const socket = new Socket(httpClient, '');
     const request = getAggregatorRequest();
 
     // Act
@@ -52,7 +51,7 @@ describe('aggregators', () => {
           },
         }),
     });
-    const socket = new Socket(httpClient);
+    const socket = new Socket(httpClient, '');
     const request = getAggregatorRequest();
 
     // Act
@@ -158,16 +157,15 @@ describe('aggregators', () => {
           },
         }),
     });
-    const socket = new Socket(httpClient);
+    const socket = new Socket(httpClient, '');
     const request = getAggregatorRequest();
 
     // Act
     const route = await socket.execute(request);
 
     // Assert
-    expect(route.transactionDetails.to).toEqual(txTo);
-    expect(route.transactionDetails.approvalAddress).toEqual(txApprove);
-    expect(route.transactionDetails.callData).toEqual('0xdata');
+    expect(route.transaction.to).toEqual(txTo);
+    expect(route.transaction.callData).toEqual('0xdata');
     expect(route.steps.length).toEqual(2);
     expect(route.steps[0].type).toEqual('swap');
     expect(route.steps[0].amountOut.toString()).toEqual('150000000');
