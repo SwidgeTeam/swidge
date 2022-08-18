@@ -13,8 +13,9 @@ import { TwoSteppedAggregator } from '../two-stepped-aggregator';
 import { TransactionDetails } from '../../../shared/domain/transaction-details';
 import { ApprovalTransactionDetails } from '../approval-transaction-details';
 import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
+import { Aggregator } from '../aggregator';
 
-export class ViaExchange implements TwoSteppedAggregator {
+export class ViaExchange implements Aggregator, TwoSteppedAggregator {
   private enabledChains = [];
   private client: Via;
 

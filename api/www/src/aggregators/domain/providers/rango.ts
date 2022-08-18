@@ -15,8 +15,9 @@ import { OneSteppedAggregator } from '../one-stepped-aggregator';
 import { TransactionDetails } from 'src/shared/domain/transaction-details';
 import { ApprovalTransactionDetails } from '../approval-transaction-details';
 import BothTxs from '../both-txs';
+import { Aggregator } from '../aggregator';
 
-export class Rango implements OneSteppedAggregator {
+export class Rango implements Aggregator, OneSteppedAggregator {
   private enabledChains: string[];
   private client: RangoClient;
 
