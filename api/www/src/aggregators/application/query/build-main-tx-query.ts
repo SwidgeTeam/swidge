@@ -1,4 +1,4 @@
-export default class BuildTxQuery {
+export default class BuildMainTxQuery {
   constructor(
     readonly aggregatorId: string,
     readonly routeId: string,

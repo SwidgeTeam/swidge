@@ -6,7 +6,7 @@ import { GetApprovalTxCalldataController } from './infrastructure/controllers/ge
 import { BuildTxApprovalHandler } from './application/query/build-tx-approval-handler';
 import { ConfigModule } from '../config/config.module';
 import { ConfigService } from '../config/config.service';
-import { BuildTxHandler } from './application/query/build-tx-handler';
+import { BuildMainTxHandler } from './application/query/build-main-tx-handler';
 import { GetMainTxCalldataController } from './infrastructure/controllers/get-main-tx-calldata-controller';
 
 @Module({
@@ -20,7 +20,7 @@ import { GetMainTxCalldataController } from './infrastructure/controllers/get-ma
   ],
   providers: [
     BuildTxApprovalHandler,
-    BuildTxHandler,
+    BuildMainTxHandler,
     ConfigService,
     httpClientProvider(),
     consoleLoggerProvider(),

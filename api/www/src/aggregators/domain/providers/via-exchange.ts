@@ -9,12 +9,12 @@ import { RouteStep } from '../../../shared/domain/route-step';
 import { IActionStep, IRouteAction } from '@viaprotocol/router-sdk/dist/types';
 import { Token } from '../../../shared/domain/token';
 import { ProviderDetails } from '../../../shared/domain/provider-details';
-import { SteppedAggregator } from '../stepped-aggregator';
+import { TwoSteppedAggregator } from '../two-stepped-aggregator';
 import { TransactionDetails } from '../../../shared/domain/transaction-details';
 import { ApprovalTransactionDetails } from '../approval-transaction-details';
 import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
 
-export class ViaExchange implements SteppedAggregator {
+export class ViaExchange implements TwoSteppedAggregator {
   private enabledChains = [];
   private client: Via;
 

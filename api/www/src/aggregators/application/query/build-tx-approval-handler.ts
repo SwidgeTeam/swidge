@@ -6,20 +6,20 @@ import { HttpClient } from '../../../shared/infrastructure/http/httpClient';
 import { Logger } from '../../../shared/domain/logger';
 import { AggregatorProviders } from '../../domain/providers/aggregator-providers';
 import { ViaExchange } from '../../domain/providers/via-exchange';
-import { SteppedAggregators } from '../../domain/stepped-aggregators';
+import { TwoSteppedAggregators } from '../../domain/two-stepped-aggregators';
 import { ApprovalTransactionDetails } from '../../domain/approval-transaction-details';
 import { ConfigService } from '../../../config/config.service';
 
 @QueryHandler(BuildTxApprovalQuery)
 export class BuildTxApprovalHandler implements IQueryHandler<BuildTxApprovalQuery> {
-  private aggregators: SteppedAggregators;
+  private aggregators: TwoSteppedAggregators;
 
   constructor(
     private readonly configService: ConfigService,
     @Inject(Class.HttpClient) private readonly httpClient: HttpClient,
     @Inject(Class.Logger) private readonly logger: Logger,
   ) {
-    this.aggregators = new SteppedAggregators([
+    this.aggregators = new TwoSteppedAggregators([
       [AggregatorProviders.Via, ViaExchange.create(configService.getViaApiKey())],
     ]);
   }

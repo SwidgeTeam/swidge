@@ -3,7 +3,7 @@ import { QueryBus } from '@nestjs/cqrs';
 import { Response } from 'express';
 import BuildTxApprovalQuery from '../../application/query/build-tx-approval-query';
 import { GetMainTxCalldataDto } from './get-main-tx-calldata-dto';
-import BuildTxQuery from '../../application/query/build-tx-query';
+import BuildMainTxQuery from '../../application/query/build-main-tx-query';
 import { TransactionDetails } from '../../../shared/domain/transaction-details';
 
 @Controller()
@@ -12,7 +12,7 @@ export class GetMainTxCalldataController {
 
   @Get('build-main-tx')
   async build(@Query() params: GetMainTxCalldataDto, @Res() res: Response) {
-    const query = new BuildTxQuery(
+    const query = new BuildMainTxQuery(
       params.aggregatorId,
       params.routeId,
       params.senderAddress,
