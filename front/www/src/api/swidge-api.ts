@@ -125,7 +125,7 @@ class SwidgeAPI extends HttpClient {
         senderAddress: string
     }): Promise<ApprovalTransactionDetails> {
         try {
-            const response = await this.instance.get<GetApprovalTxResponseJson>('/build-tx-approval', { params: query })
+            const response = await this.instance.get<GetApprovalTxResponseJson>('/build-approval-tx', { params: query })
             return {
                 to: response.data.tx.to,
                 callData: response.data.tx.callData,
@@ -141,14 +141,14 @@ class SwidgeAPI extends HttpClient {
         }
     }
 
-    async getTx(query: {
+    async getMainTx(query: {
         aggregatorId: string
         routeId: string
         senderAddress: string
         receiverAddress: string
     }): Promise<TransactionDetails> {
         try {
-            const response = await this.instance.get<GetTxResponse>('/build-tx', { params: query })
+            const response = await this.instance.get<GetTxResponse>('/build-main-tx', { params: query })
             return {
                 to: response.data.tx.to,
                 value: response.data.tx.value,

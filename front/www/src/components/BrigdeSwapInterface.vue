@@ -272,7 +272,7 @@ const executeSteppedRoute = async (route: Route): Promise<void> => {
     await ContractCaller.executeApproval(approvalTx)
 
     // quote tx calldata
-    const mainTx = await swidgeApi.getTx({
+    const mainTx = await swidgeApi.getMainTx({
         aggregatorId: route.aggregator.id,
         routeId: route.aggregator.routeId,
         senderAddress: web3Store.account,
