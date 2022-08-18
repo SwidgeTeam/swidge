@@ -14,8 +14,14 @@ import { TransactionDetails } from '../../../shared/domain/transaction-details';
 import { ApprovalTransactionDetails } from '../approval-transaction-details';
 import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
 import { Aggregator } from '../aggregator';
+import { ExternalAggregator } from '../external-aggregator';
+import {
+  ExternalTransactionStatus,
+  StatusCheckRequest,
+  StatusCheckResponse
+} from '../status-check';
 
-export class ViaExchange implements Aggregator, TwoSteppedAggregator {
+export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAggregator {
   private enabledChains = [];
   private client: Via;
 
@@ -125,6 +131,36 @@ export class ViaExchange implements Aggregator, TwoSteppedAggregator {
       BigInteger.fromString(tx.value.toString()),
       BigInteger.fromString(tx.gas.toString()),
     );
+  }
+
+  async checkStatus(request: StatusCheckRequest): Promise<StatusCheckResponse> {
+    const statusResponse = await this.client.checkTx({
+      actionUuid: request.trackingId,
+    });
+
+    let status: ExternalTransactionStatus;
+    switch (statusResponse.event) {
+      case 'success':
+        status = ExternalTransactionStatus.Success;
+        break;
+      case 'pending':
+      case 'to_be_started':
+        status = ExternalTransactionStatus.Pending;
+        break;
+      case 'null':
+      case 'recieve_tx_not_found':
+      case 'user_tx_failed':
+        status = ExternalTransactionStatus.Failed;
+        break;
+    }
+
+    return {
+      status: status,
+    };
+  }
+
+  executedTransaction(txHash: string, trackingId: string): Promise<void> {
+    return Promise.resolve(undefined);
   }
 
   /**
