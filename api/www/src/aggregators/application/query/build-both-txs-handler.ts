@@ -7,14 +7,14 @@ import { AggregatorProviders } from '../../domain/providers/aggregator-providers
 import { ConfigService } from '../../../config/config.service';
 import BuildBothTxsQuery from './build-both-txs-query';
 import { Rango } from '../../domain/providers/rango';
-import { OneSteppedAggregators } from '../../domain/one-stepped-aggregators';
 import BothTxs from '../../domain/both-txs';
 import { AggregatorRequest } from '../../domain/aggregator-request';
 import { TokenDetailsFetcher } from '../../../shared/infrastructure/TokenDetailsFetcher';
+import { OneSteppedAggregator } from '../../domain/one-stepped-aggregator';
 
 @QueryHandler(BuildBothTxsQuery)
 export class BuildBothTxsHandler implements IQueryHandler<BuildBothTxsQuery> {
-  private aggregators: OneSteppedAggregators;
+  private aggregators: Map<string, OneSteppedAggregator>;
 
   constructor(
     private readonly configService: ConfigService,
@@ -22,7 +22,7 @@ export class BuildBothTxsHandler implements IQueryHandler<BuildBothTxsQuery> {
     @Inject(Class.TokenDetailsFetcher) private readonly tokenDetailsFetcher: TokenDetailsFetcher,
     @Inject(Class.Logger) private readonly logger: Logger,
   ) {
-    this.aggregators = new OneSteppedAggregators([
+    this.aggregators = new Map<string, OneSteppedAggregator>([
       [AggregatorProviders.Via, Rango.create(configService.getRangoApiKey())],
     ]);
   }
