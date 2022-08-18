@@ -197,6 +197,25 @@ class SwidgeAPI extends HttpClient {
             throw new Error('UnknownError no axios error')
         }
     }
+
+    async informExecutedTx(params: {
+        aggregatorId: string,
+        fromAddress: string,
+        toAddress: string,
+        txHash: string,
+        trackingId: string,
+    }): Promise<void> {
+        try {
+            await this.instance.post('/tx-executed', params)
+        } catch (e: unknown) {
+            if (axios.isAxiosError(e)) {
+                const apiErrorResponse = e.response?.data as ApiErrorResponse
+                const errorMessage = apiErrorResponse.message ?? 'Unhandled error!'
+                throw new Error(errorMessage)
+            }
+            throw new Error('UnknownError no axios error')
+        }
+    }
 }
 
 export default new SwidgeAPI()

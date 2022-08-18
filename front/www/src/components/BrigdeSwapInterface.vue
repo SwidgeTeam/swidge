@@ -1,22 +1,23 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import ModalNetworkAndTokenSelect from './ModalNetworkAndTokenSelect.vue'
-import { ContractCaller } from '@/contracts/contractCaller'
-import { useWeb3Store } from '@/store/web3'
 import { ethers, providers } from 'ethers'
-import ModalSwidgeStatus from './ModalSwidgeStatus.vue'
-import IToken from '@/domain/tokens/IToken'
+import { useWeb3Store } from '@/store/web3'
 import { useTokensStore } from '@/store/tokens'
 import { useRoutesStore } from '@/store/routes'
+import { useTransactionStore } from '@/store/transaction'
+import ModalSwidgeStatus from './ModalSwidgeStatus.vue'
+import ModalNetworkAndTokenSelect from './ModalNetworkAndTokenSelect.vue'
 import SwapBox from '@/components/SwapBox.vue'
+import { ContractCaller } from '@/contracts/contractCaller'
+import IToken from '@/domain/tokens/IToken'
 import Route, { TransactionDetails } from '@/domain/paths/path'
-import swidgeApi from '@/api/swidge-api'
 import { TransactionReceipt } from '@ethersproject/abstract-provider'
 import { Aggregators } from '@/domain/aggregators/aggregators'
 
 const web3Store = useWeb3Store()
 const tokensStore = useTokensStore()
 const routesStore = useRoutesStore()
+const transactionStore = useTransactionStore()
 
 const { switchToNetwork, getChainProvider, getBalance } = web3Store
 
@@ -227,7 +228,7 @@ const onExecuteTransaction = async () => {
     } else {
         promise = aggregator.bothQuotesInOne
             ? executeSingleQuoteExecution()
-            : executeDoubleQuoteExecution(route)
+            : executeDoubleQuoteExecution()
     }
 
     await promise
@@ -260,9 +261,9 @@ const executeRoute = async (route: Route): Promise<TransactionReceipt> => {
  * Executes the route when the aggregator requires quoting the callData
  */
 const executeSingleQuoteExecution = async (): Promise<TransactionReceipt> => {
-    await routesStore.fetchBothTxs(sourceTokenAmount.value, 2)
-    const approvalTx = routesStore.getApprovalTx
-    const mainTx = routesStore.mainTx
+    await transactionStore.fetchBothTxs(sourceTokenAmount.value, 2)
+    const approvalTx = transactionStore.getApprovalTx
+    const mainTx = transactionStore.mainTx
 
     if (!mainTx) {
         throw new Error('trying to execute an empty transaction')
@@ -280,17 +281,17 @@ const executeSingleQuoteExecution = async (): Promise<TransactionReceipt> => {
  * Executes the route when the aggregator requires quoting the callData
  */
 const executeDoubleQuoteExecution = async (): Promise<TransactionReceipt> => {
-    await routesStore.fetchApprovalTx()
+    await transactionStore.fetchApprovalTx()
 
-    if (routesStore.getApprovalTx) {
-        await ContractCaller.executeApproval(routesStore.getApprovalTx)
+    if (transactionStore.getApprovalTx) {
+        await ContractCaller.executeApproval(transactionStore.getApprovalTx)
     }
 
-    await routesStore.fetchMainTx()
+    await transactionStore.fetchMainTx()
 
     openTransactionStatusModal()
 
-    return ContractCaller.executeTransaction(routesStore.getMainTx)
+    return ContractCaller.executeTransaction(transactionStore.getMainTx)
 }
 
 /**
@@ -304,7 +305,7 @@ const onInitialTxCompleted = (route: Route, receipt: TransactionReceipt) => {
         if (route.aggregator.id === Aggregators.Swidge.toString()) {
             setUpEventListener(route.tx as TransactionDetails, receipt.transactionHash)
         } else {
-            // TODO setTimeout for checking status
+            transactionStore.informExecutedTx(receipt.transactionHash)
         }
     } else {
         routesStore.completeRoute()
