@@ -7,9 +7,9 @@ import { AggregatorProviders } from '../../domain/providers/aggregator-providers
 import { ConfigService } from '../../../config/config.service';
 import { TokenDetailsFetcher } from '../../../shared/infrastructure/TokenDetailsFetcher';
 import CheckTxStatusQuery from './check-tx-status-query';
-import { ExternalAggregator } from '../../domain/external-aggregator';
 import { ViaExchange } from '../../domain/providers/via-exchange';
 import { StatusCheckResponse } from '../../domain/status-check';
+import { ExternalAggregator } from 'src/aggregators/domain/aggregator';
 
 @QueryHandler(CheckTxStatusQuery)
 export class CheckTxStatusHandler implements IQueryHandler<CheckTxStatusQuery> {

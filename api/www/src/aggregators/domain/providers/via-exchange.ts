@@ -9,12 +9,10 @@ import { RouteStep } from '../../../shared/domain/route-step';
 import { IActionStep, IRouteAction } from '@viaprotocol/router-sdk/dist/types';
 import { Token } from '../../../shared/domain/token';
 import { ProviderDetails } from '../../../shared/domain/provider-details';
-import { TwoSteppedAggregator } from '../two-stepped-aggregator';
 import { TransactionDetails } from '../../../shared/domain/transaction-details';
 import { ApprovalTransactionDetails } from '../approval-transaction-details';
 import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
-import { Aggregator } from '../aggregator';
-import { ExternalAggregator } from '../external-aggregator';
+import { Aggregator, ExternalAggregator, TwoSteppedAggregator } from '../aggregator';
 import {
   ExternalTransactionStatus,
   StatusCheckRequest,

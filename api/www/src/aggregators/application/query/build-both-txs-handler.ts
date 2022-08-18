@@ -10,7 +10,7 @@ import { Rango } from '../../domain/providers/rango';
 import BothTxs from '../../domain/both-txs';
 import { AggregatorRequest } from '../../domain/aggregator-request';
 import { TokenDetailsFetcher } from '../../../shared/infrastructure/TokenDetailsFetcher';
-import { OneSteppedAggregator } from '../../domain/one-stepped-aggregator';
+import { OneSteppedAggregator } from 'src/aggregators/domain/aggregator';
 
 @QueryHandler(BuildBothTxsQuery)
 export class BuildBothTxsHandler implements IQueryHandler<BuildBothTxsQuery> {

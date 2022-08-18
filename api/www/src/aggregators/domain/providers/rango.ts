@@ -11,11 +11,10 @@ import { ProviderDetails } from '../../../shared/domain/provider-details';
 import { InsufficientLiquidity } from '../../../swaps/domain/insufficient-liquidity';
 import { QuotePath } from 'rango-sdk-basic/lib/types/api/common';
 import { Avalanche, BSC, Fantom, Mainnet, Optimism, Polygon } from '../../../shared/enums/ChainIds';
-import { OneSteppedAggregator } from '../one-stepped-aggregator';
 import { TransactionDetails } from 'src/shared/domain/transaction-details';
 import { ApprovalTransactionDetails } from '../approval-transaction-details';
 import BothTxs from '../both-txs';
-import { Aggregator } from '../aggregator';
+import { Aggregator, OneSteppedAggregator } from '../aggregator';
 
 export class Rango implements Aggregator, OneSteppedAggregator {
   private enabledChains: string[];

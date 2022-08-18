@@ -8,7 +8,7 @@ import { ViaExchange } from '../../domain/providers/via-exchange';
 import BuildMainTxQuery from './build-main-tx-query';
 import { TransactionDetails } from '../../../shared/domain/transaction-details';
 import { ConfigService } from '../../../config/config.service';
-import { TwoSteppedAggregator } from '../../domain/two-stepped-aggregator';
+import { TwoSteppedAggregator } from 'src/aggregators/domain/aggregator';
 
 @QueryHandler(BuildMainTxQuery)
 export class BuildMainTxHandler implements IQueryHandler<BuildMainTxQuery> {

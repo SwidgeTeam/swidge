@@ -8,7 +8,7 @@ import { AggregatorProviders } from '../../domain/providers/aggregator-providers
 import { ViaExchange } from '../../domain/providers/via-exchange';
 import { ApprovalTransactionDetails } from '../../domain/approval-transaction-details';
 import { ConfigService } from '../../../config/config.service';
-import { TwoSteppedAggregator } from '../../domain/two-stepped-aggregator';
+import { TwoSteppedAggregator } from 'src/aggregators/domain/aggregator';
 
 @QueryHandler(BuildTxApprovalQuery)
 export class BuildTxApprovalHandler implements IQueryHandler<BuildTxApprovalQuery> {
