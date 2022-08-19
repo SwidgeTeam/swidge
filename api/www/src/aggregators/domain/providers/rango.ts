@@ -1,5 +1,5 @@
 import { AggregatorRequest } from '../aggregator-request';
-import { EvmTransaction, RangoClient, TransactionStatus } from 'rango-sdk-basic';
+import { EvmTransaction, RangoClient, SwapFee, TransactionStatus } from 'rango-sdk-basic';
 import { Route } from '../../../shared/domain/route/route';
 import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
 import { AggregatorProviders } from './aggregator-providers';
@@ -20,6 +20,8 @@ import {
   StatusCheckRequest,
   StatusCheckResponse,
 } from '../status-check';
+import { RouteFees } from '../../../shared/domain/route/route-fees';
+import { PriceFeed } from '../../../shared/domain/PriceFeed';
 
 export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregator {
   private enabledChains: string[];
@@ -41,8 +43,14 @@ export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregat
   /**
    * Entrypoint to quote a Route from Rango.exchange
    * @param request
+   * @param gasPrice
+   * @param coinPrice
    */
-  async execute(request: AggregatorRequest): Promise<Route> {
+  async execute(
+    request: AggregatorRequest,
+    gasPrice: BigInteger,
+    coinPrice: PriceFeed,
+  ): Promise<Route> {
     const response = await this.client.quote({
       from: {
         blockchain: this.getBlockchainCode(request.fromChain),
@@ -61,13 +69,8 @@ export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregat
       throw new InsufficientLiquidity();
     }
 
-    const aggregatorDetails = new AggregatorDetails(
-      AggregatorProviders.Rango,
-      '',
-      true,
-      true,
-      response.requestId,
-    );
+    const aggregatorDetails = new AggregatorDetails(AggregatorProviders.Rango, '', true, true);
+
     const amountOut = BigInteger.fromString(response.route.outputAmount);
     const resume = new RouteResume(
       request.fromChain,
@@ -80,8 +83,9 @@ export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregat
     );
 
     const steps = this.buildSteps(request.amountIn, response.route.path);
+    const fees = this.buildFees(response.route.fee, coinPrice);
 
-    return new Route(aggregatorDetails, resume, steps);
+    return new Route(aggregatorDetails, resume, steps, fees);
   }
 
   /**
@@ -176,6 +180,28 @@ export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregat
   ): Promise<void> {
     // this provider does not need to be informed
     return;
+  }
+
+  /**
+   * Computes and returns the fees
+   * @param fees
+   * @param nativePrice
+   * @private
+   */
+  private buildFees(fees: SwapFee[], nativePrice: PriceFeed): RouteFees {
+    const totalFee = fees.reduce((total: BigInteger, current: SwapFee) => {
+      if (current.expenseType === 'FROM_SOURCE_WALLET') {
+        return total.plus(BigInteger.fromDecimal(current.amount, current.token.decimals));
+      }
+      return total;
+    }, BigInteger.zero());
+
+    const feesInUsd = totalFee
+      .times(nativePrice.lastPrice)
+      .div(BigInteger.weiInEther())
+      .toDecimal(nativePrice.decimals);
+
+    return new RouteFees(totalFee, feesInUsd);
   }
 
   /**
