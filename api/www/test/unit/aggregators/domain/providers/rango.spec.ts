@@ -5,7 +5,7 @@ import { faker } from '@faker-js/faker';
 import { Rango } from '../../../../../src/aggregators/domain/providers/rango';
 import { QuoteRequest, QuoteResponse, RangoClient } from 'rango-sdk-basic';
 import { createMock } from 'ts-auto-mock';
-import { PriceFeed } from '../../../../../src/shared/domain/PriceFeed';
+import { PriceFeed } from '../../../../../src/shared/domain/price-feed';
 
 describe('aggregators', () => {
   it('should throw exception resultType is NO_ROUTE', async () => {

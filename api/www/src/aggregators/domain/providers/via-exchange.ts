@@ -19,7 +19,7 @@ import {
   StatusCheckResponse,
 } from '../status-check';
 import { RouteFees } from '../../../shared/domain/route/route-fees';
-import { PriceFeed } from '../../../shared/domain/PriceFeed';
+import { PriceFeed } from '../../../shared/domain/price-feed';
 
 export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAggregator {
   private enabledChains = [];

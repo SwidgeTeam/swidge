@@ -6,7 +6,7 @@ import { RouteMother } from '../../shared/domain/route.mother';
 import { TokenMother } from '../../shared/domain/token.mother';
 import { BigIntegerMother } from '../../shared/domain/big-integer.mother';
 import { faker } from '@faker-js/faker';
-import { PriceFeed } from '../../../../src/shared/domain/PriceFeed';
+import { PriceFeed } from '../../../../src/shared/domain/price-feed';
 import { BigInteger } from '../../../../src/shared/domain/big-integer';
 
 describe('aggregators', () => {

@@ -1,6 +1,6 @@
 import { PriceFeedFetcher } from '../../../src/shared/infrastructure/price-feed-fetcher';
 import { stub } from 'sinon';
-import { PriceFeed } from '../../../src/shared/domain/PriceFeed';
+import { PriceFeed } from '../../../src/shared/domain/price-feed';
 import { BigInteger } from '../../../src/shared/domain/big-integer';
 import { Logger } from '../../../src/shared/domain/logger';
 import { ZeroEx } from '../../../src/swaps/domain/providers/zero-ex';

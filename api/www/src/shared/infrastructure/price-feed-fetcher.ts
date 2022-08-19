@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import { RpcNode } from '../enums/RpcNode';
 import { PriceFeeds } from '../PriceFeeds';
-import { PriceFeed } from '../domain/PriceFeed';
+import { PriceFeed } from '../domain/price-feed';
 import { BigInteger } from '../domain/big-integer';
 import { IPriceFeedFetcher } from '../domain/price-feed-fetcher';
 

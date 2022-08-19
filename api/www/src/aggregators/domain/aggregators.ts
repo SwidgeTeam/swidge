@@ -2,7 +2,7 @@ import { Aggregator } from './aggregator';
 import { AggregatorRequest } from './aggregator-request';
 import { Route } from '../../shared/domain/route/route';
 import { BigInteger } from '../../shared/domain/big-integer';
-import { PriceFeed } from '../../shared/domain/PriceFeed';
+import { PriceFeed } from '../../shared/domain/price-feed';
 
 type Entry = [string, Aggregator];
 

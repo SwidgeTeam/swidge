@@ -11,7 +11,7 @@ import { BridgingRequest } from '../../bridges/domain/bridging-request';
 import { PathNotFound } from './path-not-found';
 import { flatten } from 'lodash';
 import { GasConverter } from '../../shared/domain/gas-converter';
-import { PriceFeed } from '../../shared/domain/PriceFeed';
+import { PriceFeed } from '../../shared/domain/price-feed';
 import { AggregatorRequest } from '../../aggregators/domain/aggregator-request';
 import { Route } from '../../shared/domain/route/route';
 import { RouteStep } from '../../shared/domain/route/route-step';

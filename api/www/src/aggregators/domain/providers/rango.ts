@@ -21,7 +21,7 @@ import {
   StatusCheckResponse,
 } from '../status-check';
 import { RouteFees } from '../../../shared/domain/route/route-fees';
-import { PriceFeed } from '../../../shared/domain/PriceFeed';
+import { PriceFeed } from '../../../shared/domain/price-feed';
 
 export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregator {
   private enabledChains: string[];

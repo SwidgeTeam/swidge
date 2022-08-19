@@ -5,7 +5,7 @@ import { ApprovalTransactionDetails } from '../../shared/domain/route/approval-t
 import { TransactionDetails } from '../../shared/domain/route/transaction-details';
 import { StatusCheckRequest, StatusCheckResponse } from './status-check';
 import { BigInteger } from '../../shared/domain/big-integer';
-import { PriceFeed } from '../../shared/domain/PriceFeed';
+import { PriceFeed } from '../../shared/domain/price-feed';
 
 export interface Aggregator {
   isEnabledOn: (fromChainId: string, toChainId: string) => boolean;
