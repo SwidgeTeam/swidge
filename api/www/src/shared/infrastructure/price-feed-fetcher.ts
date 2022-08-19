@@ -6,6 +6,10 @@ import { BigInteger } from '../domain/big-integer';
 import { IPriceFeedFetcher } from '../domain/price-feed-fetcher';
 
 export class PriceFeedFetcher implements IPriceFeedFetcher {
+  public static create(): PriceFeedFetcher {
+    return new PriceFeedFetcher();
+  }
+
   public async fetch(chainId: string): Promise<PriceFeed> {
     const provider = new ethers.providers.JsonRpcProvider(RpcNode[chainId]);
     const feedAddress = PriceFeeds[chainId];
