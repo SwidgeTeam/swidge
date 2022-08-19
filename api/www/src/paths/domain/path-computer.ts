@@ -31,6 +31,7 @@ import { Logger } from '../../shared/domain/logger';
 import { AggregatorProviders } from '../../aggregators/domain/providers/aggregator-providers';
 import { AggregatorDetails } from '../../shared/domain/aggregator-details';
 import { ApprovalTransactionDetails } from '../../shared/domain/route/approval-transaction-details';
+import { RouteFees } from '../../shared/domain/route/route-fees';
 
 export class PathComputer {
   /** Providers */
@@ -457,9 +458,22 @@ export class PathComputer {
       minAmountOut,
     );
 
+    const totalFeeInUsd = steps.reduce((fee: number, current: RouteStep) => {
+      return fee + Number(current.feeInUSD);
+    }, 0);
+
+    const fees = new RouteFees(BigInteger.zero(), totalFeeInUsd.toString());
+
     const aggregatorDetails = new AggregatorDetails(AggregatorProviders.Swidge);
 
-    return new Route(aggregatorDetails, resume, steps, approvalTransaction, transactionDetails);
+    return new Route(
+      aggregatorDetails,
+      resume,
+      steps,
+      fees,
+      approvalTransaction,
+      transactionDetails,
+    );
   }
 
   /**
