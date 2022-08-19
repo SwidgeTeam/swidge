@@ -31,6 +31,7 @@ const isSourceChainToken = ref(false)
 const isGettingQuote = ref(false)
 const isExecuteButtonDisabled = ref(true)
 const isModalStatusOpen = ref(false)
+const isSettingsModalOpen = ref(false)
 const showTransactionAlert = ref(false)
 const transactionAlertMessage = ref<string>('')
 const isExecutingTransaction = ref<boolean>(false)
@@ -393,6 +394,7 @@ const closeModalStatus = () => {
         :is-getting-quote="isGettingQuote"
         :is-execute-button-disabled="isExecuteButtonDisabled"
         :transaction-fees="totalFee"
+        :is-settings-modal-open="isSettingsModalOpen"
         @source-input-changed="handleSourceInputChanged"
         @select-source-token="() => handleOpenTokenList(true)"
         @select-destination-token="() => handleOpenTokenList(false)"

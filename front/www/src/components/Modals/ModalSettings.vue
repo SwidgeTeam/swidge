@@ -33,10 +33,11 @@ const onCloseModal = () => {
             Slippage
             <div class="absolute -right-1 -top-2 flex">
                 <SettingsButtonSlippage content="1%" input="1" name="slippage" value="1" />
-                <SettingsButtonSlippage content="2%" input="2" name="slippage" value="2" class="mr-1" />
+                <SettingsButtonSlippage content="2%" input="2" name="slippage" value="2" />
                 <input 
-                    class="w-16 h-12 ml-2 mr-1 px-2 py-2 text-center border rounded-lg border-slate-600 bg-inherit caret-inherit relative overflow-hidden" 
+                    class="peer w-16 h-12 ml-2 mr-1 px-2 py-2 text-center border rounded-lg border-slate-600 bg-inherit caret-inherit relative overflow-hidden" 
                     type="text"
+                    name="slippage"
                     placeholder="Enter"
                     >
                 

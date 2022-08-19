@@ -5,7 +5,6 @@ import TransactionDetails from './TransactionDetails.vue'
 import BridgeSwapInteractiveButton from './BridgeSwapInteractiveButton.vue'
 import {AdjustmentsIcon} from '@heroicons/vue/solid'
 import ModalSettings from './Modals/ModalSettings.vue'
-import { ref } from 'vue'
 
 defineProps<{
     sourceTokenAmount: string
@@ -14,8 +13,8 @@ defineProps<{
     buttonText: string
     isGettingQuote: boolean
     isExecuteButtonDisabled: boolean
+    isSettingsModalOpen: boolean
     transactionFees: string
-    isOpen: boolean
 }>()
 
 const emits = defineEmits<{
@@ -25,11 +24,9 @@ const emits = defineEmits<{
     (event: 'select-destination-token'): void
     (event: 'switch-tokens'): void
     (event: 'execute-transaction'): void
-    (event: 'open-settings'): void
 
 }>()
 
-const isSettingsModalOpen = ref(false)
 
 </script>
 
