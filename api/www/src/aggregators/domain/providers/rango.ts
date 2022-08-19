@@ -21,19 +21,22 @@ import {
   StatusCheckResponse,
 } from '../status-check';
 import { RouteFees } from '../../../shared/domain/route/route-fees';
+import { IPriceFeedFetcher } from '../../../shared/domain/price-feed-fetcher';
 import { PriceFeed } from '../../../shared/domain/price-feed';
 
 export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregator {
   private enabledChains: string[];
   private client: RangoClient;
+  private priceFeedFetcher: IPriceFeedFetcher;
 
-  public static create(apiKey: string): Rango {
-    return new Rango(new RangoClient(apiKey));
+  public static create(apiKey: string, priceFeedFetcher: IPriceFeedFetcher): Rango {
+    return new Rango(new RangoClient(apiKey), priceFeedFetcher);
   }
 
-  constructor(client: RangoClient) {
+  constructor(client: RangoClient, priceFeedFetcher: IPriceFeedFetcher) {
     this.enabledChains = [];
     this.client = client;
+    this.priceFeedFetcher = priceFeedFetcher;
   }
 
   isEnabledOn(fromChainId: string, toChainId: string): boolean {
@@ -43,14 +46,8 @@ export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregat
   /**
    * Entrypoint to quote a Route from Rango.exchange
    * @param request
-   * @param gasPrice
-   * @param nativePrice
    */
-  async execute(
-    request: AggregatorRequest,
-    gasPrice: BigInteger,
-    nativePrice: PriceFeed,
-  ): Promise<Route> {
+  async execute(request: AggregatorRequest): Promise<Route> {
     const response = await this.client.quote({
       from: {
         blockchain: this.getBlockchainCode(request.fromChain),
@@ -82,6 +79,7 @@ export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregat
       amountOut,
     );
 
+    const nativePrice = await this.priceFeedFetcher.fetch(request.fromChain);
     const steps = this.buildSteps(request.amountIn, response.route.path);
     const fees = this.buildFees(response.route.fee, nativePrice);
 

@@ -61,7 +61,7 @@ describe('aggregators', () => {
     );
 
     // Act
-    const route = await aggregators.execute('k1', request, BigInteger.zero(), PriceFeed.zero());
+    const route = await aggregators.execute('k1', request);
 
     // Assert
     expect(route.transaction.to).toEqual(routeOne.transaction.to);

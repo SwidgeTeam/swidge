@@ -137,12 +137,7 @@ export class PathComputer {
     // for every integrated aggregator
     for (const aggregatorId of this.getPossibleAggregators()) {
       // ask for their routes
-      const promiseRoute = this.aggregators.execute(
-        aggregatorId,
-        aggregatorRequest,
-        this.gasPriceOrigin,
-        this.priceOriginCoin,
-      );
+      const promiseRoute = this.aggregators.execute(aggregatorId, aggregatorRequest);
       promises.push(promiseRoute);
     }
 

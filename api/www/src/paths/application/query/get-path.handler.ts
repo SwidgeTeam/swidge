@@ -53,7 +53,7 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
       [AggregatorProviders.LiFi, new LiFi()],
       [AggregatorProviders.Socket, new Socket(httpClient, configService.getSocketApiKey())],
       [AggregatorProviders.Via, ViaExchange.create(configService.getViaApiKey())],
-      [AggregatorProviders.Rango, Rango.create(configService.getRangoApiKey())],
+      [AggregatorProviders.Rango, Rango.create(configService.getRangoApiKey(), priceFeedFetcher)],
     ]);
 
     this.pathComputer = new PathComputer(

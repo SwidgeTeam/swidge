@@ -4,16 +4,10 @@ import BothTxs from './both-txs';
 import { ApprovalTransactionDetails } from '../../shared/domain/route/approval-transaction-details';
 import { TransactionDetails } from '../../shared/domain/route/transaction-details';
 import { StatusCheckRequest, StatusCheckResponse } from './status-check';
-import { BigInteger } from '../../shared/domain/big-integer';
-import { PriceFeed } from '../../shared/domain/price-feed';
 
 export interface Aggregator {
   isEnabledOn: (fromChainId: string, toChainId: string) => boolean;
-  execute: (
-    request: AggregatorRequest,
-    gasPrice: BigInteger,
-    nativePrice: PriceFeed,
-  ) => Promise<Route>;
+  execute: (request: AggregatorRequest) => Promise<Route>;
 }
 
 export interface OneSteppedAggregator {
