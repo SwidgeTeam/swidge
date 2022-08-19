@@ -35,7 +35,7 @@ const onCloseModal = () => {
                 <SettingsButtonSlippage content="1%" input="1" name="slippage" value="1" />
                 <SettingsButtonSlippage content="2%" input="2" name="slippage" value="2" class="mr-1" />
                 <input 
-                    class="w-16 h-12 ml-2 mr-1 px-2 py-2 text-center border rounded-lg border-slate-600 bg-inherit caret-inherit relative" 
+                    class="w-16 h-12 ml-2 mr-1 px-2 py-2 text-center border rounded-lg border-slate-600 bg-inherit caret-inherit relative overflow-hidden" 
                     type="text"
                     placeholder="Enter"
                     >
@@ -50,10 +50,10 @@ const onCloseModal = () => {
         </div>
         <div  class="pl-4 mt-6 text-xl font-light relative">
             Gas price
-            <div class="absolute -right-1 -top-2">
-                <SettingsButtonGas content="Slow"/>
-                <SettingsButtonGas content="Medium"/>
-                <SettingsButtonGas content="Fast"/>
+            <div class="absolute -right-1 -top-2 grid grid-cols-3 grid-rows-1">
+                <SettingsButtonGas content="Slow" input="Slow" name="Gas" value="slow"/>
+                <SettingsButtonGas content="Medium" input="Medium" name="Gas" value="medium" />
+                <SettingsButtonGas content="Fast" input="Fast" name="Gas" value="fast" />
             </div>
         </div>
     </Modal>
