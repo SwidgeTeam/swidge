@@ -13,6 +13,7 @@ import { AggregatorProviders } from './aggregator-providers';
 import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
 import { ApprovalTransactionDetails } from '../../../shared/domain/route/approval-transaction-details';
 import { RouterCallEncoder } from '../../../shared/domain/router-call-encoder';
+import { RouteFees } from '../../../shared/domain/route/route-fees';
 
 // whole Route details
 interface SocketRoute {
@@ -28,6 +29,7 @@ interface SocketUserTx {
   gasFees: {
     gasAmount: string;
     gasLimit: number;
+    feesInUsd: number;
   };
 }
 
@@ -125,20 +127,22 @@ export class Socket implements Aggregator {
     );
     const responseTxDetails = await this.getTxDetails(route);
 
-    let approvalTxDetails;
-
-    if (responseTxDetails.approvalData) {
-      // if there's approvalData means we have to approve some token
-      approvalTxDetails = new ApprovalTransactionDetails(
-        request.fromToken.address,
-        this.routerCallEncoder.encodeApproval(
-          responseTxDetails.approvalData.allowanceTarget,
-          request.amountIn,
-        ),
-      );
-    }
+    // if there's approvalData means we have to approve some token
+    const approvalTxDetails = responseTxDetails.approvalData
+      ? new ApprovalTransactionDetails(
+          request.fromToken.address,
+          this.routerCallEncoder.encodeApproval(
+            responseTxDetails.approvalData.allowanceTarget,
+            request.amountIn,
+          ),
+        )
+      : null;
 
     const routeFees = route.userTxs[0].gasFees;
+    const fees = new RouteFees(
+      BigInteger.fromString(routeFees.gasAmount),
+      routeFees.feesInUsd.toString(),
+    );
     const gasLimit = BigInteger.fromString(routeFees.gasLimit.toString());
 
     const txDetails = new TransactionDetails(
@@ -151,7 +155,7 @@ export class Socket implements Aggregator {
     const steps = this.buildSteps(route.userTxs[0].steps);
     const aggregatorDetails = new AggregatorDetails(AggregatorProviders.Socket);
 
-    return new Route(aggregatorDetails, resume, steps, approvalTxDetails, txDetails);
+    return new Route(aggregatorDetails, resume, steps, fees, approvalTxDetails, txDetails);
   }
 
   /**
