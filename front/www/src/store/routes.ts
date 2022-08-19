@@ -4,6 +4,7 @@ import Route from '@/domain/paths/path'
 import { ethers } from 'ethers'
 import { useTokensStore } from '@/store/tokens'
 import { useWeb3Store } from '@/store/web3'
+import { useTransactionStore } from '@/store/transaction';
 
 export const useRoutesStore = defineStore('routes', {
     state: () => ({
@@ -34,6 +35,19 @@ export const useRoutesStore = defineStore('routes', {
                 senderAddress: web3Store.account || ethers.constants.AddressZero,
                 receiverAddress: web3Store.account || ethers.constants.AddressZero
             })
+            this.selectRoute(0) // selects the top route
+        },
+        /**
+         * Marks the route `index` as selected
+         * @param index
+         */
+        selectRoute(index: number) {
+            const transactionStore = useTransactionStore()
+            this.selectedRoute = index
+            const route = this.getSelectedRoute
+            transactionStore.trackingId = route.aggregator.trackingId
+            transactionStore.approvalTx = route.approvalTx
+            transactionStore.mainTx = route.tx
         },
         /**
          * Sets as completed the first step of the selected route

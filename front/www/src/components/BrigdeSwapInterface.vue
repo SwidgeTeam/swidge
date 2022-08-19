@@ -224,7 +224,7 @@ const onExecuteTransaction = async () => {
     const aggregator = route.aggregator
 
     if (!aggregator.requiresCallDataQuoting) {
-        promise = executeRoute(route)
+        promise = executeRoute()
     } else {
         promise = aggregator.bothQuotesInOne
             ? executeSingleQuoteExecution()
@@ -241,17 +241,18 @@ const onExecuteTransaction = async () => {
 
 /**
  * Executes the route when the aggregator already sent all the callData
- * @param route
  */
-const executeRoute = async (route: Route): Promise<TransactionReceipt> => {
-    if (!route.tx) {
+const executeRoute = async (): Promise<TransactionReceipt> => {
+    const approvalTx = transactionStore.getApprovalTx
+    const mainTx = transactionStore.mainTx
+    if (!mainTx) {
         throw new Error('trying to execute an empty transaction')
     }
-    if (route.approvalTx) {
-        await ContractCaller.executeApproval(route.approvalTx)
+    if (approvalTx) {
+        await ContractCaller.executeApproval(approvalTx)
     }
     openTransactionStatusModal()
-    return ContractCaller.executeTransaction(route.tx)
+    return ContractCaller.executeTransaction(mainTx)
 }
 
 /**
@@ -297,7 +298,7 @@ const executeDoubleQuoteExecution = async (): Promise<TransactionReceipt> => {
 const onInitialTxCompleted = (route: Route, receipt: TransactionReceipt) => {
     routesStore.completeFirstStep()
     if (isCrossTransaction()) {
-        if (route.aggregator.id === Aggregators.Swidge.toString()) {
+        if (route.aggregator.id === Aggregators.Swidge) {
             setUpEventListener(route.tx as TransactionDetails, receipt.transactionHash)
         } else {
             transactionStore.informExecutedTx(receipt.transactionHash)

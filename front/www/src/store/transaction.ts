@@ -8,16 +8,16 @@ import { TransactionStatus } from '@/api/models/get-status-check';
 
 export const useTransactionStore = defineStore('transaction', {
     state: () => ({
-        approvalTx: {} as ApprovalTransactionDetails,
-        mainTx: {} as TransactionDetails,
+        approvalTx: undefined as undefined | ApprovalTransactionDetails,
+        mainTx: undefined as undefined | TransactionDetails,
         trackingId: '',
         statusCheckInterval: 0,
     }),
     getters: {
-        getApprovalTx(): ApprovalTransactionDetails {
+        getApprovalTx(): ApprovalTransactionDetails | undefined {
             return this.approvalTx
         },
-        getMainTx(): TransactionDetails {
+        getMainTx(): TransactionDetails | undefined {
             return this.mainTx
         },
     },
