@@ -8,6 +8,7 @@ import CheckTxStatusQuery from './check-tx-status-query';
 import { ViaExchange } from '../../domain/providers/via-exchange';
 import { StatusCheckResponse } from '../../domain/status-check';
 import { ExternalAggregator } from 'src/aggregators/domain/aggregator';
+import { Rango } from '../../domain/providers/rango';
 
 @QueryHandler(CheckTxStatusQuery)
 export class CheckTxStatusHandler implements IQueryHandler<CheckTxStatusQuery> {
@@ -19,6 +20,7 @@ export class CheckTxStatusHandler implements IQueryHandler<CheckTxStatusQuery> {
   ) {
     this.aggregators = new Map<string, ExternalAggregator>([
       [AggregatorProviders.Via, ViaExchange.create(configService.getViaApiKey())],
+      [AggregatorProviders.Rango, Rango.create(configService.getRangoApiKey())],
     ]);
   }
 

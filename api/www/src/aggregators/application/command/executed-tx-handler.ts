@@ -4,6 +4,7 @@ import { ExecutedTxCommand } from './executed-tx-command';
 import { ExternalAggregator } from '../../domain/aggregator';
 import { AggregatorProviders } from '../../domain/providers/aggregator-providers';
 import { ViaExchange } from '../../domain/providers/via-exchange';
+import { Rango } from '../../domain/providers/rango';
 
 @CommandHandler(ExecutedTxCommand)
 export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
@@ -12,6 +13,7 @@ export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
   constructor(private readonly configService: ConfigService) {
     this.aggregators = new Map<string, ExternalAggregator>([
       [AggregatorProviders.Via, ViaExchange.create(configService.getViaApiKey())],
+      [AggregatorProviders.Rango, Rango.create(configService.getRangoApiKey())],
     ]);
   }
 
