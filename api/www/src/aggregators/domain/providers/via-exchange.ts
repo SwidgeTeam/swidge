@@ -18,6 +18,8 @@ import {
   StatusCheckRequest,
   StatusCheckResponse,
 } from '../status-check';
+import { RouteFees } from '../../../shared/domain/route/route-fees';
+import { PriceFeed } from '../../../shared/domain/PriceFeed';
 
 export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAggregator {
   private enabledChains = [];
@@ -44,8 +46,10 @@ export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAg
   /**
    * Entrypoint to quote a Route from Via.exchange
    * @param request
+   * @param gasPrice
+   * @param nativePrice
    */
-  async execute(request: AggregatorRequest) {
+  async execute(request: AggregatorRequest, gasPrice: BigInteger, nativePrice: PriceFeed) {
     const response = await this.client.getRoutes({
       fromChainId: Number(request.fromChain),
       fromTokenAddress: this.getTokenAddress(request.fromToken),
@@ -64,6 +68,7 @@ export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAg
     }
 
     const route = response.routes[0];
+    const action = route.actions[0];
 
     const resume = new RouteResume(
       request.fromChain,
@@ -75,16 +80,18 @@ export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAg
       BigInteger.fromString(route.toTokenAmount.toString()),
     );
 
+    const fees = this.buildFees(action, gasPrice, nativePrice);
     const steps = this.buildSteps(route.actions);
+
     const aggregatorDetails = new AggregatorDetails(
       AggregatorProviders.Via,
       route.routeId,
       true,
       false,
-      route.actions[0].uuid,
+      action.uuid,
     );
 
-    return new Route(aggregatorDetails, resume, steps);
+    return new Route(aggregatorDetails, resume, steps, fees);
   }
 
   /**
@@ -181,6 +188,33 @@ export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAg
       routeId: trackingId,
     });
     return;
+  }
+
+  /**
+   * Computes the action fees
+   * @param action
+   * @param gasPrice
+   * @param nativePrice
+   * @private
+   */
+  private buildFees(action: IRouteAction, gasPrice: BigInteger, nativePrice: PriceFeed): RouteFees {
+    // base action fee
+    const actionGasLimit = BigInteger.fromString(action.fee.gasActionUnits.toString());
+    // possible additional fee form provider
+    const actionAdditionalFee = action.additionalProviderFee
+      ? BigInteger.fromString(action.additionalProviderFee.amount.toString())
+      : BigInteger.zero();
+    // compute cost of action in Wei
+    const baseFee = actionGasLimit.times(gasPrice);
+    // add the provider fee
+    const totalFees = baseFee.plus(actionAdditionalFee);
+    // convert to USD
+    const feesInUsd = totalFees
+      .times(nativePrice.lastPrice)
+      .div(BigInteger.weiInEther())
+      .toDecimal(nativePrice.decimals);
+
+    return new RouteFees(totalFees, feesInUsd);
   }
 
   /**

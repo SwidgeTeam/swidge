@@ -44,12 +44,12 @@ export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregat
    * Entrypoint to quote a Route from Rango.exchange
    * @param request
    * @param gasPrice
-   * @param coinPrice
+   * @param nativePrice
    */
   async execute(
     request: AggregatorRequest,
     gasPrice: BigInteger,
-    coinPrice: PriceFeed,
+    nativePrice: PriceFeed,
   ): Promise<Route> {
     const response = await this.client.quote({
       from: {
@@ -83,7 +83,7 @@ export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregat
     );
 
     const steps = this.buildSteps(request.amountIn, response.route.path);
-    const fees = this.buildFees(response.route.fee, coinPrice);
+    const fees = this.buildFees(response.route.fee, nativePrice);
 
     return new Route(aggregatorDetails, resume, steps, fees);
   }
