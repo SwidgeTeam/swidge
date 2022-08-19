@@ -10,7 +10,6 @@ import { TokenDetailsFetcher } from '../../shared/infrastructure/TokenDetailsFet
 import { BridgingRequest } from '../../bridges/domain/bridging-request';
 import { PathNotFound } from './path-not-found';
 import { flatten } from 'lodash';
-import { PriceFeedFetcher } from '../../shared/infrastructure/price-feed-fetcher';
 import { GasConverter } from '../../shared/domain/gas-converter';
 import { PriceFeed } from '../../shared/domain/PriceFeed';
 import { AggregatorRequest } from '../../aggregators/domain/aggregator-request';
@@ -32,6 +31,7 @@ import { AggregatorDetails } from '../../shared/domain/aggregator-details';
 import { ApprovalTransactionDetails } from '../../shared/domain/route/approval-transaction-details';
 import { RouteFees } from '../../shared/domain/route/route-fees';
 import { IGasPriceFetcher } from '../../shared/domain/gas-price-fetcher';
+import { IPriceFeedFetcher } from '../../shared/domain/price-feed-fetcher';
 
 export class PathComputer {
   /** Providers */
@@ -39,7 +39,7 @@ export class PathComputer {
   private readonly bridges: Bridges;
   private readonly aggregators: Aggregators;
   private readonly tokenDetailsFetcher: TokenDetailsFetcher;
-  private readonly priceFeedFetcher: PriceFeedFetcher;
+  private readonly priceFeedFetcher: IPriceFeedFetcher;
   private readonly gasPriceFetcher: IGasPriceFetcher;
   private readonly gasConverter: GasConverter;
   private readonly routerCallEncoder: RouterCallEncoder;
@@ -66,7 +66,7 @@ export class PathComputer {
     _bridges: Bridges,
     _aggregators: Aggregators,
     _tokenDetailsFetcher: TokenDetailsFetcher,
-    _priceFeedFetcher: PriceFeedFetcher,
+    _priceFeedFetcher: IPriceFeedFetcher,
     _gasPriceFetcher: IGasPriceFetcher,
     _logger: Logger,
   ) {

@@ -3,8 +3,9 @@ import { RpcNode } from '../enums/RpcNode';
 import { PriceFeeds } from '../PriceFeeds';
 import { PriceFeed } from '../domain/PriceFeed';
 import { BigInteger } from '../domain/big-integer';
+import { IPriceFeedFetcher } from '../domain/price-feed-fetcher';
 
-export class PriceFeedFetcher {
+export class PriceFeedFetcher implements IPriceFeedFetcher {
   public async fetch(chainId: string): Promise<PriceFeed> {
     const provider = new ethers.providers.JsonRpcProvider(RpcNode[chainId]);
     const feedAddress = PriceFeeds[chainId];
