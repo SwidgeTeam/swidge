@@ -1,8 +1,8 @@
 import { AggregatorRequest } from './aggregator-request';
-import { Route } from '../../shared/domain/route';
+import { Route } from '../../shared/domain/route/route';
 import BothTxs from './both-txs';
-import { ApprovalTransactionDetails } from './approval-transaction-details';
-import { TransactionDetails } from '../../shared/domain/transaction-details';
+import { ApprovalTransactionDetails } from '../../shared/domain/route/approval-transaction-details';
+import { TransactionDetails } from '../../shared/domain/route/transaction-details';
 import { StatusCheckRequest, StatusCheckResponse } from './status-check';
 
 export interface Aggregator {

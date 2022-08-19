@@ -1,18 +1,18 @@
 import { AggregatorRequest } from '../aggregator-request';
 import { EvmTransaction, RangoClient, TransactionStatus } from 'rango-sdk-basic';
-import { Route } from '../../../shared/domain/route';
+import { Route } from '../../../shared/domain/route/route';
 import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
 import { AggregatorProviders } from './aggregator-providers';
-import { RouteResume } from '../../../shared/domain/route-resume';
+import { RouteResume } from '../../../shared/domain/route/route-resume';
 import { BigInteger } from '../../../shared/domain/big-integer';
-import { RouteStep } from '../../../shared/domain/route-step';
+import { RouteStep } from '../../../shared/domain/route/route-step';
 import { Token } from '../../../shared/domain/token';
 import { ProviderDetails } from '../../../shared/domain/provider-details';
 import { InsufficientLiquidity } from '../../../swaps/domain/insufficient-liquidity';
 import { QuotePath } from 'rango-sdk-basic/lib/types/api/common';
 import { Avalanche, BSC, Fantom, Mainnet, Optimism, Polygon } from '../../../shared/enums/ChainIds';
-import { TransactionDetails } from '../../../shared/domain/transaction-details';
-import { ApprovalTransactionDetails } from '../approval-transaction-details';
+import { TransactionDetails } from '../../../shared/domain/route/transaction-details';
+import { ApprovalTransactionDetails } from '../../../shared/domain/route/approval-transaction-details';
 import BothTxs from '../both-txs';
 import { Aggregator, ExternalAggregator, OneSteppedAggregator } from '../aggregator';
 import {

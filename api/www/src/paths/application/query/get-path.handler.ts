@@ -6,7 +6,7 @@ import { Class } from '../../../shared/Class';
 import { PathComputer } from '../../domain/path-computer';
 import { PriceFeedFetcher } from '../../../shared/infrastructure/PriceFeedFetcher';
 import { GasPriceFetcher } from '../../../shared/infrastructure/GasPriceFetcher';
-import { Route } from '../../../shared/domain/route';
+import { Route } from '../../../shared/domain/route/route';
 import { Bridges } from '../../../bridges/domain/bridges';
 import { Multichain } from '../../../bridges/domain/providers/multichain';
 import { HttpClient } from '../../../shared/infrastructure/http/httpClient';

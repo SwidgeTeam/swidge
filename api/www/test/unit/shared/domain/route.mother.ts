@@ -1,7 +1,7 @@
-import { Route } from '../../../../src/shared/domain/route';
-import { RouteStep } from '../../../../src/shared/domain/route-step';
-import { TransactionDetails } from '../../../../src/shared/domain/transaction-details';
-import { RouteResume } from '../../../../src/shared/domain/route-resume';
+import { Route } from '../../../../src/shared/domain/route/route';
+import { RouteStep } from '../../../../src/shared/domain/route/route-step';
+import { TransactionDetails } from '../../../../src/shared/domain/route/transaction-details';
+import { RouteResume } from '../../../../src/shared/domain/route/route-resume';
 import { faker } from '@faker-js/faker';
 import { BigIntegerMother } from './big-integer.mother';
 import { ProviderDetailsMother } from './provider-details.mother';

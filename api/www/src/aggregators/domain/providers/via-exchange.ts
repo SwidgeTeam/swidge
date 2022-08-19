@@ -1,16 +1,16 @@
 import { AggregatorRequest } from '../aggregator-request';
 import { Via } from '@viaprotocol/router-sdk';
-import { Route } from '../../../shared/domain/route';
+import { Route } from '../../../shared/domain/route/route';
 import { AggregatorProviders } from './aggregator-providers';
-import { RouteResume } from '../../../shared/domain/route-resume';
+import { RouteResume } from '../../../shared/domain/route/route-resume';
 import { InsufficientLiquidity } from '../../../swaps/domain/insufficient-liquidity';
 import { BigInteger } from '../../../shared/domain/big-integer';
-import { RouteStep } from '../../../shared/domain/route-step';
+import { RouteStep } from '../../../shared/domain/route/route-step';
 import { IActionStep, IRouteAction } from '@viaprotocol/router-sdk/dist/types';
 import { Token } from '../../../shared/domain/token';
 import { ProviderDetails } from '../../../shared/domain/provider-details';
-import { TransactionDetails } from '../../../shared/domain/transaction-details';
-import { ApprovalTransactionDetails } from '../approval-transaction-details';
+import { TransactionDetails } from '../../../shared/domain/route/transaction-details';
+import { ApprovalTransactionDetails } from '../../../shared/domain/route/approval-transaction-details';
 import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
 import { Aggregator, ExternalAggregator, TwoSteppedAggregator } from '../aggregator';
 import {

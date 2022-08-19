@@ -2,16 +2,16 @@ import { Aggregator } from '../aggregator';
 import { AggregatorRequest } from '../aggregator-request';
 import LIFI, { Step } from '@lifi/sdk';
 import { BigInteger } from '../../../shared/domain/big-integer';
-import { TransactionDetails } from '../../../shared/domain/transaction-details';
-import { Route } from '../../../shared/domain/route';
-import { RouteStep } from '../../../shared/domain/route-step';
+import { TransactionDetails } from '../../../shared/domain/route/transaction-details';
+import { Route } from '../../../shared/domain/route/route';
+import { RouteStep } from '../../../shared/domain/route/route-step';
 import { Token } from '../../../shared/domain/token';
 import { InsufficientLiquidity } from '../../../swaps/domain/insufficient-liquidity';
 import { ProviderDetails } from '../../../shared/domain/provider-details';
-import { RouteResume } from '../../../shared/domain/route-resume';
+import { RouteResume } from '../../../shared/domain/route/route-resume';
 import { AggregatorProviders } from './aggregator-providers';
 import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
-import { ApprovalTransactionDetails } from '../approval-transaction-details';
+import { ApprovalTransactionDetails } from '../../../shared/domain/route/approval-transaction-details';
 import { RouterCallEncoder } from '../../../shared/domain/router-call-encoder';
 
 export class LiFi implements Aggregator {

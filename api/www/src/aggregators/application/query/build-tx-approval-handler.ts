@@ -6,7 +6,7 @@ import { HttpClient } from '../../../shared/infrastructure/http/httpClient';
 import { Logger } from '../../../shared/domain/logger';
 import { AggregatorProviders } from '../../domain/providers/aggregator-providers';
 import { ViaExchange } from '../../domain/providers/via-exchange';
-import { ApprovalTransactionDetails } from '../../domain/approval-transaction-details';
+import { ApprovalTransactionDetails } from '../../../shared/domain/route/approval-transaction-details';
 import { ConfigService } from '../../../config/config.service';
 import { TwoSteppedAggregator } from 'src/aggregators/domain/aggregator';
 

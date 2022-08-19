@@ -1,5 +1,5 @@
 import { IOrderStrategy } from './order-strategy';
-import { Route } from '../../../shared/domain/route';
+import { Route } from '../../../shared/domain/route/route';
 import descendingOrder from '../../../shared/domain/descending-order';
 
 export class HighestReturnStrategy implements IOrderStrategy {

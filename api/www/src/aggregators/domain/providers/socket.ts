@@ -1,17 +1,17 @@
 import { Aggregator } from '../aggregator';
 import { AggregatorRequest } from '../aggregator-request';
-import { Route } from '../../../shared/domain/route';
+import { Route } from '../../../shared/domain/route/route';
 import { InsufficientLiquidity } from '../../../swaps/domain/insufficient-liquidity';
 import { IHttpClient } from '../../../shared/domain/http/IHttpClient';
-import { TransactionDetails } from '../../../shared/domain/transaction-details';
+import { TransactionDetails } from '../../../shared/domain/route/transaction-details';
 import { BigInteger } from '../../../shared/domain/big-integer';
-import { RouteResume } from '../../../shared/domain/route-resume';
-import { RouteStep } from '../../../shared/domain/route-step';
+import { RouteResume } from '../../../shared/domain/route/route-resume';
+import { RouteStep } from '../../../shared/domain/route/route-step';
 import { Token } from '../../../shared/domain/token';
 import { ProviderDetails } from '../../../shared/domain/provider-details';
 import { AggregatorProviders } from './aggregator-providers';
 import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
-import { ApprovalTransactionDetails } from '../approval-transaction-details';
+import { ApprovalTransactionDetails } from '../../../shared/domain/route/approval-transaction-details';
 import { RouterCallEncoder } from '../../../shared/domain/router-call-encoder';
 
 // whole Route details

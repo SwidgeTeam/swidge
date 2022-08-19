@@ -1,8 +1,8 @@
 import { TransactionDetails } from './transaction-details';
 import { RouteStep } from './route-step';
 import { RouteResume } from './route-resume';
-import { AggregatorDetails } from './aggregator-details';
-import { ApprovalTransactionDetails } from '../../aggregators/domain/approval-transaction-details';
+import { AggregatorDetails } from '../aggregator-details';
+import { ApprovalTransactionDetails } from './approval-transaction-details';
 
 export class Route {
   constructor(

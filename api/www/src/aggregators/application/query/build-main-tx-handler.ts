@@ -6,7 +6,7 @@ import { Logger } from '../../../shared/domain/logger';
 import { AggregatorProviders } from '../../domain/providers/aggregator-providers';
 import { ViaExchange } from '../../domain/providers/via-exchange';
 import BuildMainTxQuery from './build-main-tx-query';
-import { TransactionDetails } from '../../../shared/domain/transaction-details';
+import { TransactionDetails } from '../../../shared/domain/route/transaction-details';
 import { ConfigService } from '../../../config/config.service';
 import { TwoSteppedAggregator } from 'src/aggregators/domain/aggregator';
 

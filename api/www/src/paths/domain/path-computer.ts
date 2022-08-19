@@ -15,22 +15,22 @@ import { GasPriceFetcher } from '../../shared/infrastructure/GasPriceFetcher';
 import { GasConverter } from '../../shared/domain/gas-converter';
 import { PriceFeed } from '../../shared/domain/PriceFeed';
 import { AggregatorRequest } from '../../aggregators/domain/aggregator-request';
-import { Route } from '../../shared/domain/route';
-import { RouteStep } from '../../shared/domain/route-step';
-import { TransactionDetails } from '../../shared/domain/transaction-details';
+import { Route } from '../../shared/domain/route/route';
+import { RouteStep } from '../../shared/domain/route/route-step';
+import { TransactionDetails } from '../../shared/domain/route/transaction-details';
 import { DeployedAddresses } from '../../shared/DeployedAddresses';
 import { RouterCallEncoder } from '../../shared/domain/router-call-encoder';
 import { BridgeDetails, BridgeProviders } from '../../bridges/domain/providers/bridge-providers';
 import { ExchangeDetails } from '../../swaps/domain/providers/exchange-providers';
 import { OrderStrategy } from './route-order-strategy/order-strategy';
-import { RouteResume } from '../../shared/domain/route-resume';
+import { RouteResume } from '../../shared/domain/route/route-resume';
 import { Bridges } from '../../bridges/domain/bridges';
 import { Exchanges } from '../../swaps/domain/exchanges';
 import { Aggregators } from '../../aggregators/domain/aggregators';
 import { Logger } from '../../shared/domain/logger';
 import { AggregatorProviders } from '../../aggregators/domain/providers/aggregator-providers';
 import { AggregatorDetails } from '../../shared/domain/aggregator-details';
-import { ApprovalTransactionDetails } from '../../aggregators/domain/approval-transaction-details';
+import { ApprovalTransactionDetails } from '../../shared/domain/route/approval-transaction-details';
 
 export class PathComputer {
   /** Providers */

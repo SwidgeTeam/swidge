@@ -1,5 +1,5 @@
-import { Token } from './token';
-import { BigInteger } from './big-integer';
+import { Token } from '../token';
+import { BigInteger } from '../big-integer';
 
 export class RouteResume {
   constructor(
