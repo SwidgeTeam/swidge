@@ -4,7 +4,7 @@ import { TokenDetailsFetcher } from '../../../shared/infrastructure/TokenDetails
 import { Inject } from '@nestjs/common';
 import { Class } from '../../../shared/Class';
 import { PathComputer } from '../../domain/path-computer';
-import { PriceFeedFetcher } from '../../../shared/infrastructure/PriceFeedFetcher';
+import { PriceFeedFetcher } from '../../../shared/infrastructure/price-feed-fetcher';
 import { GasPriceFetcher } from '../../../shared/infrastructure/gas-price-fetcher';
 import { Route } from '../../../shared/domain/route/route';
 import { Bridges } from '../../../bridges/domain/bridges';

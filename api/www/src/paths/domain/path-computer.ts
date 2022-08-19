@@ -10,7 +10,7 @@ import { TokenDetailsFetcher } from '../../shared/infrastructure/TokenDetailsFet
 import { BridgingRequest } from '../../bridges/domain/bridging-request';
 import { PathNotFound } from './path-not-found';
 import { flatten } from 'lodash';
-import { PriceFeedFetcher } from '../../shared/infrastructure/PriceFeedFetcher';
+import { PriceFeedFetcher } from '../../shared/infrastructure/price-feed-fetcher';
 import { GasConverter } from '../../shared/domain/gas-converter';
 import { PriceFeed } from '../../shared/domain/PriceFeed';
 import { AggregatorRequest } from '../../aggregators/domain/aggregator-request';

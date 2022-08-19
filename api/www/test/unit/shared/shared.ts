@@ -1,4 +1,4 @@
-import { PriceFeedFetcher } from '../../../src/shared/infrastructure/PriceFeedFetcher';
+import { PriceFeedFetcher } from '../../../src/shared/infrastructure/price-feed-fetcher';
 import { stub } from 'sinon';
 import { PriceFeed } from '../../../src/shared/domain/PriceFeed';
 import { BigInteger } from '../../../src/shared/domain/big-integer';
