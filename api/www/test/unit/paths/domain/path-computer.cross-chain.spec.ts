@@ -6,7 +6,7 @@ import { GetPathQuery } from '../../../../src/paths/application/query/get-path.q
 import { TokenMother } from '../../shared/domain/token.mother';
 import { BigInteger } from '../../../../src/shared/domain/big-integer';
 import { Polygon, Fantom } from '../../../../src/shared/enums/ChainIds';
-import { GasPriceFetcher } from '../../../../src/shared/infrastructure/GasPriceFetcher';
+import { GasPriceFetcher } from '../../../../src/shared/infrastructure/gas-price-fetcher';
 import { Sushiswap } from '../../../../src/swaps/domain/providers/sushiswap';
 import { Exchanges } from '../../../../src/swaps/domain/exchanges';
 import { Aggregators } from '../../../../src/aggregators/domain/aggregators';

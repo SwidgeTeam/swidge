@@ -1,5 +1,5 @@
 import { Class } from '../Class';
-import { GasPriceFetcher } from './GasPriceFetcher';
+import { GasPriceFetcher } from './gas-price-fetcher';
 
 export default () => {
   return {

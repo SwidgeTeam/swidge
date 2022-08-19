@@ -9,7 +9,7 @@ import tokenDetailsFetcherProvider from '../shared/infrastructure/TokenDetailsFe
 import cachedHttpClientProvider from '../shared/infrastructure/http/cachedHttpClient.provider';
 import sushiPairsRepositoryProvider from '../swaps/infrastructure/database/repositories/sushi-pairs.repository.provider';
 import priceFeedFetcherProvider from '../shared/infrastructure/PriceFeedFetcher.provider';
-import gasPriceFetcherProvider from '../shared/infrastructure/GasPriceFetcher.provider';
+import gasPriceFetcherProvider from '../shared/infrastructure/gas-price-fetcher.provider';
 import consoleLoggerProvider from '../shared/infrastructure/console-logger-provider';
 import { ConfigModule } from '../config/config.module';
 import { ConfigService } from '../config/config.service';

@@ -5,7 +5,7 @@ import { Inject } from '@nestjs/common';
 import { Class } from '../../../shared/Class';
 import { PathComputer } from '../../domain/path-computer';
 import { PriceFeedFetcher } from '../../../shared/infrastructure/PriceFeedFetcher';
-import { GasPriceFetcher } from '../../../shared/infrastructure/GasPriceFetcher';
+import { GasPriceFetcher } from '../../../shared/infrastructure/gas-price-fetcher';
 import { Route } from '../../../shared/domain/route/route';
 import { Bridges } from '../../../bridges/domain/bridges';
 import { Multichain } from '../../../bridges/domain/providers/multichain';
