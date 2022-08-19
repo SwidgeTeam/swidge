@@ -20,23 +20,33 @@ import {
 } from '../status-check';
 import { RouteFees } from '../../../shared/domain/route/route-fees';
 import { PriceFeed } from '../../../shared/domain/price-feed';
+import { IPriceFeedFetcher } from '../../../shared/domain/price-feed-fetcher';
+import { IGasPriceFetcher } from '../../../shared/domain/gas-price-fetcher';
 
 export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAggregator {
   private enabledChains = [];
   private client: Via;
+  private gasPriceFetcher: IGasPriceFetcher;
+  private priceFeedFetcher: IPriceFeedFetcher;
 
-  public static create(apiKey: string): ViaExchange {
+  public static create(
+    apiKey: string,
+    gasPriceFetcher: IGasPriceFetcher,
+    priceFeedFetcher: IPriceFeedFetcher,
+  ): ViaExchange {
     const client = new Via({
       apiKey: apiKey,
       url: 'https://router-api.via.exchange',
       timeout: 30000,
     });
 
-    return new ViaExchange(client);
+    return new ViaExchange(client, gasPriceFetcher, priceFeedFetcher);
   }
 
-  constructor(client: Via) {
+  constructor(client: Via, gasPriceFetcher: IGasPriceFetcher, priceFeedFetcher: IPriceFeedFetcher) {
     this.client = client;
+    this.gasPriceFetcher = gasPriceFetcher;
+    this.priceFeedFetcher = priceFeedFetcher;
   }
 
   isEnabledOn(fromChainId: string, toChainId: string): boolean {
@@ -46,10 +56,8 @@ export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAg
   /**
    * Entrypoint to quote a Route from Via.exchange
    * @param request
-   * @param gasPrice
-   * @param nativePrice
    */
-  async execute(request: AggregatorRequest, gasPrice: BigInteger, nativePrice: PriceFeed) {
+  async execute(request: AggregatorRequest) {
     const response = await this.client.getRoutes({
       fromChainId: Number(request.fromChain),
       fromTokenAddress: this.getTokenAddress(request.fromToken),
@@ -80,6 +88,8 @@ export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAg
       BigInteger.fromString(route.toTokenAmount.toString()),
     );
 
+    const gasPrice = await this.gasPriceFetcher.fetch(request.fromChain);
+    const nativePrice = await this.priceFeedFetcher.fetch(request.fromChain);
     const fees = this.buildFees(action, gasPrice, nativePrice);
     const steps = this.buildSteps(route.actions);
 

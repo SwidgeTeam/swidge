@@ -52,7 +52,10 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
     const aggregators = new Aggregators([
       [AggregatorProviders.LiFi, new LiFi()],
       [AggregatorProviders.Socket, new Socket(httpClient, configService.getSocketApiKey())],
-      [AggregatorProviders.Via, ViaExchange.create(configService.getViaApiKey())],
+      [
+        AggregatorProviders.Via,
+        ViaExchange.create(configService.getViaApiKey(), gasPriceFetcher, priceFeedFetcher),
+      ],
       [AggregatorProviders.Rango, Rango.create(configService.getRangoApiKey(), priceFeedFetcher)],
     ]);
 

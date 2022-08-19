@@ -9,6 +9,8 @@ import BuildMainTxQuery from './build-main-tx-query';
 import { TransactionDetails } from '../../../shared/domain/route/transaction-details';
 import { ConfigService } from '../../../config/config.service';
 import { TwoSteppedAggregator } from 'src/aggregators/domain/aggregator';
+import { CachedGasPriceFetcher } from '../../../shared/domain/cached-gas-price-fetcher';
+import { CachedPriceFeedFetcher } from '../../../shared/domain/cached-price-feed-fetcher';
 
 @QueryHandler(BuildMainTxQuery)
 export class BuildMainTxHandler implements IQueryHandler<BuildMainTxQuery> {
@@ -17,10 +19,15 @@ export class BuildMainTxHandler implements IQueryHandler<BuildMainTxQuery> {
   constructor(
     private readonly configService: ConfigService,
     @Inject(Class.HttpClient) private readonly httpClient: HttpClient,
+    @Inject(Class.GasPriceFetcher) private readonly gasPriceFetcher: CachedGasPriceFetcher,
+    @Inject(Class.PriceFeedFetcher) private readonly priceFeedFetcher: CachedPriceFeedFetcher,
     @Inject(Class.Logger) private readonly logger: Logger,
   ) {
     this.aggregators = new Map<string, TwoSteppedAggregator>([
-      [AggregatorProviders.Via, ViaExchange.create(configService.getViaApiKey())],
+      [
+        AggregatorProviders.Via,
+        ViaExchange.create(configService.getViaApiKey(), gasPriceFetcher, priceFeedFetcher),
+      ],
     ]);
   }
 

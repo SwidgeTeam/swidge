@@ -8,6 +8,7 @@ import { Rango } from '../../domain/providers/rango';
 import { Inject } from '@nestjs/common';
 import { Class } from '../../../shared/Class';
 import { CachedPriceFeedFetcher } from '../../../shared/domain/cached-price-feed-fetcher';
+import { CachedGasPriceFetcher } from '../../../shared/domain/cached-gas-price-fetcher';
 
 @CommandHandler(ExecutedTxCommand)
 export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
@@ -16,9 +17,13 @@ export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
   constructor(
     private readonly configService: ConfigService,
     @Inject(Class.PriceFeedFetcher) private readonly priceFeedFetcher: CachedPriceFeedFetcher,
+    @Inject(Class.GasPriceFetcher) private readonly gasPriceFetcher: CachedGasPriceFetcher,
   ) {
     this.aggregators = new Map<string, ExternalAggregator>([
-      [AggregatorProviders.Via, ViaExchange.create(configService.getViaApiKey())],
+      [
+        AggregatorProviders.Via,
+        ViaExchange.create(configService.getViaApiKey(), gasPriceFetcher, priceFeedFetcher),
+      ],
       [AggregatorProviders.Rango, Rango.create(configService.getRangoApiKey(), priceFeedFetcher)],
     ]);
   }
