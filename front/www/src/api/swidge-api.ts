@@ -13,7 +13,7 @@ import GetApprovalTxResponseJson from '@/api/models/get-approval-tx-response'
 import GetMainTxResponse from '@/api/models/get-main-tx-response'
 import GetBothTxsResponse from '@/api/models/get-both-txs-response'
 import GetBothTxsRequest from '@/api/models/get-both-txs-request'
-import { StatusCheckResponse } from '@/api/models/get-status-check';
+import { StatusCheckRequest, StatusCheckResponse } from '@/api/models/get-status-check'
 
 class SwidgeAPI extends HttpClient {
     public constructor() {
@@ -218,9 +218,9 @@ class SwidgeAPI extends HttpClient {
         }
     }
 
-    checkTxStatus(): Promise<StatusCheckResponse> {
+    checkTxStatus(request: StatusCheckRequest): Promise<StatusCheckResponse> {
         try {
-            return this.instance.get('/tx-status')
+            return this.instance.get('/tx-status', { params: request })
                 .then(response => response.data)
         } catch (e: unknown) {
             if (axios.isAxiosError(e)) {

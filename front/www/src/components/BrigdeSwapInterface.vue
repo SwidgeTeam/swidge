@@ -12,7 +12,7 @@ import { ContractCaller } from '@/contracts/contractCaller'
 import IToken from '@/domain/tokens/IToken'
 import Route, { TransactionDetails } from '@/domain/paths/path'
 import { TransactionReceipt } from '@ethersproject/abstract-provider'
-import { Aggregators } from '@/domain/aggregators/aggregators'
+import Aggregators from '@/domain/aggregators/aggregators'
 
 const web3Store = useWeb3Store()
 const tokensStore = useTokensStore()

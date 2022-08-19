@@ -4,7 +4,7 @@ import { useTokensStore } from '@/store/tokens'
 import { useWeb3Store } from '@/store/web3'
 import swidgeApi from '@/api/swidge-api'
 import { useRoutesStore } from '@/store/routes'
-import { TransactionStatus } from '@/api/models/get-status-check';
+import { TransactionStatus } from '@/api/models/get-status-check'
 
 export const useTransactionStore = defineStore('transaction', {
     state: () => ({
@@ -12,6 +12,7 @@ export const useTransactionStore = defineStore('transaction', {
         mainTx: undefined as undefined | TransactionDetails,
         trackingId: '',
         statusCheckInterval: 0,
+        txHash: '',
     }),
     getters: {
         getApprovalTx(): ApprovalTransactionDetails | undefined {
@@ -62,8 +63,8 @@ export const useTransactionStore = defineStore('transaction', {
             const txs = await swidgeApi.getBothTxs({
                 aggregatorId: route.aggregator.id,
                 fromChainId: tokensStore.getOriginChainId,
-                srcToken: tokensStore.getOriginTokenAddress,
                 toChainId: tokensStore.getDestinationChainId,
+                srcToken: tokensStore.getOriginTokenAddress,
                 dstToken: tokensStore.getDestinationTokenAddress,
                 amount: amount,
                 slippage: slippage,
@@ -78,6 +79,7 @@ export const useTransactionStore = defineStore('transaction', {
          * Informs the provider the tx has been executed
          */
         informExecutedTx(txHash: string) {
+            this.txHash = txHash
             const web3Store = useWeb3Store()
             const routesStore = useRoutesStore()
             const route = routesStore.getSelectedRoute
@@ -85,7 +87,7 @@ export const useTransactionStore = defineStore('transaction', {
                 aggregatorId: route.aggregator.id,
                 fromAddress: web3Store.account,
                 toAddress: web3Store.account,
-                txHash: txHash,
+                txHash: this.txHash,
                 trackingId: this.trackingId,
             })
         },
@@ -94,7 +96,16 @@ export const useTransactionStore = defineStore('transaction', {
          */
         startCheckingStatus: function () {
             this.statusCheckInterval = window.setInterval(() => {
-                swidgeApi.checkTxStatus().then(response => {
+                const routesStore = useRoutesStore()
+                const tokensStore = useTokensStore()
+                const route = routesStore.getSelectedRoute
+                swidgeApi.checkTxStatus({
+                    aggregatorId: route.aggregator.id,
+                    fromChainId: tokensStore.getOriginChainId,
+                    toChainId: tokensStore.getDestinationChainId,
+                    txHash: this.txHash,
+                    trackingId: this.trackingId,
+                }).then(response => {
                     if (response.status === TransactionStatus.Success) {
                         const routesStore = useRoutesStore()
                         routesStore.completeRoute()
