@@ -1,9 +1,9 @@
 import { Class } from '../Class';
-import { PriceFeedFetcher } from './price-feed-fetcher';
+import { CachedPriceFeedFetcher } from '../domain/cached-price-feed-fetcher';
 
 export default () => {
   return {
     provide: Class.PriceFeedFetcher,
-    useClass: PriceFeedFetcher,
+    useClass: CachedPriceFeedFetcher,
   };
 };

@@ -4,8 +4,6 @@ import { TokenDetailsFetcher } from '../../../shared/infrastructure/TokenDetails
 import { Inject } from '@nestjs/common';
 import { Class } from '../../../shared/Class';
 import { PathComputer } from '../../domain/path-computer';
-import { PriceFeedFetcher } from '../../../shared/infrastructure/price-feed-fetcher';
-import { GasPriceFetcher } from '../../../shared/infrastructure/gas-price-fetcher';
 import { Route } from '../../../shared/domain/route/route';
 import { Bridges } from '../../../bridges/domain/bridges';
 import { Multichain } from '../../../bridges/domain/providers/multichain';
@@ -25,6 +23,8 @@ import { ViaExchange } from '../../../aggregators/domain/providers/via-exchange'
 import { ConfigService } from '../../../config/config.service';
 import { Socket } from '../../../aggregators/domain/providers/socket';
 import { Rango } from '../../../aggregators/domain/providers/rango';
+import { CachedGasPriceFetcher } from '../../../shared/domain/cached-gas-price-fetcher';
+import { CachedPriceFeedFetcher } from '../../../shared/domain/cached-price-feed-fetcher';
 
 @QueryHandler(GetPathQuery)
 export class GetPathHandler implements IQueryHandler<GetPathQuery> {
@@ -35,8 +35,8 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
     @Inject(Class.HttpClient) private readonly httpClient: HttpClient,
     @Inject(Class.CachedHttpClient) private readonly cachedHttpClient: CachedHttpClient,
     @Inject(Class.TokenDetailsFetcher) private readonly tokenDetailsFetcher: TokenDetailsFetcher,
-    @Inject(Class.PriceFeedFetcher) private readonly priceFeedFetcher: PriceFeedFetcher,
-    @Inject(Class.GasPriceFetcher) private readonly gasPriceFetcher: GasPriceFetcher,
+    @Inject(Class.PriceFeedFetcher) private readonly priceFeedFetcher: CachedPriceFeedFetcher,
+    @Inject(Class.GasPriceFetcher) private readonly gasPriceFetcher: CachedGasPriceFetcher,
     @Inject(Class.SushiPairsRepository) private readonly sushiPairsRepository: SushiPairsRepository,
     @Inject(Class.Logger) private readonly logger: Logger,
   ) {
