@@ -138,6 +138,7 @@ describe('aggregators', () => {
                     gasFees: {
                       gasAmount: '92468358000000000',
                       gasLimit: 1744686,
+                      feesInUsd: '189.9',
                     },
                   },
                 ],
@@ -166,6 +167,8 @@ describe('aggregators', () => {
     // Assert
     expect(route.transaction.to).toEqual(txTo);
     expect(route.transaction.callData).toEqual('0xdata');
+    expect(route.fees.feeInUsd).toEqual('189.9');
+    expect(route.fees.nativeWei.toString()).toEqual('92468358000000000');
     expect(route.steps.length).toEqual(2);
     expect(route.steps[0].type).toEqual('swap');
     expect(route.steps[0].amountOut.toString()).toEqual('150000000');

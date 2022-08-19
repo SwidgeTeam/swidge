@@ -6,6 +6,8 @@ import { RouteMother } from '../../shared/domain/route.mother';
 import { TokenMother } from '../../shared/domain/token.mother';
 import { BigIntegerMother } from '../../shared/domain/big-integer.mother';
 import { faker } from '@faker-js/faker';
+import { PriceFeed } from '../../../../src/shared/domain/PriceFeed';
+import { BigInteger } from '../../../../src/shared/domain/big-integer';
 
 describe('aggregators', () => {
   it('should filter enabled aggregators correctly', () => {
@@ -59,7 +61,7 @@ describe('aggregators', () => {
     );
 
     // Act
-    const route = await aggregators.execute('k1', request);
+    const route = await aggregators.execute('k1', request, BigInteger.zero(), PriceFeed.zero());
 
     // Assert
     expect(route.transaction.to).toEqual(routeOne.transaction.to);
