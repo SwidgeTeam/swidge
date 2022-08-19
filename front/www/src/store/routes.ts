@@ -1,25 +1,53 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import SwidgeAPI from '@/api/swidge-api'
-import GetQuoteRequest from '@/api/models/get-quote-request'
 import Route from '@/domain/paths/path'
+import { ethers } from 'ethers'
+import { useTokensStore } from '@/store/tokens'
+import { useWeb3Store } from '@/store/web3'
+import { useTransactionStore } from '@/store/transaction';
 
 export const useRoutesStore = defineStore('routes', {
     state: () => ({
         routes: [] as Route[],
-        selectedRoute: 0
+        selectedRoute: 0,
     }),
     getters: {
         getSelectedRoute(): Route {
             return this.routes[this.selectedRoute]
-        }
+        },
     },
     actions: {
         /**
          * Fetches the routes for a specific path
-         * @param payload
+         * @param amount
+         * @param slippage
          */
-        async quotePath(payload: GetQuoteRequest) {
-            this.routes = await SwidgeAPI.getQuote(payload)
+        async quotePath(amount: string, slippage: number) {
+            const tokensStore = useTokensStore()
+            const web3Store = useWeb3Store()
+            this.routes = await SwidgeAPI.getQuote({
+                fromChainId: tokensStore.getOriginChainId,
+                srcToken: tokensStore.getOriginTokenAddress,
+                toChainId: tokensStore.getDestinationChainId,
+                dstToken: tokensStore.getDestinationTokenAddress,
+                amount: amount,
+                slippage: slippage,
+                senderAddress: web3Store.account || ethers.constants.AddressZero,
+                receiverAddress: web3Store.account || ethers.constants.AddressZero
+            })
+            this.selectRoute(0) // selects the top route
+        },
+        /**
+         * Marks the route `index` as selected
+         * @param index
+         */
+        selectRoute(index: number) {
+            const transactionStore = useTransactionStore()
+            this.selectedRoute = index
+            const route = this.getSelectedRoute
+            transactionStore.trackingId = route.aggregator.trackingId
+            transactionStore.approvalTx = route.approvalTx
+            transactionStore.mainTx = route.tx
         },
         /**
          * Sets as completed the first step of the selected route

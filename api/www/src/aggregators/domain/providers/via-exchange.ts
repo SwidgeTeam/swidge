@@ -9,12 +9,17 @@ import { RouteStep } from '../../../shared/domain/route-step';
 import { IActionStep, IRouteAction } from '@viaprotocol/router-sdk/dist/types';
 import { Token } from '../../../shared/domain/token';
 import { ProviderDetails } from '../../../shared/domain/provider-details';
-import { SteppedAggregator } from '../stepped-aggregator';
 import { TransactionDetails } from '../../../shared/domain/transaction-details';
 import { ApprovalTransactionDetails } from '../approval-transaction-details';
 import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
+import { Aggregator, ExternalAggregator, TwoSteppedAggregator } from '../aggregator';
+import {
+  ExternalTransactionStatus,
+  StatusCheckRequest,
+  StatusCheckResponse,
+} from '../status-check';
 
-export class ViaExchange implements SteppedAggregator {
+export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAggregator {
   private enabledChains = [];
   private client: Via;
 
@@ -75,6 +80,7 @@ export class ViaExchange implements SteppedAggregator {
       AggregatorProviders.Via,
       route.routeId,
       true,
+      false,
       route.actions[0].uuid,
     );
 
@@ -123,6 +129,58 @@ export class ViaExchange implements SteppedAggregator {
       BigInteger.fromString(tx.value.toString()),
       BigInteger.fromString(tx.gas.toString()),
     );
+  }
+
+  /**
+   * Checks and returns the current status of the transaction
+   * @param request
+   */
+  async checkStatus(request: StatusCheckRequest): Promise<StatusCheckResponse> {
+    const statusResponse = await this.client.checkTx({
+      actionUuid: request.trackingId,
+    });
+
+    let status: ExternalTransactionStatus;
+    switch (statusResponse.event) {
+      case 'success':
+        status = ExternalTransactionStatus.Success;
+        break;
+      case 'pending':
+      case 'to_be_started':
+        status = ExternalTransactionStatus.Pending;
+        break;
+      case 'null':
+      case 'recieve_tx_not_found':
+      case 'user_tx_failed':
+        status = ExternalTransactionStatus.Failed;
+        break;
+    }
+
+    return {
+      status: status,
+    };
+  }
+
+  /**
+   * Sets the transaction as executed
+   * @param txHash
+   * @param trackingId
+   * @param fromAddress
+   * @param toAddress
+   */
+  async executedTransaction(
+    txHash: string,
+    trackingId: string,
+    fromAddress: string,
+    toAddress: string,
+  ): Promise<void> {
+    await this.client.startRoute({
+      fromAddress: fromAddress,
+      toAddress: toAddress,
+      txHash: txHash,
+      routeId: trackingId,
+    });
+    return;
   }
 
   /**

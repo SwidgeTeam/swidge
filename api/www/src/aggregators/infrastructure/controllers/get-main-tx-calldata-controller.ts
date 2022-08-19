@@ -2,17 +2,17 @@ import { Controller, Get, Query, Res } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
 import { Response } from 'express';
 import BuildTxApprovalQuery from '../../application/query/build-tx-approval-query';
-import { GetTxCalldataDto } from './get-tx-calldata-dto';
-import BuildTxQuery from '../../application/query/build-tx-query';
+import { GetMainTxCalldataDto } from './get-main-tx-calldata-dto';
+import BuildMainTxQuery from '../../application/query/build-main-tx-query';
 import { TransactionDetails } from '../../../shared/domain/transaction-details';
 
 @Controller()
-export class GetTxCalldataController {
+export class GetMainTxCalldataController {
   constructor(private readonly queryBus: QueryBus) {}
 
-  @Get('build-tx')
-  async build(@Query() params: GetTxCalldataDto, @Res() res: Response) {
-    const query = new BuildTxQuery(
+  @Get('build-main-tx')
+  async build(@Query() params: GetMainTxCalldataDto, @Res() res: Response) {
+    const query = new BuildMainTxQuery(
       params.aggregatorId,
       params.routeId,
       params.senderAddress,

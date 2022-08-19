@@ -24,6 +24,7 @@ import { Logger } from '../../../shared/domain/logger';
 import { ViaExchange } from '../../../aggregators/domain/providers/via-exchange';
 import { ConfigService } from '../../../config/config.service';
 import { Socket } from '../../../aggregators/domain/providers/socket';
+import { Rango } from '../../../aggregators/domain/providers/rango';
 
 @QueryHandler(GetPathQuery)
 export class GetPathHandler implements IQueryHandler<GetPathQuery> {
@@ -43,7 +44,6 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
       [BridgeProviders.Multichain, new Multichain(cachedHttpClient)]
     ]);
 
-
     const exchanges = new Exchanges([
       [ExchangeProviders.ZeroEx, new ZeroEx(httpClient)],
       [ExchangeProviders.Sushi, new Sushiswap(httpClient, sushiPairsRepository)],
@@ -53,6 +53,7 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
       [AggregatorProviders.LiFi, new LiFi()],
       [AggregatorProviders.Socket, new Socket(httpClient, configService.getSocketApiKey())],
       [AggregatorProviders.Via, ViaExchange.create(configService.getViaApiKey())],
+      [AggregatorProviders.Rango, Rango.create(configService.getRangoApiKey())],
     ]);
 
     this.pathComputer = new PathComputer(

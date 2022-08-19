@@ -1,6 +1,5 @@
-import { Aggregator } from '../aggregator';
 import { AggregatorRequest } from '../aggregator-request';
-import { RangoClient } from 'rango-sdk-basic';
+import { EvmTransaction, RangoClient, TransactionStatus } from 'rango-sdk-basic';
 import { Route } from '../../../shared/domain/route';
 import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
 import { AggregatorProviders } from './aggregator-providers';
@@ -12,10 +11,23 @@ import { ProviderDetails } from '../../../shared/domain/provider-details';
 import { InsufficientLiquidity } from '../../../swaps/domain/insufficient-liquidity';
 import { QuotePath } from 'rango-sdk-basic/lib/types/api/common';
 import { Avalanche, BSC, Fantom, Mainnet, Optimism, Polygon } from '../../../shared/enums/ChainIds';
+import { TransactionDetails } from '../../../shared/domain/transaction-details';
+import { ApprovalTransactionDetails } from '../approval-transaction-details';
+import BothTxs from '../both-txs';
+import { Aggregator, ExternalAggregator, OneSteppedAggregator } from '../aggregator';
+import {
+  ExternalTransactionStatus,
+  StatusCheckRequest,
+  StatusCheckResponse,
+} from '../status-check';
 
-export class Rango implements Aggregator {
+export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregator {
   private enabledChains: string[];
   private client: RangoClient;
+
+  public static create(apiKey: string): Rango {
+    return new Rango(new RangoClient(apiKey));
+  }
 
   constructor(client: RangoClient) {
     this.enabledChains = [];
@@ -52,7 +64,8 @@ export class Rango implements Aggregator {
     const aggregatorDetails = new AggregatorDetails(
       AggregatorProviders.Rango,
       '',
-      false,
+      true,
+      true,
       response.requestId,
     );
     const amountOut = BigInteger.fromString(response.route.outputAmount);
@@ -72,6 +85,100 @@ export class Rango implements Aggregator {
   }
 
   /**
+   * Builds callData transactions
+   * @param request
+   */
+  public async buildTxs(request: AggregatorRequest): Promise<BothTxs> {
+    const response = await this.client.swap({
+      from: {
+        blockchain: this.getBlockchainCode(request.fromChain),
+        address: request.fromToken.address,
+        symbol: request.fromToken.symbol,
+      },
+      to: {
+        blockchain: this.getBlockchainCode(request.toChain),
+        address: request.toToken.address,
+        symbol: request.toToken.symbol,
+      },
+      amount: request.amountIn.toString(),
+      fromAddress: request.senderAddress,
+      toAddress: request.receiverAddress,
+      referrerAddress: null,
+      referrerFee: null,
+      disableEstimate: true,
+      slippage: request.slippage.toString(),
+    });
+
+    if (response.resultType !== 'OK' || !response.tx) {
+      throw new InsufficientLiquidity();
+    }
+
+    const tx = response.tx as EvmTransaction;
+
+    const approvalTx =
+      tx.approveTo && tx.approveData
+        ? new ApprovalTransactionDetails(tx.approveTo, tx.approveData)
+        : null;
+
+    const mainTx = new TransactionDetails(
+      tx.txTo,
+      tx.txData,
+      tx.value ? BigInteger.fromString(tx.value) : BigInteger.zero(),
+      tx.gasLimit ? BigInteger.fromString(tx.gasLimit) : BigInteger.zero(),
+    );
+
+    return new BothTxs(response.requestId, approvalTx, mainTx);
+  }
+
+  /**
+   * Checks and returns the current status of the transaction
+   * @param request
+   */
+  async checkStatus(request: StatusCheckRequest): Promise<StatusCheckResponse> {
+    const response = await this.client.status({
+      requestId: request.trackingId,
+      txId: request.txHash,
+    });
+    let status;
+    switch (response.status) {
+      case null:
+      case TransactionStatus.RUNNING:
+        status = ExternalTransactionStatus.Pending;
+        break;
+      case TransactionStatus.FAILED:
+        status = ExternalTransactionStatus.Failed;
+        break;
+      case TransactionStatus.SUCCESS:
+        status = ExternalTransactionStatus.Success;
+        break;
+    }
+    return {
+      status: status,
+    };
+  }
+
+  /**
+   * Sets the transaction as executed
+   * @param txHash
+   * @param trackingId
+   * @param fromAddress
+   * @param toAddress
+   */
+  async executedTransaction(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    txHash: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    trackingId: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    fromAddress: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    toAddress: string,
+  ): Promise<void> {
+    // this provider does not need to be informed
+    return;
+  }
+
+  /**
    * Builds the whole set of steps
    * @param generalAmountIn
    * @param steps
@@ -80,9 +187,7 @@ export class Rango implements Aggregator {
   private buildSteps(generalAmountIn: BigInteger, steps: QuotePath[]): RouteStep[] {
     const items: RouteStep[] = [];
     for (const step of steps) {
-      const amountIn = items.length > 0
-        ? items[items.length - 1].amountOut
-        : generalAmountIn;
+      const amountIn = items.length > 0 ? items[items.length - 1].amountOut : generalAmountIn;
       items.push(this.buildStep(amountIn, step));
     }
     return items;

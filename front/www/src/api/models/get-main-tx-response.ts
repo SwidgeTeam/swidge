@@ -1,4 +1,4 @@
-export default interface GetTxResponse {
+export default interface GetMainTxResponse {
     tx: {
         to: string;
         value: string;

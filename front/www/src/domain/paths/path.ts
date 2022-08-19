@@ -51,5 +51,7 @@ export default interface Route {
 interface AggregatorDetails {
     id: string
     routeId: string
-    requireCallDataQuote: boolean
+    requiresCallDataQuoting: boolean
+    bothQuotesInOne: boolean
+    trackingId: string
 }

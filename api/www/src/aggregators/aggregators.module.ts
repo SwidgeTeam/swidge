@@ -2,12 +2,12 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import httpClientProvider from '../shared/infrastructure/http/httpClient.provider';
 import consoleLoggerProvider from '../shared/infrastructure/console-logger-provider';
-import { GetTxApprovalCalldataController } from './infrastructure/controllers/get-tx-approval-calldata-controller';
+import { GetApprovalTxCalldataController } from './infrastructure/controllers/get-approval-tx-calldata-controller';
 import { BuildTxApprovalHandler } from './application/query/build-tx-approval-handler';
 import { ConfigModule } from '../config/config.module';
 import { ConfigService } from '../config/config.service';
-import { BuildTxHandler } from './application/query/build-tx-handler';
-import { GetTxCalldataController } from './infrastructure/controllers/get-tx-calldata-controller';
+import { BuildMainTxHandler } from './application/query/build-main-tx-handler';
+import { GetMainTxCalldataController } from './infrastructure/controllers/get-main-tx-calldata-controller';
 
 @Module({
   imports: [
@@ -15,12 +15,12 @@ import { GetTxCalldataController } from './infrastructure/controllers/get-tx-cal
     ConfigModule,
   ],
   controllers: [
-    GetTxApprovalCalldataController,
-    GetTxCalldataController
+    GetApprovalTxCalldataController,
+    GetMainTxCalldataController
   ],
   providers: [
     BuildTxApprovalHandler,
-    BuildTxHandler,
+    BuildMainTxHandler,
     ConfigService,
     httpClientProvider(),
     consoleLoggerProvider(),

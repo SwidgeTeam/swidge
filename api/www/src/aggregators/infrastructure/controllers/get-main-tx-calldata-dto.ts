@@ -1,6 +1,6 @@
 import { IsEthereumAddress, IsNotEmpty, IsString } from 'class-validator';
 
-export class GetTxCalldataDto {
+export class GetMainTxCalldataDto {
   @IsString()
   @IsNotEmpty()
   aggregatorId: string;

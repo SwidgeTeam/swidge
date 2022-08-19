@@ -10,7 +10,10 @@ import IToken from '@/domain/tokens/IToken'
 import { Networks } from '@/domain/chains/Networks'
 import Route, { ApprovalTransactionDetails, TransactionDetails } from '@/domain/paths/path'
 import GetApprovalTxResponseJson from '@/api/models/get-approval-tx-response'
-import GetTxResponse from '@/api/models/get-tx-response'
+import GetMainTxResponse from '@/api/models/get-main-tx-response'
+import GetBothTxsResponse from '@/api/models/get-both-txs-response'
+import GetBothTxsRequest from '@/api/models/get-both-txs-request'
+import { StatusCheckRequest, StatusCheckResponse } from '@/api/models/get-status-check'
 
 class SwidgeAPI extends HttpClient {
     public constructor() {
@@ -51,7 +54,9 @@ class SwidgeAPI extends HttpClient {
                     aggregator: {
                         id: r.aggregator.id,
                         routeId: r.aggregator.routeId,
-                        requireCallDataQuote: r.aggregator.requireCallDataQuote,
+                        requiresCallDataQuoting: r.aggregator.requiresCallDataQuoting,
+                        bothQuotesInOne: r.aggregator.bothQuotesInOne,
+                        trackingId: r.aggregator.trackingId,
                     },
                     resume: {
                         fromChain: r.resume.fromChain,
@@ -76,21 +81,19 @@ class SwidgeAPI extends HttpClient {
                     }),
                     completed: false,
                 }
-                if (!route.aggregator.requireCallDataQuote) {
-                    if (r.tx) {
-                        route.tx = {
-                            to: r.tx.to,
-                            callData: r.tx.callData,
-                            value: r.tx.value,
-                            gasLimit: r.tx.gasLimit,
-                        }
+                if (r.tx) {
+                    route.tx = {
+                        to: r.tx.to,
+                        callData: r.tx.callData,
+                        value: r.tx.value,
+                        gasLimit: r.tx.gasLimit,
                     }
-                    if (r.approvalTx) {
-                        route.approvalTx = {
-                            to: r.approvalTx.to,
-                            callData: r.approvalTx.callData,
-                            gasLimit: r.approvalTx.gasLimit,
-                        }
+                }
+                if (r.approvalTx) {
+                    route.approvalTx = {
+                        to: r.approvalTx.to,
+                        callData: r.approvalTx.callData,
+                        gasLimit: r.approvalTx.gasLimit,
                     }
                 }
                 return route
@@ -125,7 +128,7 @@ class SwidgeAPI extends HttpClient {
         senderAddress: string
     }): Promise<ApprovalTransactionDetails> {
         try {
-            const response = await this.instance.get<GetApprovalTxResponseJson>('/build-tx-approval', { params: query })
+            const response = await this.instance.get<GetApprovalTxResponseJson>('/build-approval-tx', { params: query })
             return {
                 to: response.data.tx.to,
                 callData: response.data.tx.callData,
@@ -141,20 +144,84 @@ class SwidgeAPI extends HttpClient {
         }
     }
 
-    async getTx(query: {
+    async getMainTx(query: {
         aggregatorId: string
         routeId: string
         senderAddress: string
         receiverAddress: string
     }): Promise<TransactionDetails> {
         try {
-            const response = await this.instance.get<GetTxResponse>('/build-tx', { params: query })
+            const response = await this.instance.get<GetMainTxResponse>('/build-main-tx', { params: query })
             return {
                 to: response.data.tx.to,
                 value: response.data.tx.value,
                 callData: response.data.tx.callData,
                 gasLimit: response.data.tx.gasLimit,
             }
+        } catch (e: unknown) {
+            if (axios.isAxiosError(e)) {
+                const apiErrorResponse = e.response?.data as ApiErrorResponse
+                const errorMessage = apiErrorResponse.message ?? 'Unhandled error!'
+                throw new Error(errorMessage)
+            }
+            throw new Error('UnknownError no axios error')
+        }
+    }
+
+    async getBothTxs(query: GetBothTxsRequest): Promise<{
+        trackingId: string,
+        approvalTx: ApprovalTransactionDetails,
+        mainTx: TransactionDetails,
+    }> {
+        try {
+            const response = await this.instance.get<GetBothTxsResponse>('/build-both-txs', { params: query })
+            return {
+                trackingId: response.data.trackingId,
+                approvalTx: {
+                    to: response.data.approvalTx.to,
+                    callData: response.data.approvalTx.callData,
+                    gasLimit: response.data.approvalTx.gasLimit,
+                },
+                mainTx: {
+                    to: response.data.mainTx.to,
+                    value: response.data.mainTx.value,
+                    callData: response.data.mainTx.callData,
+                    gasLimit: response.data.mainTx.gasLimit,
+                }
+            }
+        } catch (e: unknown) {
+            if (axios.isAxiosError(e)) {
+                const apiErrorResponse = e.response?.data as ApiErrorResponse
+                const errorMessage = apiErrorResponse.message ?? 'Unhandled error!'
+                throw new Error(errorMessage)
+            }
+            throw new Error('UnknownError no axios error')
+        }
+    }
+
+    async informExecutedTx(params: {
+        aggregatorId: string,
+        fromAddress: string,
+        toAddress: string,
+        txHash: string,
+        trackingId: string,
+    }): Promise<void> {
+        try {
+            await this.instance.post('/tx-executed', params)
+        } catch (e: unknown) {
+            if (axios.isAxiosError(e)) {
+                const apiErrorResponse = e.response?.data as ApiErrorResponse
+                const errorMessage = apiErrorResponse.message ?? 'Unhandled error!'
+                throw new Error(errorMessage)
+            }
+            throw new Error('UnknownError no axios error')
+        }
+    }
+
+    checkTxStatus(request: StatusCheckRequest): Promise<StatusCheckResponse> {
+        try {
+            return this.instance.get('/tx-status', { params: request })
+                .then(response => response.data)
         } catch (e: unknown) {
             if (axios.isAxiosError(e)) {
                 const apiErrorResponse = e.response?.data as ApiErrorResponse
