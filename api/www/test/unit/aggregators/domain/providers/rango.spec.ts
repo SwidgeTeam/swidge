@@ -6,6 +6,7 @@ import { Rango } from '../../../../../src/aggregators/domain/providers/rango';
 import { QuoteRequest, QuoteResponse, RangoClient } from 'rango-sdk-basic';
 import { createMock } from 'ts-auto-mock';
 import { PriceFeed } from '../../../../../src/shared/domain/price-feed';
+import { IPriceFeedFetcher } from '../../../../../src/shared/domain/price-feed-fetcher';
 
 describe('aggregators', () => {
   it('should throw exception resultType is NO_ROUTE', async () => {
@@ -19,11 +20,12 @@ describe('aggregators', () => {
         });
       },
     });
-    const rango = new Rango(client);
+    const priceFeedMock = createMock<IPriceFeedFetcher>();
+    const rango = new Rango(client, priceFeedMock);
     const request = getAggregatorRoute();
 
     // Act
-    const call = rango.execute(request, BigInteger.zero(), PriceFeed.zero());
+    const call = rango.execute(request);
 
     // Assert
     await expect(call).rejects.toEqual(new Error('INSUFFICIENT_LIQUIDITY'));
@@ -40,11 +42,12 @@ describe('aggregators', () => {
         });
       },
     });
-    const rango = new Rango(client);
+    const priceFeedMock = createMock<IPriceFeedFetcher>();
+    const rango = new Rango(client, priceFeedMock);
     const request = getAggregatorRoute();
 
     // Act
-    const call = rango.execute(request, BigInteger.zero(), PriceFeed.zero());
+    const call = rango.execute(request);
 
     // Assert
     await expect(call).rejects.toEqual(new Error('INSUFFICIENT_LIQUIDITY'));
@@ -61,11 +64,12 @@ describe('aggregators', () => {
         });
       },
     });
-    const rango = new Rango(client);
+    const priceFeedMock = createMock<IPriceFeedFetcher>();
+    const rango = new Rango(client, priceFeedMock);
     const request = getAggregatorRoute();
 
     // Act
-    const call = rango.execute(request, BigInteger.zero(), PriceFeed.zero());
+    const call = rango.execute(request);
 
     // Assert
     await expect(call).rejects.toEqual(new Error('INSUFFICIENT_LIQUIDITY'));
@@ -154,15 +158,14 @@ describe('aggregators', () => {
         });
       },
     });
-    const rango = new Rango(client);
+    const priceFeedMock = createMock<IPriceFeedFetcher>({
+      fetch: () => Promise.resolve(new PriceFeed(BigInteger.fromDecimal('0.5'), 18)),
+    });
+    const rango = new Rango(client, priceFeedMock);
     const request = getAggregatorRoute();
 
     // Act
-    const route = await rango.execute(
-      request,
-      BigInteger.zero(),
-      new PriceFeed(BigInteger.fromDecimal('0.5'), 18),
-    );
+    const route = await rango.execute(request);
 
     // Assert
     expect(route.aggregator.id).toEqual('4');
