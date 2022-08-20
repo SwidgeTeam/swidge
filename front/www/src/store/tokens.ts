@@ -163,7 +163,7 @@ export const useTokensStore = defineStore('tokens', {
             })
             if (!exists) {
                 customTokens.push(token)
-                localStorage.setItem(CUSTOM_TOKENS_STORAGE_KEY, JSON.stringify(customTokens))
+                setCustomTokens(customTokens)
                 this.tokens.push(token)
             }
         },
@@ -206,6 +206,10 @@ function getCustomTokens(): IToken[] {
     return rawCustomTokens
         ? JSON.parse(rawCustomTokens)
         : []
+}
+
+function setCustomTokens(customTokens: IToken[]) {
+    localStorage.setItem(CUSTOM_TOKENS_STORAGE_KEY, JSON.stringify(customTokens))
 }
 
 if (import.meta.hot)

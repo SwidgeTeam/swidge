@@ -10,6 +10,7 @@ import { ethers } from 'ethers'
 import { useTokensStore } from '@/store/tokens'
 import IERC20Abi from '@/contracts/IERC20.json'
 import { INetwork } from '@/domain/chains/INetwork'
+import ModalImportToken from '@/components/Modals/ModalImportToken.vue'
 
 const tokensStore = useTokensStore()
 
@@ -28,6 +29,8 @@ const selectedNetworkId = ref('')
 const searchComponent = ref<any | null>(null)
 const matchingTokens = ref<IToken[]>([])
 const checkingNetworks = ref<number>(0)
+const isImportModalOpen = ref<boolean>(false)
+const selectedTokenToImport = ref<IToken | null>(null)
 
 const getNetworks = () => {
     return Networks.live()
@@ -45,12 +48,24 @@ const handleSetToken = (token: IToken) => {
 }
 
 /**
- * Handles the event of a token being imported
+ * Handles the event of a token being selected to import
  * @param token
  */
-const handleImportToken = (token: IToken) => {
-    tokensStore.importToken(token)
-    handleSetToken(token)
+const handleSelectTokenToImport = (token: IToken) => {
+    selectedTokenToImport.value = token
+    isImportModalOpen.value = true
+}
+
+/**
+ * Handles the event of a token being imported
+ */
+const handleImportToken = () => {
+    if (selectedTokenToImport.value) {
+        const token = selectedTokenToImport.value
+        tokensStore.importToken(token)
+        handleSetToken(token)
+        selectedTokenToImport.value = null
+    }
 }
 
 /**
@@ -61,6 +76,10 @@ const onCloseModal = () => {
     selectedNetworkId.value = ''
     matchingTokens.value = []
     emits('close-modal')
+}
+
+const onCloseImportModal = () => {
+    isImportModalOpen.value = false
 }
 
 const handleModalClick = () => {
@@ -228,6 +247,11 @@ const filteredTokens = () => {
             :search-term="searchTerm"
             :selected-network-id="selectedNetworkId"
             @set-token="handleSetToken($event)"
-            @import-token="handleImportToken($event)"/>
+            @import-token="handleSelectTokenToImport($event)"/>
     </Modal>
+    <ModalImportToken
+        :is-open="isImportModalOpen"
+        @close="onCloseImportModal()"
+        @import-token="handleImportToken()"
+    />
 </template>
