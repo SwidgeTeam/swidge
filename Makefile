@@ -117,6 +117,9 @@ test-front:
 test-api:
 	@$(call DOCKER_COMPOSE_RUN,--rm ${DOCKER_API_SERVICE} test)
 
+test-api-e2e:
+	@$(call DOCKER_COMPOSE_RUN,--rm ${DOCKER_API_SERVICE} test:e2e)
+
 test-relayer:
 	@$(call DOCKER_COMPOSE_RUN,--rm ${DOCKER_RELAYER_SERVICE} test)
 

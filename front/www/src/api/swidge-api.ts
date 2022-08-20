@@ -1,8 +1,6 @@
 import axios from 'axios'
 import HttpClient from './http-base-client'
-import { indexedErrors } from './models/get-quote-error'
-import GetQuoteRequest from './models/get-quote-request'
-import GetQuoteResponse from './models/get-quote-response'
+import { GetQuoteRequest, GetQuoteResponse, indexedErrors } from './models/get-quote'
 import { ApiErrorResponse } from '@/api/models/ApiErrorResponse'
 import { TransactionsList } from '@/api/models/transactions'
 import { TokenList } from '@/domain/tokens/TokenList'
@@ -66,6 +64,10 @@ class SwidgeAPI extends HttpClient {
                         amountIn: r.resume.amountIn,
                         amountOut: r.resume.amountOut,
                     },
+                    fees: {
+                        amount: r.fees.amount,
+                        amountInUsd: r.fees.amountInUsd,
+                    },
                     steps: r.steps.map((step) => {
                         return {
                             type: step.type,
@@ -81,12 +83,12 @@ class SwidgeAPI extends HttpClient {
                     }),
                     completed: false,
                 }
-                if (r.tx) {
+                if (r.mainTx) {
                     route.tx = {
-                        to: r.tx.to,
-                        callData: r.tx.callData,
-                        value: r.tx.value,
-                        gasLimit: r.tx.gasLimit,
+                        to: r.mainTx.to,
+                        callData: r.mainTx.callData,
+                        value: r.mainTx.value,
+                        gasLimit: r.mainTx.gasLimit,
                     }
                 }
                 if (r.approvalTx) {
