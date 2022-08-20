@@ -50,6 +50,16 @@ const buttonLabel = computed({
     set: () => null,
 })
 
+const setButtonAlert = (text: string) => {
+    transactionAlertMessage.value = text
+    showTransactionAlert.value = true
+}
+
+const unsetButtonAlert = () => {
+    transactionAlertMessage.value = ''
+    showTransactionAlert.value = false
+}
+
 /**
  * Decides if should quote for a possible path
  */
@@ -166,47 +176,42 @@ const switchHandlerFunction = () => {
  * Quotes the possible path for a given pair and amount
  */
 const onQuote = async () => {
-    showTransactionAlert.value = false
-    isExecuteButtonDisabled.value = true
-    isGettingQuote.value = true
-
     if (!tokensStore.bothTokensSelected) {
         return
     }
+    unsetButtonAlert()
+
+    isGettingQuote.value = true
+    isExecuteButtonDisabled.value = true
 
     try {
         await routesStore.quotePath(sourceTokenAmount.value, 2)
-
         const route = routesStore.getSelectedRoute
 
         destinationTokenAmount.value = route.resume.amountOut
-        isGettingQuote.value = false
-        totalFee.value = route.steps.reduce((total, current) => {
-            return total + Number(current.fee)
-        }, 0).toFixed(2).toString()
+        totalFee.value = Number(route.fees.amountInUsd).toFixed(2)
 
-        if (
-            Number(sourceTokenAmount.value) > Number(sourceTokenMaxAmount.value)
-        ) {
-            showTransactionAlert.value = true
-            transactionAlertMessage.value = 'Insufficient Balance'
-            return
-        }
-        isExecuteButtonDisabled.value = false
-        transactionAlertMessage.value = ''
-        showTransactionAlert.value = false
-    } catch (e: unknown) {
-        isGettingQuote.value = false
-        isExecuteButtonDisabled.value = true
-        if (e instanceof Error) {
-            transactionAlertMessage.value = e.message
-            showTransactionAlert.value = true
-            destinationTokenAmount.value = ''
-            totalFee.value = ''
+        if (Number(sourceTokenAmount.value) > Number(sourceTokenMaxAmount.value)) {
+            setButtonAlert('Insufficient Balance')
         } else {
-            console.log('Unexpected error', e)
+            isExecuteButtonDisabled.value = false
         }
+    } catch (e: unknown) {
+        onQuotingError(e as Error)
+    } finally {
+        isGettingQuote.value = false
     }
+}
+
+/**
+ * What to do when quoting fails
+ * @param e
+ */
+const onQuotingError = (e: Error) => {
+    setButtonAlert(e.message)
+    isExecuteButtonDisabled.value = true
+    destinationTokenAmount.value = ''
+    totalFee.value = ''
 }
 
 /**
@@ -283,7 +288,7 @@ const executeDoubleQuoteExecution = async (): Promise<TransactionReceipt> => {
     }
     await transactionStore.fetchMainTx()
     const mainTx = transactionStore.mainTx
-    if(!mainTx){
+    if (!mainTx) {
         throw new Error('trying to execute an empty transaction')
     }
     openTransactionStatusModal()
@@ -296,8 +301,8 @@ const executeDoubleQuoteExecution = async (): Promise<TransactionReceipt> => {
  * @param receipt
  */
 const onInitialTxCompleted = (route: Route, receipt: TransactionReceipt) => {
-    routesStore.completeFirstStep()
     if (isCrossTransaction()) {
+        routesStore.completeFirstStep()
         if (route.aggregator.id === Aggregators.Swidge) {
             setUpEventListener(route.tx as TransactionDetails, receipt.transactionHash)
         } else {
