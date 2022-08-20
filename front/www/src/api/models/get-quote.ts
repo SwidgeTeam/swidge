@@ -38,13 +38,19 @@ interface RouteResumeJson {
     amountOut: string
 }
 
+interface RouteFeesJson {
+    amount: string
+    amountInUsd: string
+}
+
 interface RouteJson {
     amountOut: string
     aggregator: AggregatorDetailsJson
     resume: RouteResumeJson
     steps: RouteStepJson[]
+    fees: RouteFeesJson
     approvalTx: ApprovalTransactionDetailsJson | null
-    tx: TransactionDetailsJson | null
+    mainTx: TransactionDetailsJson | null
 }
 
 interface AggregatorDetailsJson {

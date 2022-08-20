@@ -64,6 +64,10 @@ class SwidgeAPI extends HttpClient {
                         amountIn: r.resume.amountIn,
                         amountOut: r.resume.amountOut,
                     },
+                    fees: {
+                        amount: r.fees.amount,
+                        amountInUsd: r.fees.amountInUsd,
+                    },
                     steps: r.steps.map((step) => {
                         return {
                             type: step.type,
@@ -79,12 +83,12 @@ class SwidgeAPI extends HttpClient {
                     }),
                     completed: false,
                 }
-                if (r.tx) {
+                if (r.mainTx) {
                     route.tx = {
-                        to: r.tx.to,
-                        callData: r.tx.callData,
-                        value: r.tx.value,
-                        gasLimit: r.tx.gasLimit,
+                        to: r.mainTx.to,
+                        callData: r.mainTx.callData,
+                        value: r.mainTx.value,
+                        gasLimit: r.mainTx.gasLimit,
                     }
                 }
                 if (r.approvalTx) {

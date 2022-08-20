@@ -26,6 +26,11 @@ interface RouteResume {
     amountOut: string
 }
 
+interface RouteFees {
+    amount: string,
+    amountInUsd: string
+}
+
 export interface ApprovalTransactionDetails {
     to: string
     callData: string
@@ -43,6 +48,7 @@ export default interface Route {
     aggregator: AggregatorDetails
     resume: RouteResume
     steps: RouteStep[]
+    fees: RouteFees
     approvalTx?: ApprovalTransactionDetails
     tx?: TransactionDetails
     completed: boolean
