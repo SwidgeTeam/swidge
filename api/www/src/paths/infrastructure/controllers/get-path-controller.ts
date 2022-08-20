@@ -31,23 +31,21 @@ export class GetPathController {
   }
 
   private mapRoute(route: Route) {
-    let approvalTx, tx;
-
-    if (!route.aggregator.requiresCallDataQuoting) {
-      approvalTx = route.approvalTransaction
-        ? {
-            to: route.approvalTransaction.to,
-            callData: route.approvalTransaction.callData,
-            gasLimit: route.approvalTransaction.gasLimit.toString(),
-          }
-        : null;
-      tx = {
-        to: route.transaction.to,
-        callData: route.transaction.callData,
-        value: route.transaction.value.toString(),
-        gasLimit: route.transaction.gasLimit.toString(),
-      };
-    }
+    const approvalTx = route.approvalTransaction
+      ? {
+          to: route.approvalTransaction.to,
+          callData: route.approvalTransaction.callData,
+          gasLimit: route.approvalTransaction.gasLimit.toString(),
+        }
+      : null;
+    const mainTx = route.transaction
+      ? {
+          to: route.transaction.to,
+          callData: route.transaction.callData,
+          value: route.transaction.value.toString(),
+          gasLimit: route.transaction.gasLimit.toString(),
+        }
+      : null;
 
     return {
       amountOut: route.amountOut,
@@ -67,6 +65,10 @@ export class GetPathController {
         amountOut: route.resume.amountOut.toDecimal(route.resume.toToken.decimals),
         minAmountOut: route.resume.minAmountOut.toDecimal(route.resume.toToken.decimals),
       },
+      fees: {
+        amount: route.fees.nativeWei.toString(),
+        amountInUsd: route.fees.feeInUsd.toString(),
+      },
       steps: route.steps.map((step) => {
         return {
           type: step.type,
@@ -80,7 +82,7 @@ export class GetPathController {
         };
       }),
       approvalTx,
-      tx,
+      mainTx,
     };
   }
 
