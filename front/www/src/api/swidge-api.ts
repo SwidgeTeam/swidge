@@ -233,6 +233,23 @@ class SwidgeAPI extends HttpClient {
             throw new Error('UnknownError no axios error')
         }
     }
+
+    async addImportedToken(params: {
+        chainId: string,
+        address: string,
+        wallet: string
+    }) {
+        try {
+            await this.instance.post('/imported-token', params)
+        } catch (e: unknown) {
+            if (axios.isAxiosError(e)) {
+                const apiErrorResponse = e.response?.data as ApiErrorResponse
+                const errorMessage = apiErrorResponse.message ?? 'Unhandled error!'
+                throw new Error(errorMessage)
+            }
+            throw new Error('UnknownError no axios error')
+        }
+    }
 }
 
 export default new SwidgeAPI()

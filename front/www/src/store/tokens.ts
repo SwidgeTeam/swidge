@@ -1,6 +1,9 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import swidgeApi from '@/api/swidge-api'
 import IToken from '@/domain/tokens/IToken'
+import { useWeb3Store } from '@/store/web3'
+
+const CUSTOM_TOKENS_STORAGE_KEY = 'custom-tokens'
 
 export const useTokensStore = defineStore('tokens', {
     state: () => ({
@@ -38,6 +41,18 @@ export const useTokensStore = defineStore('tokens', {
                 return state.tokens
                     .find(token => {
                         return token.chainId === chainId && token.address.toLowerCase() === address.toLowerCase()
+                    })
+            }
+        },
+        /**
+         * Returns a token given chainId and address
+         * @param state
+         */
+        getTokensByAddress(state) {
+            return (address: string): IToken[] | undefined => {
+                return state.tokens
+                    .filter(token => {
+                        return token.address.toLowerCase() === address.toLowerCase()
                     })
             }
         },
@@ -133,6 +148,30 @@ export const useTokensStore = defineStore('tokens', {
          */
         async fetchTokens() {
             this.tokens = await swidgeApi.fetchTokens()
+            const customTokens = getCustomTokens()
+            if (customTokens) {
+                this.tokens.push(...customTokens)
+            }
+        },
+        /**
+         * Imports a token into the list if it doesn't exist already
+         * @param token
+         */
+        importToken(token: IToken) {
+            const customTokens = getCustomTokens()
+            const exists = customTokens.find(t => {
+                return t.address === token.address && t.chainId === t.chainId
+            })
+            if (!exists) {
+                customTokens.push(token)
+                setCustomTokens(customTokens)
+                this.tokens.push(token)
+                swidgeApi.addImportedToken({
+                    chainId: token.chainId,
+                    address: token.address,
+                    wallet: useWeb3Store().account,
+                })
+            }
         },
         /**
          * Sets a specific token as selected on origin
@@ -167,6 +206,17 @@ export const useTokensStore = defineStore('tokens', {
         }
     }
 })
+
+function getCustomTokens(): IToken[] {
+    const rawCustomTokens = localStorage.getItem(CUSTOM_TOKENS_STORAGE_KEY)
+    return rawCustomTokens
+        ? JSON.parse(rawCustomTokens)
+        : []
+}
+
+function setCustomTokens(customTokens: IToken[]) {
+    localStorage.setItem(CUSTOM_TOKENS_STORAGE_KEY, JSON.stringify(customTokens))
+}
 
 if (import.meta.hot)
     import.meta.hot.accept(acceptHMRUpdate(useTokensStore, import.meta.hot))
