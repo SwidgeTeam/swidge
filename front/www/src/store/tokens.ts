@@ -1,6 +1,7 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import swidgeApi from '@/api/swidge-api'
 import IToken from '@/domain/tokens/IToken'
+import { useWeb3Store } from '@/store/web3'
 
 const CUSTOM_TOKENS_STORAGE_KEY = 'custom-tokens'
 
@@ -165,6 +166,11 @@ export const useTokensStore = defineStore('tokens', {
                 customTokens.push(token)
                 setCustomTokens(customTokens)
                 this.tokens.push(token)
+                swidgeApi.addImportedToken({
+                    chainId: token.chainId,
+                    address: token.address,
+                    wallet: useWeb3Store().account,
+                })
             }
         },
         /**
