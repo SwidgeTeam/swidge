@@ -55,6 +55,23 @@ interface AggregatorDetailsJson {
     trackingId: string
 }
 
-export default interface GetQuoteResponse {
+export interface GetQuoteResponse {
     routes: RouteJson[]
+}
+
+export interface GetQuoteRequest {
+    fromChainId: string
+    srcToken: string,
+    toChainId: string
+    dstToken: string,
+    amount: string
+    slippage: number,
+    senderAddress: string,
+    receiverAddress: string,
+}
+
+export const indexedErrors: { [errorKey: string]: string } = {
+    TOO_BIG_AMOUNT: 'Too big amount',
+    TOO_SMALL_AMOUNT: 'Too small amount',
+    PATH_NOT_FOUND: 'Insufficient liquidity'
 }
