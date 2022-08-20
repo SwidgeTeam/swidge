@@ -4,33 +4,28 @@ import { Class } from '../../shared/Class';
 import { ContractAddress } from '../../shared/types';
 import { RpcNode } from '../../shared/RpcNode';
 import {
-  CreateTransactionPayload,
   TransactionsRepository,
-  UpdateTransactionPayload,
 } from '../../transactions/domain/TransactionsRepository';
 import { CustomLogger } from '../../logger/CustomLogger';
-import { Producer } from 'sqs-producer';
-import { SQS } from 'aws-sdk';
 import { ConfigService } from '../../config/config.service';
-
-interface TxJob {
-  txHash: string;
-  wallet: string;
-  router: string;
-  fromChain: string;
-  toChain: string;
-  dstToken: string;
-  srcToken: string;
-  minAmountOut: string;
-}
+import EventProcessor from '../domain/event-processor';
+import { abiEvents } from '../domain/event-types';
 
 export class EventsListener {
+  private eventProcessor: EventProcessor;
+
   constructor(
     private readonly configService: ConfigService,
     private readonly logger: CustomLogger,
     @Inject(Class.TransactionsRepository)
     private readonly transactionsRepository: TransactionsRepository,
-  ) {}
+  ) {
+    this.eventProcessor = new EventProcessor(
+      configService,
+      logger,
+      transactionsRepository,
+    );
+  }
 
   public async execute() {
     const router = await this.transactionsRepository.getRouterAddress();
@@ -45,33 +40,7 @@ export class EventsListener {
 
   private setListener(rpcUrl: string, routerAddress: ContractAddress) {
     const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
-
-    const abi = [
-      'event SwapExecuted(' +
-        'address srcToken,' +
-        'address dstToken,' +
-        'uint256 chainId,' +
-        'uint256 amountIn,' +
-        'uint256 amountOut)',
-      'event CrossInitiated(' +
-        'address srcToken,' +
-        'address bridgeTokenIn,' +
-        'address bridgeTokenOut,' +
-        'address dstToken,' +
-        'address receiver,' +
-        'uint256 fromChain,' +
-        'uint256 toChain,' +
-        'uint256 amountIn,' +
-        'uint256 amountCross,' +
-        'uint256 minAmountOut)',
-      'event CrossFinalized(' +
-        'bytes32 txHash,' +
-        'uint256 amountOut,' +
-        'address assetOut)',
-    ];
-
-    const contract = new Contract(routerAddress, abi, provider);
-
+    const contract = new Contract(routerAddress, abiEvents, provider);
     this.logger.log('listening ' + routerAddress + ' through ' + rpcUrl);
 
     contract
@@ -87,28 +56,18 @@ export class EventsListener {
         ) => {
           try {
             this.logger.log('Received SwapExecuted event');
-            const txHash = event.transactionHash;
-            const routerAddress = event.address;
-            const tx = await provider.getTransactionReceipt(txHash);
-            const wallet = tx.from;
 
-            // Create initial transaction
-            await this.createTransaction(<CreateTransactionPayload>{
+            const txHash = event.transactionHash;
+            const tx = await provider.getTransactionReceipt(txHash);
+
+            await this.eventProcessor.swapExecuted({
               txHash: txHash,
-              walletAddress: wallet,
-              routerAddress: routerAddress,
-              fromChainId: chainId.toString(),
-              toChainId: chainId.toString(),
+              routerAddress: event.address,
+              wallet: tx.from,
+              chainId: chainId.toString(),
               srcToken: srcToken,
-              bridgeTokenIn: '',
-              bridgeTokenOut: '',
               dstToken: dstToken,
               amountIn: amountIn.toString(),
-            });
-
-            // Update final amount
-            await this.updateTransaction(<UpdateTransactionPayload>{
-              txHash: txHash,
               amountOut: amountOut.toString(),
             });
           } catch (e) {
@@ -134,39 +93,21 @@ export class EventsListener {
           try {
             this.logger.log('Received CrossInitiated event');
             const txHash = event.transactionHash;
-            const routerAddress = event.address;
             const tx = await provider.getTransactionReceipt(txHash);
-            const wallet = tx.from;
 
-            // Create initial transaction
-            await this.createTransaction(<CreateTransactionPayload>{
+            await this.eventProcessor.crossInitiated({
               txHash: txHash,
-              walletAddress: wallet,
-              routerAddress: routerAddress,
+              routerAddress: event.address,
+              wallet: tx.from,
               receiver: receiver,
-              fromChainId: fromChain.toString(),
-              toChainId: toChain.toString(),
+              fromChain: fromChain.toString(),
+              toChain: toChain.toString(),
               srcToken: srcToken,
               bridgeTokenIn: bridgeTokenIn,
               bridgeTokenOut: bridgeTokenOut,
               dstToken: dstToken,
               amountIn: amountIn.toString(),
-            });
-
-            // Update bridged amount
-            await this.updateTransaction(<UpdateTransactionPayload>{
-              txHash: txHash,
-              bridgeAmountIn: amountCross.toString(),
-            });
-
-            await this.queueJob(<TxJob>{
-              txHash: txHash,
-              wallet: receiver,
-              router: routerAddress,
-              fromChain: fromChain.toString(),
-              toChain: toChain.toString(),
-              srcToken: bridgeTokenOut,
-              dstToken: dstToken,
+              amountCross: amountCross.toString(),
               minAmountOut: minAmountOut.toString(),
             });
           } catch (e) {
@@ -184,10 +125,10 @@ export class EventsListener {
         ) => {
           try {
             this.logger.log('Received CrossFinalized event');
-            const destinationTxHash = event.transactionHash;
-            await this.updateTransaction(<UpdateTransactionPayload>{
+
+            await this.eventProcessor.crossFinalized({
               txHash: txHash,
-              destinationTxHash: destinationTxHash,
+              destinationTxHash: event.transactionHash,
               amountOut: amountOut.toString(),
               completed: new Date(),
             });
@@ -196,43 +137,5 @@ export class EventsListener {
           }
         },
       );
-  }
-
-  private async queueJob(tx: TxJob): Promise<void> {
-    const producer = Producer.create({
-      queueUrl: this.configService.sqsQueueUrl,
-      sqs: new SQS({
-        region: this.configService.region,
-        accessKeyId: this.configService.accessKey,
-        secretAccessKey: this.configService.secret,
-      }),
-    });
-
-    await producer.send({
-      id: tx.txHash,
-      body: tx.txHash,
-      groupId: tx.wallet,
-      deduplicationId: tx.wallet,
-      messageAttributes: {
-        txHash: { DataType: 'String', StringValue: tx.txHash },
-        wallet: { DataType: 'String', StringValue: tx.wallet },
-        fromChain: { DataType: 'String', StringValue: tx.fromChain },
-        toChain: { DataType: 'String', StringValue: tx.toChain },
-        srcToken: { DataType: 'String', StringValue: tx.srcToken },
-        dstToken: { DataType: 'String', StringValue: tx.dstToken },
-        router: { DataType: 'String', StringValue: tx.router },
-        minAmount: { DataType: 'String', StringValue: tx.minAmountOut },
-      },
-    });
-  }
-
-  private createTransaction(payload: CreateTransactionPayload): Promise<void> {
-    this.logger.log('Create transaction', payload);
-    return this.transactionsRepository.create(payload);
-  }
-
-  private updateTransaction(payload: UpdateTransactionPayload): Promise<void> {
-    this.logger.log('Update transaction', payload);
-    return this.transactionsRepository.update(payload);
   }
 }
