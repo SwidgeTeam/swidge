@@ -9,4 +9,6 @@ export interface TokensRepository {
   save(token: TokenListItem): void;
 
   getOutdatedTokens(minutes: number, amount: number): Promise<TokenList>;
+
+  addImported(chainId: string, address: string, wallet: string): Promise<void>;
 }

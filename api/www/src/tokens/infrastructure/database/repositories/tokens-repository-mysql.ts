@@ -4,6 +4,8 @@ import { EntityManager, LessThan } from 'typeorm';
 import { TokensEntity } from '../models/tokens.entity';
 import { Injectable } from '@nestjs/common';
 import { TokenList } from '../../../domain/TokenItem';
+import { ImportedTokensEntity } from '../models/imported-tokens.entity';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class TokensRepositoryMySQL implements TokensRepository {
@@ -145,5 +147,15 @@ export class TokensRepositoryMySQL implements TokensRepository {
     });
 
     return new TokenList(items);
+  }
+
+  async addImported(chainId: string, address: string, wallet: string): Promise<void> {
+    await this.manager.save(ImportedTokensEntity, {
+      uuid: randomUUID(),
+      chainId: chainId,
+      address: address,
+      wallet: wallet,
+      added: new Date(),
+    });
   }
 }
