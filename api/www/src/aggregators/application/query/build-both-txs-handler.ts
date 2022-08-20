@@ -11,6 +11,7 @@ import BothTxs from '../../domain/both-txs';
 import { AggregatorRequest } from '../../domain/aggregator-request';
 import { TokenDetailsFetcher } from '../../../shared/infrastructure/TokenDetailsFetcher';
 import { OneSteppedAggregator } from 'src/aggregators/domain/aggregator';
+import { CachedPriceFeedFetcher } from '../../../shared/domain/cached-price-feed-fetcher';
 
 @QueryHandler(BuildBothTxsQuery)
 export class BuildBothTxsHandler implements IQueryHandler<BuildBothTxsQuery> {
@@ -20,10 +21,11 @@ export class BuildBothTxsHandler implements IQueryHandler<BuildBothTxsQuery> {
     private readonly configService: ConfigService,
     @Inject(Class.HttpClient) private readonly httpClient: HttpClient,
     @Inject(Class.TokenDetailsFetcher) private readonly tokenDetailsFetcher: TokenDetailsFetcher,
+    @Inject(Class.PriceFeedFetcher) private readonly priceFeedFetcher: CachedPriceFeedFetcher,
     @Inject(Class.Logger) private readonly logger: Logger,
   ) {
     this.aggregators = new Map<string, OneSteppedAggregator>([
-      [AggregatorProviders.Via, Rango.create(configService.getRangoApiKey())],
+      [AggregatorProviders.Via, Rango.create(configService.getRangoApiKey(), priceFeedFetcher)],
     ]);
   }
 

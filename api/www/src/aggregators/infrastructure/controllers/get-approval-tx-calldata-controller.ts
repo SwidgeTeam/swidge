@@ -3,7 +3,7 @@ import { QueryBus } from '@nestjs/cqrs';
 import { Response } from 'express';
 import { GetApprovalTxCalldataDto } from './get-approval-tx-calldata-dto';
 import BuildTxApprovalQuery from '../../application/query/build-tx-approval-query';
-import { ApprovalTransactionDetails } from '../../domain/approval-transaction-details';
+import { ApprovalTransactionDetails } from '../../../shared/domain/route/approval-transaction-details';
 
 @Controller()
 export class GetApprovalTxCalldataController {

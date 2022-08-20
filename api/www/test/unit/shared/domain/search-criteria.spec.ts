@@ -1,4 +1,4 @@
-import { SearchCriteria } from '../../../../src/shared/domain/SearchCriteria';
+import { SearchCriteria } from '../../../../src/shared/domain/search-criteria';
 
 class TestSearchCriteria extends SearchCriteria {}
 

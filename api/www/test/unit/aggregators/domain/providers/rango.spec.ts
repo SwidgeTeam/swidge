@@ -5,6 +5,8 @@ import { faker } from '@faker-js/faker';
 import { Rango } from '../../../../../src/aggregators/domain/providers/rango';
 import { QuoteRequest, QuoteResponse, RangoClient } from 'rango-sdk-basic';
 import { createMock } from 'ts-auto-mock';
+import { PriceFeed } from '../../../../../src/shared/domain/price-feed';
+import { IPriceFeedFetcher } from '../../../../../src/shared/domain/price-feed-fetcher';
 
 describe('aggregators', () => {
   it('should throw exception resultType is NO_ROUTE', async () => {
@@ -18,7 +20,8 @@ describe('aggregators', () => {
         });
       },
     });
-    const rango = new Rango(client);
+    const priceFeedMock = createMock<IPriceFeedFetcher>();
+    const rango = new Rango(client, priceFeedMock);
     const request = getAggregatorRoute();
 
     // Act
@@ -39,7 +42,8 @@ describe('aggregators', () => {
         });
       },
     });
-    const rango = new Rango(client);
+    const priceFeedMock = createMock<IPriceFeedFetcher>();
+    const rango = new Rango(client, priceFeedMock);
     const request = getAggregatorRoute();
 
     // Act
@@ -60,7 +64,8 @@ describe('aggregators', () => {
         });
       },
     });
-    const rango = new Rango(client);
+    const priceFeedMock = createMock<IPriceFeedFetcher>();
+    const rango = new Rango(client, priceFeedMock);
     const request = getAggregatorRoute();
 
     // Act
@@ -113,14 +118,38 @@ describe('aggregators', () => {
               {
                 name: '',
                 token: {
-                  blockchain: 'FANTOM',
+                  blockchain: 'POLYGON',
                   address: faker.finance.ethereumAddress(),
-                  symbol: 'SYM',
-                  decimals: 6,
+                  symbol: 'MATIC',
+                  decimals: 18,
                   image: 'imgurl',
                 },
                 expenseType: 'FROM_SOURCE_WALLET',
-                amount: '',
+                amount: '1',
+              },
+              {
+                name: '',
+                token: {
+                  blockchain: 'POLYGON',
+                  address: faker.finance.ethereumAddress(),
+                  symbol: 'MATIC',
+                  decimals: 18,
+                  image: 'imgurl',
+                },
+                expenseType: 'FROM_SOURCE_WALLET',
+                amount: '0.5',
+              },
+              {
+                name: '',
+                token: {
+                  blockchain: 'FANTOM',
+                  address: faker.finance.ethereumAddress(),
+                  symbol: 'USDC',
+                  decimals: 6,
+                  image: 'imgurl',
+                },
+                expenseType: 'DECREASE_FROM_OUTPUT',
+                amount: '200.123456',
               },
             ],
             amountRestriction: null,
@@ -129,7 +158,10 @@ describe('aggregators', () => {
         });
       },
     });
-    const rango = new Rango(client);
+    const priceFeedMock = createMock<IPriceFeedFetcher>({
+      fetch: () => Promise.resolve(new PriceFeed(BigInteger.fromDecimal('0.5'), 18)),
+    });
+    const rango = new Rango(client, priceFeedMock);
     const request = getAggregatorRoute();
 
     // Act
@@ -138,6 +170,8 @@ describe('aggregators', () => {
     // Assert
     expect(route.aggregator.id).toEqual('4');
     expect(route.amountOut.toString()).toEqual('18.123456');
+    expect(route.fees.nativeWei.toString()).toEqual('1500000000000000000');
+    expect(route.fees.feeInUsd).toEqual('0.75');
   });
 });
 

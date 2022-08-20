@@ -4,7 +4,7 @@ import { Response } from 'express';
 import BuildTxApprovalQuery from '../../application/query/build-tx-approval-query';
 import { GetMainTxCalldataDto } from './get-main-tx-calldata-dto';
 import BuildMainTxQuery from '../../application/query/build-main-tx-query';
-import { TransactionDetails } from '../../../shared/domain/transaction-details';
+import { TransactionDetails } from '../../../shared/domain/route/transaction-details';
 
 @Controller()
 export class GetMainTxCalldataController {

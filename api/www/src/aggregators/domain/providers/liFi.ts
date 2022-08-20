@@ -1,26 +1,26 @@
 import { Aggregator } from '../aggregator';
 import { AggregatorRequest } from '../aggregator-request';
-import LIFI, { Step } from '@lifi/sdk';
+import LIFI, { Estimate, GasCost, Step } from '@lifi/sdk';
 import { BigInteger } from '../../../shared/domain/big-integer';
-import { TransactionDetails } from '../../../shared/domain/transaction-details';
-import { Route } from '../../../shared/domain/route';
-import { RouteStep } from '../../../shared/domain/route-step';
+import { TransactionDetails } from '../../../shared/domain/route/transaction-details';
+import { Route } from '../../../shared/domain/route/route';
+import { RouteStep } from '../../../shared/domain/route/route-step';
 import { Token } from '../../../shared/domain/token';
 import { InsufficientLiquidity } from '../../../swaps/domain/insufficient-liquidity';
 import { ProviderDetails } from '../../../shared/domain/provider-details';
-import { RouteResume } from '../../../shared/domain/route-resume';
+import { RouteResume } from '../../../shared/domain/route/route-resume';
 import { AggregatorProviders } from './aggregator-providers';
 import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
-import { ApprovalTransactionDetails } from '../approval-transaction-details';
+import { ApprovalTransactionDetails } from '../../../shared/domain/route/approval-transaction-details';
 import { RouterCallEncoder } from '../../../shared/domain/router-call-encoder';
+import { RouteFees } from '../../../shared/domain/route/route-fees';
 
 export class LiFi implements Aggregator {
-  private enabledChains: string[];
+  private enabledChains = [];
   private client: LIFI;
   private routerCallEncoder: RouterCallEncoder;
 
   constructor() {
-    this.enabledChains = [];
     this.client = new LIFI();
     this.routerCallEncoder = new RouterCallEncoder();
   }
@@ -63,6 +63,7 @@ export class LiFi implements Aggregator {
       );
 
       const steps = this.createSteps(response);
+      const fees = this.buildFees(response.estimate);
 
       const resume = new RouteResume(
         request.fromChain,
@@ -76,10 +77,34 @@ export class LiFi implements Aggregator {
 
       const aggregatorDetails = new AggregatorDetails(AggregatorProviders.LiFi);
 
-      return new Route(aggregatorDetails, resume, steps, approvalTransaction, transactionDetails);
+      return new Route(
+        aggregatorDetails,
+        resume,
+        steps,
+        fees,
+        approvalTransaction,
+        transactionDetails,
+      );
     } catch (e) {
       throw new InsufficientLiquidity();
     }
+  }
+
+  /**
+   * Build the global fees object for the route
+   * @param estimate
+   * @private
+   */
+  private buildFees(estimate: Estimate): RouteFees {
+    const totalFees = estimate.gasCosts.reduce((total: BigInteger, current: GasCost) => {
+      return total.plus(BigInteger.fromString(current.amount));
+    }, BigInteger.zero());
+
+    const totalFeesInUsd = estimate.gasCosts.reduce((total: number, current: GasCost) => {
+      return total + Number(current.amountUSD);
+    }, 0);
+
+    return new RouteFees(totalFees, totalFeesInUsd.toString());
   }
 
   /**

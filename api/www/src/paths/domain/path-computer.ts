@@ -10,27 +10,28 @@ import { TokenDetailsFetcher } from '../../shared/infrastructure/TokenDetailsFet
 import { BridgingRequest } from '../../bridges/domain/bridging-request';
 import { PathNotFound } from './path-not-found';
 import { flatten } from 'lodash';
-import { PriceFeedFetcher } from '../../shared/infrastructure/PriceFeedFetcher';
-import { GasPriceFetcher } from '../../shared/infrastructure/GasPriceFetcher';
 import { GasConverter } from '../../shared/domain/gas-converter';
-import { PriceFeed } from '../../shared/domain/PriceFeed';
+import { PriceFeed } from '../../shared/domain/price-feed';
 import { AggregatorRequest } from '../../aggregators/domain/aggregator-request';
-import { Route } from '../../shared/domain/route';
-import { RouteStep } from '../../shared/domain/route-step';
-import { TransactionDetails } from '../../shared/domain/transaction-details';
+import { Route } from '../../shared/domain/route/route';
+import { RouteStep } from '../../shared/domain/route/route-step';
+import { TransactionDetails } from '../../shared/domain/route/transaction-details';
 import { DeployedAddresses } from '../../shared/DeployedAddresses';
 import { RouterCallEncoder } from '../../shared/domain/router-call-encoder';
 import { BridgeDetails, BridgeProviders } from '../../bridges/domain/providers/bridge-providers';
 import { ExchangeDetails } from '../../swaps/domain/providers/exchange-providers';
 import { OrderStrategy } from './route-order-strategy/order-strategy';
-import { RouteResume } from '../../shared/domain/route-resume';
+import { RouteResume } from '../../shared/domain/route/route-resume';
 import { Bridges } from '../../bridges/domain/bridges';
 import { Exchanges } from '../../swaps/domain/exchanges';
 import { Aggregators } from '../../aggregators/domain/aggregators';
 import { Logger } from '../../shared/domain/logger';
 import { AggregatorProviders } from '../../aggregators/domain/providers/aggregator-providers';
 import { AggregatorDetails } from '../../shared/domain/aggregator-details';
-import { ApprovalTransactionDetails } from '../../aggregators/domain/approval-transaction-details';
+import { ApprovalTransactionDetails } from '../../shared/domain/route/approval-transaction-details';
+import { RouteFees } from '../../shared/domain/route/route-fees';
+import { IGasPriceFetcher } from '../../shared/domain/gas-price-fetcher';
+import { IPriceFeedFetcher } from '../../shared/domain/price-feed-fetcher';
 
 export class PathComputer {
   /** Providers */
@@ -38,8 +39,8 @@ export class PathComputer {
   private readonly bridges: Bridges;
   private readonly aggregators: Aggregators;
   private readonly tokenDetailsFetcher: TokenDetailsFetcher;
-  private readonly priceFeedFetcher: PriceFeedFetcher;
-  private readonly gasPriceFetcher: GasPriceFetcher;
+  private readonly priceFeedFetcher: IPriceFeedFetcher;
+  private readonly gasPriceFetcher: IGasPriceFetcher;
   private readonly gasConverter: GasConverter;
   private readonly routerCallEncoder: RouterCallEncoder;
   private readonly logger: Logger;
@@ -65,8 +66,8 @@ export class PathComputer {
     _bridges: Bridges,
     _aggregators: Aggregators,
     _tokenDetailsFetcher: TokenDetailsFetcher,
-    _priceFeedFetcher: PriceFeedFetcher,
-    _gasPriceFetcher: GasPriceFetcher,
+    _priceFeedFetcher: IPriceFeedFetcher,
+    _gasPriceFetcher: IGasPriceFetcher,
     _logger: Logger,
   ) {
     this.exchanges = _exchanges;
@@ -452,9 +453,22 @@ export class PathComputer {
       minAmountOut,
     );
 
+    const totalFeeInUsd = steps.reduce((fee: number, current: RouteStep) => {
+      return fee + Number(current.feeInUSD);
+    }, 0);
+
+    const fees = new RouteFees(BigInteger.zero(), totalFeeInUsd.toString());
+
     const aggregatorDetails = new AggregatorDetails(AggregatorProviders.Swidge);
 
-    return new Route(aggregatorDetails, resume, steps, approvalTransaction, transactionDetails);
+    return new Route(
+      aggregatorDetails,
+      resume,
+      steps,
+      fees,
+      approvalTransaction,
+      transactionDetails,
+    );
   }
 
   /**

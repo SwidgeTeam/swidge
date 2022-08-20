@@ -1,14 +1,16 @@
 import { TransactionDetails } from './transaction-details';
 import { RouteStep } from './route-step';
 import { RouteResume } from './route-resume';
-import { AggregatorDetails } from './aggregator-details';
-import { ApprovalTransactionDetails } from '../../aggregators/domain/approval-transaction-details';
+import { AggregatorDetails } from '../aggregator-details';
+import { ApprovalTransactionDetails } from './approval-transaction-details';
+import { RouteFees } from './route-fees';
 
 export class Route {
   constructor(
     private readonly _aggregator: AggregatorDetails,
     private readonly _resume: RouteResume,
     private readonly _steps: RouteStep[],
+    private readonly _fees: RouteFees,
     private readonly _approvalTransaction?: ApprovalTransactionDetails,
     private readonly _transactionDetails?: TransactionDetails,
   ) {}
@@ -27,6 +29,10 @@ export class Route {
 
   get steps(): RouteStep[] {
     return this._steps;
+  }
+
+  get fees(): RouteFees {
+    return this._fees;
   }
 
   get approvalTransaction(): ApprovalTransactionDetails {

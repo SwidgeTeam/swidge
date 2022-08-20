@@ -1,6 +1,6 @@
 import { Aggregator } from './aggregator';
 import { AggregatorRequest } from './aggregator-request';
-import { Route } from '../../shared/domain/route';
+import { Route } from '../../shared/domain/route/route';
 
 type Entry = [string, Aggregator];
 

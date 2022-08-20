@@ -1,5 +1,5 @@
-import { ContractAddress } from '../../shared/types';
-import { BigInteger } from '../../shared/domain/big-integer';
+import { ContractAddress } from '../../types';
+import { BigInteger } from '../big-integer';
 
 export class ApprovalTransactionDetails {
   constructor(private readonly _to: ContractAddress, private readonly _callData: string) {}

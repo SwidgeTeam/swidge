@@ -1,4 +1,4 @@
-import { Route } from '../../../shared/domain/route';
+import { Route } from '../../../shared/domain/route/route';
 import { HighestReturnStrategy } from './highest-return-strategy';
 
 export interface IOrderStrategy {

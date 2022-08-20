@@ -1,18 +1,18 @@
 import { AggregatorRequest } from '../aggregator-request';
-import { EvmTransaction, RangoClient, TransactionStatus } from 'rango-sdk-basic';
-import { Route } from '../../../shared/domain/route';
+import { EvmTransaction, RangoClient, SwapFee, TransactionStatus } from 'rango-sdk-basic';
+import { Route } from '../../../shared/domain/route/route';
 import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
 import { AggregatorProviders } from './aggregator-providers';
-import { RouteResume } from '../../../shared/domain/route-resume';
+import { RouteResume } from '../../../shared/domain/route/route-resume';
 import { BigInteger } from '../../../shared/domain/big-integer';
-import { RouteStep } from '../../../shared/domain/route-step';
+import { RouteStep } from '../../../shared/domain/route/route-step';
 import { Token } from '../../../shared/domain/token';
 import { ProviderDetails } from '../../../shared/domain/provider-details';
 import { InsufficientLiquidity } from '../../../swaps/domain/insufficient-liquidity';
 import { QuotePath } from 'rango-sdk-basic/lib/types/api/common';
 import { Avalanche, BSC, Fantom, Mainnet, Optimism, Polygon } from '../../../shared/enums/ChainIds';
-import { TransactionDetails } from '../../../shared/domain/transaction-details';
-import { ApprovalTransactionDetails } from '../approval-transaction-details';
+import { TransactionDetails } from '../../../shared/domain/route/transaction-details';
+import { ApprovalTransactionDetails } from '../../../shared/domain/route/approval-transaction-details';
 import BothTxs from '../both-txs';
 import { Aggregator, ExternalAggregator, OneSteppedAggregator } from '../aggregator';
 import {
@@ -20,18 +20,23 @@ import {
   StatusCheckRequest,
   StatusCheckResponse,
 } from '../status-check';
+import { RouteFees } from '../../../shared/domain/route/route-fees';
+import { IPriceFeedFetcher } from '../../../shared/domain/price-feed-fetcher';
+import { PriceFeed } from '../../../shared/domain/price-feed';
 
 export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregator {
   private enabledChains: string[];
   private client: RangoClient;
+  private priceFeedFetcher: IPriceFeedFetcher;
 
-  public static create(apiKey: string): Rango {
-    return new Rango(new RangoClient(apiKey));
+  public static create(apiKey: string, priceFeedFetcher: IPriceFeedFetcher): Rango {
+    return new Rango(new RangoClient(apiKey), priceFeedFetcher);
   }
 
-  constructor(client: RangoClient) {
+  constructor(client: RangoClient, priceFeedFetcher: IPriceFeedFetcher) {
     this.enabledChains = [];
     this.client = client;
+    this.priceFeedFetcher = priceFeedFetcher;
   }
 
   isEnabledOn(fromChainId: string, toChainId: string): boolean {
@@ -61,13 +66,8 @@ export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregat
       throw new InsufficientLiquidity();
     }
 
-    const aggregatorDetails = new AggregatorDetails(
-      AggregatorProviders.Rango,
-      '',
-      true,
-      true,
-      response.requestId,
-    );
+    const aggregatorDetails = new AggregatorDetails(AggregatorProviders.Rango, '', true, true);
+
     const amountOut = BigInteger.fromString(response.route.outputAmount);
     const resume = new RouteResume(
       request.fromChain,
@@ -79,9 +79,11 @@ export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregat
       amountOut,
     );
 
+    const nativePrice = await this.priceFeedFetcher.fetch(request.fromChain);
     const steps = this.buildSteps(request.amountIn, response.route.path);
+    const fees = this.buildFees(response.route.fee, nativePrice);
 
-    return new Route(aggregatorDetails, resume, steps);
+    return new Route(aggregatorDetails, resume, steps, fees);
   }
 
   /**
@@ -176,6 +178,28 @@ export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregat
   ): Promise<void> {
     // this provider does not need to be informed
     return;
+  }
+
+  /**
+   * Computes and returns the fees
+   * @param fees
+   * @param nativePrice
+   * @private
+   */
+  private buildFees(fees: SwapFee[], nativePrice: PriceFeed): RouteFees {
+    const totalFee = fees.reduce((total: BigInteger, current: SwapFee) => {
+      if (current.expenseType === 'FROM_SOURCE_WALLET') {
+        return total.plus(BigInteger.fromDecimal(current.amount, current.token.decimals));
+      }
+      return total;
+    }, BigInteger.zero());
+
+    const feesInUsd = totalFee
+      .times(nativePrice.lastPrice)
+      .div(BigInteger.weiInEther())
+      .toDecimal(nativePrice.decimals);
+
+    return new RouteFees(totalFee, feesInUsd);
   }
 
   /**

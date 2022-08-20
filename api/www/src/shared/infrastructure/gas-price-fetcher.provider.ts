@@ -1,9 +1,9 @@
 import { Class } from '../Class';
-import { GasPriceFetcher } from './GasPriceFetcher';
+import { CachedGasPriceFetcher } from '../domain/cached-gas-price-fetcher';
 
 export default () => {
   return {
     provide: Class.GasPriceFetcher,
-    useClass: GasPriceFetcher,
+    useClass: CachedGasPriceFetcher,
   };
 };

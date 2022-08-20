@@ -1,5 +1,5 @@
-import { ApprovalTransactionDetails } from './approval-transaction-details';
-import { TransactionDetails } from '../../shared/domain/transaction-details';
+import { ApprovalTransactionDetails } from '../../shared/domain/route/approval-transaction-details';
+import { TransactionDetails } from '../../shared/domain/route/transaction-details';
 
 export default class BothTxs {
   constructor(

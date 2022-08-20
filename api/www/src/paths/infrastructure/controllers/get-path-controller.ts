@@ -4,7 +4,7 @@ import { Response } from 'express';
 import { GetPathQuery } from '../../application/query/get-path.query';
 import { GetPathDto } from './get-path-dto';
 import { Token } from '../../../shared/domain/token';
-import { Route } from '../../../shared/domain/route';
+import { Route } from '../../../shared/domain/route/route';
 
 @Controller()
 export class GetPathController {
