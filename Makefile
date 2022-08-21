@@ -349,14 +349,17 @@ $(addprefix udf-, ${ENABLED_NETWORKS}): udf-%:
 
 RELAYER = $(call DOCKER_COMPOSE_RUN,--rm ${DOCKER_RELAYER_SERVICE} $(1))
 
-relayer-events: create-queues
-	@$(call RELAYER,run:dev:events)
+relayer-router-listener: create-queues
+	@$(call RELAYER,run:dev:router-listener)
 
-relayer-multichain:
-	@$(call RELAYER,run:dev:multichain)
+relayer-multichain-listener:
+	@$(call RELAYER,run:dev:multichain-listener)
 
-relayer-consumer:
-	@$(call RELAYER,run:dev:consumer)
+relayer-events-consumer:
+	@$(call RELAYER,run:dev:events-consumer)
+
+relayer-txs-consumer:
+	@$(call RELAYER,run:dev:txs-consumer)
 
 ### Terraform
 
