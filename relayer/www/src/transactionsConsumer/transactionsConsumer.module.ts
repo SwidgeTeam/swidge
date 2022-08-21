@@ -4,14 +4,14 @@ import { ConfigService } from '../config/config.service';
 import { ConfigService as NestJSConfigService } from '@nestjs/config';
 import { LoggerModule } from '../logger/logger.module';
 import { CustomLogger } from '../logger/CustomLogger';
-import EventsConsumer from './application/events-consumer';
 import httpClientProvider from '../shared/http/httpClient.provider';
+import TransactionsConsumer from './application/transactions-consumer';
 import transactionsRepositoryProvider from '../persistence/infrastructure/transactions-repository.provider';
 
 @Module({
   imports: [ConfigModule, LoggerModule],
   providers: [
-    EventsConsumer,
+    TransactionsConsumer,
     ConfigService,
     NestJSConfigService,
     CustomLogger,
@@ -19,4 +19,4 @@ import transactionsRepositoryProvider from '../persistence/infrastructure/transa
     httpClientProvider(),
   ],
 })
-export class EventConsumerModule {}
+export class TransactionsConsumerModule {}

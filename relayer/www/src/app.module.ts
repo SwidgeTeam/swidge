@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common';
-import { TransactionsModule } from './transactions/transactions.module';
-import { EventListenerModule } from './eventListener/eventListener.module';
 import { LoggerModule } from './logger/logger.module';
+import { TransactionsConsumerModule } from './transactionsConsumer/transactionsConsumer.module';
+import { EventsConsumerModule } from './eventsConsumer/eventsConsumer.module';
+import { EventsListenerModule } from './eventsListener/eventsListener.module';
 
 @Module({
   imports: [
-    TransactionsModule,
-    EventListenerModule,
+    EventsListenerModule,
+    EventsConsumerModule,
+    TransactionsConsumerModule,
     LoggerModule,
   ],
 })
