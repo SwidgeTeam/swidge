@@ -1,7 +1,7 @@
 import { ConfigService } from '../../config/config.service';
 import { Inject } from '@nestjs/common';
 import { Class } from '../../shared/Class';
-import { Consumer } from 'sqs-consumer';
+import { Consumer, SQSMessage } from 'sqs-consumer';
 import { SQS } from 'aws-sdk';
 import https from 'https';
 import http from 'http';
@@ -29,7 +29,9 @@ export default class TransactionsConsumer {
     const consumer = Consumer.create({
       queueUrl: this.configService.sqsTransactionsQueueUrl,
       messageAttributeNames: ['All'],
-      handleMessage: this.consumer.process,
+      handleMessage: (message: SQSMessage) => {
+        return this.consumer.process(message);
+      },
       sqs: new SQS({
         region: this.configService.region,
         accessKeyId: this.configService.accessKey,
