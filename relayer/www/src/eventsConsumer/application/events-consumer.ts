@@ -59,26 +59,6 @@ export default class EventsConsumer {
   }
 
   /**
-   * Creates the consumer for `events queue`
-   * @private
-   */
-  private createSqsConsumer(): Consumer {
-    return Consumer.create({
-      queueUrl: this.configService.sqsEventsQueueUrl,
-      messageAttributeNames: ['All'],
-      handleMessage: this.consumer.process,
-      sqs: new SQS({
-        region: this.configService.region,
-        accessKeyId: this.configService.accessKey,
-        secretAccessKey: this.configService.secret,
-        httpOptions: {
-          agent: this.getAgent(),
-        },
-      }),
-    });
-  }
-
-  /**
    * Creates the producer for `transactions queue`
    * @private
    */
