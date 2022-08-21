@@ -1,12 +1,10 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { RouterListener } from './eventsListener/application/router-listener';
+import { EventsListenerModule } from './eventsListener/eventsListener.module';
 
 async function main() {
-  const appModule = await NestFactory.createApplicationContext(AppModule);
-
-  const listener = appModule.get(RouterListener);
-
+  const service = await NestFactory.createApplicationContext(EventsListenerModule);
+  const listener = service.get(RouterListener);
   await listener.start();
 }
 

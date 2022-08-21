@@ -1,21 +1,27 @@
 module.exports = {
     apps: [
         {
-            name: "queue-consumer",
-            cwd: "/code/www",
-            script: "./dist/src/queue-consumer.js",
-            watch: true,
-        },
-        {
             name: "multichain-listener",
             cwd: "/code/www",
             script: "./dist/src/multichain-listener.js",
             watch: true,
         },
         {
-            name: "events-listener",
+            name: "router-listener",
             cwd: "/code/www",
-            script: "./dist/src/events-listener.js",
+            script: "./dist/src/router-listener.js",
+            watch: true,
+        },
+        {
+            name: "events-consumer",
+            cwd: "/code/www",
+            script: "./dist/src/events-consumer.js",
+            watch: true,
+        },
+        {
+            name: "transactions-consumer",
+            cwd: "/code/www",
+            script: "./dist/src/transactions-consumer.js",
             watch: true,
         },
         {
