@@ -183,8 +183,9 @@ AWS_CLI_MESSAGE = \
 		-v $(PWD)/relayer/message.json:/message.json\
 	)
 
-create-queue:
-	@$(call AWS_CLI, sqs create-queue --queue-name ${AWS_SQS_QUEUE_NAME} --attributes '{"FifoQueue": "True"}')
+create-queues:
+	@$(call AWS_CLI, sqs create-queue --queue-name ${AWS_SQS_EVENTS_QUEUE_NAME} --attributes '{"FifoQueue": "True"}')
+	@$(call AWS_CLI, sqs create-queue --queue-name ${AWS_SQS_TRANSACTIONS_QUEUE_NAME} --attributes '{"FifoQueue": "True"}')
 
 list-queues:
 	@$(call AWS_CLI, sqs list-queues)
@@ -348,7 +349,7 @@ $(addprefix udf-, ${ENABLED_NETWORKS}): udf-%:
 
 RELAYER = $(call DOCKER_COMPOSE_RUN,--rm ${DOCKER_RELAYER_SERVICE} $(1))
 
-relayer-events: create-queue
+relayer-events: create-queues
 	@$(call RELAYER,run:dev:events)
 
 relayer-multichain:
