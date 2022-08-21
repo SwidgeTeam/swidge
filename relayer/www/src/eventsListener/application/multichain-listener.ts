@@ -85,7 +85,7 @@ export class MultichainListener {
         await this.producer.send({
           id: txHash,
           body: Events.MultichainDelivered,
-          groupId: '',
+          groupId: 'multichain',
           deduplicationId: txHash,
           messageAttributes: {
             originTxHash: { DataType: 'String', StringValue: originTxHash },
