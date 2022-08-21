@@ -113,7 +113,7 @@ export default class EventProcessor {
   public async multichainDelivered(event: MultichainDelivered) {
     await this.updateTransaction({
       txHash: event.originTxHash,
-      bridged: new Date(),
+      bridged: event.bridged,
       bridgeAmountOut: event.amountOut,
     });
   }

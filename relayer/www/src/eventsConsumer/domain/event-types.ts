@@ -35,6 +35,7 @@ export interface CrossFinalized {
 export interface MultichainDelivered {
   originTxHash: string;
   amountOut: string;
+  bridged: Date;
 }
 
 export const Events = {
@@ -43,4 +44,3 @@ export const Events = {
   CrossFinalized: 'cross_finalized',
   MultichainDelivered: 'multichain_delivered',
 };
-

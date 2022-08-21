@@ -9,6 +9,7 @@ import EventConsumer from '../domain/event-consumer';
 import { Producer } from 'sqs-producer';
 import { TransactionsRepository } from '../../persistence/domain/transactions-repository';
 import { Logger } from '../../shared/domain/logger';
+import EventProcessor from '../domain/event-processor';
 
 export default class EventsConsumer {
   private consumer: EventConsumer;
@@ -19,7 +20,8 @@ export default class EventsConsumer {
     @Inject(Class.TransactionsRepository) private readonly repository: TransactionsRepository,
   ) {
     const producer = this.createSqsProducer();
-    this.consumer = new EventConsumer(producer, repository, logger);
+    const eventProcessor = new EventProcessor(producer, repository, logger);
+    this.consumer = new EventConsumer(eventProcessor);
   }
 
   /**
