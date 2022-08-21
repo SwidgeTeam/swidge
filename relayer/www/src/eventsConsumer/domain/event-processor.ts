@@ -1,4 +1,3 @@
-import { CustomLogger } from '../../logger/CustomLogger';
 import { CrossFinalized, CrossInitiated, MultichainDelivered, SwapExecuted } from './event-types';
 import { Producer } from 'sqs-producer';
 import {
@@ -6,6 +5,7 @@ import {
   TransactionsRepository,
   UpdateTransactionPayload,
 } from '../../persistence/domain/transactions-repository';
+import { Logger } from '../../shared/domain/logger';
 
 interface TxJob {
   txHash: string;
@@ -19,15 +19,11 @@ interface TxJob {
 }
 
 export default class EventProcessor {
-  private logger: CustomLogger;
+  private logger: Logger;
   private repository: TransactionsRepository;
   private transactionsProducer: Producer;
 
-  constructor(
-    producer: Producer,
-    transactionsRepository: TransactionsRepository,
-    logger: CustomLogger,
-  ) {
+  constructor(producer: Producer, transactionsRepository: TransactionsRepository, logger: Logger) {
     this.logger = logger;
     this.repository = transactionsRepository;
     this.transactionsProducer = producer;

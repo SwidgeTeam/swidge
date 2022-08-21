@@ -3,12 +3,12 @@ import { Inject } from '@nestjs/common';
 import { Class } from '../../shared/Class';
 import { ContractAddress } from '../../shared/types';
 import { RpcNode } from '../../shared/RpcNode';
-import { CustomLogger } from '../../logger/CustomLogger';
 import { ConfigService } from '../../config/config.service';
 import { Events } from '../../eventsConsumer/domain/event-types';
 import { Producer } from 'sqs-producer';
 import { SQS } from 'aws-sdk';
 import { AddressesRepository } from '../../persistence/domain/addresses-repository';
+import { Logger } from '../../shared/domain/logger';
 
 export class RouterListener {
   private producer: Producer;
@@ -35,7 +35,7 @@ export class RouterListener {
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly logger: CustomLogger,
+    @Inject(Class.Logger) private readonly logger: Logger,
     @Inject(Class.AddressesRepository) private readonly repository: AddressesRepository,
   ) {
     this.producer = this.createSqsProducer();

@@ -1,5 +1,4 @@
 import { ConfigService } from '../../config/config.service';
-import { CustomLogger } from '../../logger/CustomLogger';
 import { Inject } from '@nestjs/common';
 import { Class } from '../../shared/Class';
 import { Consumer } from 'sqs-consumer';
@@ -9,13 +8,14 @@ import http from 'http';
 import EventConsumer from '../domain/event-consumer';
 import { Producer } from 'sqs-producer';
 import { TransactionsRepository } from '../../persistence/domain/transactions-repository';
+import { Logger } from '../../shared/domain/logger';
 
 export default class EventsConsumer {
   private consumer: EventConsumer;
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly logger: CustomLogger,
+    @Inject(Class.Logger) private readonly logger: Logger,
     @Inject(Class.TransactionsRepository) private readonly repository: TransactionsRepository,
   ) {
     const producer = this.createSqsProducer();

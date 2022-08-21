@@ -3,4 +3,5 @@ export class Class {
   public static AddressesRepository = 'AddressesRepository';
 
   public static HttpClient = 'HttpClient';
+  public static Logger = 'Logger';
 }

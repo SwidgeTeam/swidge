@@ -4,21 +4,20 @@ import { MultichainListener } from './application/multichain-listener';
 import { ConfigModule } from '../config/config.module';
 import { ConfigService } from '../config/config.service';
 import { ConfigService as NestJSConfigService } from '@nestjs/config';
-import { LoggerModule } from '../logger/logger.module';
-import { CustomLogger } from '../logger/CustomLogger';
 import httpClientProvider from '../shared/http/httpClient.provider';
 import addressesRepositoryProvider from '../persistence/infrastructure/addresses-repository.provider';
+import consoleLoggerProvider from '../shared/infrastructure/console-logger.provider';
 
 @Module({
-  imports: [ConfigModule, LoggerModule],
+  imports: [ConfigModule],
   providers: [
     MultichainListener,
     RouterListener,
     ConfigService,
     NestJSConfigService,
-    CustomLogger,
     addressesRepositoryProvider(),
     httpClientProvider(),
+    consoleLoggerProvider(),
   ],
 })
 export class EventsListenerModule {}

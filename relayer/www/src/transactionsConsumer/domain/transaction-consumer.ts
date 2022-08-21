@@ -1,11 +1,11 @@
 import { RpcNode } from '../../shared/RpcNode';
-import { CustomLogger } from '../../logger/CustomLogger';
 import { SQSMessage } from 'sqs-consumer';
 import { RouterCaller } from '../infrastructure/router-caller';
 import {
   SwapRequest,
   TransactionsRepository,
 } from '../../persistence/domain/transactions-repository';
+import { Logger } from '../../shared/domain/logger';
 
 interface QuoteSwap {
   toChainId: string;
@@ -19,7 +19,7 @@ export default class TransactionConsumer {
   constructor(
     private readonly routerCaller: RouterCaller,
     private readonly repository: TransactionsRepository,
-    private readonly logger: CustomLogger,
+    private readonly logger: Logger,
   ) {}
 
   async process(message: SQSMessage) {

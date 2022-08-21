@@ -1,6 +1,6 @@
-import { ConsoleLogger } from '@nestjs/common';
+import { ConsoleLogger as ConsoleLoggerNestJs } from '@nestjs/common';
 
-export class CustomLogger extends ConsoleLogger {
+export class ConsoleLogger extends ConsoleLoggerNestJs {
   error(message: any, ...optionalParams: any[]): any {
     super.error(message, ...optionalParams);
   }

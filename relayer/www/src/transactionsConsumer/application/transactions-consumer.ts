@@ -1,5 +1,4 @@
 import { ConfigService } from '../../config/config.service';
-import { CustomLogger } from '../../logger/CustomLogger';
 import { Inject } from '@nestjs/common';
 import { Class } from '../../shared/Class';
 import { Consumer } from 'sqs-consumer';
@@ -9,13 +8,14 @@ import http from 'http';
 import TransactionConsumer from '../domain/transaction-consumer';
 import { RouterCaller } from '../infrastructure/router-caller';
 import { TransactionsRepository } from '../../persistence/domain/transactions-repository';
+import { Logger } from '../../shared/domain/logger';
 
 export default class TransactionsConsumer {
   private consumer: TransactionConsumer;
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly logger: CustomLogger,
+    @Inject(Class.Logger) private readonly logger: Logger,
     @Inject(Class.TransactionsRepository) private readonly repository: TransactionsRepository,
   ) {
     const routerCaller = new RouterCaller(configService, logger);

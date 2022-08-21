@@ -2,15 +2,12 @@ import { ethers, ContractReceipt } from 'ethers';
 import { ConfigService } from '../../config/config.service';
 import routerAbi from './router.json';
 import { Injectable } from '@nestjs/common';
-import { CustomLogger } from '../../logger/CustomLogger';
 import { FinalizeCrossParams, IRouterCaller } from '../domain/router-caller';
+import { Logger } from '../../shared/domain/logger';
 
 @Injectable()
 export class RouterCaller implements IRouterCaller {
-  constructor(
-    private readonly configService: ConfigService,
-    private readonly logger: CustomLogger,
-  ) {}
+  constructor(private readonly configService: ConfigService, private readonly logger: Logger) {}
 
   async call(params: FinalizeCrossParams): Promise<ContractReceipt> {
     this.logger.log('Calling contract w/ ', params);

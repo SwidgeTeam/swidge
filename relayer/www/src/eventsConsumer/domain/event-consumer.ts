@@ -1,9 +1,9 @@
 import { SQSMessage } from 'sqs-consumer';
 import EventProcessor from './event-processor';
-import { CustomLogger } from '../../logger/CustomLogger';
 import { Producer } from 'sqs-producer';
 import { Events } from './event-types';
 import { TransactionsRepository } from '../../persistence/domain/transactions-repository';
+import { Logger } from '../../shared/domain/logger';
 
 export default class EventConsumer {
   private processor: EventProcessor;
@@ -11,7 +11,7 @@ export default class EventConsumer {
   constructor(
     private readonly producer: Producer,
     private readonly repository: TransactionsRepository,
-    private readonly logger: CustomLogger,
+    private readonly logger: Logger,
   ) {
     this.processor = new EventProcessor(producer, repository, logger);
   }
