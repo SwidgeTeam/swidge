@@ -13,8 +13,12 @@ export class ConfigService {
     return this.configService.get<string>('api_url');
   }
 
-  get sqsQueueUrl() {
-    return this.value('sqs_queue_url');
+  get sqsEventsQueueUrl() {
+    return this.value('sqs_events_queue_url');
+  }
+
+  get sqsTransactionsQueueUrl() {
+    return this.value('sqs_transactions_queue_url');
   }
 
   get region() {
