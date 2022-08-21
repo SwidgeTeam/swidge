@@ -24,9 +24,9 @@ export default class EventProcessor {
   private transactionsProducer: Producer;
 
   constructor(producer: Producer, transactionsRepository: TransactionsRepository, logger: Logger) {
-    this.logger = logger;
     this.repository = transactionsRepository;
     this.transactionsProducer = producer;
+    this.logger = logger;
   }
 
   /**
@@ -49,7 +49,7 @@ export default class EventProcessor {
     });
 
     // Update final amount
-    await this.updateTransaction(<UpdateTransactionPayload>{
+    await this.repository.update(<UpdateTransactionPayload>{
       txHash: event.txHash,
       amountOut: event.amountOut,
     });
