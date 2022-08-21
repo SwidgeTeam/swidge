@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { EventsListener } from './eventListener/application/EventsListener';
+import { RouterListener } from './eventsListener/application/router-listener';
 import { CustomLogger } from './logger/CustomLogger';
 
 async function main() {
@@ -8,9 +8,9 @@ async function main() {
 
   appModule.useLogger(appModule.get(CustomLogger));
 
-  const listener = appModule.get(EventsListener);
+  const listener = appModule.get(RouterListener);
 
-  await listener.execute();
+  await listener.start();
 }
 
 main().catch((error) => {

@@ -1,19 +1,19 @@
 import { Module } from '@nestjs/common';
-import { EventsListener } from './application/EventsListener';
-import transactionsRepositoryProvider from '../transactions/infrastructure/repositories/transactions.repository.provider';
+import { RouterListener } from './application/router-listener';
+import { MultichainListener } from './application/multichain-listener';
 import { ConfigModule } from '../config/config.module';
 import { ConfigService } from '../config/config.service';
 import { ConfigService as NestJSConfigService } from '@nestjs/config';
-import httpClientProvider from '../shared/http/httpClient.provider';
 import { LoggerModule } from '../logger/logger.module';
 import { CustomLogger } from '../logger/CustomLogger';
-import { MultichainListener } from './application/multichain-listener';
+import httpClientProvider from '../shared/http/httpClient.provider';
+import transactionsRepositoryProvider from '../transactions/infrastructure/repositories/transactions.repository.provider';
 
 @Module({
   imports: [ConfigModule, LoggerModule],
   providers: [
     MultichainListener,
-    EventsListener,
+    RouterListener,
     ConfigService,
     NestJSConfigService,
     CustomLogger,
