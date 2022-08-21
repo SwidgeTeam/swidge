@@ -40,7 +40,7 @@ export default class TransactionConsumer {
     }
 
     const router = message.MessageAttributes.router.StringValue;
-    const walletAddress = message.MessageAttributes.router.StringValue;
+    const receiver = message.MessageAttributes.receiver.StringValue;
     const toChainId = message.MessageAttributes.toChain.StringValue;
     const srcToken = message.MessageAttributes.srcToken.StringValue;
     const dstToken = message.MessageAttributes.dstToken.StringValue;
@@ -57,7 +57,7 @@ export default class TransactionConsumer {
     await this.routerCaller.call({
       rpcNode: RpcNode[toChainId],
       routerAddress: router,
-      receiverAddress: walletAddress,
+      receiverAddress: receiver,
       txHash: txHash,
       swap: swapDetails,
     });

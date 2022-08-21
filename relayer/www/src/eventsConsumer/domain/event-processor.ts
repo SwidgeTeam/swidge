@@ -8,8 +8,8 @@ import {
 import { Logger } from '../../shared/domain/logger';
 
 interface TxJob {
-  txHash: string;
-  wallet: string;
+  originTxHash: string;
+  receiver: string;
   router: string;
   fromChain: string;
   toChain: string;
@@ -82,8 +82,8 @@ export default class EventProcessor {
     });
 
     await this.queueJob(<TxJob>{
-      txHash: event.txHash,
-      wallet: event.receiver,
+      originTxHash: event.txHash,
+      receiver: event.receiver,
       router: event.routerAddress,
       fromChain: event.fromChain,
       toChain: event.toChain,
@@ -120,24 +120,24 @@ export default class EventProcessor {
 
   /**
    * Queues a new job for the `transactions consumer`
-   * @param tx
+   * @param job
    * @private
    */
-  private async queueJob(tx: TxJob): Promise<void> {
+  private async queueJob(job: TxJob): Promise<void> {
     await this.transactionsProducer.send({
-      id: tx.txHash,
-      body: tx.txHash,
-      groupId: tx.wallet,
-      deduplicationId: tx.txHash,
+      id: job.originTxHash,
+      body: job.originTxHash,
+      groupId: job.receiver,
+      deduplicationId: job.originTxHash,
       messageAttributes: {
-        txHash: { DataType: 'String', StringValue: tx.txHash },
-        wallet: { DataType: 'String', StringValue: tx.wallet },
-        fromChain: { DataType: 'String', StringValue: tx.fromChain },
-        toChain: { DataType: 'String', StringValue: tx.toChain },
-        srcToken: { DataType: 'String', StringValue: tx.srcToken },
-        dstToken: { DataType: 'String', StringValue: tx.dstToken },
-        router: { DataType: 'String', StringValue: tx.router },
-        minAmount: { DataType: 'String', StringValue: tx.minAmountOut },
+        txHash: { DataType: 'String', StringValue: job.originTxHash },
+        receiver: { DataType: 'String', StringValue: job.receiver },
+        fromChain: { DataType: 'String', StringValue: job.fromChain },
+        toChain: { DataType: 'String', StringValue: job.toChain },
+        srcToken: { DataType: 'String', StringValue: job.srcToken },
+        dstToken: { DataType: 'String', StringValue: job.dstToken },
+        router: { DataType: 'String', StringValue: job.router },
+        minAmount: { DataType: 'String', StringValue: job.minAmountOut },
       },
     });
   }
