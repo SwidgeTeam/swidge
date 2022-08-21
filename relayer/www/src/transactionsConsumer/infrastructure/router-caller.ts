@@ -1,11 +1,9 @@
 import { ethers, ContractReceipt } from 'ethers';
 import { ConfigService } from '../../config/config.service';
 import routerAbi from './router.json';
-import { Injectable } from '@nestjs/common';
 import { FinalizeCrossParams, IRouterCaller } from '../domain/router-caller';
 import { Logger } from '../../shared/domain/logger';
 
-@Injectable()
 export class RouterCaller implements IRouterCaller {
   constructor(private readonly configService: ConfigService, private readonly logger: Logger) {}
 

@@ -1,8 +1,8 @@
 import { createMock } from 'ts-auto-mock';
 import EventProcessor from '../../../src/eventsConsumer/domain/event-processor';
 import EventConsumer from '../../../src/eventsConsumer/domain/event-consumer';
-import { SQSMessage } from 'sqs-consumer';
 import { method, On } from 'ts-auto-mock/extension';
+import { createMessage } from '../../shared';
 
 describe('event-consumer', () => {
   it('should call right function on SwapExecuted event', () => {
@@ -121,13 +121,3 @@ describe('event-consumer', () => {
     expect(spy.mock.calls[0][0].amountOut).toEqual('0x122');
   });
 });
-
-function createMessage(event: string, params: { key: string; value: string }[]) {
-  const message = createMock<SQSMessage>();
-  message.Body = event;
-  message.MessageAttributes = {};
-  for (const param of params) {
-    message.MessageAttributes[param.key] = { DataType: 'String', StringValue: param.value };
-  }
-  return message;
-}
