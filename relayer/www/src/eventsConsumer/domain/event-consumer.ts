@@ -1,9 +1,9 @@
 import { SQSMessage } from 'sqs-consumer';
 import EventProcessor from './event-processor';
 import { CustomLogger } from '../../logger/CustomLogger';
-import { TransactionsRepository } from '../../transactions/domain/TransactionsRepository';
 import { Producer } from 'sqs-producer';
 import { Events } from './event-types';
+import { TransactionsRepository } from '../../persistence/domain/transactions-repository';
 
 export default class EventConsumer {
   private processor: EventProcessor;

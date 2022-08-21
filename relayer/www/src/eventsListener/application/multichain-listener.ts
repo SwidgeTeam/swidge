@@ -3,13 +3,13 @@ import { Inject } from '@nestjs/common';
 import { Class } from '../../shared/Class';
 import { ContractAddress } from '../../shared/types';
 import { RpcNode } from '../../shared/RpcNode';
-import { TransactionsRepository } from '../../transactions/domain/TransactionsRepository';
 import { CustomLogger } from '../../logger/CustomLogger';
 import { ConfigService } from '../../config/config.service';
 import { hexZeroPad } from 'ethers/lib/utils';
 import { Producer } from 'sqs-producer';
 import { SQS } from 'aws-sdk';
 import { Events } from '../../eventsConsumer/domain/event-types';
+import { AddressesRepository } from '../../persistence/domain/addresses-repository';
 
 export class MultichainListener {
   private producer: Producer;
@@ -18,8 +18,8 @@ export class MultichainListener {
   constructor(
     private readonly configService: ConfigService,
     private readonly logger: CustomLogger,
-    @Inject(Class.TransactionsRepository)
-    private readonly transactionsRepository: TransactionsRepository,
+    @Inject(Class.AddressesRepository)
+    private readonly repository: AddressesRepository,
   ) {
     this.producer = this.createSqsProducer();
   }
@@ -28,8 +28,8 @@ export class MultichainListener {
    * Entrypoint
    */
   public async start() {
-    this.routerAddress = await this.transactionsRepository.getRouterAddress();
-    const multichainRouters = await this.transactionsRepository.getMultichainRouters();
+    this.routerAddress = await this.repository.getRouterAddress();
+    const multichainRouters = await this.repository.getMultichainRouters();
 
     if (!this.routerAddress) {
       this.logger.error('No router address');

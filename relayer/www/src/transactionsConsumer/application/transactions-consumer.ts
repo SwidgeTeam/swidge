@@ -2,13 +2,13 @@ import { ConfigService } from '../../config/config.service';
 import { CustomLogger } from '../../logger/CustomLogger';
 import { Inject } from '@nestjs/common';
 import { Class } from '../../shared/Class';
-import { TransactionsRepository } from '../../transactions/domain/TransactionsRepository';
 import { Consumer } from 'sqs-consumer';
 import { SQS } from 'aws-sdk';
 import https from 'https';
 import http from 'http';
 import TransactionConsumer from '../domain/transaction-consumer';
 import { RouterCaller } from '../infrastructure/router-caller';
+import { TransactionsRepository } from '../../persistence/domain/transactions-repository';
 
 export default class TransactionsConsumer {
   private consumer: TransactionConsumer;

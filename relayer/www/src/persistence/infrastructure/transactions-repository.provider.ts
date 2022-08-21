@@ -1,5 +1,5 @@
-import { Class } from '../../../shared/Class';
-import { TransactionsRepositoryImpl } from './transactions.repository';
+import { Class } from '../../shared/Class';
+import { TransactionsRepositoryImpl } from './transactions-repository';
 
 export default () => {
   return {

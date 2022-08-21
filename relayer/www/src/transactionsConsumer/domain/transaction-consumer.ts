@@ -1,11 +1,11 @@
 import { RpcNode } from '../../shared/RpcNode';
-import {
-  SwapRequest,
-  TransactionsRepository,
-} from '../../transactions/domain/TransactionsRepository';
 import { CustomLogger } from '../../logger/CustomLogger';
 import { SQSMessage } from 'sqs-consumer';
 import { RouterCaller } from '../infrastructure/router-caller';
+import {
+  SwapRequest,
+  TransactionsRepository,
+} from '../../persistence/domain/transactions-repository';
 
 interface QuoteSwap {
   toChainId: string;

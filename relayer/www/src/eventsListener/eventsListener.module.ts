@@ -7,7 +7,7 @@ import { ConfigService as NestJSConfigService } from '@nestjs/config';
 import { LoggerModule } from '../logger/logger.module';
 import { CustomLogger } from '../logger/CustomLogger';
 import httpClientProvider from '../shared/http/httpClient.provider';
-import transactionsRepositoryProvider from '../transactions/infrastructure/repositories/transactions.repository.provider';
+import addressesRepositoryProvider from '../persistence/infrastructure/addresses-repository.provider';
 
 @Module({
   imports: [ConfigModule, LoggerModule],
@@ -17,7 +17,7 @@ import transactionsRepositoryProvider from '../transactions/infrastructure/repos
     ConfigService,
     NestJSConfigService,
     CustomLogger,
-    transactionsRepositoryProvider(),
+    addressesRepositoryProvider(),
     httpClientProvider(),
   ],
 })

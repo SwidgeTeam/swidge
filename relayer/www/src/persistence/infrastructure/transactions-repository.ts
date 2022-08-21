@@ -1,18 +1,17 @@
-import { HttpClient } from '../../../shared/http/httpClient';
+import { HttpClient } from '../../shared/http/httpClient';
 import {
   CreateTransactionPayload,
   UpdateTransactionPayload,
   TransactionsRepository,
   SwapRequest,
-} from '../../domain/TransactionsRepository';
-import { ConfigService } from '../../../config/config.service';
+} from '../domain/transactions-repository';
+import { ConfigService } from '../../config/config.service';
 import { Inject } from '@nestjs/common';
-import { Class } from '../../../shared/Class';
-import { SwapOrder } from '../../domain/SwapOrder';
-import { Contract } from '../../../shared/domain/Contract';
-import { TransactionJson } from './TransactionJson';
-import { Transaction } from '../../domain/Transaction';
+import { Class } from '../../shared/Class';
+import { TransactionJson } from '../domain/transaction-json';
+import { Transaction } from '../domain/transaction';
 import { BigNumber } from 'ethers';
+import { SwapOrder } from '../domain/swap-order';
 
 export class TransactionsRepositoryImpl implements TransactionsRepository {
   constructor(
@@ -90,9 +89,7 @@ export class TransactionsRepositoryImpl implements TransactionsRepository {
       response.dstToken,
       response.amountIn ? BigNumber.from(response.amountIn) : null,
       response.bridgeAmountIn ? BigNumber.from(response.bridgeAmountIn) : null,
-      response.bridgeAmountOut
-        ? BigNumber.from(response.bridgeAmountOut)
-        : null,
+      response.bridgeAmountOut ? BigNumber.from(response.bridgeAmountOut) : null,
       response.amountOut ? BigNumber.from(response.amountOut) : null,
       response.executed ? new Date(response.executed) : null,
       response.bridged ? new Date(response.bridged) : null,
@@ -119,7 +116,6 @@ export class TransactionsRepositoryImpl implements TransactionsRepository {
         `&tokenOut=${request.tokenOut}` +
         `&amountIn=${request.amountIn.toString()}` +
         `&minAmountOut=${request.minAmountOut}`,
-      this.headers(),
     );
 
     return new SwapOrder(
@@ -130,35 +126,6 @@ export class TransactionsRepositoryImpl implements TransactionsRepository {
       response.estimatedGas,
       response.required,
     );
-  }
-
-  /**
-   * Fetch the current router address
-   */
-  public async getRouterAddress(): Promise<string> {
-    const response = await this.httpClient.get<{
-      address: string;
-    }>(`${this.configService.apiUrl}/address/router`);
-
-    return response.address;
-  }
-
-  /**
-   * Fetch the contracts of Multichain
-   */
-  public async getMultichainRouters(): Promise<Contract[]> {
-    const response = await this.httpClient.get<{
-      addresses: [
-        {
-          chainId: string;
-          address: string;
-        },
-      ];
-    }>(`${this.configService.apiUrl}/address/bridge?type=multichain`);
-
-    return response.addresses.map((row) => {
-      return new Contract(row.chainId, row.address);
-    });
   }
 
   private headers() {

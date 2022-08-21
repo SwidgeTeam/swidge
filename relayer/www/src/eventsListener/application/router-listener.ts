@@ -3,12 +3,12 @@ import { Inject } from '@nestjs/common';
 import { Class } from '../../shared/Class';
 import { ContractAddress } from '../../shared/types';
 import { RpcNode } from '../../shared/RpcNode';
-import { TransactionsRepository } from '../../transactions/domain/TransactionsRepository';
 import { CustomLogger } from '../../logger/CustomLogger';
 import { ConfigService } from '../../config/config.service';
 import { Events } from '../../eventsConsumer/domain/event-types';
 import { Producer } from 'sqs-producer';
 import { SQS } from 'aws-sdk';
+import { AddressesRepository } from '../../persistence/domain/addresses-repository';
 
 export class RouterListener {
   private producer: Producer;
@@ -36,8 +36,7 @@ export class RouterListener {
   constructor(
     private readonly configService: ConfigService,
     private readonly logger: CustomLogger,
-    @Inject(Class.TransactionsRepository)
-    private readonly transactionsRepository: TransactionsRepository,
+    @Inject(Class.AddressesRepository) private readonly repository: AddressesRepository,
   ) {
     this.producer = this.createSqsProducer();
   }
@@ -46,7 +45,7 @@ export class RouterListener {
    * Entrypoint
    */
   public async start() {
-    const router = await this.transactionsRepository.getRouterAddress();
+    const router = await this.repository.getRouterAddress();
     if (!router) {
       this.logger.error('No router address');
       throw new Error('No router address');

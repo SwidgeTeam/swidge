@@ -1,11 +1,11 @@
+import { CustomLogger } from '../../logger/CustomLogger';
+import { CrossFinalized, CrossInitiated, MultichainDelivered, SwapExecuted } from './event-types';
+import { Producer } from 'sqs-producer';
 import {
   CreateTransactionPayload,
   TransactionsRepository,
   UpdateTransactionPayload,
-} from '../../transactions/domain/TransactionsRepository';
-import { CustomLogger } from '../../logger/CustomLogger';
-import { CrossFinalized, CrossInitiated, MultichainDelivered, SwapExecuted } from './event-types';
-import { Producer } from 'sqs-producer';
+} from '../../persistence/domain/transactions-repository';
 
 interface TxJob {
   txHash: string;
@@ -20,7 +20,7 @@ interface TxJob {
 
 export default class EventProcessor {
   private logger: CustomLogger;
-  private transactionsRepository: TransactionsRepository;
+  private repository: TransactionsRepository;
   private transactionsProducer: Producer;
 
   constructor(
@@ -29,7 +29,7 @@ export default class EventProcessor {
     logger: CustomLogger,
   ) {
     this.logger = logger;
-    this.transactionsRepository = transactionsRepository;
+    this.repository = transactionsRepository;
     this.transactionsProducer = producer;
   }
 
@@ -148,11 +148,11 @@ export default class EventProcessor {
 
   private createTransaction(payload: CreateTransactionPayload): Promise<void> {
     this.logger.log('Create transaction', payload);
-    return this.transactionsRepository.create(payload);
+    return this.repository.create(payload);
   }
 
   private updateTransaction(payload: UpdateTransactionPayload): Promise<void> {
     this.logger.log('Update transaction', payload);
-    return this.transactionsRepository.update(payload);
+    return this.repository.update(payload);
   }
 }
