@@ -3,11 +3,9 @@ import {
   TransactionsRepository,
   UpdateTransactionPayload,
 } from '../../transactions/domain/TransactionsRepository';
-import { ConfigService } from '../../config/config.service';
 import { CustomLogger } from '../../logger/CustomLogger';
-import { CrossFinalized, CrossInitiated, SwapExecuted } from './event-types';
+import { CrossFinalized, CrossInitiated, MultichainDelivered, SwapExecuted } from './event-types';
 import { Producer } from 'sqs-producer';
-import { SQS } from 'aws-sdk';
 
 interface TxJob {
   txHash: string;
@@ -21,18 +19,18 @@ interface TxJob {
 }
 
 export default class EventProcessor {
-  private configService: ConfigService;
   private logger: CustomLogger;
   private transactionsRepository: TransactionsRepository;
+  private transactionsProducer: Producer;
 
   constructor(
-    configService: ConfigService,
-    logger: CustomLogger,
+    producer: Producer,
     transactionsRepository: TransactionsRepository,
+    logger: CustomLogger,
   ) {
-    this.configService = configService;
     this.logger = logger;
     this.transactionsRepository = transactionsRepository;
+    this.transactionsProducer = producer;
   }
 
   /**
@@ -112,21 +110,29 @@ export default class EventProcessor {
     });
   }
 
-  private async queueJob(tx: TxJob): Promise<void> {
-    const producer = Producer.create({
-      queueUrl: this.configService.sqsQueueUrl,
-      sqs: new SQS({
-        region: this.configService.region,
-        accessKeyId: this.configService.accessKey,
-        secretAccessKey: this.configService.secret,
-      }),
+  /**
+   * Executed when a MultichainDelivered event fires
+   * @param event
+   */
+  public async multichainDelivered(event: MultichainDelivered) {
+    await this.updateTransaction({
+      txHash: event.originTxHash,
+      bridged: new Date(),
+      bridgeAmountOut: event.amountOut,
     });
+  }
 
-    await producer.send({
+  /**
+   * Queues a new job for the `transactions consumer`
+   * @param tx
+   * @private
+   */
+  private async queueJob(tx: TxJob): Promise<void> {
+    await this.transactionsProducer.send({
       id: tx.txHash,
       body: tx.txHash,
       groupId: tx.wallet,
-      deduplicationId: tx.wallet,
+      deduplicationId: tx.txHash,
       messageAttributes: {
         txHash: { DataType: 'String', StringValue: tx.txHash },
         wallet: { DataType: 'String', StringValue: tx.wallet },
