@@ -64,6 +64,11 @@ variable "transactions_queue" {
   description = "Name of the queue for the processed transactions"
 }
 
+variable "events_queue" {
+  type        = string
+  description = "Name of the queue for the incoming events"
+}
+
 variable "instances_key" {
   type        = string
   description = "Public key of the key-pair to access the EC2 instances"

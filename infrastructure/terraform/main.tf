@@ -129,6 +129,7 @@ module "relayer" {
   internet_gateway_id = aws_internet_gateway.igw.id
   instance_type       = var.relayer_instance_type
   transactions_queue  = var.transactions_queue
+  events_queue        = var.events_queue
   relayer_account_arn = aws_iam_user.relayer.arn
   key_name            = local.instances_key_name
   scrapper_ips        = module.grafana.public_ip
@@ -274,4 +275,20 @@ output "relayer_public_ip" {
 
 output "grafana_public_ip" {
   value = module.grafana.public_ip
+}
+
+output "transactions_queue" {
+  value = module.relayer.transactions_queue
+}
+
+output "events_queue" {
+  value = module.relayer.events_queue
+}
+
+output "dead_transactions_queue" {
+  value = module.relayer.dead_transactions_queue
+}
+
+output "dead_events_queue" {
+  value = module.relayer.dead_events_queue
 }
