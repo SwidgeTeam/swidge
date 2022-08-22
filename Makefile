@@ -371,7 +371,7 @@ SQS_MOVER = \
 		-e "AWS_SECRET_ACCESS_KEY=${CREATOR_AWS_SECRET_KEY}" \
 		${DOCKER_SQSMOVER_SERVICE} \
 		--source=$(1) \
-		--destination=$(1) \
+		--destination=$(2) \
 	)
 
 move-dlq-events:
