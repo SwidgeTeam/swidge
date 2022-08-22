@@ -52,7 +52,7 @@ export default class EventConsumer {
         break;
       case Events.MultichainDelivered:
         await this.processor.multichainDelivered({
-          originTxHash: body.txHash,
+          originTxHash: body.originTxHash,
           amountOut: body.amountOut,
           bridged: new Date(),
         });

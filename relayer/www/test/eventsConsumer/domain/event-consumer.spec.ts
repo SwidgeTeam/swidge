@@ -108,7 +108,7 @@ describe('event-consumer', () => {
     const consumer = new EventConsumer(processor);
     const spy = On(processor).get(method('multichainDelivered'));
     const message = createMessage('multichain_delivered', [
-      { key: 'txHash', value: '0x123' },
+      { key: 'originTxHash', value: '0x123' },
       { key: 'amountOut', value: '0x122' },
     ]);
 
