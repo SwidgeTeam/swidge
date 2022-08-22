@@ -40,6 +40,16 @@ variable "events_queue" {
   description = "Name of the queue for the incoming events"
 }
 
+variable "transactions_dead_queue" {
+  type        = string
+  description = "Name of the transactions DLQ"
+}
+
+variable "events_dead_queue" {
+  type        = string
+  description = "Name of the events DLQ"
+}
+
 variable "relayer_account_arn" {
   type        = string
   description = "ARN of the account used to produce/consume transactions"

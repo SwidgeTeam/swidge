@@ -62,7 +62,7 @@ resource "aws_security_group" "relayer-sg" {
 // Events queue
 
 resource "aws_sqs_queue" "dead_events" {
-  name       = "dead_${var.events_queue}"
+  name       = var.events_dead_queue
   fifo_queue = true
 }
 
@@ -121,7 +121,7 @@ resource "aws_sqs_queue_policy" "events" {
 // Transactions queue
 
 resource "aws_sqs_queue" "dead_transactions" {
-  name       = "dead_${var.transactions_queue}"
+  name       = var.transactions_dead_queue
   fifo_queue = true
 }
 

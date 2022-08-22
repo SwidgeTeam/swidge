@@ -120,19 +120,21 @@ module "api" {
 module "relayer" {
   source = "./blocks/relayer"
 
-  ami_id              = var.ami_id
-  region              = var.region
-  environment         = var.environment
-  vpc_id              = module.my_vpc.vpc_id
-  public_subnets_cidr = local.relayer_public_subnets_cidr
-  availability_zones  = local.availability_zones
-  internet_gateway_id = aws_internet_gateway.igw.id
-  instance_type       = var.relayer_instance_type
-  transactions_queue  = var.transactions_queue
-  events_queue        = var.events_queue
-  relayer_account_arn = aws_iam_user.relayer.arn
-  key_name            = local.instances_key_name
-  scrapper_ips        = module.grafana.public_ip
+  ami_id                  = var.ami_id
+  region                  = var.region
+  environment             = var.environment
+  vpc_id                  = module.my_vpc.vpc_id
+  public_subnets_cidr     = local.relayer_public_subnets_cidr
+  availability_zones      = local.availability_zones
+  internet_gateway_id     = aws_internet_gateway.igw.id
+  instance_type           = var.relayer_instance_type
+  transactions_queue      = var.transactions_queue
+  transactions_dead_queue = var.transactions_dead_queue
+  events_queue            = var.events_queue
+  events_dead_queue       = var.events_dead_queue
+  relayer_account_arn     = aws_iam_user.relayer.arn
+  key_name                = local.instances_key_name
+  scrapper_ips            = module.grafana.public_ip
 }
 
 module "grafana" {
