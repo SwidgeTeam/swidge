@@ -172,6 +172,10 @@ services:
       - /var/log:/var/log
       - ./grafana/local:/etc/promtail
 
+  sqsmover:
+    build:
+      context: sqsmover/
+
 volumes:
   db:
   grafana:
