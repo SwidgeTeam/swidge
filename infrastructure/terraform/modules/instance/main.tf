@@ -9,12 +9,8 @@ resource "aws_network_interface" "net_interface" {
   }
 }
 
-module "ami" {
-  source = "../ami"
-}
-
 resource "aws_instance" "instance" {
-  ami           = module.ami.ami_id
+  ami           = var.ami_id
   instance_type = var.instance_type
   count         = length(var.subnets)
   key_name      = var.key_name

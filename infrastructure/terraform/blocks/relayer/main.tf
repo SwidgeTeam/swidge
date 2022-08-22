@@ -17,6 +17,7 @@ module "relayer-subnets" {
 module "relayer-instance" {
   source = "../../modules/instance"
 
+  ami_id            = var.ami_id
   name              = local.name
   instance_type     = var.instance_type
   environment       = var.environment

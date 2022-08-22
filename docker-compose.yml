@@ -137,6 +137,7 @@ services:
       TF_VAR_grafana_instance_type: ${TF_GRAFANA_INSTANCE_TYPE}
       TF_VAR_transactions_queue: ${AWS_SQS_QUEUE_NAME}
       TF_VAR_instances_key: ${TF_INSTANCES_KEY}
+      TF_VAR_ami_id: ${AWS_AMI_ID}
     volumes:
       - ./infrastructure/terraform:/code
     working_dir: /code

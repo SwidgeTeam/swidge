@@ -68,3 +68,8 @@ variable "instances_key" {
   type        = string
   description = "Public key of the key-pair to access the EC2 instances"
 }
+
+variable "ami_id" {
+  type        = string
+  description = "AMI ID to use on the instances"
+}

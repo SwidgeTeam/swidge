@@ -104,6 +104,7 @@ module "regional_cert" {
 module "api" {
   source = "./blocks/api"
 
+  ami_id              = var.ami_id
   region              = var.region
   environment         = var.environment
   vpc_id              = module.my_vpc.vpc_id
@@ -119,6 +120,7 @@ module "api" {
 module "relayer" {
   source = "./blocks/relayer"
 
+  ami_id              = var.ami_id
   region              = var.region
   environment         = var.environment
   vpc_id              = module.my_vpc.vpc_id
@@ -135,6 +137,7 @@ module "relayer" {
 module "grafana" {
   source = "./blocks/grafana"
 
+  ami_id              = var.ami_id
   region              = var.region
   environment         = var.environment
   vpc_id              = module.my_vpc.vpc_id
