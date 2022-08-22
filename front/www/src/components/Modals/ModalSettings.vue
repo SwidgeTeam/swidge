@@ -89,7 +89,7 @@ const customValue = () => {
                     <input
                         ref="ownValue"
                         class="absolute z-0 -top-12 peer w-16 h-12 ml-2 mr-1 px-2 py-2 text-center border rounded-lg border-slate-600 focus:border-slate-600 focus:ring-offset-white focus:ring-gray-300 focus:ring-2 bg-inherit caret-inherit relative overflow-hidden"
-                        :class="{ 'border-slate-600':isFilled,'ring-offset-white':isFilled,'ring-gray-300':isFilled, 'ring-2':isFilled }"
+                        :class="{ 'border-slate-600 ring-offset-white ring-gray-300 ring-2':isFilled }"
                         type="text"
                         name="slippage"
                         placeholder="Enter"
