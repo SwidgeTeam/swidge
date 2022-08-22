@@ -168,7 +168,7 @@ export class RouterListener {
           try {
             this.logger.log('Received CrossFinalized event');
             const destinationTxHash = event.transactionHash;
-            const tx = await provider.getTransactionReceipt(txHash);
+            const tx = await provider.getTransactionReceipt(destinationTxHash);
             const wallet = tx.from;
 
             const body = {
