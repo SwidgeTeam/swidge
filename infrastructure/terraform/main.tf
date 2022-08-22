@@ -104,6 +104,7 @@ module "regional_cert" {
 module "api" {
   source = "./blocks/api"
 
+  ami_id              = var.ami_id
   region              = var.region
   environment         = var.environment
   vpc_id              = module.my_vpc.vpc_id
@@ -119,22 +120,27 @@ module "api" {
 module "relayer" {
   source = "./blocks/relayer"
 
-  region              = var.region
-  environment         = var.environment
-  vpc_id              = module.my_vpc.vpc_id
-  public_subnets_cidr = local.relayer_public_subnets_cidr
-  availability_zones  = local.availability_zones
-  internet_gateway_id = aws_internet_gateway.igw.id
-  instance_type       = var.relayer_instance_type
-  transactions_queue  = var.transactions_queue
-  relayer_account_arn = aws_iam_user.relayer.arn
-  key_name            = local.instances_key_name
-  scrapper_ips        = module.grafana.public_ip
+  ami_id                  = var.ami_id
+  region                  = var.region
+  environment             = var.environment
+  vpc_id                  = module.my_vpc.vpc_id
+  public_subnets_cidr     = local.relayer_public_subnets_cidr
+  availability_zones      = local.availability_zones
+  internet_gateway_id     = aws_internet_gateway.igw.id
+  instance_type           = var.relayer_instance_type
+  transactions_queue      = var.transactions_queue
+  transactions_dead_queue = var.transactions_dead_queue
+  events_queue            = var.events_queue
+  events_dead_queue       = var.events_dead_queue
+  relayer_account_arn     = aws_iam_user.relayer.arn
+  key_name                = local.instances_key_name
+  scrapper_ips            = module.grafana.public_ip
 }
 
 module "grafana" {
   source = "./blocks/grafana"
 
+  ami_id              = var.ami_id
   region              = var.region
   environment         = var.environment
   vpc_id              = module.my_vpc.vpc_id
@@ -250,7 +256,16 @@ resource "aws_key_pair" "instances" {
   public_key = var.instances_key
 }
 
+
+module "ami" {
+  source = "./modules/ami"
+}
+
 /** Outputs */
+
+output "current_ami_id" {
+  value = module.ami.ami_id
+}
 
 output "api_public_ip" {
   value = module.api.public_ip
@@ -262,4 +277,20 @@ output "relayer_public_ip" {
 
 output "grafana_public_ip" {
   value = module.grafana.public_ip
+}
+
+output "transactions_queue" {
+  value = module.relayer.transactions_queue
+}
+
+output "events_queue" {
+  value = module.relayer.events_queue
+}
+
+output "dead_transactions_queue" {
+  value = module.relayer.dead_transactions_queue
+}
+
+output "dead_events_queue" {
+  value = module.relayer.dead_events_queue
 }

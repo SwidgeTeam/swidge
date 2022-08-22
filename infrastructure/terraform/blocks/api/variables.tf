@@ -47,3 +47,8 @@ variable "scrapper_ips" {
   type        = list(string)
   description = "IPs allowed to scrape the metrics"
 }
+
+variable "ami_id" {
+  type        = string
+  description = "AMI ID to use on the instances"
+}

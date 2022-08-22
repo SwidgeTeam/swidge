@@ -47,3 +47,8 @@ variable "allowed_ips" {
   type        = list(string)
   description = "IPs of the allowed instances to connect to Loki"
 }
+
+variable "ami_id" {
+  type        = string
+  description = "AMI ID to use on the instances"
+}

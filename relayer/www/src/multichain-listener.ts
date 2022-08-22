@@ -1,16 +1,11 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { CustomLogger } from './logger/CustomLogger';
-import { MultichainListener } from './eventListener/application/multichain-listener';
+import { EventsListenerModule } from './eventsListener/eventsListener.module';
+import { MultichainListener } from './eventsListener/application/multichain-listener';
 
 async function main() {
-  const appModule = await NestFactory.createApplicationContext(AppModule);
-
-  appModule.useLogger(appModule.get(CustomLogger));
-
-  const listener = appModule.get(MultichainListener);
-
-  await listener.execute();
+  const service = await NestFactory.createApplicationContext(EventsListenerModule);
+  const listener = service.get(MultichainListener);
+  await listener.start();
 }
 
 main().catch((error) => {

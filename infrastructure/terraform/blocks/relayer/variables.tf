@@ -35,6 +35,21 @@ variable "transactions_queue" {
   description = "Name of the queue for the processed transactions"
 }
 
+variable "events_queue" {
+  type        = string
+  description = "Name of the queue for the incoming events"
+}
+
+variable "transactions_dead_queue" {
+  type        = string
+  description = "Name of the transactions DLQ"
+}
+
+variable "events_dead_queue" {
+  type        = string
+  description = "Name of the events DLQ"
+}
+
 variable "relayer_account_arn" {
   type        = string
   description = "ARN of the account used to produce/consume transactions"
@@ -48,4 +63,9 @@ variable "key_name" {
 variable "scrapper_ips" {
   type        = list(string)
   description = "IPs allowed to scrape the metrics"
+}
+
+variable "ami_id" {
+  type        = string
+  description = "AMI ID to use on the instances"
 }
