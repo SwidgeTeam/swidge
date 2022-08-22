@@ -23,7 +23,8 @@ export default class TransactionConsumer {
   ) {}
 
   async process(message: SQSMessage) {
-    const txHash = message.MessageAttributes.txHash.StringValue;
+    const body = JSON.parse(message.Body);
+    const txHash = body.txHash;
 
     this.logger.log('Processing message w/ txHash ' + txHash);
 
@@ -39,12 +40,12 @@ export default class TransactionConsumer {
       throw new Error('Tx not bridged yet');
     }
 
-    const router = message.MessageAttributes.router.StringValue;
-    const receiver = message.MessageAttributes.receiver.StringValue;
-    const toChainId = message.MessageAttributes.toChain.StringValue;
-    const srcToken = message.MessageAttributes.srcToken.StringValue;
-    const dstToken = message.MessageAttributes.dstToken.StringValue;
-    const minAmountOut = message.MessageAttributes.minAmount.StringValue;
+    const router = body.router;
+    const receiver = body.receiver;
+    const toChainId = body.toChain;
+    const srcToken = body.srcToken;
+    const dstToken = body.dstToken;
+    const minAmountOut = body.minAmount;
 
     const swapDetails = await this.getSwapDetails({
       toChainId: toChainId,

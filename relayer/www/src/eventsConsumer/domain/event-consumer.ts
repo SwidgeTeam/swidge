@@ -9,50 +9,51 @@ export default class EventConsumer {
     this.processor = processor;
   }
 
-  public async process(event: SQSMessage) {
-    const attr = event.MessageAttributes;
-    switch (event.Body) {
+  public async process(message: SQSMessage) {
+    const event = message.MessageAttributes.event.StringValue;
+    const body = JSON.parse(message.Body);
+    switch (event) {
       case Events.SwapExecuted:
         await this.processor.swapExecuted({
-          txHash: attr.txHash.StringValue,
-          routerAddress: attr.routerAddress.StringValue,
-          wallet: attr.wallet.StringValue,
-          chainId: attr.chainId.StringValue,
-          srcToken: attr.srcToken.StringValue,
-          dstToken: attr.dstToken.StringValue,
-          amountIn: attr.amountIn.StringValue,
-          amountOut: attr.amountOut.StringValue,
+          txHash: body.txHash,
+          routerAddress: body.routerAddress,
+          wallet: body.wallet,
+          chainId: body.chainId,
+          srcToken: body.srcToken,
+          dstToken: body.dstToken,
+          amountIn: body.amountIn,
+          amountOut: body.amountOut,
         });
         break;
       case Events.CrossInitiated:
         await this.processor.crossInitiated({
-          txHash: attr.txHash.StringValue,
-          routerAddress: attr.routerAddress.StringValue,
-          wallet: attr.wallet.StringValue,
-          receiver: attr.receiver.StringValue,
-          fromChain: attr.fromChain.StringValue,
-          toChain: attr.toChain.StringValue,
-          srcToken: attr.srcToken.StringValue,
-          bridgeTokenIn: attr.bridgeTokenIn.StringValue,
-          bridgeTokenOut: attr.bridgeTokenOut.StringValue,
-          dstToken: attr.dstToken.StringValue,
-          amountIn: attr.amountIn.StringValue,
-          amountCross: attr.amountCross.StringValue,
-          minAmountOut: attr.minAmountOut.StringValue,
+          txHash: body.txHash,
+          routerAddress: body.routerAddress,
+          wallet: body.wallet,
+          receiver: body.receiver,
+          fromChain: body.fromChain,
+          toChain: body.toChain,
+          srcToken: body.srcToken,
+          bridgeTokenIn: body.bridgeTokenIn,
+          bridgeTokenOut: body.bridgeTokenOut,
+          dstToken: body.dstToken,
+          amountIn: body.amountIn,
+          amountCross: body.amountCross,
+          minAmountOut: body.minAmountOut,
         });
         break;
       case Events.CrossFinalized:
         await this.processor.crossFinalized({
-          txHash: attr.txHash.StringValue,
-          destinationTxHash: attr.destinationTxHash.StringValue,
-          amountOut: attr.amountOut.StringValue,
+          txHash: body.txHash,
+          destinationTxHash: body.destinationTxHash,
+          amountOut: body.amountOut,
           completed: new Date(),
         });
         break;
       case Events.MultichainDelivered:
         await this.processor.multichainDelivered({
-          originTxHash: attr.txHash.StringValue,
-          amountOut: attr.amountOut.StringValue,
+          originTxHash: body.txHash,
+          amountOut: body.amountOut,
           bridged: new Date(),
         });
         break;

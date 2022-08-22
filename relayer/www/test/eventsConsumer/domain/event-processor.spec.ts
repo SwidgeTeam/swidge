@@ -99,7 +99,18 @@ describe('event-consumer', () => {
       bridgeAmountIn: 'amountCross',
     });
     expect(spySend.mock.calls[0][0].id).toEqual('txHash');
-    expect(spySend.mock.calls[0][0].body).toEqual('txHash');
+    expect(spySend.mock.calls[0][0].body).toEqual(
+      JSON.stringify({
+        txHash: 'txHash',
+        receiver: 'receiver',
+        fromChain: 'fromChain',
+        toChain: 'toChain',
+        srcToken: 'bridgeTokenOut',
+        dstToken: 'dstToken',
+        router: 'routerAddress',
+        minAmount: 'minAmountOut',
+      }),
+    );
     expect(spySend.mock.calls[0][0].groupId).toEqual('receiver');
     expect(spySend.mock.calls[0][0].deduplicationId).toEqual('txHash');
   });

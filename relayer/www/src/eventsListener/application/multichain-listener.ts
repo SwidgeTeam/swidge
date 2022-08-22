@@ -80,15 +80,19 @@ export class MultichainListener {
       const originTxHash = event.topics[1];
       const txHash = event.transactionHash;
 
+      const body = {
+        originTxHash: originTxHash,
+        amountOut: amount.toString(),
+      };
+
       try {
         await this.producer.send({
           id: txHash,
-          body: Events.MultichainDelivered,
+          body: JSON.stringify(body),
           groupId: 'multichain',
           deduplicationId: txHash,
           messageAttributes: {
-            originTxHash: { DataType: 'String', StringValue: originTxHash },
-            amountOut: { DataType: 'String', StringValue: amount.toString() },
+            event: { DataType: 'String', StringValue: Events.MultichainDelivered },
           },
         });
       } catch (error) {

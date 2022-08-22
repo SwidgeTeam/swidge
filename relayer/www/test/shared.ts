@@ -3,10 +3,12 @@ import { SQSMessage } from 'sqs-consumer';
 
 export function createMessage(event: string, params: { key: string; value: string }[]) {
   const message = createMock<SQSMessage>();
-  message.Body = event;
   message.MessageAttributes = {};
+  message.MessageAttributes.event = { DataType: 'String', StringValue: event };
+  const body = {};
   for (const param of params) {
-    message.MessageAttributes[param.key] = { DataType: 'String', StringValue: param.value };
+    body[param.key] = param.value;
   }
+  message.Body = JSON.stringify(body);
   return message;
 }

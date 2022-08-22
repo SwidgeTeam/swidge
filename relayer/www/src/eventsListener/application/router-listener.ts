@@ -85,20 +85,24 @@ export class RouterListener {
             const wallet = tx.from;
             const routerAddress = event.address;
 
+            const body = {
+              txHash: txHash,
+              routerAddress: routerAddress,
+              wallet: wallet,
+              chainId: chainId.toString(),
+              srcToken: srcToken,
+              dstToken: dstToken,
+              amountIn: amountIn.toString(),
+              amountOut: amountOut.toString(),
+            };
+
             await this.producer.send({
               id: txHash,
-              body: Events.SwapExecuted,
+              body: JSON.stringify(body),
               groupId: wallet,
               deduplicationId: txHash,
               messageAttributes: {
-                txHash: { DataType: 'String', StringValue: txHash },
-                routerAddress: { DataType: 'String', StringValue: routerAddress },
-                wallet: { DataType: 'String', StringValue: wallet },
-                chainId: { DataType: 'String', StringValue: chainId.toString() },
-                srcToken: { DataType: 'String', StringValue: srcToken },
-                dstToken: { DataType: 'String', StringValue: dstToken },
-                amountIn: { DataType: 'String', StringValue: amountIn.toString() },
-                amountOut: { DataType: 'String', StringValue: amountOut.toString() },
+                event: { DataType: 'String', StringValue: Events.SwapExecuted },
               },
             });
           } catch (e) {
@@ -128,25 +132,29 @@ export class RouterListener {
             const wallet = tx.from;
             const routerAddress = event.address;
 
+            const body = {
+              txHash: txHash,
+              routerAddress: routerAddress,
+              wallet: wallet,
+              receiver: receiver,
+              fromChain: fromChain.toString(),
+              toChain: toChain.toString(),
+              srcToken: srcToken,
+              bridgeTokenIn: bridgeTokenIn,
+              bridgeTokenOut: bridgeTokenOut,
+              dstToken: dstToken,
+              amountIn: amountIn.toString(),
+              amountCross: amountCross.toString(),
+              minAmountOut: minAmountOut.toString(),
+            };
+
             await this.producer.send({
               id: txHash,
-              body: Events.CrossInitiated,
+              body: JSON.stringify(body),
               groupId: wallet,
               deduplicationId: txHash,
               messageAttributes: {
-                txHash: { DataType: 'String', StringValue: txHash },
-                routerAddress: { DataType: 'String', StringValue: routerAddress },
-                wallet: { DataType: 'String', StringValue: wallet },
-                receiver: { DataType: 'String', StringValue: receiver },
-                fromChain: { DataType: 'String', StringValue: fromChain.toString() },
-                toChain: { DataType: 'String', StringValue: toChain.toString() },
-                srcToken: { DataType: 'String', StringValue: srcToken },
-                bridgeTokenIn: { DataType: 'String', StringValue: bridgeTokenIn },
-                bridgeTokenOut: { DataType: 'String', StringValue: bridgeTokenOut },
-                dstToken: { DataType: 'String', StringValue: dstToken },
-                amountIn: { DataType: 'String', StringValue: amountIn.toString() },
-                amountCross: { DataType: 'String', StringValue: amountCross.toString() },
-                minAmountOut: { DataType: 'String', StringValue: minAmountOut.toString() },
+                event: { DataType: 'String', StringValue: Events.CrossInitiated },
               },
             });
           } catch (e) {
@@ -163,15 +171,19 @@ export class RouterListener {
             const tx = await provider.getTransactionReceipt(txHash);
             const wallet = tx.from;
 
+            const body = {
+              txHash: txHash,
+              destinationTxHash: destinationTxHash,
+              amountOut: amountOut.toString(),
+            };
+
             await this.producer.send({
               id: txHash,
-              body: Events.CrossFinalized,
+              body: JSON.stringify(body),
               groupId: wallet,
               deduplicationId: txHash,
               messageAttributes: {
-                txHash: { DataType: 'String', StringValue: txHash },
-                destinationTxHash: { DataType: 'String', StringValue: destinationTxHash },
-                amountOut: { DataType: 'String', StringValue: amountOut.toString() },
+                event: { DataType: 'String', StringValue: Events.CrossFinalized },
               },
             });
           } catch (e) {

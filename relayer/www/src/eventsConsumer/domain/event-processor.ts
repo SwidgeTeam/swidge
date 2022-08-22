@@ -124,21 +124,21 @@ export default class EventProcessor {
    * @private
    */
   private async queueJob(job: TxJob): Promise<void> {
+    const body = {
+      txHash: job.originTxHash,
+      receiver: job.receiver,
+      fromChain: job.fromChain,
+      toChain: job.toChain,
+      srcToken: job.srcToken,
+      dstToken: job.dstToken,
+      router: job.router,
+      minAmount: job.minAmountOut,
+    };
     await this.transactionsProducer.send({
       id: job.originTxHash,
-      body: job.originTxHash,
+      body: JSON.stringify(body),
       groupId: job.receiver,
       deduplicationId: job.originTxHash,
-      messageAttributes: {
-        txHash: { DataType: 'String', StringValue: job.originTxHash },
-        receiver: { DataType: 'String', StringValue: job.receiver },
-        fromChain: { DataType: 'String', StringValue: job.fromChain },
-        toChain: { DataType: 'String', StringValue: job.toChain },
-        srcToken: { DataType: 'String', StringValue: job.srcToken },
-        dstToken: { DataType: 'String', StringValue: job.dstToken },
-        router: { DataType: 'String', StringValue: job.router },
-        minAmount: { DataType: 'String', StringValue: job.minAmountOut },
-      },
     });
   }
 
