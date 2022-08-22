@@ -253,7 +253,16 @@ resource "aws_key_pair" "instances" {
   public_key = var.instances_key
 }
 
+
+module "ami" {
+  source = "./modules/ami"
+}
+
 /** Outputs */
+
+output "current_ami_id" {
+  value = module.ami.ami_id
+}
 
 output "api_public_ip" {
   value = module.api.public_ip
