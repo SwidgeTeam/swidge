@@ -9,8 +9,14 @@ const routesStore = useRoutesStore()
 
 const ownValue = ref<HTMLInputElement | null>(null)
 
-const FIRST_DEFAULT = '1'
-const SECOND_DEFAULT = '2'
+const FIRST_DEFAULT_SLIPPAGE = '1'
+const SECOND_DEFAULT_SLIPPAGE = '2'
+
+const FIRST_DEFAULT_GAS = 'slow'
+const SECOND_DEFAULT_GAS = 'medium'
+const THIRD_DEFAULT_GAS = 'fast'
+
+const isFilled = ref(false)
 
 defineProps({
     isOpen: {
@@ -21,7 +27,6 @@ defineProps({
 
 const emits = defineEmits<{
     (event: 'close-modal'): void
-    (event: 'send-update-gas-value', value: string): void
 }>()
 
 const onCloseModal = () => {
@@ -32,7 +37,7 @@ const focusInput = () => {
     ownValue.value?.focus()
 }
 
-const onChange = (event: Event) => {
+const onSlippageChange = (event: Event) => {
     if (!(event.target instanceof HTMLInputElement)) return
     const value = event.target.value
     routesStore.setSlippage(value)
@@ -40,15 +45,14 @@ const onChange = (event: Event) => {
 
 const customValue = () => {
     const selectedValue = routesStore.getSlippage
-    if (selectedValue !== FIRST_DEFAULT && selectedValue !== SECOND_DEFAULT) {
+    if (selectedValue !== FIRST_DEFAULT_SLIPPAGE && selectedValue !== SECOND_DEFAULT_SLIPPAGE) {
+        isFilled.value = true
         return selectedValue
     }
+    isFilled.value = false
     return ''
 }
 
-const onGasChange = (value) => {
-    // Store
-}
 </script>
 
 <template>
@@ -63,13 +67,13 @@ const onGasChange = (value) => {
             Slippage
             <div class="absolute -right-1 -top-2 flex">
                 <SettingsButtonSlippage
-                    :content="FIRST_DEFAULT + '%'"
-                    :value="FIRST_DEFAULT"
+                    :content="FIRST_DEFAULT_SLIPPAGE + '%'"
+                    :value="FIRST_DEFAULT_SLIPPAGE"
                     name="slippage"
                 />
                 <SettingsButtonSlippage
-                    :content="SECOND_DEFAULT + '%'"
-                    :value="SECOND_DEFAULT"
+                    :content="SECOND_DEFAULT_SLIPPAGE + '%'"
+                    :value="SECOND_DEFAULT_SLIPPAGE"
                     name="slippage"
                 />
                 <div class="ml-1">
@@ -84,11 +88,12 @@ const onGasChange = (value) => {
                     <input
                         ref="ownValue"
                         class="absolute z-0 -top-12 peer w-16 h-12 ml-2 mr-1 px-2 py-2 text-center border rounded-lg border-slate-600 focus:border-slate-600 focus:ring-offset-white focus:ring-gray-300 focus:ring-2 bg-inherit caret-inherit relative overflow-hidden"
+                        :class="{ 'border-slate-600':isFilled,'ring-offset-white':isFilled,'ring-gray-300':isFilled, 'ring-2':isFilled }"
                         type="text"
                         name="slippage"
                         placeholder="Enter"
                         :value="customValue()"
-                        @change="onChange"
+                        @change="onSlippageChange"
                     >
                 </div>
             </div>
@@ -113,23 +118,20 @@ const onGasChange = (value) => {
             Gas price
             <div class="absolute -right-1 -top-2 grid grid-cols-3 grid-rows-1">
                 <SettingsButtonGas
-                    content="Slow"
-                    input="slow"
+                    :content="FIRST_DEFAULT_GAS"
+                    :value="FIRST_DEFAULT_GAS"
                     name="Gas"
-                    value="slow"
-                    @update-gas-value="onGasChange()"/>
+                    />
                 <SettingsButtonGas
-                    content="Medium"
-                    input="medium"
+                    :content="SECOND_DEFAULT_GAS"
+                    :value="SECOND_DEFAULT_GAS"
                     name="Gas"
-                    value="medium"
-                    @update-gas-value="emits('send-update-gas-value','medium')"/>
+                    />
                 <SettingsButtonGas
-                    content="Fast"
-                    input="fast"
+                    :content="THIRD_DEFAULT_GAS"
+                    :value="THIRD_DEFAULT_GAS"
                     name="Gas"
-                    value="fast"
-                    @update-gas-value="emits('send-update-gas-value','fast')"/>
+                    />
             </div>
         </div>
     </Modal>
