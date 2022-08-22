@@ -62,8 +62,8 @@ resource "aws_security_group" "relayer-sg" {
 // Events queue
 
 resource "aws_sqs_queue" "dead_events" {
-  name                 = "dead_${var.events_queue}"
-  fifo_queue           = true
+  name       = "dead_${var.events_queue}"
+  fifo_queue = true
 }
 
 resource "aws_sqs_queue" "events" {
@@ -121,8 +121,8 @@ resource "aws_sqs_queue_policy" "events" {
 // Transactions queue
 
 resource "aws_sqs_queue" "dead_transactions" {
-  name                 = "dead_${var.transactions_queue}"
-  fifo_queue           = true
+  name       = "dead_${var.transactions_queue}"
+  fifo_queue = true
 }
 
 resource "aws_sqs_queue" "transactions" {
@@ -176,6 +176,69 @@ resource "aws_sqs_queue_policy" "transactions" {
     }
   EOP
 }
+
+// Alarms
+
+resource "aws_sns_topic" "dead_events" {
+  name = "dead-events-topic"
+}
+
+resource "aws_sns_topic" "dead_transactions" {
+  name = "dead-transactions-topic"
+}
+
+resource "aws_cloudwatch_metric_alarm" "dead_events" {
+  alarm_name          = "dead-events"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "1"
+  metric_name         = "ApproximateNumberOfMessagesVisible"
+  namespace           = "AWS/SQS"
+  dimensions          = {
+    QueueName = aws_sqs_queue.dead_events.name
+  }
+  period            = "30"
+  statistic         = "Maximum"
+  threshold         = "0"
+  alarm_description = "This metric monitors events dead letter queue"
+  alarm_actions     = [
+    aws_sns_topic.dead_events.arn
+  ]
+}
+
+resource "aws_cloudwatch_metric_alarm" "dead_transactions" {
+  alarm_name          = "dead-transactions"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "1"
+  metric_name         = "ApproximateNumberOfMessagesVisible"
+  namespace           = "AWS/SQS"
+  dimensions          = {
+    QueueName = aws_sqs_queue.dead_transactions.name
+  }
+  period            = "30"
+  statistic         = "Maximum"
+  threshold         = "0"
+  alarm_description = "This metric monitors transactions dead letter queue"
+  alarm_actions     = [
+    aws_sns_topic.dead_transactions.arn
+  ]
+}
+
+/*
+// Rather do it manually for now
+resource "aws_sns_topic_subscription" "dead_events" {
+  topic_arn = aws_sns_topic.dead_events.arn
+  protocol  = "email"
+  endpoint  = []
+}
+
+resource "aws_sns_topic_subscription" "dead_transactions" {
+  topic_arn = aws_sns_topic.dead_transactions.arn
+  protocol  = "email"
+  endpoint  = []
+}
+*/
+
+// Outputs
 
 output "security_group_id" {
   value = aws_security_group.relayer-sg.id
