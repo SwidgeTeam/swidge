@@ -2,16 +2,21 @@
 import Modal from '@/components/Modals/Modal.vue'
 import SettingsButtonSlippage from '../Buttons/SettingsButtonSlippage.vue'
 import SettingsButtonGas from '../Buttons/SettingsButtonGas.vue'
+import { useRoutesStore } from '@/store/routes'
 import { ref } from 'vue'
 
+const routesStore = useRoutesStore()
+
 const ownValue = ref<HTMLInputElement | null>(null)
+
+const FIRST_DEFAULT = '1'
+const SECOND_DEFAULT = '2'
 
 defineProps({
     isOpen: {
         type: Boolean,
         default: true
     },
-
 })
 
 const emits = defineEmits<{
@@ -27,11 +32,23 @@ const focusInput = () => {
     ownValue.value?.focus()
 }
 
-const log = (input: string) => {
-    console.log(input)
+const onChange = (event: Event) => {
+    if (!(event.target instanceof HTMLInputElement)) return
+    const value = event.target.value
+    routesStore.setSlippage(value)
 }
 
+const customValue = () => {
+    const selectedValue = routesStore.getSlippage
+    if (selectedValue !== FIRST_DEFAULT && selectedValue !== SECOND_DEFAULT) {
+        return selectedValue
+    }
+    return ''
+}
 
+const onGasChange = (value) => {
+    // Store
+}
 </script>
 
 <template>
@@ -46,17 +63,15 @@ const log = (input: string) => {
             Slippage
             <div class="absolute -right-1 -top-2 flex">
                 <SettingsButtonSlippage
-                    content="1%"
-                    input="1"
+                    :content="FIRST_DEFAULT + '%'"
+                    :value="FIRST_DEFAULT"
                     name="slippage"
-                    value="1"
-                    attr=""/>
+                />
                 <SettingsButtonSlippage
-                    content="2%"
-                    input="2"
+                    :content="SECOND_DEFAULT + '%'"
+                    :value="SECOND_DEFAULT"
                     name="slippage"
-                    value="2"
-                    attr="checked"/>
+                />
                 <div class="ml-1">
                     <input
                         type="radio"
@@ -65,15 +80,15 @@ const log = (input: string) => {
                         @click="focusInput">
                     <label
                         class="flex z-10 grid w-16 h-12 mx-2 px-4 py-2 text-center focus:outline-none cursor-pointer border rounded-lg border-slate-600 peer-checked:text-slate-800 peer-checked:font-normal"
-                        for={{input}}></label>
+                        for="slippage"></label>
                     <input
                         ref="ownValue"
-                        class="absulute z-0 -top-12 peer w-16 h-12 ml-2 mr-1 px-2 py-2 text-center border rounded-lg border-slate-600 focus:border-slate-600 focus:ring-offset-white focus:ring-gray-300 focus:ring-2 bg-inherit caret-inherit relative overflow-hidden"
+                        class="absolute z-0 -top-12 peer w-16 h-12 ml-2 mr-1 px-2 py-2 text-center border rounded-lg border-slate-600 focus:border-slate-600 focus:ring-offset-white focus:ring-gray-300 focus:ring-2 bg-inherit caret-inherit relative overflow-hidden"
                         type="text"
                         name="slippage"
                         placeholder="Enter"
-
-                        @change="log('test')"
+                        :value="customValue()"
+                        @change="onChange"
                     >
                 </div>
             </div>
@@ -102,7 +117,7 @@ const log = (input: string) => {
                     input="slow"
                     name="Gas"
                     value="slow"
-                    @update-gas-value="emits('send-update-gas-value','slow')"/>
+                    @update-gas-value="onGasChange()"/>
                 <SettingsButtonGas
                     content="Medium"
                     input="medium"

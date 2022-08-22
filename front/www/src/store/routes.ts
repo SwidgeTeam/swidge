@@ -10,10 +10,14 @@ export const useRoutesStore = defineStore('routes', {
     state: () => ({
         routes: [] as Route[],
         selectedRoute: 0,
+        slippage: '2',
     }),
     getters: {
         getSelectedRoute(): Route {
             return this.routes[this.selectedRoute]
+        },
+        getSlippage(): string {
+            return this.slippage
         },
     },
     actions: {
@@ -64,6 +68,9 @@ export const useRoutesStore = defineStore('routes', {
             })
             this.routes[this.selectedRoute].completed = true
         },
+        setSlippage(value: string) {
+            this.slippage = value
+        }
     }
 })
 
