@@ -20,7 +20,7 @@ export const useRoutesStore = defineStore('routes', {
         getSlippage(): string {
             return this.slippageValue
         },
-        getGas(): string {
+        getGasPriority(): string {
             return this.gasPriority
         },
     },
@@ -75,7 +75,7 @@ export const useRoutesStore = defineStore('routes', {
         setSlippage(value: string) {
             this.slippageValue = value
         },
-        setGas(value: string) {
+        setGasPriority(value: string) {
             this.gasPriority = value
         }
     }
