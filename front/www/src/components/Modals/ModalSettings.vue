@@ -11,10 +11,12 @@ defineProps({
         type: Boolean,
         default: true
     },
+
 })
 
 const emits = defineEmits<{
     (event: 'close-modal'): void
+    (event: 'send-update-gas-value', value: string): void
 }>()
 
 const onCloseModal = () => {
@@ -24,6 +26,11 @@ const onCloseModal = () => {
 const focusInput = () => {
     ownValue.value?.focus()
 }
+
+const log = (input: string) => {
+  console.log(input)
+}
+
 
 </script>
 
@@ -49,6 +56,8 @@ const focusInput = () => {
                         name="slippage"
                         ref="ownValue"
                         placeholder="Enter"
+
+                        v-on:change="log('test')"
                         >
                 </div>
             </div>
@@ -62,9 +71,9 @@ const focusInput = () => {
         <div  class="pl-4 mt-6 text-xl font-light relative">
             Gas price
             <div class="absolute -right-1 -top-2 grid grid-cols-3 grid-rows-1">
-                <SettingsButtonGas content="Slow" input="Slow" name="Gas" value="slow"/>
-                <SettingsButtonGas content="Medium" input="Medium" name="Gas" value="medium" />
-                <SettingsButtonGas content="Fast" input="Fast" name="Gas" value="fast" />
+                <SettingsButtonGas content="Slow" input="slow" name="Gas" value="slow" @update-gas-value="emits('send-update-gas-value','slow')"/>
+                <SettingsButtonGas content="Medium" input="medium" name="Gas" value="medium" @update-gas-value="emits('send-update-gas-value','medium')" />
+                <SettingsButtonGas content="Fast" input="fast" name="Gas" value="fast" @update-gas-value="emits('send-update-gas-value','fast')"/>
             </div>
         </div>
     </Modal>

@@ -5,6 +5,9 @@ import TransactionDetails from './TransactionDetails.vue'
 import BridgeSwapInteractiveButton from './BridgeSwapInteractiveButton.vue'
 import {AdjustmentsIcon} from '@heroicons/vue/solid'
 import ModalSettings from './Modals/ModalSettings.vue'
+import { ref } from 'vue'
+
+const gasValue = ref<string | null>('')
 
 defineProps<{
     sourceTokenAmount: string
@@ -27,6 +30,11 @@ const emits = defineEmits<{
 
 }>()
 
+const storeGasSetting = (input: string) => {
+    gasValue.value = input
+    console.log(gasValue.value)
+  return gasValue.value
+} 
 
 </script>
 
@@ -76,6 +84,7 @@ const emits = defineEmits<{
         <ModalSettings 
         :is-open="isSettingsModalOpen"
         @close-modal="isSettingsModalOpen = false"
+        @send-update-gas-value="(input) => storeGasSetting(input)"
         />
     </div>
 </template>
