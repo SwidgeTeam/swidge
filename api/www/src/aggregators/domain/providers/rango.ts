@@ -77,6 +77,7 @@ export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregat
       request.amountIn,
       amountOut,
       amountOut,
+      response.route.estimatedTimeInSeconds,
     );
 
     const nativePrice = await this.priceFeedFetcher.fetch(request.fromChain);
@@ -245,7 +246,7 @@ export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregat
         break;
     }
 
-    return new RouteStep(type, details, fromToken, toToken, amountIn, amountOut, '');
+    return new RouteStep(type, details, fromToken, toToken, amountIn, amountOut, '', 0);
   }
 
   /**

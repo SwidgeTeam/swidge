@@ -78,6 +78,15 @@ export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAg
     const route = response.routes[0];
     const action = route.actions[0];
 
+    const gasPrice = await this.gasPriceFetcher.fetch(request.fromChain);
+    const nativePrice = await this.priceFeedFetcher.fetch(request.fromChain);
+    const fees = this.buildFees(action, gasPrice, nativePrice);
+    const steps = this.buildSteps(route.actions);
+
+    const estimatedTime = steps.reduce((total: number, current: RouteStep) => {
+      return total + current.timeInSeconds;
+    }, 0);
+
     const resume = new RouteResume(
       request.fromChain,
       request.toChain,
@@ -86,12 +95,8 @@ export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAg
       request.amountIn,
       BigInteger.fromString(route.toTokenAmount.toString()),
       BigInteger.fromString(route.toTokenAmount.toString()),
+      estimatedTime,
     );
-
-    const gasPrice = await this.gasPriceFetcher.fetch(request.fromChain);
-    const nativePrice = await this.priceFeedFetcher.fetch(request.fromChain);
-    const fees = this.buildFees(action, gasPrice, nativePrice);
-    const steps = this.buildSteps(route.actions);
 
     const aggregatorDetails = new AggregatorDetails(
       AggregatorProviders.Via,
@@ -275,7 +280,16 @@ export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAg
         break;
     }
 
-    return new RouteStep(type, details, fromToken, toToken, amountIn, amountOut, '');
+    return new RouteStep(
+      type,
+      details,
+      fromToken,
+      toToken,
+      amountIn,
+      amountOut,
+      '',
+      step.tool.estimatedTime,
+    );
   }
 
   /**

@@ -65,6 +65,10 @@ export class LiFi implements Aggregator {
       const steps = this.createSteps(response);
       const fees = this.buildFees(response.estimate);
 
+      const estimatedTime = steps.reduce((total: number, current: RouteStep) => {
+        return total + current.timeInSeconds;
+      }, 0);
+
       const resume = new RouteResume(
         request.fromChain,
         request.toChain,
@@ -73,6 +77,7 @@ export class LiFi implements Aggregator {
         request.amountIn,
         BigInteger.fromString(response.estimate.toAmount),
         BigInteger.fromString(response.estimate.toAmountMin),
+        estimatedTime,
       );
 
       const aggregatorDetails = new AggregatorDetails(AggregatorProviders.LiFi);
@@ -182,6 +187,7 @@ export class LiFi implements Aggregator {
       BigInteger.fromString(step.estimate.fromAmount),
       BigInteger.fromString(step.estimate.toAmount),
       feeInUSD.toString(),
+      step.estimate.executionDuration,
     );
   }
 }

@@ -48,6 +48,7 @@ interface SocketUserTxStep {
     gasLimit: number;
     feesInUsd: number;
   };
+  serviceTime: number;
 }
 
 // details of a token
@@ -116,6 +117,12 @@ export class Socket implements Aggregator {
 
     const route = response.result.routes[0];
     const amountOut = BigInteger.fromString(route.toAmount);
+
+    const steps = this.buildSteps(route.userTxs[0].steps);
+    const estimatedTime = steps.reduce((total: number, current: RouteStep) => {
+      return total + current.timeInSeconds;
+    }, 0);
+
     const resume = new RouteResume(
       request.fromChain,
       request.toChain,
@@ -124,6 +131,7 @@ export class Socket implements Aggregator {
       request.amountIn,
       amountOut,
       amountOut,
+      estimatedTime,
     );
     const responseTxDetails = await this.getTxDetails(route);
 
@@ -152,7 +160,6 @@ export class Socket implements Aggregator {
       gasLimit,
     );
 
-    const steps = this.buildSteps(route.userTxs[0].steps);
     const aggregatorDetails = new AggregatorDetails(AggregatorProviders.Socket);
 
     return new Route(aggregatorDetails, resume, steps, fees, approvalTxDetails, txDetails);
@@ -226,9 +233,17 @@ export class Socket implements Aggregator {
 
     switch (step.type) {
       case 'middleware':
-        return RouteStep.swap(details, fromToken, toToken, amountIn, amountOut, feeInUSD);
+        return RouteStep.swap(details, fromToken, toToken, amountIn, amountOut, feeInUSD, 0);
       case 'bridge':
-        return RouteStep.bridge(details, fromToken, toToken, amountIn, amountOut, feeInUSD);
+        return RouteStep.bridge(
+          details,
+          fromToken,
+          toToken,
+          amountIn,
+          amountOut,
+          feeInUSD,
+          step.serviceTime,
+        );
     }
   }
 }
