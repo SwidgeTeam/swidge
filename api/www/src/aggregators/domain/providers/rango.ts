@@ -23,6 +23,7 @@ import {
 import { RouteFees } from '../../../shared/domain/route/route-fees';
 import { IPriceFeedFetcher } from '../../../shared/domain/price-feed-fetcher';
 import { PriceFeed } from '../../../shared/domain/price-feed';
+import { RouteSteps } from '../../../shared/domain/route/route-steps';
 
 export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregator {
   private enabledChains: string[];
@@ -77,6 +78,7 @@ export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregat
       request.amountIn,
       amountOut,
       amountOut,
+      response.route.estimatedTimeInSeconds,
     );
 
     const nativePrice = await this.priceFeedFetcher.fetch(request.fromChain);
@@ -208,13 +210,13 @@ export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregat
    * @param steps
    * @private
    */
-  private buildSteps(generalAmountIn: BigInteger, steps: QuotePath[]): RouteStep[] {
+  private buildSteps(generalAmountIn: BigInteger, steps: QuotePath[]): RouteSteps {
     const items: RouteStep[] = [];
     for (const step of steps) {
       const amountIn = items.length > 0 ? items[items.length - 1].amountOut : generalAmountIn;
       items.push(this.buildStep(amountIn, step));
     }
-    return items;
+    return new RouteSteps(items);
   }
 
   /**
@@ -245,7 +247,7 @@ export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregat
         break;
     }
 
-    return new RouteStep(type, details, fromToken, toToken, amountIn, amountOut, '');
+    return new RouteStep(type, details, fromToken, toToken, amountIn, amountOut, '', 0);
   }
 
   /**

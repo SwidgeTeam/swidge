@@ -13,6 +13,7 @@ export class RouteStep {
     amountIn: BigInteger,
     amountOut: BigInteger,
     feeInUSD: string,
+    timeInSeconds: number,
   ) {
     return new RouteStep(
       RouteStep.TYPE_SWAP,
@@ -22,6 +23,7 @@ export class RouteStep {
       amountIn,
       amountOut,
       feeInUSD,
+      timeInSeconds,
     );
   }
 
@@ -32,6 +34,7 @@ export class RouteStep {
     amountIn: BigInteger,
     amountOut: BigInteger,
     feeInUSD: string,
+    timeInSeconds: number,
   ) {
     return new RouteStep(
       RouteStep.TYPE_BRIDGE,
@@ -41,6 +44,7 @@ export class RouteStep {
       amountIn,
       amountOut,
       feeInUSD,
+      timeInSeconds,
     );
   }
 
@@ -52,6 +56,7 @@ export class RouteStep {
     private readonly _amountIn: BigInteger,
     private readonly _amountOut: BigInteger,
     private readonly _feeInUSD: string,
+    private readonly _timeInSeconds: number,
   ) {}
 
   get type(): string {
@@ -84,5 +89,9 @@ export class RouteStep {
 
   get feeInUSD(): string {
     return this._feeInUSD;
+  }
+
+  get timeInSeconds(): number {
+    return this._timeInSeconds;
   }
 }

@@ -22,6 +22,7 @@ import { RouteFees } from '../../../shared/domain/route/route-fees';
 import { PriceFeed } from '../../../shared/domain/price-feed';
 import { IPriceFeedFetcher } from '../../../shared/domain/price-feed-fetcher';
 import { IGasPriceFetcher } from '../../../shared/domain/gas-price-fetcher';
+import { RouteSteps } from '../../../shared/domain/route/route-steps';
 
 export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAggregator {
   private enabledChains = [];
@@ -78,6 +79,11 @@ export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAg
     const route = response.routes[0];
     const action = route.actions[0];
 
+    const gasPrice = await this.gasPriceFetcher.fetch(request.fromChain);
+    const nativePrice = await this.priceFeedFetcher.fetch(request.fromChain);
+    const fees = this.buildFees(action, gasPrice, nativePrice);
+    const steps = this.buildSteps(route.actions);
+
     const resume = new RouteResume(
       request.fromChain,
       request.toChain,
@@ -86,12 +92,8 @@ export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAg
       request.amountIn,
       BigInteger.fromString(route.toTokenAmount.toString()),
       BigInteger.fromString(route.toTokenAmount.toString()),
+      steps.totalExecutionTime(),
     );
-
-    const gasPrice = await this.gasPriceFetcher.fetch(request.fromChain);
-    const nativePrice = await this.priceFeedFetcher.fetch(request.fromChain);
-    const fees = this.buildFees(action, gasPrice, nativePrice);
-    const steps = this.buildSteps(route.actions);
 
     const aggregatorDetails = new AggregatorDetails(
       AggregatorProviders.Via,
@@ -232,14 +234,14 @@ export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAg
    * @param actions
    * @private
    */
-  private buildSteps(actions: IRouteAction[]): RouteStep[] {
+  private buildSteps(actions: IRouteAction[]): RouteSteps {
     const items: RouteStep[] = [];
     for (const action of actions) {
       for (const step of action.steps) {
         items.push(this.buildStep(step));
       }
     }
-    return items;
+    return new RouteSteps(items);
   }
 
   /**
@@ -275,7 +277,16 @@ export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAg
         break;
     }
 
-    return new RouteStep(type, details, fromToken, toToken, amountIn, amountOut, '');
+    return new RouteStep(
+      type,
+      details,
+      fromToken,
+      toToken,
+      amountIn,
+      amountOut,
+      '',
+      step.tool.estimatedTime,
+    );
   }
 
   /**

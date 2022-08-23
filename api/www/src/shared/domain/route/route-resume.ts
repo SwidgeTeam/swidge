@@ -10,6 +10,7 @@ export class RouteResume {
     private readonly _amountIn: BigInteger,
     private readonly _amountOut: BigInteger,
     private readonly _minAmountOut: BigInteger,
+    private readonly _estimatedTime: number,
   ) {}
 
   get fromChain(): string {
@@ -38,5 +39,9 @@ export class RouteResume {
 
   get minAmountOut(): BigInteger {
     return this._minAmountOut;
+  }
+
+  get estimatedTime(): number {
+    return this._estimatedTime;
   }
 }

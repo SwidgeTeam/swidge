@@ -14,6 +14,7 @@ export class BridgingOrder {
       '0x',
       null,
       null,
+      0,
       false,
     );
   }
@@ -27,6 +28,7 @@ export class BridgingOrder {
     private readonly _data: string,
     private readonly _fees: BridgingFees,
     private readonly _limits: BridgingLimits,
+    private readonly _executionTime: number,
     private readonly _required = true,
   ) {}
 
@@ -56,6 +58,10 @@ export class BridgingOrder {
 
   get amountIn(): BigInteger {
     return this._expectedAmountIn;
+  }
+
+  get executionTime(): number {
+    return this._executionTime;
   }
 
   get expectedAmountOut(): BigInteger {

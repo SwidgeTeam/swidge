@@ -14,6 +14,7 @@ import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
 import { ApprovalTransactionDetails } from '../../../shared/domain/route/approval-transaction-details';
 import { RouterCallEncoder } from '../../../shared/domain/router-call-encoder';
 import { RouteFees } from '../../../shared/domain/route/route-fees';
+import { RouteSteps } from '../../../shared/domain/route/route-steps';
 
 // whole Route details
 interface SocketRoute {
@@ -48,6 +49,7 @@ interface SocketUserTxStep {
     gasLimit: number;
     feesInUsd: number;
   };
+  serviceTime: number;
 }
 
 // details of a token
@@ -116,6 +118,9 @@ export class Socket implements Aggregator {
 
     const route = response.result.routes[0];
     const amountOut = BigInteger.fromString(route.toAmount);
+
+    const steps = this.buildSteps(route.userTxs[0].steps);
+
     const resume = new RouteResume(
       request.fromChain,
       request.toChain,
@@ -124,6 +129,7 @@ export class Socket implements Aggregator {
       request.amountIn,
       amountOut,
       amountOut,
+      steps.totalExecutionTime(),
     );
     const responseTxDetails = await this.getTxDetails(route);
 
@@ -152,7 +158,6 @@ export class Socket implements Aggregator {
       gasLimit,
     );
 
-    const steps = this.buildSteps(route.userTxs[0].steps);
     const aggregatorDetails = new AggregatorDetails(AggregatorProviders.Socket);
 
     return new Route(aggregatorDetails, resume, steps, fees, approvalTxDetails, txDetails);
@@ -193,12 +198,12 @@ export class Socket implements Aggregator {
    * @param steps
    * @private
    */
-  private buildSteps(steps: SocketUserTxStep[]): RouteStep[] {
+  private buildSteps(steps: SocketUserTxStep[]): RouteSteps {
     const items: RouteStep[] = [];
     for (const step of steps) {
       items.push(this.buildStep(step));
     }
-    return items;
+    return new RouteSteps(items);
   }
 
   /**
@@ -226,9 +231,17 @@ export class Socket implements Aggregator {
 
     switch (step.type) {
       case 'middleware':
-        return RouteStep.swap(details, fromToken, toToken, amountIn, amountOut, feeInUSD);
+        return RouteStep.swap(details, fromToken, toToken, amountIn, amountOut, feeInUSD, 0);
       case 'bridge':
-        return RouteStep.bridge(details, fromToken, toToken, amountIn, amountOut, feeInUSD);
+        return RouteStep.bridge(
+          details,
+          fromToken,
+          toToken,
+          amountIn,
+          amountOut,
+          feeInUSD,
+          step.serviceTime,
+        );
     }
   }
 }

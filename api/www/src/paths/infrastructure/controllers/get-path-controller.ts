@@ -64,6 +64,7 @@ export class GetPathController {
         amountIn: route.resume.amountIn.toDecimal(route.resume.fromToken.decimals),
         amountOut: route.resume.amountOut.toDecimal(route.resume.toToken.decimals),
         minAmountOut: route.resume.minAmountOut.toDecimal(route.resume.toToken.decimals),
+        executionTime: route.resume.estimatedTime,
       },
       fees: {
         amount: route.fees.nativeWei.toString(),
@@ -79,6 +80,7 @@ export class GetPathController {
           amountIn: step.amountIn.toDecimal(step.tokenIn.decimals),
           amountOut: step.amountOut.toDecimal(step.tokenOut.decimals),
           fee: step.feeInUSD,
+          executionTime: step.timeInSeconds,
         };
       }),
       approvalTx,
