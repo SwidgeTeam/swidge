@@ -50,7 +50,7 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
     ]);
 
     const aggregators = new Aggregators([
-      [AggregatorProviders.LiFi, new LiFi()],
+      [AggregatorProviders.LiFi, LiFi.create()],
       [AggregatorProviders.Socket, new Socket(httpClient, configService.getSocketApiKey())],
       [
         AggregatorProviders.Via,

@@ -26,8 +26,12 @@ export class LiFi implements Aggregator, ExternalAggregator {
   private client: LIFI;
   private routerCallEncoder: RouterCallEncoder;
 
-  constructor() {
-    this.client = new LIFI();
+  public static create() {
+    return new LiFi(new LIFI());
+  }
+
+  constructor(client: LIFI) {
+    this.client = client;
     this.routerCallEncoder = new RouterCallEncoder();
   }
 
@@ -40,8 +44,9 @@ export class LiFi implements Aggregator, ExternalAggregator {
    * @param request
    */
   async execute(request: AggregatorRequest): Promise<Route> {
+    let response;
     try {
-      const response = await this.client.getQuote({
+      response = await this.client.getQuote({
         fromChain: request.fromChain,
         fromToken: request.fromToken.address,
         toChain: request.toChain,
@@ -50,51 +55,55 @@ export class LiFi implements Aggregator, ExternalAggregator {
         fromAddress: request.senderAddress,
         slippage: request.slippage / 100,
       });
-
-      const approvalTransaction = request.fromToken.isNative()
-        ? null
-        : new ApprovalTransactionDetails(
-            request.fromToken.address,
-            this.routerCallEncoder.encodeApproval(
-              response.estimate.approvalAddress,
-              request.amountIn,
-            ),
-          );
-
-      const transactionDetails = new TransactionDetails(
-        response.transactionRequest.to,
-        response.transactionRequest.data.toString(),
-        BigInteger.fromString(response.transactionRequest.value.toString()),
-        BigInteger.fromString(response.transactionRequest.gasLimit.toString()),
-      );
-
-      const steps = this.createSteps(response);
-      const fees = this.buildFees(response.estimate);
-
-      const resume = new RouteResume(
-        request.fromChain,
-        request.toChain,
-        request.fromToken,
-        request.toToken,
-        request.amountIn,
-        BigInteger.fromString(response.estimate.toAmount),
-        BigInteger.fromString(response.estimate.toAmountMin),
-        steps.totalExecutionTime(),
-      );
-
-      const aggregatorDetails = new AggregatorDetails(AggregatorProviders.LiFi);
-
-      return new Route(
-        aggregatorDetails,
-        resume,
-        steps,
-        fees,
-        approvalTransaction,
-        transactionDetails,
-      );
     } catch (e) {
       throw new InsufficientLiquidity();
     }
+
+    if (!response.estimate || !response.action) {
+      throw new InsufficientLiquidity();
+    }
+
+    const approvalTransaction = request.fromToken.isNative()
+      ? null
+      : new ApprovalTransactionDetails(
+          request.fromToken.address,
+          this.routerCallEncoder.encodeApproval(
+            response.estimate.approvalAddress,
+            request.amountIn,
+          ),
+        );
+
+    const transactionDetails = new TransactionDetails(
+      response.transactionRequest.to,
+      response.transactionRequest.data.toString(),
+      BigInteger.fromString(response.transactionRequest.value.toString()),
+      BigInteger.fromString(response.transactionRequest.gasLimit.toString()),
+    );
+
+    const steps = this.createSteps(response);
+    const fees = this.buildFees(response.estimate);
+
+    const resume = new RouteResume(
+      request.fromChain,
+      request.toChain,
+      request.fromToken,
+      request.toToken,
+      request.amountIn,
+      BigInteger.fromString(response.estimate.toAmount),
+      BigInteger.fromString(response.estimate.toAmountMin),
+      steps.totalExecutionTime(),
+    );
+
+    const aggregatorDetails = new AggregatorDetails(AggregatorProviders.LiFi);
+
+    return new Route(
+      aggregatorDetails,
+      resume,
+      steps,
+      fees,
+      approvalTransaction,
+      transactionDetails,
+    );
   }
 
   /**

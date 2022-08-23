@@ -24,7 +24,7 @@ export class CheckTxStatusHandler implements IQueryHandler<CheckTxStatusQuery> {
     @Inject(Class.Logger) private readonly logger: Logger,
   ) {
     this.aggregators = new Map<string, ExternalAggregator>([
-      [AggregatorProviders.LiFi, new LiFi()],
+      [AggregatorProviders.LiFi, LiFi.create()],
       [
         AggregatorProviders.Via,
         ViaExchange.create(configService.getViaApiKey(), gasPriceFetcher, priceFeedFetcher),

@@ -21,7 +21,7 @@ export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
     @Inject(Class.GasPriceFetcher) private readonly gasPriceFetcher: CachedGasPriceFetcher,
   ) {
     this.aggregators = new Map<string, ExternalAggregator>([
-      [AggregatorProviders.LiFi, new LiFi()],
+      [AggregatorProviders.LiFi, LiFi.create()],
       [
         AggregatorProviders.Via,
         ViaExchange.create(configService.getViaApiKey(), gasPriceFetcher, priceFeedFetcher),
