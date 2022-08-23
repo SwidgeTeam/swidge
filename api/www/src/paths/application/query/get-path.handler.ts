@@ -25,6 +25,7 @@ import { Socket } from '../../../aggregators/domain/providers/socket';
 import { Rango } from '../../../aggregators/domain/providers/rango';
 import { CachedGasPriceFetcher } from '../../../shared/domain/cached-gas-price-fetcher';
 import { CachedPriceFeedFetcher } from '../../../shared/domain/cached-price-feed-fetcher';
+import { SushiPoolsTheGraph } from '../../../swaps/infrastructure/theGraph/sushi-pools-the-graph';
 
 @QueryHandler(GetPathQuery)
 export class GetPathHandler implements IQueryHandler<GetPathQuery> {
@@ -38,6 +39,7 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
     @Inject(Class.PriceFeedFetcher) private readonly priceFeedFetcher: CachedPriceFeedFetcher,
     @Inject(Class.GasPriceFetcher) private readonly gasPriceFetcher: CachedGasPriceFetcher,
     @Inject(Class.SushiPairsRepository) private readonly sushiPairsRepository: SushiPairsRepository,
+    @Inject(Class.SushiPairsTheGraph) private readonly theGraph: SushiPoolsTheGraph,
     @Inject(Class.Logger) private readonly logger: Logger,
   ) {
     const bridges = new Bridges([
@@ -46,7 +48,7 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
 
     const exchanges = new Exchanges([
       [ExchangeProviders.ZeroEx, new ZeroEx(httpClient)],
-      [ExchangeProviders.Sushi, new Sushiswap(httpClient, sushiPairsRepository)],
+      [ExchangeProviders.Sushi, new Sushiswap(theGraph, sushiPairsRepository)],
     ]);
 
     const aggregators = new Aggregators([

@@ -13,6 +13,7 @@ import { LastSwapComputer } from '../../domain/last-swap-computer';
 import { BigInteger } from '../../../shared/domain/big-integer';
 import { LastSwapComputeRequest } from '../../domain/last-swap-compute-request';
 import { SwapOrder } from '../../domain/swap-order';
+import { SushiPoolsTheGraph } from '../../infrastructure/theGraph/sushi-pools-the-graph';
 
 @QueryHandler(GetQuoteSwapQuery)
 export class GetQuoteSwapHandler implements IQueryHandler<GetQuoteSwapQuery> {
@@ -22,10 +23,11 @@ export class GetQuoteSwapHandler implements IQueryHandler<GetQuoteSwapQuery> {
     @Inject(Class.HttpClient) private readonly httpClient: HttpClient,
     @Inject(Class.TokenDetailsFetcher) private readonly tokenDetailsFetcher: TokenDetailsFetcher,
     @Inject(Class.SushiPairsRepository) private readonly sushiPairsRepository: SushiPairsRepository,
+    @Inject(Class.SushiPairsTheGraph) private readonly theGraph: SushiPoolsTheGraph,
   ) {
     const exchanges = new Exchanges([
       [ExchangeProviders.ZeroEx, new ZeroEx(httpClient)],
-      [ExchangeProviders.Sushi, new Sushiswap(httpClient, sushiPairsRepository)],
+      [ExchangeProviders.Sushi, new Sushiswap(theGraph, sushiPairsRepository)],
     ]);
     this.swapComputer = new LastSwapComputer(exchanges);
   }

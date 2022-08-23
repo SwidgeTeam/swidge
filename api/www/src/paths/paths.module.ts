@@ -13,6 +13,7 @@ import gasPriceFetcherProvider from '../shared/infrastructure/gas-price-fetcher.
 import consoleLoggerProvider from '../shared/infrastructure/console-logger-provider';
 import { ConfigModule } from '../config/config.module';
 import { ConfigService } from '../config/config.service';
+import sushiPoolsTheGraphProvider from '../swaps/infrastructure/theGraph/sushi-pools-the-graph.provider';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { ConfigService } from '../config/config.service';
     priceFeedFetcherProvider(),
     gasPriceFetcherProvider(),
     sushiPairsRepositoryProvider(),
+    sushiPoolsTheGraphProvider(),
     consoleLoggerProvider(),
   ],
 })

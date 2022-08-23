@@ -9,6 +9,7 @@ import { Sushiswap } from '../../../src/swaps/domain/providers/sushiswap';
 import { SushiPairsRepository } from '../../../src/swaps/domain/sushi-pairs-repository';
 import { TokenDetailsFetcher } from '../../../src/shared/infrastructure/TokenDetailsFetcher';
 import { IHttpClient } from '../../../src/shared/domain/http/IHttpClient';
+import { SushiPoolsTheGraph } from '../../../src/swaps/infrastructure/theGraph/sushi-pools-the-graph';
 
 export function getPriceFeedFetcher(responses: { chain: string; result: string }[]) {
   const priceFeedFetcher = new PriceFeedFetcher();
@@ -25,11 +26,15 @@ export function getZeroEx(): ZeroEx {
 }
 
 export function getSushi(): Sushiswap {
-  return new Sushiswap(httpClientMock(), sushiRepositoryMock());
+  return new Sushiswap(sushiTheGraphMock(), sushiRepositoryMock());
 }
 
 export function httpClientMock(args = {}) {
   return createMock<IHttpClient>(args);
+}
+
+export function sushiTheGraphMock() {
+  return new SushiPoolsTheGraph(httpClientMock());
 }
 
 export function sushiRepositoryMock(args = {}) {

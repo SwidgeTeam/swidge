@@ -7,19 +7,22 @@ import { SushiPairs } from '../../../../../src/swaps/domain/sushi-pairs';
 import { SushiPairMother } from '../sushi-pair.mother';
 import { BigIntegerMother } from '../../../shared/domain/big-integer.mother';
 import { BigInteger } from '../../../../../src/shared/domain/big-integer';
+import { SushiPoolsTheGraph } from '../../../../../src/swaps/infrastructure/theGraph/sushi-pools-the-graph';
 
 describe('sushiswap', () => {
   it('should throw exception if no possible trade', () => {
     // Arrange
     const sushi = new Sushiswap(
-      httpClientMock({
-        post: () =>
-          Promise.resolve({
-            data: {
-              pairs: [],
-            },
-          }),
-      }),
+      new SushiPoolsTheGraph(
+        httpClientMock({
+          post: () =>
+            Promise.resolve({
+              data: {
+                pairs: [],
+              },
+            }),
+        }),
+      ),
       sushiRepositoryMock({
         getPairs: () => Promise.resolve(new SushiPairs([SushiPairMother.linkUsdc()])),
       }),
@@ -43,7 +46,7 @@ describe('sushiswap', () => {
   it('should return a correctly constructed order', async () => {
     // Arrange
     const sushiswap = new Sushiswap(
-      httpClientMock(),
+      new SushiPoolsTheGraph(httpClientMock()),
       sushiRepositoryMock({
         getPairs: () =>
           Promise.resolve(
