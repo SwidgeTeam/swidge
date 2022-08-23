@@ -3,7 +3,7 @@ import { CommandBus } from '@nestjs/cqrs';
 import { AddSushiPoolsCommand } from '../../application/command/add-sushi-pools-command';
 
 @Controller()
-export class UpdateSushiPairsController {
+export class AddSushiPoolsController {
   constructor(private readonly commandBus: CommandBus) {}
 
   @Get('/add/sushi-pools')

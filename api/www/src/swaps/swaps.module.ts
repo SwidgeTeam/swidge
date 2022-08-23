@@ -9,13 +9,20 @@ import sushiPairsRepositoryProvider from './infrastructure/database/repositories
 import { UpdateSushiPairsController } from './infrastructure/controllers/update-sushi-pairs.controller';
 import { UpdateSushiPairsHandler } from './application/command/update-sushi-pairs.handler';
 import sushiPoolsTheGraphProvider from './infrastructure/theGraph/sushi-pools-the-graph.provider';
+import { AddSushiPoolsHandler } from './application/command/add-sushi-pools-handler';
+import { AddSushiPoolsController } from './infrastructure/controllers/add-sushi-pools-controller';
 
 @Module({
   imports: [CqrsModule],
-  controllers: [GetSwapQuoteController, UpdateSushiPairsController],
+  controllers: [
+    GetSwapQuoteController,
+    UpdateSushiPairsController,
+    AddSushiPoolsController
+  ],
   providers: [
     GetQuoteSwapHandler,
     UpdateSushiPairsHandler,
+    AddSushiPoolsHandler,
     httpClientProvider(),
     cachedHttpClientProvider(),
     tokenDetailsFetcherProvider(),
