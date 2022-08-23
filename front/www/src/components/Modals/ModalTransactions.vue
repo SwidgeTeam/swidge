@@ -52,16 +52,24 @@ const loadData = async () => {
 }
 
 /**
+ * Format digits inside date
+ * @param num
+ */
+function padTo2Digits(num: number) {
+  return num.toString().padStart(2, '0');
+}
+
+/**
  * Format date
  * @param timestamp
  */
 const transformDate = (timestamp: string) => {
     const date = new Date(timestamp)
     const year = date.getFullYear()
-    const month = date.getMonth()
-    const day = date.getDay()
-    const hours = date.getHours()
-    const minutes = date.getMinutes()
+    const month = padTo2Digits(date.getMonth())
+    const day = padTo2Digits(date.getDay())
+    const hours = padTo2Digits(date.getHours())
+    const minutes = padTo2Digits(date.getMinutes())
     return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes
 }
 
