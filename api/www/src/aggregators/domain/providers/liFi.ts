@@ -1,4 +1,4 @@
-import { Aggregator } from '../aggregator';
+import { Aggregator, ExternalAggregator } from '../aggregator';
 import { AggregatorRequest } from '../aggregator-request';
 import LIFI, { Estimate, GasCost, Step } from '@lifi/sdk';
 import { BigInteger } from '../../../shared/domain/big-integer';
@@ -15,14 +15,23 @@ import { ApprovalTransactionDetails } from '../../../shared/domain/route/approva
 import { RouterCallEncoder } from '../../../shared/domain/router-call-encoder';
 import { RouteFees } from '../../../shared/domain/route/route-fees';
 import { RouteSteps } from '../../../shared/domain/route/route-steps';
+import {
+  ExternalTransactionStatus,
+  StatusCheckRequest,
+  StatusCheckResponse,
+} from '../status-check';
 
-export class LiFi implements Aggregator {
+export class LiFi implements Aggregator, ExternalAggregator {
   private enabledChains = [];
   private client: LIFI;
   private routerCallEncoder: RouterCallEncoder;
 
-  constructor() {
-    this.client = new LIFI();
+  public static create() {
+    return new LiFi(new LIFI());
+  }
+
+  constructor(client: LIFI) {
+    this.client = client;
     this.routerCallEncoder = new RouterCallEncoder();
   }
 
@@ -35,8 +44,9 @@ export class LiFi implements Aggregator {
    * @param request
    */
   async execute(request: AggregatorRequest): Promise<Route> {
+    let response;
     try {
-      const response = await this.client.getQuote({
+      response = await this.client.getQuote({
         fromChain: request.fromChain,
         fromToken: request.fromToken.address,
         toChain: request.toChain,
@@ -45,51 +55,107 @@ export class LiFi implements Aggregator {
         fromAddress: request.senderAddress,
         slippage: request.slippage / 100,
       });
-
-      const approvalTransaction = request.fromToken.isNative()
-        ? null
-        : new ApprovalTransactionDetails(
-            request.fromToken.address,
-            this.routerCallEncoder.encodeApproval(
-              response.estimate.approvalAddress,
-              request.amountIn,
-            ),
-          );
-
-      const transactionDetails = new TransactionDetails(
-        response.transactionRequest.to,
-        response.transactionRequest.data.toString(),
-        BigInteger.fromString(response.transactionRequest.value.toString()),
-        BigInteger.fromString(response.transactionRequest.gasLimit.toString()),
-      );
-
-      const steps = this.createSteps(response);
-      const fees = this.buildFees(response.estimate);
-
-      const resume = new RouteResume(
-        request.fromChain,
-        request.toChain,
-        request.fromToken,
-        request.toToken,
-        request.amountIn,
-        BigInteger.fromString(response.estimate.toAmount),
-        BigInteger.fromString(response.estimate.toAmountMin),
-        steps.totalExecutionTime(),
-      );
-
-      const aggregatorDetails = new AggregatorDetails(AggregatorProviders.LiFi);
-
-      return new Route(
-        aggregatorDetails,
-        resume,
-        steps,
-        fees,
-        approvalTransaction,
-        transactionDetails,
-      );
     } catch (e) {
       throw new InsufficientLiquidity();
     }
+
+    if (!response.estimate || !response.action) {
+      throw new InsufficientLiquidity();
+    }
+
+    const approvalTransaction = request.fromToken.isNative()
+      ? null
+      : new ApprovalTransactionDetails(
+          request.fromToken.address,
+          this.routerCallEncoder.encodeApproval(
+            response.estimate.approvalAddress,
+            request.amountIn,
+          ),
+        );
+
+    const transactionDetails = new TransactionDetails(
+      response.transactionRequest.to,
+      response.transactionRequest.data.toString(),
+      BigInteger.fromString(response.transactionRequest.value.toString()),
+      BigInteger.fromString(response.transactionRequest.gasLimit.toString()),
+    );
+
+    const steps = this.createSteps(response);
+    const fees = this.buildFees(response.estimate);
+
+    const resume = new RouteResume(
+      request.fromChain,
+      request.toChain,
+      request.fromToken,
+      request.toToken,
+      request.amountIn,
+      BigInteger.fromString(response.estimate.toAmount),
+      BigInteger.fromString(response.estimate.toAmountMin),
+      steps.totalExecutionTime(),
+    );
+
+    const aggregatorDetails = new AggregatorDetails(AggregatorProviders.LiFi);
+
+    return new Route(
+      aggregatorDetails,
+      resume,
+      steps,
+      fees,
+      approvalTransaction,
+      transactionDetails,
+    );
+  }
+
+  /**
+   * @param txHash
+   * @param trackingId
+   * @param fromAddress
+   * @param toAddress
+   */
+  executedTransaction(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    txHash: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    trackingId: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    fromAddress: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    toAddress: string,
+  ): Promise<void> {
+    // pass
+    // this provider doesn't need to be informed on executed transaction
+    return;
+  }
+
+  /**
+   *
+   * @param request
+   */
+  async checkStatus(request: StatusCheckRequest): Promise<StatusCheckResponse> {
+    const response = await this.client.getStatus({
+      txHash: request.txHash,
+      fromChain: request.fromChain,
+      toChain: request.toChain,
+      bridge: request.trackingId,
+    });
+    let status;
+    switch (response.status) {
+      case 'FAILED':
+        status = ExternalTransactionStatus.Failed;
+        break;
+      case 'DONE':
+        status = ExternalTransactionStatus.Success;
+        break;
+      case 'PENDING':
+      case 'NOT_FOUND':
+        status = ExternalTransactionStatus.Pending;
+        break;
+      case 'INVALID':
+        break;
+    }
+    return {
+      status: status,
+    };
   }
 
   /**

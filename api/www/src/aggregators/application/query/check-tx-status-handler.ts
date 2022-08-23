@@ -11,6 +11,7 @@ import { ExternalAggregator } from 'src/aggregators/domain/aggregator';
 import { Rango } from '../../domain/providers/rango';
 import { CachedPriceFeedFetcher } from '../../../shared/domain/cached-price-feed-fetcher';
 import { CachedGasPriceFetcher } from '../../../shared/domain/cached-gas-price-fetcher';
+import { LiFi } from '../../domain/providers/liFi';
 
 @QueryHandler(CheckTxStatusQuery)
 export class CheckTxStatusHandler implements IQueryHandler<CheckTxStatusQuery> {
@@ -23,6 +24,7 @@ export class CheckTxStatusHandler implements IQueryHandler<CheckTxStatusQuery> {
     @Inject(Class.Logger) private readonly logger: Logger,
   ) {
     this.aggregators = new Map<string, ExternalAggregator>([
+      [AggregatorProviders.LiFi, LiFi.create()],
       [
         AggregatorProviders.Via,
         ViaExchange.create(configService.getViaApiKey(), gasPriceFetcher, priceFeedFetcher),
