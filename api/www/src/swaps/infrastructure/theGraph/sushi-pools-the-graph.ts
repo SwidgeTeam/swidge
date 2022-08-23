@@ -123,4 +123,66 @@ export class SushiPoolsTheGraph {
 
     return new SushiPairs(items);
   }
+
+  /**
+   * Fetches a pair given a chainId and two tokens
+   * @param chainId
+   * @param token0
+   * @param token1
+   */
+  public async fetchPair(chainId: string, token0: string, token1: string) {
+    const result = await this.httpClient.post<{
+      data: {
+        pairs: GraphPair[];
+      };
+    }>(theGraphEndpoints[chainId], {
+      params: {
+        query: `
+        {
+          pairs(
+            where: {
+              token0: "${token0}"
+              token1: "${token1}"
+            }
+          ) {
+            name
+            token0 {
+              id
+              name
+              decimals
+              symbol
+            }
+            token1 {
+              id
+              name
+              decimals
+              symbol
+            }
+            reserve0
+            reserve1
+          }
+        }`,
+      },
+    });
+
+    const row = result.data.pairs[0];
+
+    const t0 = new Token(
+      row.token0.name,
+      ethers.utils.getAddress(row.token0.id),
+      Number(row.token0.decimals),
+      row.token0.symbol,
+    );
+    const t1 = new Token(
+      row.token1.name,
+      ethers.utils.getAddress(row.token1.id),
+      Number(row.token1.decimals),
+      row.token1.symbol,
+    );
+
+    const reserve0 = BigInteger.fromDecimal(row.reserve0, t0.decimals);
+    const reserve1 = BigInteger.fromDecimal(row.reserve1, t1.decimals);
+
+    return new SushiPair(randomUUID(), chainId, t0, t1, reserve0, reserve1);
+  }
 }
