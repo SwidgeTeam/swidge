@@ -1,4 +1,3 @@
-import { HttpClient } from '../../../shared/infrastructure/http/httpClient';
 import { SushiPair } from '../../domain/sushi-pair';
 import { BigInteger } from '../../../shared/domain/big-integer';
 import { BSC, Fantom, Mainnet, Polygon } from '../../../shared/enums/ChainIds';
