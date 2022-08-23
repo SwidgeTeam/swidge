@@ -365,6 +365,7 @@ export class PathComputer {
           originSwap.amountIn,
           originSwap.expectedAmountOut,
           fee,
+          10,
         ),
       );
       minAmountOut = originSwap.worstCaseAmountOut;
@@ -380,6 +381,7 @@ export class PathComputer {
           bridge.amountIn,
           bridge.expectedAmountOut,
           bridge.decimalFee,
+          bridge.executionTime,
         ),
       );
 
@@ -402,6 +404,7 @@ export class PathComputer {
           destinationSwap.amountIn,
           destinationSwap.expectedAmountOut,
           fee,
+          30,
         ),
       );
 
@@ -443,6 +446,10 @@ export class PathComputer {
       BigInteger.fromString('2000000'), // TODO set more accurate
     );
 
+    const estimatedTime = steps.reduce((total: number, current: RouteStep) => {
+      return total + current.timeInSeconds;
+    }, 0);
+
     const resume = new RouteResume(
       this.fromChain,
       this.toChain,
@@ -451,6 +458,7 @@ export class PathComputer {
       this.amountIn,
       steps[steps.length - 1].amountOut,
       minAmountOut,
+      estimatedTime,
     );
 
     const totalFeeInUsd = steps.reduce((fee: number, current: RouteStep) => {
