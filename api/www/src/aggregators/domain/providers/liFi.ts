@@ -1,4 +1,4 @@
-import { Aggregator } from '../aggregator';
+import { Aggregator, ExternalAggregator } from '../aggregator';
 import { AggregatorRequest } from '../aggregator-request';
 import LIFI, { Estimate, GasCost, Step } from '@lifi/sdk';
 import { BigInteger } from '../../../shared/domain/big-integer';
@@ -15,8 +15,13 @@ import { ApprovalTransactionDetails } from '../../../shared/domain/route/approva
 import { RouterCallEncoder } from '../../../shared/domain/router-call-encoder';
 import { RouteFees } from '../../../shared/domain/route/route-fees';
 import { RouteSteps } from '../../../shared/domain/route/route-steps';
+import {
+  ExternalTransactionStatus,
+  StatusCheckRequest,
+  StatusCheckResponse,
+} from '../status-check';
 
-export class LiFi implements Aggregator {
+export class LiFi implements Aggregator, ExternalAggregator {
   private enabledChains = [];
   private client: LIFI;
   private routerCallEncoder: RouterCallEncoder;
@@ -90,6 +95,58 @@ export class LiFi implements Aggregator {
     } catch (e) {
       throw new InsufficientLiquidity();
     }
+  }
+
+  /**
+   * @param txHash
+   * @param trackingId
+   * @param fromAddress
+   * @param toAddress
+   */
+  executedTransaction(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    txHash: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    trackingId: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    fromAddress: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    toAddress: string,
+  ): Promise<void> {
+    // pass
+    // this provider doesn't need to be informed on executed transaction
+    return;
+  }
+
+  /**
+   *
+   * @param request
+   */
+  async checkStatus(request: StatusCheckRequest): Promise<StatusCheckResponse> {
+    const response = await this.client.getStatus({
+      txHash: request.txHash,
+      fromChain: request.fromChain,
+      toChain: request.toChain,
+      bridge: request.trackingId,
+    });
+    let status;
+    switch (response.status) {
+      case 'FAILED':
+        status = ExternalTransactionStatus.Failed;
+        break;
+      case 'DONE':
+        status = ExternalTransactionStatus.Success;
+        break;
+      case 'PENDING':
+      case 'NOT_FOUND':
+        status = ExternalTransactionStatus.Pending;
+        break;
+      case 'INVALID':
+        break;
+    }
+    return {
+      status: status,
+    };
   }
 
   /**

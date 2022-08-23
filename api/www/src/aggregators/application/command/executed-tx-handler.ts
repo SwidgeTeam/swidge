@@ -9,6 +9,7 @@ import { Inject } from '@nestjs/common';
 import { Class } from '../../../shared/Class';
 import { CachedPriceFeedFetcher } from '../../../shared/domain/cached-price-feed-fetcher';
 import { CachedGasPriceFetcher } from '../../../shared/domain/cached-gas-price-fetcher';
+import { LiFi } from '../../domain/providers/liFi';
 
 @CommandHandler(ExecutedTxCommand)
 export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
@@ -20,6 +21,7 @@ export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
     @Inject(Class.GasPriceFetcher) private readonly gasPriceFetcher: CachedGasPriceFetcher,
   ) {
     this.aggregators = new Map<string, ExternalAggregator>([
+      [AggregatorProviders.LiFi, new LiFi()],
       [
         AggregatorProviders.Via,
         ViaExchange.create(configService.getViaApiKey(), gasPriceFetcher, priceFeedFetcher),
