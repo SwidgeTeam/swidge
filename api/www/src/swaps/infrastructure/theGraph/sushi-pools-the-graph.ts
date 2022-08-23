@@ -2,7 +2,7 @@ import { SushiPair } from '../../domain/sushi-pair';
 import { BigInteger } from '../../../shared/domain/big-integer';
 import { BSC, Fantom, Mainnet, Polygon } from '../../../shared/enums/ChainIds';
 import { SushiPairs } from '../../domain/sushi-pairs';
-import { Token as OwnToken, Token } from '../../../shared/domain/token';
+import { Token as OwnToken } from '../../../shared/domain/token';
 import { ethers } from 'ethers';
 import { randomUUID } from 'crypto';
 import { IHttpClient } from '../../../shared/domain/http/IHttpClient';
@@ -121,23 +121,7 @@ export class SushiPoolsTheGraph {
     const items = [];
 
     for (const row of result.data.pairs) {
-      const t0 = new Token(
-        row.token0.name,
-        ethers.utils.getAddress(row.token0.id),
-        Number(row.token0.decimals),
-        row.token0.symbol,
-      );
-      const t1 = new Token(
-        row.token1.name,
-        ethers.utils.getAddress(row.token1.id),
-        Number(row.token1.decimals),
-        row.token1.symbol,
-      );
-
-      const reserve0 = BigInteger.fromDecimal(row.reserve0, t0.decimals);
-      const reserve1 = BigInteger.fromDecimal(row.reserve1, t1.decimals);
-
-      items.push(new SushiPair(randomUUID(), chainId, t0, t1, reserve0, reserve1));
+      items.push(this.buildPair(chainId, row));
     }
 
     return new SushiPairs(items);
@@ -186,23 +170,7 @@ export class SushiPoolsTheGraph {
 
     const row = result.data.pairs[0];
 
-    const t0 = new Token(
-      row.token0.name,
-      ethers.utils.getAddress(row.token0.id),
-      Number(row.token0.decimals),
-      row.token0.symbol,
-    );
-    const t1 = new Token(
-      row.token1.name,
-      ethers.utils.getAddress(row.token1.id),
-      Number(row.token1.decimals),
-      row.token1.symbol,
-    );
-
-    const reserve0 = BigInteger.fromDecimal(row.reserve0, t0.decimals);
-    const reserve1 = BigInteger.fromDecimal(row.reserve1, t1.decimals);
-
-    return new SushiPair(randomUUID(), chainId, t0, t1, reserve0, reserve1);
+    return this.buildPair(chainId, row);
   }
 
   /**
@@ -269,25 +237,29 @@ export class SushiPoolsTheGraph {
     const items = [];
 
     for (const row of result.data.pairs) {
-      const t0 = new OwnToken(
-        row.token0.name,
-        ethers.utils.getAddress(row.token0.id),
-        Number(row.token0.decimals),
-        row.token0.symbol,
-      );
-      const t1 = new OwnToken(
-        row.token1.name,
-        ethers.utils.getAddress(row.token1.id),
-        Number(row.token1.decimals),
-        row.token1.symbol,
-      );
-
-      const reserve0 = BigInteger.fromDecimal(row.reserve0, t0.decimals);
-      const reserve1 = BigInteger.fromDecimal(row.reserve1, t1.decimals);
-
-      items.push(new SushiPair(randomUUID(), chainId, t0, t1, reserve0, reserve1));
+      items.push(this.buildPair(chainId, row));
     }
 
     return new SushiPairs(items);
+  }
+
+  private buildPair(chainId: string, data: GraphPair): SushiPair {
+    const t0 = new OwnToken(
+      data.token0.name,
+      ethers.utils.getAddress(data.token0.id),
+      Number(data.token0.decimals),
+      data.token0.symbol,
+    );
+    const t1 = new OwnToken(
+      data.token1.name,
+      ethers.utils.getAddress(data.token1.id),
+      Number(data.token1.decimals),
+      data.token1.symbol,
+    );
+
+    const reserve0 = BigInteger.fromDecimal(data.reserve0, t0.decimals);
+    const reserve1 = BigInteger.fromDecimal(data.reserve1, t1.decimals);
+
+    return new SushiPair(randomUUID(), chainId, t0, t1, reserve0, reserve1);
   }
 }
