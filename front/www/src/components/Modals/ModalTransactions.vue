@@ -70,12 +70,6 @@ const transformDate = (timestamp: string) => {
     const day = padTo2Digits(date.getUTCDate())
     const hours = padTo2Digits(date.getUTCHours())
     const minutes = padTo2Digits(date.getUTCMinutes())
-    console.log(year)
-    console.log(month)
-    console.log(day)
-    console.log(hours)
-    console.log(minutes)
-    console.log("")
     return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes
 }
 
