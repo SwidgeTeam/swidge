@@ -4,12 +4,13 @@ import { RouteResume } from './route-resume';
 import { AggregatorDetails } from '../aggregator-details';
 import { ApprovalTransactionDetails } from './approval-transaction-details';
 import { RouteFees } from './route-fees';
+import { RouteSteps } from './route-steps';
 
 export class Route {
   constructor(
     private readonly _aggregator: AggregatorDetails,
     private readonly _resume: RouteResume,
-    private readonly _steps: RouteStep[],
+    private readonly _steps: RouteSteps,
     private readonly _fees: RouteFees,
     private readonly _approvalTransaction?: ApprovalTransactionDetails,
     private readonly _transactionDetails?: TransactionDetails,
@@ -28,7 +29,7 @@ export class Route {
   }
 
   get steps(): RouteStep[] {
-    return this._steps;
+    return this._steps.items<RouteStep[]>();
   }
 
   get fees(): RouteFees {

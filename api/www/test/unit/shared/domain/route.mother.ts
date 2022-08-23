@@ -10,12 +10,13 @@ import { AggregatorProviders } from '../../../../src/aggregators/domain/provider
 import { AggregatorDetails } from '../../../../src/shared/domain/aggregator-details';
 import { RouteFees } from '../../../../src/shared/domain/route/route-fees';
 import { BigInteger } from '../../../../src/shared/domain/big-integer';
+import { RouteSteps } from '../../../../src/shared/domain/route/route-steps';
 
 export class RouteMother {
   public static create(
     resume: RouteResume,
     txDetails: TransactionDetails,
-    steps: RouteStep[],
+    steps: RouteSteps,
   ): Route {
     const aggregatorDetails = new AggregatorDetails(AggregatorProviders.Swidge);
     const fees = new RouteFees(BigInteger.zero(), '');
@@ -33,6 +34,7 @@ export class RouteMother {
       BigIntegerMother.random(),
       BigIntegerMother.random(),
       BigIntegerMother.random(),
+      0,
     );
     const txDetails = new TransactionDetails(
       faker.finance.ethereumAddress(),
@@ -49,10 +51,11 @@ export class RouteMother {
         BigIntegerMother.random(),
         BigIntegerMother.random(),
         '0.' + faker.random.numeric(3),
+        0,
       ),
     ];
 
-    return this.create(resume, txDetails, steps);
+    return this.create(resume, txDetails, new RouteSteps(steps));
   }
 
   public static randomCrossChain(): Route {
@@ -66,6 +69,7 @@ export class RouteMother {
       BigIntegerMother.random(),
       BigIntegerMother.random(),
       BigIntegerMother.random(),
+      0,
     );
     const txDetails = new TransactionDetails(
       faker.finance.ethereumAddress(),
@@ -82,6 +86,7 @@ export class RouteMother {
         BigIntegerMother.random(),
         BigIntegerMother.random(),
         '0.' + faker.random.numeric(3),
+        0,
       ),
       new RouteStep(
         'bridge',
@@ -91,6 +96,7 @@ export class RouteMother {
         BigIntegerMother.random(),
         BigIntegerMother.random(),
         '0.' + faker.random.numeric(3),
+        0,
       ),
       new RouteStep(
         'swap',
@@ -100,9 +106,10 @@ export class RouteMother {
         BigIntegerMother.random(),
         BigIntegerMother.random(),
         '0.' + faker.random.numeric(3),
+        0,
       ),
     ];
 
-    return this.create(resume, txDetails, steps);
+    return this.create(resume, txDetails, new RouteSteps(steps));
   }
 }

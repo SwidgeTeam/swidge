@@ -14,6 +14,7 @@ import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
 import { ApprovalTransactionDetails } from '../../../shared/domain/route/approval-transaction-details';
 import { RouterCallEncoder } from '../../../shared/domain/router-call-encoder';
 import { RouteFees } from '../../../shared/domain/route/route-fees';
+import { RouteSteps } from '../../../shared/domain/route/route-steps';
 
 export class LiFi implements Aggregator {
   private enabledChains = [];
@@ -65,10 +66,6 @@ export class LiFi implements Aggregator {
       const steps = this.createSteps(response);
       const fees = this.buildFees(response.estimate);
 
-      const estimatedTime = steps.reduce((total: number, current: RouteStep) => {
-        return total + current.timeInSeconds;
-      }, 0);
-
       const resume = new RouteResume(
         request.fromChain,
         request.toChain,
@@ -77,7 +74,7 @@ export class LiFi implements Aggregator {
         request.amountIn,
         BigInteger.fromString(response.estimate.toAmount),
         BigInteger.fromString(response.estimate.toAmountMin),
-        estimatedTime,
+        steps.totalExecutionTime(),
       );
 
       const aggregatorDetails = new AggregatorDetails(AggregatorProviders.LiFi);
@@ -117,7 +114,7 @@ export class LiFi implements Aggregator {
    * @param step
    * @private
    */
-  private createSteps(step: Step): RouteStep[] {
+  private createSteps(step: Step): RouteSteps {
     let steps = [];
 
     switch (step.type) {
@@ -132,7 +129,7 @@ export class LiFi implements Aggregator {
         break;
     }
 
-    return steps;
+    return new RouteSteps(steps);
   }
 
   /**

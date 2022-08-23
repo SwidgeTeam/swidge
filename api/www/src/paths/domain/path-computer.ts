@@ -32,6 +32,7 @@ import { ApprovalTransactionDetails } from '../../shared/domain/route/approval-t
 import { RouteFees } from '../../shared/domain/route/route-fees';
 import { IGasPriceFetcher } from '../../shared/domain/gas-price-fetcher';
 import { IPriceFeedFetcher } from '../../shared/domain/price-feed-fetcher';
+import { RouteSteps } from '../../shared/domain/route/route-steps';
 
 export class PathComputer {
   /** Providers */
@@ -348,7 +349,7 @@ export class PathComputer {
     let minAmountOut: BigInteger;
 
     // create the required steps of the route
-    const steps: RouteStep[] = [];
+    const stepItems: RouteStep[] = [];
     if (originSwap.required) {
       const fee = this.computeUSDFee(
         originSwap.estimatedGas,
@@ -357,7 +358,7 @@ export class PathComputer {
       );
 
       const details = ExchangeDetails.get(originSwap.providerCode);
-      steps.push(
+      stepItems.push(
         RouteStep.swap(
           details,
           originSwap.tokenIn,
@@ -373,7 +374,7 @@ export class PathComputer {
 
     if (bridge.required) {
       const details = BridgeDetails.get(BridgeProviders.Multichain);
-      steps.push(
+      stepItems.push(
         RouteStep.bridge(
           details,
           bridge.tokenIn,
@@ -396,7 +397,7 @@ export class PathComputer {
       );
 
       const details = ExchangeDetails.get(destinationSwap.providerCode);
-      steps.push(
+      stepItems.push(
         RouteStep.swap(
           details,
           destinationSwap.tokenIn,
@@ -410,6 +411,8 @@ export class PathComputer {
 
       minAmountOut = destinationSwap.worstCaseAmountOut;
     }
+
+    const steps = new RouteSteps(stepItems);
 
     // create transaction details
 
@@ -446,26 +449,18 @@ export class PathComputer {
       BigInteger.fromString('2000000'), // TODO set more accurate
     );
 
-    const estimatedTime = steps.reduce((total: number, current: RouteStep) => {
-      return total + current.timeInSeconds;
-    }, 0);
-
     const resume = new RouteResume(
       this.fromChain,
       this.toChain,
       this.srcToken,
       this.dstToken,
       this.amountIn,
-      steps[steps.length - 1].amountOut,
+      steps.lastAmountOut(),
       minAmountOut,
-      estimatedTime,
+      steps.totalExecutionTime(),
     );
 
-    const totalFeeInUsd = steps.reduce((fee: number, current: RouteStep) => {
-      return fee + Number(current.feeInUSD);
-    }, 0);
-
-    const fees = new RouteFees(BigInteger.zero(), totalFeeInUsd.toString());
+    const fees = new RouteFees(BigInteger.zero(), steps.totalFeesInUsd().toString());
 
     const aggregatorDetails = new AggregatorDetails(AggregatorProviders.Swidge);
 

@@ -14,6 +14,7 @@ import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
 import { ApprovalTransactionDetails } from '../../../shared/domain/route/approval-transaction-details';
 import { RouterCallEncoder } from '../../../shared/domain/router-call-encoder';
 import { RouteFees } from '../../../shared/domain/route/route-fees';
+import { RouteSteps } from '../../../shared/domain/route/route-steps';
 
 // whole Route details
 interface SocketRoute {
@@ -119,9 +120,6 @@ export class Socket implements Aggregator {
     const amountOut = BigInteger.fromString(route.toAmount);
 
     const steps = this.buildSteps(route.userTxs[0].steps);
-    const estimatedTime = steps.reduce((total: number, current: RouteStep) => {
-      return total + current.timeInSeconds;
-    }, 0);
 
     const resume = new RouteResume(
       request.fromChain,
@@ -131,7 +129,7 @@ export class Socket implements Aggregator {
       request.amountIn,
       amountOut,
       amountOut,
-      estimatedTime,
+      steps.totalExecutionTime(),
     );
     const responseTxDetails = await this.getTxDetails(route);
 
@@ -200,12 +198,12 @@ export class Socket implements Aggregator {
    * @param steps
    * @private
    */
-  private buildSteps(steps: SocketUserTxStep[]): RouteStep[] {
+  private buildSteps(steps: SocketUserTxStep[]): RouteSteps {
     const items: RouteStep[] = [];
     for (const step of steps) {
       items.push(this.buildStep(step));
     }
-    return items;
+    return new RouteSteps(items);
   }
 
   /**

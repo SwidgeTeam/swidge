@@ -22,6 +22,7 @@ import { RouteFees } from '../../../shared/domain/route/route-fees';
 import { PriceFeed } from '../../../shared/domain/price-feed';
 import { IPriceFeedFetcher } from '../../../shared/domain/price-feed-fetcher';
 import { IGasPriceFetcher } from '../../../shared/domain/gas-price-fetcher';
+import { RouteSteps } from '../../../shared/domain/route/route-steps';
 
 export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAggregator {
   private enabledChains = [];
@@ -83,10 +84,6 @@ export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAg
     const fees = this.buildFees(action, gasPrice, nativePrice);
     const steps = this.buildSteps(route.actions);
 
-    const estimatedTime = steps.reduce((total: number, current: RouteStep) => {
-      return total + current.timeInSeconds;
-    }, 0);
-
     const resume = new RouteResume(
       request.fromChain,
       request.toChain,
@@ -95,7 +92,7 @@ export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAg
       request.amountIn,
       BigInteger.fromString(route.toTokenAmount.toString()),
       BigInteger.fromString(route.toTokenAmount.toString()),
-      estimatedTime,
+      steps.totalExecutionTime(),
     );
 
     const aggregatorDetails = new AggregatorDetails(
@@ -237,14 +234,14 @@ export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAg
    * @param actions
    * @private
    */
-  private buildSteps(actions: IRouteAction[]): RouteStep[] {
+  private buildSteps(actions: IRouteAction[]): RouteSteps {
     const items: RouteStep[] = [];
     for (const action of actions) {
       for (const step of action.steps) {
         items.push(this.buildStep(step));
       }
     }
-    return items;
+    return new RouteSteps(items);
   }
 
   /**
