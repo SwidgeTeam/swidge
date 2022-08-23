@@ -14,5 +14,6 @@ export class Class {
   public static GasPriceFetcher = 'GasPriceFetcher';
   public static TokensPriceFetcher = 'TokensPriceFetcher';
   public static CoinsPriceFetcher = 'CoinPriceFetcher';
+  public static SushiPairsTheGraph = 'SushiPairsTheGraph';
   public static Logger = 'Logger';
 }

@@ -8,6 +8,7 @@ import cachedHttpClientProvider from '../shared/infrastructure/http/cachedHttpCl
 import sushiPairsRepositoryProvider from './infrastructure/database/repositories/sushi-pairs.repository.provider';
 import { UpdateSushiPairsController } from './infrastructure/controllers/update-sushi-pairs.controller';
 import { UpdateSushiPairsHandler } from './application/command/update-sushi-pairs.handler';
+import sushiPoolsTheGraphProvider from './infrastructure/theGraph/sushi-pools-the-graph.provider';
 
 @Module({
   imports: [CqrsModule],
@@ -19,6 +20,7 @@ import { UpdateSushiPairsHandler } from './application/command/update-sushi-pair
     cachedHttpClientProvider(),
     tokenDetailsFetcherProvider(),
     sushiPairsRepositoryProvider(),
+    sushiPoolsTheGraphProvider(),
   ],
 })
 export class SwapsModule {}
