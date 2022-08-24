@@ -13,11 +13,13 @@ import IToken from '@/domain/tokens/IToken'
 import Route, { TransactionDetails } from '@/domain/paths/path'
 import Aggregators from '@/domain/aggregators/aggregators'
 import { TransactionReceipt } from '@ethersproject/abstract-provider'
+import { useToast } from "vue-toastification";
 
 const web3Store = useWeb3Store()
 const tokensStore = useTokensStore()
 const routesStore = useRoutesStore()
 const transactionStore = useTransactionStore()
+const toast = useToast();
 
 const { switchToNetwork, getChainProvider, getBalance } = web3Store
 
@@ -240,7 +242,12 @@ const onExecuteTransaction = async () => {
     await promise
         .then((receipt: TransactionReceipt) => {
             onInitialTxCompleted(route, receipt)
-        }).finally(() => {
+        })
+        .catch((err)=> {
+            toast.error('Transaction failed')
+            closeModalStatus();
+        })
+        .finally(() => {
             unsetExecutingButton()
         })
 }
