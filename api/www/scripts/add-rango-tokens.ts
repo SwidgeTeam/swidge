@@ -4,7 +4,7 @@ import { Avalanche, BSC, Fantom, Optimism, Polygon } from '../src/shared/enums/C
 
 async function run() {
   const apiUrl = process.env.API_URL;
-  const secret = '';
+  const secret = process.env.API_AUTH_TOKEN;
   let tokens;
 
   try {

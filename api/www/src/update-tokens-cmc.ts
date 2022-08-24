@@ -6,6 +6,7 @@ async function bootstrap() {
   const appModule = await NestFactory.createApplicationContext(AppModule);
   const updater = await appModule.get(UpdateTokensDetailsCmc);
   await updater.execute();
+  await appModule.close();
 }
 
 bootstrap();
