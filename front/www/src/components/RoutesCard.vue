@@ -14,11 +14,11 @@ import { ChevronDownIcon } from '@heroicons/vue/outline'
                 <div>time</div>
                 <div>gas</div>
             </div>
-            <div class="relative flex cursor-pointer bg-[#222129]/40 px-2 py-1 rounded-2xl hover:bg-[#222129]/100 transition duration-150 ease-out hover:ease-in py-6">
+            <div class="relative flex items-center justify-between cursor-pointer bg-[#222129]/40 px-2 py-1 rounded-2xl hover:bg-[#222129]/100 transition duration-150 ease-out hover:ease-in py-6">
                 <div class="flex justify-left">
                 <ChevronDownIcon class="h-6 pl-2"/>
                 </div>
-                <div class="flex items-center justify-self-center gap-4">
+                <div class="flex justify-self-center gap-4 ">
                     <div>icon</div>
                     <div>icon</div>
                     <div>icon</div>
