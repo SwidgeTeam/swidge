@@ -22,8 +22,4 @@ export class TokenDto {
   @IsNotEmpty()
   @IsString()
   logo: string;
-
-  @IsNotEmpty()
-  @IsString()
-  externalId: string;
 }

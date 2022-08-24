@@ -36,7 +36,6 @@ async function run() {
         symbol: token.s,
         decimals: token.d,
         logo: token.i,
-        externalId: '1',
       });
     }
 
