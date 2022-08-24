@@ -8,6 +8,7 @@ import { AllChains } from '../../../shared/enums/ChainIds';
 import { TokenList } from '../../domain/TokenItem';
 import { CoinsPriceFetcher } from '../../domain/coins-price-fetcher';
 import { TokensPriceFetcher } from '../../domain/tokens-price-fetcher';
+import { ICoinmarketcapApi } from '../../domain/coinmarketcap-api';
 
 @CommandHandler(UpdateTokensPriceCommand)
 export class UpdateTokensPriceHandler implements ICommandHandler<UpdateTokensPriceCommand> {
@@ -15,6 +16,7 @@ export class UpdateTokensPriceHandler implements ICommandHandler<UpdateTokensPri
     @Inject(Class.TokensRepository) private readonly repository: TokensRepository,
     @Inject(Class.CoinsPriceFetcher) private readonly coinsPriceFetcher: CoinsPriceFetcher,
     @Inject(Class.TokensPriceFetcher) private readonly tokensPriceFetcher: TokensPriceFetcher,
+    @Inject(Class.CoinmarketcapApi) private readonly coinmarketcapApi: ICoinmarketcapApi,
   ) {}
 
   /**
@@ -23,7 +25,21 @@ export class UpdateTokensPriceHandler implements ICommandHandler<UpdateTokensPri
   async execute(): Promise<void> {
     const tokens = await this.repository.getList();
 
-    // update tokens
+    // update coins
+    const natives = tokens.getNatives();
+    const ids = this.getNativesIds(natives);
+    try {
+      const prices = await this.coinsPriceFetcher.fetch(ids);
+      for (const row of prices) {
+        const coin = natives.findByCoingeckoId(row.id);
+        coin.setPrice(row.price);
+        this.repository.save(coin);
+      }
+    } catch (e) {
+      // log
+    }
+
+    // update tokens on Coingecko
     for (const chain of AllChains) {
       const chainTokens = tokens.ofChain(chain);
       if (chainTokens.count() > 0) {
@@ -35,18 +51,16 @@ export class UpdateTokensPriceHandler implements ICommandHandler<UpdateTokensPri
       }
     }
 
-    // update coins
-    const natives = tokens.getNatives();
-    const ids = this.getNativesIds(natives);
-    try {
-      const prices = await this.coinsPriceFetcher.fetch(ids);
-      for (const row of prices) {
-        const coin = natives.findByExternalId(row.id);
-        coin.setPrice(row.price);
-        this.repository.save(coin);
-      }
-    } catch (e) {
-      // log
+    // update remaining tokens on Coinmarketcap
+    const tokensWithCmcId = tokens.withCmcId();
+    const cmcIds = tokensWithCmcId.map<string[]>((token: TokenListItem) => {
+      return token.coinmarketcapId;
+    });
+    const prices = await this.coinmarketcapApi.fetch(cmcIds);
+    for (const row of prices) {
+      const token = tokensWithCmcId.findByCmcId(row.id);
+      token.setPrice(row.price);
+      this.repository.save(token);
     }
   }
 
@@ -58,7 +72,7 @@ export class UpdateTokensPriceHandler implements ICommandHandler<UpdateTokensPri
   private getNativesIds(natives: TokenList): string[] {
     return natives
       .map<string[]>((token: TokenListItem) => {
-        return token.externalId;
+        return token.coingeckoId;
       })
       .filter((id) => id);
   }
