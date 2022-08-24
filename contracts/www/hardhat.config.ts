@@ -42,6 +42,12 @@ const config: HardhatUserConfig = {
     localhost: {
       url: "http://127.0.0.1:8545",
     },
+    ethereum: {
+      url: process.env.RPC_NODE_ETHEREUM || "https://mainnet.infura.io/v3/",
+      accounts,
+      chainId: Number(process.env.CHAIN_ID_ETHEREUM || 137),
+      gasMultiplier: 2,
+    },
     polygon: {
       url: process.env.RPC_NODE_POLYGON || "https://polygon-rpc.com/",
       accounts,
