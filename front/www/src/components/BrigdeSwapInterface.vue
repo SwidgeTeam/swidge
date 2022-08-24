@@ -186,7 +186,7 @@ const onQuote = async () => {
     isExecuteButtonDisabled.value = true
 
     try {
-        await routesStore.quotePath(sourceTokenAmount.value, 2)
+        await routesStore.quotePath(sourceTokenAmount.value)
         const route = routesStore.getSelectedRoute
 
         destinationTokenAmount.value = route.resume.amountOut
@@ -265,7 +265,7 @@ const executeRoute = async (): Promise<TransactionReceipt> => {
  * Executes the route when the aggregator requires quoting the callData
  */
 const executeSingleQuoteExecution = async (): Promise<TransactionReceipt> => {
-    await transactionStore.fetchBothTxs(sourceTokenAmount.value, 2)
+    await transactionStore.fetchBothTxs(sourceTokenAmount.value)
     const approvalTx = transactionStore.getApprovalTx
     const mainTx = transactionStore.mainTx
     if (!mainTx) {
