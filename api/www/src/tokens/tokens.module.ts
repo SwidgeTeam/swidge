@@ -15,9 +15,15 @@ import { AddImportedTokenController } from './infrastructure/controllers/add-imp
 import { AddImportedTokenHandler } from './application/command/add-imported-token-handler';
 import httpClientProvider from '../shared/infrastructure/http/httpClient.provider';
 import { UpdateTokensDetailsCmc } from './application/command/update-tokens-details-cmc';
+import coinmarketcapApiProvider from './infrastructure/external/coinmarketcap-api-provider';
+import { ConfigService } from '../config/config.service';
+import { ConfigModule } from '../config/config.module';
 
 @Module({
-  imports: [CqrsModule],
+  imports: [
+    CqrsModule,
+    ConfigModule,
+  ],
   controllers: [
     GetTokenListController,
     AddTokensController,
@@ -31,9 +37,11 @@ import { UpdateTokensDetailsCmc } from './application/command/update-tokens-deta
     UpdateTokensDetailsCoingecko,
     UpdateTokensDetailsCmc,
     AddImportedTokenHandler,
+    ConfigService,
     tokensRepositoryProvider(),
     coingeckoTokensPriceFetcherProvider(),
     coingeckoCoinPriceFetcherProvider(),
+    coinmarketcapApiProvider(),
     consoleLoggerProvider(),
     httpClientProvider(),
   ],

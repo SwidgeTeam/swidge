@@ -55,6 +55,7 @@ services:
       SOCKET_API_KEY: ${SOCKET_API_KEY}
       RANGO_API_KEY: ${RANGO_API_KEY}
       VIA_API_KEY: ${VIA_API_KEY}
+      CMC_API_KEY: ${CMC_API_KEY}
     ports:
       - ${API_PORT}:3000
     volumes:

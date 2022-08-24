@@ -3,64 +3,36 @@ import { Class } from '../../../shared/Class';
 import { TokensRepository } from '../../domain/tokens.repository';
 import { Avalanche, BSC, Fantom, Mainnet, Optimism, Polygon } from '../../../shared/enums/ChainIds';
 import { Logger } from '../../../shared/domain/logger';
-import { IHttpClient } from '../../../shared/domain/http/IHttpClient';
-
-interface TokenDetails {
-  id: number;
-  name: string;
-  symbol: string;
-  platform: {
-    token_address: string;
-    symbol: string;
-  };
-}
+import { ICoinmarketcapApi } from '../../domain/coinmarketcap-api';
+import { CmcTokenDetails } from '../../infrastructure/external/coinmarketcap-api';
 
 export class UpdateTokensDetailsCmc {
-  private readonly apiUrl;
-  private client: IHttpClient;
-
   constructor(
     @Inject(Class.TokensRepository) private readonly repository: TokensRepository,
-    @Inject(Class.HttpClient) private readonly httpClient: IHttpClient,
+    @Inject(Class.CoinmarketcapApi) private readonly coinmarketcapApi: ICoinmarketcapApi,
     @Inject(Class.Logger) private readonly logger: Logger,
-  ) {
-    this.client = httpClient;
-    this.apiUrl = 'https://pro-api.coinmarketcap.com';
-  }
+  ) {}
 
   /**
    * Entrypoint
    */
   async execute(): Promise<void> {
     try {
-      const response = await this.client.get<{
-        data: TokenDetails[];
-      }>(`${this.apiUrl}/v1/cryptocurrency/map`, {
-        headers: {
-          'X-CMC_PRO_API_KEY': '6dad25d6-49ec-4979-8172-83f794348643',
-        },
-      });
+      const tokens = await this.coinmarketcapApi.all();
 
-      if (response.data.length === 0) {
-        return;
-      }
-
-      for (const token of response.data) {
+      for (const token of tokens) {
         await this.processToken(token);
       }
-      console.log(response.data.length);
-
     } catch (e) {
       console.log(e);
       // log e
     }
   }
 
-  private async processToken(token: TokenDetails) {
+  private async processToken(token: CmcTokenDetails) {
     if (token.platform) {
       try {
         const chainId = this.getChainId(token.platform.symbol);
-        console.log(chainId, token.platform.token_address);
         const tokenItem = await this.repository.find(
           chainId,
           token.platform.token_address.toLowerCase(),
@@ -95,7 +67,7 @@ export class UpdateTokensDetailsCmc {
     }
   }
 
-  private getUniqueChains(tokens: TokenDetails[]) {
+  private getUniqueChains(tokens: CmcTokenDetails[]) {
     const chains = [];
     for (const token of tokens) {
       if (token.platform) {
