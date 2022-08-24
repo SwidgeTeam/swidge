@@ -16,9 +16,18 @@ export class TokenList extends Collection {
     return null;
   }
 
-  findByExternalId(id: string): TokenListItem {
+  findByCoingeckoId(id: string): TokenListItem {
     for (const token of this.items<TokenListItem[]>()) {
-      if (token.externalId === id) {
+      if (token.coingeckoId === id) {
+        return token;
+      }
+    }
+    return null;
+  }
+
+  findByCmcId(id: string): TokenListItem {
+    for (const token of this.items<TokenListItem[]>()) {
+      if (token.coinmarketcapId === id) {
         return token;
       }
     }
@@ -48,5 +57,15 @@ export class TokenList extends Collection {
   updateTokenPrice(chainId: string, address: string, price: number): void {
     const token = this.find(chainId, address);
     token.setPrice(price);
+  }
+
+  withCmcId(): TokenList {
+    const items = [];
+    for (const token of this.items<TokenListItem[]>()) {
+      if (token.coinmarketcapId) {
+        items.push(token);
+      }
+    }
+    return new TokenList(items);
   }
 }

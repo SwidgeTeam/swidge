@@ -22,4 +22,8 @@ export class ConfigService {
   private isProduction(): boolean {
     return process.env.NODE_ENV === 'production';
   }
+
+  public getCoinmarketcapApiKey() {
+    return process.env.CMC_API_KEY;
+  }
 }

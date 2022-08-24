@@ -9,7 +9,7 @@ import { NATIVE_TOKEN_ADDRESS } from '../../../shared/enums/Natives';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const CoinGecko = require('coingecko-api');
 
-export class UpdateTokensDetails {
+export class UpdateTokensDetailsCoingecko {
   private client;
   private tokens: TokenList;
   private DELAY_SECONDS = 1;

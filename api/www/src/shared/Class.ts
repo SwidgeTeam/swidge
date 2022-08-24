@@ -4,6 +4,7 @@ export class Class {
   public static AddressesRepository = 'AddressesRepository';
   public static TransactionRepository = 'TransactionRepository';
   public static SushiPairsRepository = 'SushiPairsRepository';
+  public static CoinmarketcapApi = 'CoinmarketcapApi';
 
   /* Libraries */
   public static HttpClient = 'httpClient';

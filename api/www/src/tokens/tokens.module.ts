@@ -5,7 +5,7 @@ import { GetTokenListController } from './infrastructure/controllers/get-token-l
 import { GetTokenListHandler } from './application/query/get-token-list-handler';
 import { AddTokensController } from './infrastructure/controllers/add-tokens-controller';
 import { AddTokensHandler } from './application/command/add-tokens-handler';
-import { UpdateTokensDetails } from './application/command/update-tokens-details';
+import { UpdateTokensDetailsCoingecko } from './application/command/update-tokens-details-coingecko';
 import { UpdateTokensPriceController } from './infrastructure/controllers/update-tokens-price-controller';
 import { UpdateTokensPriceHandler } from './application/command/update-tokens-price-handler';
 import consoleLoggerProvider from '../shared/infrastructure/console-logger-provider';
@@ -13,9 +13,17 @@ import coingeckoTokensPriceFetcherProvider from './infrastructure/external/coing
 import coingeckoCoinPriceFetcherProvider from './infrastructure/external/coingecko-coins-price-fetcher-provider';
 import { AddImportedTokenController } from './infrastructure/controllers/add-imported-token-controller';
 import { AddImportedTokenHandler } from './application/command/add-imported-token-handler';
+import httpClientProvider from '../shared/infrastructure/http/httpClient.provider';
+import { UpdateTokensDetailsCmc } from './application/command/update-tokens-details-cmc';
+import coinmarketcapApiProvider from './infrastructure/external/coinmarketcap-api-provider';
+import { ConfigService } from '../config/config.service';
+import { ConfigModule } from '../config/config.module';
 
 @Module({
-  imports: [CqrsModule],
+  imports: [
+    CqrsModule,
+    ConfigModule,
+  ],
   controllers: [
     GetTokenListController,
     AddTokensController,
@@ -26,12 +34,16 @@ import { AddImportedTokenHandler } from './application/command/add-imported-toke
     GetTokenListHandler,
     AddTokensHandler,
     UpdateTokensPriceHandler,
-    UpdateTokensDetails,
+    UpdateTokensDetailsCoingecko,
+    UpdateTokensDetailsCmc,
     AddImportedTokenHandler,
+    ConfigService,
     tokensRepositoryProvider(),
     coingeckoTokensPriceFetcherProvider(),
     coingeckoCoinPriceFetcherProvider(),
+    coinmarketcapApiProvider(),
     consoleLoggerProvider(),
+    httpClientProvider(),
   ],
 })
 export class TokensModule {}
