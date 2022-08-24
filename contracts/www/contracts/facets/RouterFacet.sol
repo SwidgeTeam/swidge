@@ -24,6 +24,7 @@ contract RouterFacet {
      * @dev Defines the details for the bridge step
      */
     struct BridgeStep {
+        uint8 providerCode;
         address tokenIn;
         uint256 toChainId;
         bytes data;
@@ -103,7 +104,7 @@ contract RouterFacet {
         if (_bridgeStep.required) {
             // Execute bridge process
             LibProvider.bridge(
-                0, // TODO : from input
+                _bridgeStep.providerCode,
                 _bridgeStep.tokenIn,
                 finalAmount,
                 _bridgeStep.toChainId,

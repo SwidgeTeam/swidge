@@ -43,7 +43,7 @@ describe("RouterFacet - init", function () {
       .initSwidge(
         1000000,
         [0, RandomAddress, RandomAddress, "0x", false],
-        [RandomAddress, 57, "0x", false],
+        [0, RandomAddress, 57, "0x", false],
         [RandomAddress, RandomAddress, RandomAddress, 0]
       );
 
@@ -65,7 +65,7 @@ describe("RouterFacet - init", function () {
       .initSwidge(
         0,
         [0, fakeTokenIn.address, fakeTokenOut.address, "0x", true],
-        [RandomAddress, 57, "0x", false],
+        [0, RandomAddress, 57, "0x", false],
         [RandomAddress, RandomAddress, RandomAddress, 0]
       );
 
@@ -87,7 +87,7 @@ describe("RouterFacet - init", function () {
       .initSwidge(
         10,
         [0, fakeTokenIn.address, fakeTokenOut.address, "0x", true],
-        [RandomAddress, 57, "0x", false],
+        [0, RandomAddress, 57, "0x", false],
         [RandomAddress, RandomAddress, ethers.constants.AddressZero, 0]
       );
 
@@ -119,7 +119,7 @@ describe("RouterFacet - init", function () {
       .initSwidge(
         1000000,
         [0, fakeTokenIn.address, fakeTokenOut.address, callData, true],
-        [RandomAddress, 1337, "0x", false],
+        [0, RandomAddress, 1337, "0x", false],
         [RandomAddress, RandomAddress, RandomAddress, 0]
       );
 
@@ -166,7 +166,7 @@ describe("RouterFacet - init", function () {
       .initSwidge(
         1000000,
         [providerSwapCode, RandomAddress, RandomAddress, "0x", false],
-        [fakeTokenIn.address, 1337, callData, true],
+        [providerBridgeCode, fakeTokenIn.address, 1337, callData, true],
         [RandomAddress, RandomAddress, RandomAddress, 0]
       );
 
@@ -198,7 +198,7 @@ describe("RouterFacet - init", function () {
     const call = router.connect(anyoneElse).initSwidge(
       1000000,
       [providerSwapCode, RandomAddress, RandomAddress, "0x", false], // would fail executing with random addresses
-      [fakeTokenIn.address, 1337, callData, true],
+      [providerBridgeCode, fakeTokenIn.address, 1337, callData, true],
       [RandomAddress, RandomAddress, receiver, 999]
     );
 
@@ -262,7 +262,7 @@ describe("RouterFacet - init", function () {
           callDataSwap,
           true,
         ],
-        [fakeTokenOut.address, 1337, callDataBridge, true],
+        [providerBridgeCode, fakeTokenOut.address, 1337, callDataBridge, true],
         [RandomAddress, RandomAddress, RandomAddress, 999]
       );
 
@@ -308,7 +308,7 @@ describe("RouterFacet - init", function () {
       .initSwidge(
         amountIn,
         [0, NativeToken, fakeTokenOut.address, callData, true],
-        [RandomAddress, 1337, "0x", false],
+        [0, RandomAddress, 1337, "0x", false],
         [RandomAddress, RandomAddress, RandomAddress, 999],
         {
           value: amountIn,
@@ -349,7 +349,7 @@ describe("RouterFacet - init", function () {
       .initSwidge(
         amountIn,
         [0, NativeToken, fakeTokenOut.address, callData, true],
-        [RandomAddress, 1337, "0x", false],
+        [0, RandomAddress, 1337, "0x", false],
         [RandomAddress, RandomAddress, RandomAddress, 999],
         {
           value: amountIn,
@@ -389,7 +389,7 @@ describe("RouterFacet - init", function () {
       .initSwidge(
         amountIn,
         [0, RandomAddress, RandomAddress, "0x", false],
-        [fakeTokenIn.address, 1337, callDataBridge, true],
+        [providerBridgeCode, fakeTokenIn.address, 1337, callDataBridge, true],
         [RandomAddress, RandomAddress, RandomAddress, 999],
         {
           value: amountIn,

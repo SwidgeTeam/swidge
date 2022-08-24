@@ -29,7 +29,7 @@ export class RouterCallEncoder {
       [
         'uint256',
         'tuple(uint8,address,address,bytes,bool)',
-        'tuple(address,uint256,bytes,bool)',
+        'tuple(uint8,address,uint256,bytes,bool)',
         'tuple(address,address,address,uint256)',
       ],
       [
@@ -41,7 +41,13 @@ export class RouterCallEncoder {
           originSwap.data,
           originSwap.required,
         ],
-        [bridge.tokenIn.address, bridge.toChainId, bridge.data, bridge.required],
+        [
+          bridge.providerCode,
+          bridge.tokenIn.address,
+          bridge.toChainId,
+          bridge.data,
+          bridge.required,
+        ],
         [
           destinationSwap.tokenIn.address,
           destinationSwap.tokenOut.address,

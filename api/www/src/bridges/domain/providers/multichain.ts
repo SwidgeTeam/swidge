@@ -10,6 +10,7 @@ import { AbiEncoder } from '../../../shared/domain/call-encoder';
 import { Bridge } from '../bridge';
 import { CachedHttpClient } from '../../../shared/infrastructure/http/cachedHttpClient';
 import { Avalanche, BSC, Fantom, Mainnet, Optimism, Polygon } from '../../../shared/enums/ChainIds';
+import { BridgeProviders } from './bridge-providers';
 
 interface DestToken {
   SwapFeeRatePerMillion: number;
@@ -97,6 +98,7 @@ export class Multichain implements Bridge {
 
     // Construct the order
     return new BridgingOrder(
+      BridgeProviders.Multichain,
       request.expectedAmountIn,
       request.minAmountIn,
       tokenIn,

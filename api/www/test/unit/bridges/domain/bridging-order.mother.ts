@@ -22,6 +22,7 @@ export class BridgingOrderMother {
     required: boolean,
   ) {
     return new BridgingOrder(
+      '0',
       expectedAmountIn,
       minAmountIn,
       tokenIn,

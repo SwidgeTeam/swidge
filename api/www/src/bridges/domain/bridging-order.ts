@@ -6,6 +6,7 @@ import { BigInteger } from '../../shared/domain/big-integer';
 export class BridgingOrder {
   static notRequired() {
     return new BridgingOrder(
+      '0',
       BigInteger.zero(),
       BigInteger.zero(),
       Token.null(),
@@ -20,6 +21,7 @@ export class BridgingOrder {
   }
 
   constructor(
+    private readonly _providerCode: string,
     private readonly _expectedAmountIn: BigInteger,
     private readonly _worstCaseAmountIn: BigInteger,
     private readonly _tokenIn: Token,
@@ -31,6 +33,10 @@ export class BridgingOrder {
     private readonly _executionTime: number,
     private readonly _required = true,
   ) {}
+
+  get providerCode(): string {
+    return this._providerCode;
+  }
 
   get tokenIn(): Token {
     return this._tokenIn;
