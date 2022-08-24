@@ -54,8 +54,13 @@ export class TokenListItem {
     return this;
   }
 
-  public setExternalId(id: string): TokenListItem {
+  public setCoingeckoId(id: string): TokenListItem {
     this._coingeckoId = id;
+    return this;
+  }
+
+  public setCoinmarketcapId(id: string): TokenListItem {
+    this._coinmarketcapId = id;
     return this;
   }
 
