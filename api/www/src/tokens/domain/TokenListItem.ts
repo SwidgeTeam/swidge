@@ -8,8 +8,9 @@ export class TokenListItem {
     private readonly _decimals: number,
     private readonly _symbol: string,
     private _logoURL: string,
-    private _externalId: string,
-    private _price: number,
+    private _price = 0,
+    private _coingeckoId = '',
+    private _coinmarketcapId = '',
   ) {}
 
   get chainId(): string {
@@ -36,8 +37,12 @@ export class TokenListItem {
     return this._logoURL;
   }
 
-  get externalId(): string {
-    return this._externalId;
+  get coingeckoId(): string {
+    return this._coingeckoId;
+  }
+
+  get coinmarketcapId(): string {
+    return this._coinmarketcapId;
   }
 
   get price(): number {
@@ -50,7 +55,7 @@ export class TokenListItem {
   }
 
   public setExternalId(id: string): TokenListItem {
-    this._externalId = id;
+    this._coingeckoId = id;
     return this;
   }
 

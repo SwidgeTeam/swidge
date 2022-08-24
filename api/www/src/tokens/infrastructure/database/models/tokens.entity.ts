@@ -22,7 +22,10 @@ export class TokensEntity {
   logo: string;
 
   @Column()
-  externalId: string;
+  coingeckoId: string;
+
+  @Column()
+  coinmarketcapId: string;
 
   @Column('double')
   price: number;

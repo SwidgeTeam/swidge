@@ -25,8 +25,9 @@ export class TokensRepositoryMySQL implements TokensRepository {
         token.decimals,
         token.symbol,
         token.logo,
-        token.externalId,
         token.price,
+        token.coingeckoId,
+        token.coinmarketcapId,
       );
     });
 
@@ -56,8 +57,9 @@ export class TokensRepositoryMySQL implements TokensRepository {
       token.decimals,
       token.symbol,
       token.logo,
-      token.externalId,
       token.price,
+      token.coingeckoId,
+      token.coinmarketcapId,
     );
   }
 
@@ -91,7 +93,8 @@ export class TokensRepositoryMySQL implements TokensRepository {
       decimals: token.decimals,
       symbol: token.symbol,
       logo: token.logoURL,
-      externalId: token.externalId,
+      coingeckoId: token.coingeckoId,
+      coinmarketcapId: token.coinmarketcapId,
       created: new Date(),
       price: token.price,
     });
@@ -109,7 +112,8 @@ export class TokensRepositoryMySQL implements TokensRepository {
       decimals: token.decimals,
       symbol: token.symbol,
       logo: token.logoURL,
-      externalId: token.externalId,
+      coingeckoId: token.coingeckoId,
+      coinmarketcapId: token.coinmarketcapId,
       updated: new Date(),
       price: token.price,
     });
@@ -141,8 +145,9 @@ export class TokensRepositoryMySQL implements TokensRepository {
         token.decimals,
         token.symbol,
         token.logo,
-        token.externalId,
         token.price,
+        token.coingeckoId,
+        token.coinmarketcapId,
       );
     });
 

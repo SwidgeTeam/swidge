@@ -20,16 +20,7 @@ export class AddTokensHandler implements ICommandHandler<AddTokensCommand> {
       if (alreadyExists) {
         continue;
       }
-      const token = new TokenListItem(
-        t.chainId,
-        t.address,
-        t.name,
-        t.decimals,
-        t.symbol,
-        t.logo,
-        t.externalId,
-        0,
-      );
+      const token = new TokenListItem(t.chainId, t.address, t.name, t.decimals, t.symbol, t.logo);
       this.repository.save(token);
     }
 

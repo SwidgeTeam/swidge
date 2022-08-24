@@ -18,7 +18,7 @@ export class TokenList extends Collection {
 
   findByExternalId(id: string): TokenListItem {
     for (const token of this.items<TokenListItem[]>()) {
-      if (token.externalId === id) {
+      if (token.coingeckoId === id) {
         return token;
       }
     }
@@ -48,5 +48,15 @@ export class TokenList extends Collection {
   updateTokenPrice(chainId: string, address: string, price: number): void {
     const token = this.find(chainId, address);
     token.setPrice(price);
+  }
+
+  withoutPrice(): TokenList {
+    const items = [];
+    for (const token of this.items<TokenListItem[]>()) {
+      if (token.price === 0) {
+        items.push(token);
+      }
+    }
+    return new TokenList(items);
   }
 }
