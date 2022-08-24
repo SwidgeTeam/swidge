@@ -4,9 +4,10 @@ export class includeDifferentExternalIds1661351354574 implements MigrationInterf
   name = 'includeDifferentExternalIds1661351354574';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`ALTER TABLE \`tokens\` DROP COLUMN \`externalId\``);
     await queryRunner.query(`ALTER TABLE \`tokens\` ADD \`coingeckoId\` varchar(255) NOT NULL`);
     await queryRunner.query(`ALTER TABLE \`tokens\` ADD \`coinmarketcapId\` varchar(255) NOT NULL`);
+    await queryRunner.query(`UPDATE \`tokens\` SET \`coingeckoId\` = \`externalId\``);
+    await queryRunner.query(`ALTER TABLE \`tokens\` DROP COLUMN \`externalId\``);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
