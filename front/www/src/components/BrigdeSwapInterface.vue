@@ -31,6 +31,7 @@ const isSourceChainToken = ref(false)
 const isGettingQuote = ref(false)
 const isExecuteButtonDisabled = ref(true)
 const isModalStatusOpen = ref(false)
+const isSettingsModalOpen = ref(false)
 const showTransactionAlert = ref(false)
 const transactionAlertMessage = ref<string>('')
 const isExecutingTransaction = ref<boolean>(false)
@@ -185,7 +186,7 @@ const onQuote = async () => {
     isExecuteButtonDisabled.value = true
 
     try {
-        await routesStore.quotePath(sourceTokenAmount.value, 2)
+        await routesStore.quotePath(sourceTokenAmount.value)
         const route = routesStore.getSelectedRoute
 
         destinationTokenAmount.value = route.resume.amountOut
@@ -264,7 +265,7 @@ const executeRoute = async (): Promise<TransactionReceipt> => {
  * Executes the route when the aggregator requires quoting the callData
  */
 const executeSingleQuoteExecution = async (): Promise<TransactionReceipt> => {
-    await transactionStore.fetchBothTxs(sourceTokenAmount.value, 2)
+    await transactionStore.fetchBothTxs(sourceTokenAmount.value)
     const approvalTx = transactionStore.getApprovalTx
     const mainTx = transactionStore.mainTx
     if (!mainTx) {
@@ -393,6 +394,7 @@ const closeModalStatus = () => {
         :is-getting-quote="isGettingQuote"
         :is-execute-button-disabled="isExecuteButtonDisabled"
         :transaction-fees="totalFee"
+        :is-settings-modal-open="isSettingsModalOpen"
         @source-input-changed="handleSourceInputChanged"
         @select-source-token="() => handleOpenTokenList(true)"
         @select-destination-token="() => handleOpenTokenList(false)"

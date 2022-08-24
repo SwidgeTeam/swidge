@@ -3,6 +3,8 @@ import BridgeSwapSelectionCard from './BridgeSwapSelectionCard.vue'
 import SwitchButton from './Buttons/SwitchButton.vue'
 import TransactionDetails from './TransactionDetails.vue'
 import BridgeSwapInteractiveButton from './BridgeSwapInteractiveButton.vue'
+import {AdjustmentsIcon} from '@heroicons/vue/solid'
+import ModalSettings from './Modals/ModalSettings.vue'
 
 defineProps<{
     sourceTokenAmount: string
@@ -11,6 +13,7 @@ defineProps<{
     buttonText: string
     isGettingQuote: boolean
     isExecuteButtonDisabled: boolean
+    isSettingsModalOpen: boolean
     transactionFees: string
 }>()
 
@@ -21,6 +24,7 @@ const emits = defineEmits<{
     (event: 'select-destination-token'): void
     (event: 'switch-tokens'): void
     (event: 'execute-transaction'): void
+
 }>()
 
 </script>
@@ -28,7 +32,14 @@ const emits = defineEmits<{
 <template>
     <div class="flex flex-col gap-6 px-12 py-6 rounded-3xl bg-cards-background-dark-grey">
         <div class="flex flex-col w-full gap-4">
-            <span class="text-2xl">You send:</span>
+            <span class="relative text-2xl">
+                You send:
+                    <AdjustmentsIcon 
+                        class="absolute w-7 right-0 top-0 cursor-pointer"
+                        @click="isSettingsModalOpen = true"
+                    />
+            </span>
+            
             <BridgeSwapSelectionCard
                 :value="sourceTokenAmount"
                 :is-origin="true"
@@ -60,6 +71,10 @@ const emits = defineEmits<{
             :is-loading="isGettingQuote"
             :disabled="isExecuteButtonDisabled"
             :on-click="() => emits('execute-transaction')"
+        />
+        <ModalSettings 
+        :is-open="isSettingsModalOpen"
+        @close-modal="isSettingsModalOpen = false"
         />
     </div>
 </template>

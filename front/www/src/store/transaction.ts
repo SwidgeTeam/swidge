@@ -55,7 +55,7 @@ export const useTransactionStore = defineStore('transaction', {
          * @param amount
          * @param slippage
          */
-        async fetchBothTxs(amount: string, slippage: number) {
+        async fetchBothTxs(amount: string) {
             const tokensStore = useTokensStore()
             const web3Store = useWeb3Store()
             const routesStore = useRoutesStore()
@@ -67,7 +67,7 @@ export const useTransactionStore = defineStore('transaction', {
                 srcToken: tokensStore.getOriginTokenAddress,
                 dstToken: tokensStore.getDestinationTokenAddress,
                 amount: amount,
-                slippage: slippage,
+                slippage: Number(routesStore.getSlippage),
                 senderAddress: web3Store.account,
                 receiverAddress: web3Store.account
             })
