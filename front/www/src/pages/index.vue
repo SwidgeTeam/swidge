@@ -37,6 +37,7 @@ const isFaqOpen = ref(false)
                 />
                 <span class="text-3xl">FAQ</span>
             </div>
+            <BrigdeSwapInterface/>
         </div>
         <FAQCard v-if="isFaqOpen" />
     </div>
