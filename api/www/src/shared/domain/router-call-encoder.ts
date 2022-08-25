@@ -160,6 +160,11 @@ export class RouterCallEncoder {
           {
             components: [
               {
+                internalType: 'uint8',
+                name: 'providerCode',
+                type: 'uint8',
+              },
+              {
                 internalType: 'address',
                 name: 'tokenIn',
                 type: 'address',
