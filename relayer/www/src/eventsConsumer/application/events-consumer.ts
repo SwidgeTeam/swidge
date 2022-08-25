@@ -21,7 +21,7 @@ export default class EventsConsumer {
   ) {
     const producer = this.createSqsProducer();
     const eventProcessor = new EventProcessor(producer, repository, logger);
-    this.consumer = new EventConsumer(eventProcessor);
+    this.consumer = new EventConsumer(eventProcessor, logger);
   }
 
   /**

@@ -1,16 +1,20 @@
 import { SQSMessage } from 'sqs-consumer';
 import EventProcessor from './event-processor';
 import { Events } from './event-types';
+import { Logger } from '../../shared/domain/logger';
 
 export default class EventConsumer {
   private processor: EventProcessor;
+  private logger: Logger;
 
-  constructor(processor: EventProcessor) {
+  constructor(processor: EventProcessor, logger: Logger) {
     this.processor = processor;
+    this.logger = logger;
   }
 
   public async process(message: SQSMessage) {
     const event = message.MessageAttributes.event.StringValue;
+    this.logger.log('Consuming ' + event + ' event');
     const body = JSON.parse(message.Body);
     switch (event) {
       case Events.SwapExecuted:

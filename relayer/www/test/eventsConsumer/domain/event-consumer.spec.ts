@@ -3,12 +3,14 @@ import EventProcessor from '../../../src/eventsConsumer/domain/event-processor';
 import EventConsumer from '../../../src/eventsConsumer/domain/event-consumer';
 import { method, On } from 'ts-auto-mock/extension';
 import { createMessage } from '../../shared';
+import { Logger } from '../../../src/shared/domain/logger';
 
 describe('event-consumer', () => {
   it('should call right function on SwapExecuted event', () => {
     // Arrange
     const processor = createMock<EventProcessor>();
-    const consumer = new EventConsumer(processor);
+    const logger = createMock<Logger>();
+    const consumer = new EventConsumer(processor, logger);
     const spy = On(processor).get(method('swapExecuted'));
     const message = createMessage('swap_executed', [
       { key: 'txHash', value: '0x123' },
@@ -41,7 +43,8 @@ describe('event-consumer', () => {
   it('should call right function on CrossInitiated event', () => {
     // Arrange
     const processor = createMock<EventProcessor>();
-    const consumer = new EventConsumer(processor);
+    const logger = createMock<Logger>();
+    const consumer = new EventConsumer(processor, logger);
     const spy = On(processor).get(method('crossInitiated'));
     const message = createMessage('cross_initiated', [
       { key: 'txHash', value: '0x123' },
@@ -84,7 +87,8 @@ describe('event-consumer', () => {
   it('should call right function on CrossFinalized event', () => {
     // Arrange
     const processor = createMock<EventProcessor>();
-    const consumer = new EventConsumer(processor);
+    const logger = createMock<Logger>();
+    const consumer = new EventConsumer(processor, logger);
     const spy = On(processor).get(method('crossFinalized'));
     const message = createMessage('cross_finalized', [
       { key: 'txHash', value: '0x123' },
@@ -105,7 +109,8 @@ describe('event-consumer', () => {
   it('should call right function on MultichainDelivered event', () => {
     // Arrange
     const processor = createMock<EventProcessor>();
-    const consumer = new EventConsumer(processor);
+    const logger = createMock<Logger>();
+    const consumer = new EventConsumer(processor, logger);
     const spy = On(processor).get(method('multichainDelivered'));
     const message = createMessage('multichain_delivered', [
       { key: 'originTxHash', value: '0x123' },
