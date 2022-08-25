@@ -22,6 +22,7 @@ export class ZeroEx implements Exchange {
 
   async execute(request: SwapRequest): Promise<SwapOrder> {
     const urls = {
+      [Mainnet]: 'https://api.0x.org',
       [Polygon]: 'https://polygon.api.0x.org',
       [Fantom]: 'https://fantom.api.0x.org',
       [BSC]: 'https://bsc.api.0x.org',
