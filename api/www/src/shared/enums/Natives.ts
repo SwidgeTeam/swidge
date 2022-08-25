@@ -1,8 +1,13 @@
-import { Avalanche, BSC, Fantom, Polygon, Optimism } from './ChainIds';
+import { Avalanche, BSC, Fantom, Polygon, Optimism, Mainnet } from './ChainIds';
 
 export const NATIVE_TOKEN_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
 
 export const Natives = {
+  [Mainnet]: {
+    name: 'Ether',
+    symbol: 'ETH',
+    decimals: 18,
+  },
   [Polygon]: {
     name: 'Matic Token',
     symbol: 'MATIC',
