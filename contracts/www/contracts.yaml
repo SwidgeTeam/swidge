@@ -144,3 +144,29 @@ optimism:
       enabled: true
       implementation: "0xf66579Ff926e44BD583a8455beFaBb88dECcAFfc"
       handler: "0x0000000000000000000000000000000000000000"
+ethereum:
+  diamond: "0x1a6e1ef1d28A7d9feD016c88f4d1858367564781"
+  facet:
+    RouterFacet: "0x8dE40F0f62B69C35A963d5ED626da04f6c1E4AB7"
+    RelayerUpdaterFacet: "0xFFe588b6c0fC789c8ac23d7fb3AFC031C61D9227"
+    DiamondLoupeFacet: "0x56CE178868B653480cD65AaF81C01b30C005a299"
+    ProviderUpdaterFacet: "0xb5A87Cd4C9C83f75cE9a25299bf66523B7410952"
+    DiamondCutterFacet: "0x75b787F5c106153658E3Cc51e945B0B93d403885"
+    FeeManagerFacet: "0xD79a773316b54F390702Ba962238a080f8686539"
+  bridge:
+    Anyswap:
+      code: 0
+      enabled: true
+      implementation: "0x65D246154885DBeA92Dee1EA8065A407E16D5fce"
+      handler: "0xba8da9dcf11b50b03fd5284f164ef5cdef910705"
+  dex:
+    ZeroEx:
+      code: 0
+      enabled: true
+      implementation: "0x79B38753e46BD2b88170A58B403de0aBE2229D35"
+      handler: "0x0000000000000000000000000000000000000000"
+    Sushi:
+      code: 1
+      enabled: true
+      implementation: "0x878950f2f5efe0c22c399130787f8c973ad95720"
+      handler: "0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F"
