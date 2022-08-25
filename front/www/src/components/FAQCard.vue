@@ -11,8 +11,7 @@ const faqTexts = [
 
 <template>
   <div class="flex flex-col gap-6">
-    <span class="text-3xl">FAQ</span>
-    <ul class="flex flex-col gap-5">
+    <ul class="flex flex-col gap-5 mb-[2rem]">
       <Accordion
 v-for="faq in faqTexts"
         :key="faq.header"
