@@ -86,6 +86,28 @@ Make sure the application is running and type:
 $ make db-import < ./path/to/your/dump.sql
 ```
 
+## Testing
+
+The Different parts of the application have tests on them, so to run them all you can just execute:
+
+``` sh
+$ make test
+```
+
+You will normally never do that though, because it runs the tests on each project and normally you are working only 
+on one of them, so you can run the tests of the project you are working on with:
+
+``` sh
+$ make test-api
+$ make test-api-e2e
+$ make test-front
+$ make test-relayer
+$ make test-contract
+```
+
+For sure you can also run them by going into the project's folder and executing them with the specific 
+binary(normally `yarn`), but those are just shortcuts so you can run them from the root.
+
 ## Hardhat
 
 ### Forking a chain
