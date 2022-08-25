@@ -22,6 +22,7 @@ module.exports = async function (taskArguments, hre, runSuper) {
   addr.facet.DiamondCutterFacet = facets.diamondCutterFacet.address;
   addr.facet.DiamondLoupeFacet = facets.diamondLoupeFacet.address;
   addr.facet.ProviderUpdaterFacet = facets.providerUpdaterFacet.address;
+  addr.facet.FeeManagerFacet = facets.feeManagerFacet.address;
 
   allAddresses[hre.network.name] = addr;
 
