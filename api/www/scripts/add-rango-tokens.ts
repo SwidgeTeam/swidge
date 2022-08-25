@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import axios from 'axios';
-import { Avalanche, BSC, Fantom, Optimism, Polygon } from '../src/shared/enums/ChainIds';
+import { Avalanche, BSC, Fantom, Mainnet, Optimism, Polygon } from '../src/shared/enums/ChainIds';
 
 async function run() {
   const apiUrl = process.env.API_URL;
@@ -69,6 +69,8 @@ run()
 
 function getBlockchainCode(chainId: string): string {
   switch (chainId) {
+    case 'ETH':
+      return Mainnet;
     case 'OPTIMISM':
       return Optimism;
     case 'BSC':
