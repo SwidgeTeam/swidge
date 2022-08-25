@@ -1,5 +1,6 @@
 import { INetwork } from '@/domain/chains/INetwork'
 
+export const MAINNET_CHAIN_ID = '1'
 export const POLYGON_CHAIN_ID = '137'
 export const FANTOM_CHAIN_ID = '250'
 export const BSC_CHAIN_ID = '56'
@@ -8,6 +9,16 @@ export const OPTIMISM_CHAIN_ID = '10'
 
 export class Networks {
     private static networks = new Map<string, INetwork>([
+        [
+            MAINNET_CHAIN_ID,
+            {
+                id: MAINNET_CHAIN_ID,
+                name: 'Mainnet',
+                icon: 'https://api.rango.exchange/i/qr4L6S',
+                rpcUrl: `${import.meta.env.VITE_APP_RPC_NODE_MAINNET}`,
+                live: true
+            }
+        ],
         [
             POLYGON_CHAIN_ID,
             {
