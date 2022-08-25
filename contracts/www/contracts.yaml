@@ -144,7 +144,7 @@ optimism:
       enabled: true
       implementation: "0xf66579Ff926e44BD583a8455beFaBb88dECcAFfc"
       handler: "0x0000000000000000000000000000000000000000"
-ethereum:
+mainnet:
   diamond: "0x1a6e1ef1d28A7d9feD016c88f4d1858367564781"
   facet:
     RouterFacet: "0x8dE40F0f62B69C35A963d5ED626da04f6c1E4AB7"

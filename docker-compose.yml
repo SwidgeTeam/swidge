@@ -45,7 +45,7 @@ services:
       API_URL: ${API_URL}
       APP_HOST_REGEX: ${API_HOST}
       API_AUTH_TOKEN: ${API_AUTH_TOKEN}
-      RPC_NODE_ETHEREUM: ${ethereum_RPC_NODE}
+      RPC_NODE_MAINNET: ${mainnet_RPC_NODE}
       RPC_NODE_POLYGON: ${polygon_RPC_NODE}
       RPC_NODE_FANTOM: ${fantom_RPC_NODE}
       RPC_NODE_BSC: ${bsc_RPC_NODE}
@@ -74,7 +74,7 @@ services:
       ACCESS_KEY: ${AWS_SQS_ACCESS_KEY}
       SECRET: ${AWS_SQS_SECRET}
       API_AUTH_TOKEN: ${API_AUTH_TOKEN}
-      RPC_NODE_ETHEREUM: ${ethereum_RPC_NODE}
+      RPC_NODE_MAINNET: ${mainnet_RPC_NODE}
       RPC_NODE_POLYGON: ${polygon_RPC_NODE}
       RPC_NODE_FANTOM: ${fantom_RPC_NODE}
       RPC_NODE_BSC: ${bsc_RPC_NODE}
@@ -103,14 +103,14 @@ services:
     environment:
       MNEMONIC: ${MNEMONIC}
       GAS_REPORTING: ${GAS_REPORTING}
-      RPC_NODE_ETHEREUM: ${ethereum_RPC_NODE}
+      RPC_NODE_MAINNET: ${mainnet_RPC_NODE}
       RPC_NODE_FANTOM: ${fantom_RPC_NODE}
       RPC_NODE_POLYGON: ${polygon_RPC_NODE}
       RPC_NODE_BSC: ${bsc_RPC_NODE}
       RPC_NODE_AVALANCHE: ${avalanche_RPC_NODE}
       RPC_NODE_OPTIMISM: ${optimism_RPC_NODE}
       RPC_NODE_CELO: ${celo_RPC_NODE}
-      CHAIN_ID_ETHEREUM: ${ethereum_CHAIN_ID}
+      CHAIN_ID_MAINNET: ${mainnet_CHAIN_ID}
       CHAIN_ID_FANTOM: ${fantom_CHAIN_ID}
       CHAIN_ID_POLYGON: ${polygon_CHAIN_ID}
       CHAIN_ID_BSC: ${bsc_CHAIN_ID}
