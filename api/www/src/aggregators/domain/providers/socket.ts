@@ -1,4 +1,4 @@
-import { Aggregator } from '../aggregator';
+import { Aggregator, ExternalAggregator } from '../aggregator';
 import { AggregatorRequest } from '../aggregator-request';
 import { Route } from '../../../shared/domain/route/route';
 import { InsufficientLiquidity } from '../../../swaps/domain/insufficient-liquidity';
@@ -15,6 +15,11 @@ import { ApprovalTransactionDetails } from '../../../shared/domain/route/approva
 import { RouterCallEncoder } from '../../../shared/domain/router-call-encoder';
 import { RouteFees } from '../../../shared/domain/route/route-fees';
 import { RouteSteps } from '../../../shared/domain/route/route-steps';
+import {
+  ExternalTransactionStatus,
+  StatusCheckRequest,
+  StatusCheckResponse,
+} from '../status-check';
 
 // whole Route details
 interface SocketRoute {
@@ -65,7 +70,7 @@ interface SocketApprovalData {
   allowanceTarget: string;
 }
 
-export class Socket implements Aggregator {
+export class Socket implements Aggregator, ExternalAggregator {
   private enabledChains = [];
   private client: IHttpClient;
   private readonly apiKey: string;
@@ -105,11 +110,7 @@ export class Socket implements Aggregator {
         sort: 'output',
         singleTxOnly: true,
       },
-      headers: {
-        'API-KEY': this.apiKey,
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
+      headers: this.headers(),
     });
 
     if (!response.success || response.result.routes.length === 0) {
@@ -164,6 +165,63 @@ export class Socket implements Aggregator {
   }
 
   /**
+   * @param txHash
+   * @param trackingId
+   * @param fromAddress
+   * @param toAddress
+   */
+  async executedTransaction(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    txHash: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    trackingId: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    fromAddress: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    toAddress: string,
+  ): Promise<void> {
+    // pass
+    // provider doesnt required to be informed
+    return;
+  }
+
+  /**
+   *
+   * @param request
+   */
+  async checkStatus(request: StatusCheckRequest): Promise<StatusCheckResponse> {
+    const response = await this.client.get<{
+      success: boolean;
+      result: {
+        sourceTxStatus: string;
+        destinationTxStatus: string;
+      };
+    }>(`${this.apiBaseUrl}/bridge-status`, {
+      params: {
+        transactionHash: request.txHash,
+        fromChainId: request.fromChain,
+        toChainId: request.toChain,
+      },
+      headers: this.headers(),
+    });
+
+    let status;
+
+    switch (response.result.destinationTxStatus) {
+      case 'COMPLETED':
+        status = ExternalTransactionStatus.Success;
+        break;
+      case 'PENDING':
+        status = ExternalTransactionStatus.Pending;
+        break;
+    }
+
+    return {
+      status: status,
+    };
+  }
+
+  /**
    * Quotes and constructs the transaction details
    * @param route
    * @private
@@ -182,11 +240,7 @@ export class Socket implements Aggregator {
         approvalData: SocketApprovalData | null;
       };
     }>(`${this.apiBaseUrl}/build-tx`, {
-      headers: {
-        'API-KEY': this.apiKey,
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
+      headers: this.headers(),
       params: JSON.stringify({ route: route }),
     });
 
@@ -243,5 +297,17 @@ export class Socket implements Aggregator {
           step.serviceTime,
         );
     }
+  }
+
+  /**
+   * Returns API headers
+   * @private
+   */
+  private headers() {
+    return {
+      'API-KEY': this.apiKey,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    };
   }
 }
