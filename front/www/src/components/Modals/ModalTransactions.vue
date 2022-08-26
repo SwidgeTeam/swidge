@@ -56,7 +56,7 @@ const loadData = async () => {
  * @param num
  */
 function padTo2Digits(num: number) {
-  return num.toString().padStart(2, '0');
+    return num.toString().padStart(2, '0')
 }
 
 /**
@@ -66,7 +66,7 @@ function padTo2Digits(num: number) {
 const transformDate = (timestamp: string) => {
     const date = new Date(timestamp)
     const year = date.getUTCFullYear()
-    const month = padTo2Digits(date.getUTCMonth()+1) 
+    const month = padTo2Digits(date.getUTCMonth()+1)
     const day = padTo2Digits(date.getUTCDate())
     const hours = padTo2Digits(date.getUTCHours())
     const minutes = padTo2Digits(date.getUTCMinutes())

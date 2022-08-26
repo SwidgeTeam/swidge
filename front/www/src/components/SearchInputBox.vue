@@ -12,15 +12,19 @@ defineProps<{
 
 const emits = defineEmits<{
     (event: 'update:searchTerm', searchTerm: string): void,
+    (event: 'clear-input'): void,
 }>()
+
 const onInput = (event: Event) => {
     if (!(event.target instanceof HTMLInputElement)) return
     emits('update:searchTerm', event.target.value)
 }
+
 const resetInput = () => {
-    emits('update:searchTerm', '')
+    emits('clear-input')
     searchBox.value?.focus()
 }
+
 const focusInput = () => {
     searchBox.value?.focus()
 }

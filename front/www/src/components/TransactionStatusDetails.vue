@@ -10,13 +10,13 @@ defineProps<{
 }>()
 
 const fixedAmount = (amount: number) => {
-        const fixedamount = Number(amount)
-        if (fixedamount === 0) {
-            return '0'
-        } else {
-            return fixedamount.toFixed(6)
-        }
-} 
+    const fixedAmount = Number(amount)
+    if (fixedAmount === 0) {
+        return '0'
+    } else {
+        return fixedAmount.toFixed(6)
+    }
+}
 
 </script>
 

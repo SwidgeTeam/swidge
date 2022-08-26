@@ -11,6 +11,7 @@ import { useTokensStore } from '@/store/tokens'
 import IERC20Abi from '@/contracts/IERC20.json'
 import { INetwork } from '@/domain/chains/INetwork'
 import ModalImportToken from '@/components/Modals/ModalImportToken.vue'
+import { debounce } from 'lodash'
 
 const tokensStore = useTokensStore()
 
@@ -92,6 +93,8 @@ const handleModalClick = () => {
  * @param term
  */
 const updateSearchTerm = (term: string) => {
+    if(term.length < 3) return
+
     searchTerm.value = term
     matchingTokens.value = []
 
@@ -99,6 +102,8 @@ const updateSearchTerm = (term: string) => {
         loadMatchingTokens()
     }
 }
+
+const handlerUpdateSearchTerm = debounce(updateSearchTerm, 100)
 
 /**
  * Tries to fetch the matching tokens of a specific address
@@ -233,7 +238,8 @@ const filteredTokens = () => {
             ref="searchComponent"
             :search-term="searchTerm"
             placeholder="Search by token, network or address"
-            @update:search-term="updateSearchTerm"/>
+            @update:search-term="handlerUpdateSearchTerm"
+            @clear-input="searchTerm = ''"/>
         <NetworkLineSelector
             v-model:selected-network-id="selectedNetworkId"
             :networks="getNetworks()"
