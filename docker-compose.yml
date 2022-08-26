@@ -122,6 +122,7 @@ services:
       SNOWTRACE_API_KEY: ${SNOWTRACE_API_KEY}
       BSCSCAN_API_KEY: ${BSCSCAN_API_KEY}
       OPTIMISTIC_API_KEY: ${OPTIMISTIC_API_KEY}
+      ETHERSCAN_API_KEY: ${ETHERSCAN_API_KEY}
     volumes:
       - ./contracts/www/:/code
 

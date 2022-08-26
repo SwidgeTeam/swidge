@@ -87,6 +87,7 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: {
+      mainnet: String(process.env.ETHERSCAN_API_KEY),
       polygon: String(process.env.POLYGONSCAN_API_KEY),
       opera: String(process.env.FTMSCAN_API_KEY),
       avalanche: String(process.env.SNOWTRACE_API_KEY),
