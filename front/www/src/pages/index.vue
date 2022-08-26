@@ -1,17 +1,14 @@
 <script setup lang="ts">
-import { useWeb3Store } from '@/store/web3'
 import { useTokensStore } from '@/store/tokens'
 import { onMounted, ref } from 'vue'
 import { ArrowCircleRightIcon, ArrowCircleUpIcon } from '@heroicons/vue/outline'
 import BrigdeSwapInterface from '@/components/BrigdeSwapInterface.vue'
 import FAQCard from '@/components/FAQCard.vue'
 
-const { connect } = useWeb3Store()
 const { fetchTokens } = useTokensStore()
 
 onMounted(async () => {
     fetchTokens()
-    connect(false)
 })
 
 const isFaqOpen = ref(false)

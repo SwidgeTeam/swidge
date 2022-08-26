@@ -3,7 +3,7 @@
 defineProps<{
   chainName: string,
   iconLink: string,
-  isNetwork: boolean
+  isCorrectNetwork: boolean
 }>()
 
 const emits = defineEmits<{
@@ -13,7 +13,7 @@ const emits = defineEmits<{
 </script>
 
 <template>
-  <template v-if="isNetwork">
+  <template v-if="isCorrectNetwork">
     <button
       class="flex items-center gap-2 tracking-wide header-button"
       @click="emits('switch-network')"
@@ -26,7 +26,7 @@ const emits = defineEmits<{
       <span>{{ chainName }}</span>
     </button>
   </template>
-  <template v-if="!isNetwork">
+  <template v-else>
     <button
       class="flex items-center gap-2 tracking-wide header-button"
       @click="emits('switch-network')"

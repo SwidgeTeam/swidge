@@ -53,7 +53,6 @@ export const useTransactionStore = defineStore('transaction', {
         /**
          * Fetches the callData of both required transactions to execute the swidge
          * @param amount
-         * @param slippage
          */
         async fetchBothTxs(amount: string) {
             const tokensStore = useTokensStore()

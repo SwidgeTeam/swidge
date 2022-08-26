@@ -10,6 +10,7 @@ import ConnectButton from '@/components/Buttons/ConnectButton.vue'
 import { Networks } from '@/domain/chains/Networks'
 import TransactionsButton from './Buttons/TransactionsButton.vue'
 import ModalTransactions from './Modals/ModalTransactions.vue'
+import { Wallet } from '@/domain/wallets/IWallet'
 
 const emits = defineEmits<{
     (event: 'switch-network', chainId: string): void
@@ -17,21 +18,25 @@ const emits = defineEmits<{
 
 const web3Store = useWeb3Store()
 const { account, isConnected, isCorrectNetwork, selectedNetworkId } = storeToRefs(web3Store)
-const { connect, switchToNetwork } = web3Store
 
 const isNetworkModalOpen = ref(false)
 const isTransactionsModalOpen = ref(false)
 
-const createShortAddress = (address: string): string => {
+const createShortAddress = (): string => {
+    const address = account.value
     return address.substring(0, 6) + '...' + address.substring(address.length - 4)
 }
 
 const changeNetwork = (chainId: string) => {
-    switchToNetwork(chainId)
+    web3Store.switchToNetwork(chainId)
         .then(() => {
             isNetworkModalOpen.value = false
             emits('switch-network', chainId)
         })
+}
+
+const connect = () => {
+    web3Store.init(Wallet.Metamask)
 }
 
 const chainName = computed({
@@ -66,16 +71,16 @@ const chainIcon = computed({
             <ChainButton
                 :chain-name="chainName"
                 :icon-link="chainIcon"
-                :is-network="isCorrectNetwork"
+                :is-correct-network="isCorrectNetwork"
                 @switch-network="isNetworkModalOpen = true"
             />
-            <AddressButton :address="createShortAddress(account)"/>
+            <AddressButton :address="createShortAddress"/>
             <TransactionsButton
                 @show-transactions="isTransactionsModalOpen = true"/>
         </div>
         <div v-else class="flex gap-4 font-extralight">
             <ConnectButton
-                @connect="connect(true)"
+                @connect="connect"
             />
         </div>
     </nav>

@@ -2,7 +2,8 @@ import { ethers } from 'ethers'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { ref } from 'vue'
 import { Networks } from '@/domain/chains/Networks'
-import IERC20Abi from '@/contracts/IERC20.json'
+import { IWallet, Wallet, WalletEvents } from '@/domain/wallets/IWallet'
+import { Metamask } from '@/domain/wallets/Metamask'
 
 export const NATIVE_COIN_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 
@@ -11,121 +12,108 @@ export const useWeb3Store = defineStore('web3', () => {
     const isConnected = ref(false)
     const isCorrectNetwork = ref(true)
     const selectedNetworkId = ref('')
-    const error = ref('')
-    const balanceETH = ref<null | string>(null)
+    const wallet = ref<IWallet | null>(null)
 
-    async function connect(connect: boolean) {
+    /**
+     * entrypoint to connect a wallet
+     * @param code
+     */
+    async function init(code: Wallet) {
+        const events: WalletEvents = {
+            onConnect: onConnect,
+            onSwitchNetwork: onSwitchNetwork,
+            onDisconnect: onDisconnect
+        }
+
+        switch (code) {
+        case Wallet.Metamask:
+            wallet.value = new Metamask(events)
+            break
+        default:
+            throw new Error('Unsupported wallet')
+        }
+
+        await connect()
+        await checkIfCorrectNetwork()
+    }
+
+    /**
+     * tries to connect with the selected wallet
+     */
+    async function connect() {
+        if (!wallet.value) throw new Error('No wallet')
         try {
-            const { ethereum } = window
-            if (!ethereum) {
-                error.value = 'Metamask not installed.'
-                return
-            }
-            if (!(await checkIfIsAlreadyConnected()) && connect) {
-                await requestAccess()
-                isConnected.value = true
-            }
-            await checkIsCorrectNetwork()
-            await setupEventListeners()
-        } catch {
-            error.value = 'Account request refused.'
+            await wallet.value.connect()
+            isConnected.value = true
+        } catch (e) {
             isConnected.value = false
         }
     }
 
-    async function checkIfIsAlreadyConnected() {
-        const { ethereum } = window
-        const accounts: string[] = await ethereum.request({ method: 'eth_accounts' })
-        if (accounts.length !== 0) {
-            account.value = accounts[0]
-            isConnected.value = true
-            return true
-        } else {
-            return false
-        }
-    }
-
-    async function requestAccess() {
-        const { ethereum } = window
-        const accounts: string[] = await ethereum.request({ method: 'eth_requestAccounts' })
-        account.value = accounts[0]
-    }
-
-    async function checkIsCorrectNetwork() {
-        const { ethereum } = window
-        const hexChainId = await ethereum.request({ method: 'eth_chainId' })
-        const chainId = parseInt(hexChainId, 16).toString()
+    /**
+     * checks that the connected chain is an accepted one
+     */
+    async function checkIfCorrectNetwork() {
+        if (!wallet.value) throw new Error('No wallet')
+        const chainId = await wallet.value.getCurrentChain()
         const acceptedChains = Networks.ids()
-        if (acceptedChains.includes(chainId)) {
-            isCorrectNetwork.value = true
-            selectedNetworkId.value = chainId
-        } else {
-            isCorrectNetwork.value = false
-        }
+        selectedNetworkId.value = chainId
+        isCorrectNetwork.value = acceptedChains.includes(chainId)
     }
 
+    /**
+     * fetches and returns the balance of an asset
+     * @param address Address of the asset to query
+     */
     async function getBalance(address: string) {
+        if (!wallet.value) throw new Error('No wallet')
         if (address === NATIVE_COIN_ADDRESS) {
-            return getETHBalance()
+            return wallet.value.getNativeBalance(account.value)
         } else {
-            return getTokenBalance(address)
+            return wallet.value.getTokenBalance(account.value, address)
         }
     }
 
-    async function getETHBalance(): Promise<string> {
-        if (!account.value) return ''
-        try {
-            const { ethereum } = window
-            const provider = new ethers.providers.Web3Provider(ethereum)
-            const balance = await provider.getBalance(account.value)
-            return ethers.utils.formatEther(balance)
-        } catch (error) {
-            console.log(error)
-            return ''
-        }
-    }
-
-    async function getTokenBalance(address: string): Promise<string> {
-        try {
-            const { ethereum } = window
-            const provider = new ethers.providers.Web3Provider(ethereum)
-            const contract = new ethers.Contract(address, IERC20Abi, provider)
-            const balance = await contract.balanceOf(account.value)
-            const decimals = await contract.decimals()
-            return ethers.utils.formatUnits(balance, decimals)
-        } catch (error) {
-            console.log(error)
-            return ''
-        }
-    }
-
+    /**
+     * switches the wallet to the specified chain
+     * @param chainId
+     */
     async function switchToNetwork(chainId: string) {
-        const { ethereum } = window
-        try {
-            const hexChainId = '0x' + Number(chainId).toString(16)
-            await ethereum.request({
-                method: 'wallet_switchEthereumChain',
-                params: [{ chainId: hexChainId }]
-            })
-            isCorrectNetwork.value = true
-            selectedNetworkId.value = chainId
-            return true
-        } catch {
-            isCorrectNetwork.value = false
-            return false
+        if (!wallet.value) throw new Error('No wallet')
+        const changed = await wallet.value.switchNetwork(chainId)
+        if (changed) {
+            await checkIfCorrectNetwork()
         }
     }
 
-    async function setupEventListeners() {
-        const { ethereum } = window
-        ethereum.on('accountsChanged', async () => {
-            history.replaceState(null, '', '/')
-        })
-        ethereum.on('chainChanged', async () => {
-            await checkIsCorrectNetwork()
-        })
+    /**
+     * triggered when the wallet is connected an account
+     * @param address
+     */
+    function onConnect(address: string) {
+        account.value = address
     }
 
+    /**
+     * triggered when the wallet is disconnected
+     */
+    function onDisconnect() {
+        account.value = ''
+        isConnected.value = false
+    }
+
+    /**
+     * triggered when the wallet changes the network
+     */
+    async function onSwitchNetwork(chainId: string) {
+        selectedNetworkId.value = chainId
+        await checkIfCorrectNetwork()
+    }
+
+    /**
+     * returns a provider for the given chain
+     * @param chainId
+     */
     function getChainProvider(chainId: string) {
         const chain = Networks.get(chainId)
         return ethers.getDefaultProvider({
@@ -140,9 +128,7 @@ export const useWeb3Store = defineStore('web3', () => {
         isConnected,
         isCorrectNetwork,
         selectedNetworkId,
-        error,
-        balanceETH,
-        connect,
+        init,
         getBalance,
         switchToNetwork,
         getChainProvider,
