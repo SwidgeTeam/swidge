@@ -3,6 +3,7 @@ import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
 import Pages from 'vite-plugin-pages'
 import Layouts from 'vite-plugin-vue-layouts'
+import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -27,6 +28,18 @@ export default defineConfig({
     optimizeDeps: {
         include: ['vue', 'vue-router', '@vueuse/core', '@vueuse/head'],
         exclude: ['vue-demi'],
+        esbuildOptions: {
+            // Node.js global to browser globalThis
+            define: {
+                global: 'globalThis'
+            },
+            // Enable esbuild polyfill plugins
+            plugins: [
+                NodeGlobalsPolyfillPlugin({
+                    buffer: true
+                })
+            ]
+        }
     },
     server: {
         hmr: true,
