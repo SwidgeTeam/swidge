@@ -1,5 +1,5 @@
 export interface IWallet {
-    connect: () => void
+    connect: (request: boolean) => Promise<void>
     switchNetwork: (chainId: string) => Promise<boolean>
     getCurrentChain: () => Promise<string>
     getNativeBalance: (account: string) => Promise<string>

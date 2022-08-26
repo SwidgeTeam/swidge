@@ -4,11 +4,14 @@ import { onMounted, ref } from 'vue'
 import { ArrowCircleRightIcon, ArrowCircleUpIcon } from '@heroicons/vue/outline'
 import BrigdeSwapInterface from '@/components/BrigdeSwapInterface.vue'
 import FAQCard from '@/components/FAQCard.vue'
+import { useWeb3Store } from '@/store/web3'
 
 const { fetchTokens } = useTokensStore()
+const web3Store = useWeb3Store()
 
 onMounted(async () => {
     fetchTokens()
+    web3Store.init()
 })
 
 const isFaqOpen = ref(false)

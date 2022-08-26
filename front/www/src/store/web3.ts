@@ -16,9 +16,10 @@ export const useWeb3Store = defineStore('web3', () => {
 
     /**
      * entrypoint to connect a wallet
-     * @param code
+     * @param code Wallet to user
+     * @param request Whether to ask connection to user if not connected
      */
-    async function init(code: Wallet) {
+    async function init(code = Wallet.Metamask, request = false) {
         const events: WalletEvents = {
             onConnect: onConnect,
             onSwitchNetwork: onSwitchNetwork,
@@ -33,18 +34,17 @@ export const useWeb3Store = defineStore('web3', () => {
             throw new Error('Unsupported wallet')
         }
 
-        await connect()
+        await connect(request)
         await checkIfCorrectNetwork()
     }
 
     /**
      * tries to connect with the selected wallet
      */
-    async function connect() {
+    async function connect(request: boolean) {
         if (!wallet.value) throw new Error('No wallet')
         try {
-            await wallet.value.connect()
-            isConnected.value = true
+            await wallet.value.connect(request)
         } catch (e) {
             isConnected.value = false
         }
@@ -92,6 +92,7 @@ export const useWeb3Store = defineStore('web3', () => {
      */
     function onConnect(address: string) {
         account.value = address
+        isConnected.value = true
     }
 
     /**

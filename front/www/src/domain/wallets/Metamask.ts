@@ -11,16 +11,20 @@ export class Metamask implements IWallet {
         this.callbacks = callbacks
     }
 
-    public async connect() {
+    public async connect(request: boolean): Promise<void> {
         if (!window.ethereum) {
             throw new Error('Metamask not installed')
         }
         this.connector = window.ethereum
         const isConnected = await this.isAlreadyConnected()
-        if (!isConnected) {
+        if (!isConnected && request) {
             await this.requestAccess()
         }
-        this.setListeners()
+        const accounts: string[] = await this.connectedAccounts()
+        if (accounts.length > 0) {
+            this.callbacks.onConnect(accounts[0])
+            this.setListeners()
+        }
     }
 
     public async switchNetwork(chainId: string): Promise<boolean> {
@@ -65,21 +69,23 @@ export class Metamask implements IWallet {
     }
 
     private async isAlreadyConnected() {
-        const accounts: string[] = await this.connector.request({ method: 'eth_accounts' })
+        const accounts: string[] = await this.connectedAccounts()
         return accounts.length !== 0
     }
 
+    private async connectedAccounts(): Promise<string[]> {
+        return await this.connector.request({ method: 'eth_accounts' })
+    }
+
     private async requestAccess() {
-        const accounts: string[] = await this.connector.request({ method: 'eth_requestAccounts' })
-        this.callbacks.onConnect(accounts[0])
+        await this.connector.request({ method: 'eth_requestAccounts' })
     }
 
     private setListeners() {
         this.connector.on('accountsChanged', async (account: string[]) => {
             if (account.length === 0) {
                 this.callbacks.onDisconnect()
-            }
-            else {
+            } else {
                 this.callbacks.onConnect(account[0])
             }
         })
