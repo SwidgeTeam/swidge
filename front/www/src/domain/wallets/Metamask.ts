@@ -16,8 +16,12 @@ export class Metamask implements IWallet {
     }
 
     public async isConnected() {
-        const accounts: string[] = await this.connector.request({ method: 'eth_accounts' })
+        const accounts = await this.getConnectedAccounts()
         return accounts.length !== 0
+    }
+
+    public getConnectedAccounts(): Promise<string[]> {
+        return this.connector.request({ method: 'eth_accounts' })
     }
 
     public async requestAccess() {
@@ -32,8 +36,8 @@ export class Metamask implements IWallet {
                 this.callbacks.onConnect(account[0])
             }
         })
-        this.connector.on('chainChanged', async () => {
-            // pass
+        this.connector.on('chainChanged', async (chainId: string) => {
+            this.callbacks.onSwitchNetwork(chainId)
         })
         this.connector.on('disconnect', async () => {
             this.callbacks.onDisconnect()
@@ -77,7 +81,7 @@ export class Metamask implements IWallet {
         return receipt.transactionHash
     }
 
-    getProvider(): ExternalProvider {
+    public getProvider(): ExternalProvider {
         return this.connector
     }
 }

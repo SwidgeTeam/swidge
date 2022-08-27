@@ -22,6 +22,10 @@ export class WalletConnect implements IWallet {
         return this.provider.isWalletConnect
     }
 
+    public getConnectedAccounts(): Promise<string[]> {
+        return this.provider.enable()
+    }
+
     public async requestAccess() {
         await this.provider.enable()
     }

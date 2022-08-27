@@ -2,6 +2,7 @@ import { ExternalProvider } from '@ethersproject/providers'
 
 export interface IWallet {
     isConnected: () => Promise<boolean>
+    getConnectedAccounts: () => Promise<string[]>
     requestAccess: () => Promise<void>
     setListeners: () => void
     switchNetwork: (chainId: string) => Promise<boolean>

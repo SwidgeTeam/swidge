@@ -50,11 +50,16 @@ export const useWeb3Store = defineStore('web3', () => {
     async function connect(request: boolean) {
         if (!wallet.value) throw new Error('No wallet')
         try {
-            const isConnected = await wallet.value.isConnected()
+            let isConnected = await wallet.value.isConnected()
             if (!isConnected && request) {
                 await wallet.value.requestAccess()
             }
-            wallet.value.setListeners()
+            isConnected = await wallet.value.isConnected()
+            if (isConnected) {
+                wallet.value.setListeners()
+                const accounts = await wallet.value.getConnectedAccounts()
+                onConnect(accounts[0])
+            }
         } catch (e) {
             isConnected.value = false
         }
