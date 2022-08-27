@@ -18,6 +18,7 @@ export interface WalletEvents {
 
 export enum Wallet {
     Metamask,
+    WalletConnect,
 }
 
 export interface Tx {

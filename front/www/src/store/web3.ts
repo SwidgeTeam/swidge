@@ -4,6 +4,7 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 import IERC20Abi from '@/contracts/IERC20.json'
 import { IWallet, TxHash, Wallet, WalletEvents } from '@/domain/wallets/IWallet'
 import { ApprovalTransactionDetails, TransactionDetails } from '@/domain/paths/path'
+import { WalletConnect } from '@/domain/wallets/WalletConnect'
 import { Metamask } from '@/domain/wallets/Metamask'
 import { Networks } from '@/domain/chains/Networks'
 
@@ -31,6 +32,9 @@ export const useWeb3Store = defineStore('web3', () => {
         switch (code) {
         case Wallet.Metamask:
             wallet.value = new Metamask(events)
+            break
+        case Wallet.WalletConnect:
+            wallet.value = new WalletConnect(events)
             break
         default:
             throw new Error('Unsupported wallet')
