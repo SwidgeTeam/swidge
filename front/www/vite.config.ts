@@ -4,7 +4,7 @@ import { resolve } from 'path'
 import Pages from 'vite-plugin-pages'
 import Layouts from 'vite-plugin-vue-layouts'
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
-import NodeModulesPolyfillPlugin from '@esbuild-plugins/node-modules-polyfill';
+import inject from '@rollup/plugin-inject'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -48,5 +48,13 @@ export default defineConfig({
         watch: {
             usePolling: true,
         }
-    }
+    },
+    build: {
+        rollupOptions: {
+            plugins: [inject({ Buffer: ['buffer', 'Buffer'] })],
+        },
+        commonjsOptions: {
+            transformMixedEsModules: true,
+        },
+    },
 })
