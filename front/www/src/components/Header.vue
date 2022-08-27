@@ -35,7 +35,11 @@ const changeNetwork = (chainId: string) => {
 }
 
 const connect = () => {
-    web3Store.init(Wallet.WalletConnect, true)
+    web3Store.init(Wallet.Metamask, true)
+}
+
+const handleClickOnAddress = () => {
+    web3Store.disconnect()
 }
 
 const chainName = computed({
@@ -73,7 +77,10 @@ const chainIcon = computed({
                 :is-correct-network="isCorrectNetwork"
                 @switch-network="isNetworkModalOpen = true"
             />
-            <AddressButton :address="createShortAddress(account)"/>
+            <AddressButton
+                :address="createShortAddress(account)"
+                @click="handleClickOnAddress"
+            />
             <TransactionsButton
                 @show-transactions="isTransactionsModalOpen = true"/>
         </div>

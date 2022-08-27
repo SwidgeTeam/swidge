@@ -1,16 +1,19 @@
 <script setup lang='ts'>
 defineProps<{
-  address: string
+    address: string
 }>()
+
+const emits = defineEmits<{
+    (event: 'click'): void
+}>()
+
 </script>
- 
+
 <template>
-  <div class="header-button">
-    <template v-if="address.length > 0">
-      <span>{{ address }}</span>
-    </template>
-    <template v-if="address.length < 1">
-      <span>Not connected</span>
-    </template>
-  </div>
+    <button
+        class="flex items-center gap-2 tracking-wide header-button"
+        @click="emits('click')"
+    >
+        <span>{{ address }}</span>
+    </button>
 </template>
