@@ -105,7 +105,6 @@ export class WalletConnect implements IWallet {
             value: tx.value,
             gasLimit: tx.gas,
             gasPrice: tx.gasPrice,
-            nonce: tx.nonce,
         })
 
         return receipt.transactionHash
