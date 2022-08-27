@@ -1,6 +1,6 @@
-import { ethers } from 'ethers'
+import { ethers, Signer } from 'ethers'
 import IERC20Abi from '@/contracts/IERC20.json'
-import { IWallet, WalletEvents } from '@/domain/wallets/IWallet'
+import { IWallet, Tx, WalletEvents } from '@/domain/wallets/IWallet'
 
 export class Metamask implements IWallet {
     private callbacks: WalletEvents
@@ -66,6 +66,25 @@ export class Metamask implements IWallet {
     public async getCurrentChain(): Promise<string> {
         const hexChainId = await this.connector.request({ method: 'eth_chainId' })
         return parseInt(hexChainId, 16).toString()
+    }
+
+    public async sendTransaction(tx: Tx): Promise<string> {
+        const provider = new ethers.providers.Web3Provider(this.connector)
+        const signer: Signer = provider.getSigner()
+
+        const receipt = await (
+            await signer.sendTransaction({
+                from: tx.from,
+                to: tx.to,
+                data: tx.data,
+                value: tx.value,
+                gasLimit: tx.gas,
+                gasPrice: tx.gasPrice,
+                nonce: tx.nonce,
+            })
+        ).wait()
+
+        return receipt.transactionHash
     }
 
     private async isAlreadyConnected() {

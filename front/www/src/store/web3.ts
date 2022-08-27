@@ -2,8 +2,10 @@ import { ethers } from 'ethers'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { ref } from 'vue'
 import { Networks } from '@/domain/chains/Networks'
-import { IWallet, Wallet, WalletEvents } from '@/domain/wallets/IWallet'
+import { IWallet, TxDetails, TxHash, Wallet, WalletEvents } from '@/domain/wallets/IWallet'
 import { Metamask } from '@/domain/wallets/Metamask'
+import { ApprovalTransactionDetails, TransactionDetails } from '@/domain/paths/path'
+import { useTokensStore } from '@/store/tokens'
 
 export const NATIVE_COIN_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 
@@ -86,6 +88,44 @@ export const useWeb3Store = defineStore('web3', () => {
         }
     }
 
+    async function sendTransaction(tx: TxDetails): Promise<TxHash> {
+        if (!wallet.value) throw new Error('No wallet')
+        const provider = getChainProvider(useTokensStore().getOriginChainId)
+        const nonce = await provider.getTransactionCount(account.value)
+        const feeData = await provider.getFeeData()
+
+        if (!feeData.gasPrice) {
+            throw new Error('error fetching gas')
+        }
+
+        return wallet.value.sendTransaction({
+            from: account.value,
+            to: tx.to,
+            data: tx.data,
+            gas: tx.gasLimit,
+            value: tx.value ? tx.value : '0x0',
+            gasPrice: feeData.gasPrice.toString(),
+            nonce: nonce.toString(),
+        })
+    }
+
+    async function sendApprovalTransaction(tx: ApprovalTransactionDetails): Promise<TxHash> {
+        return sendTransaction({
+            to: tx.to,
+            data: tx.callData,
+            gasLimit: tx.gasLimit,
+        })
+    }
+
+    async function sendMainTransaction(tx: TransactionDetails): Promise<TxHash> {
+        return sendTransaction({
+            to: tx.to,
+            data: tx.callData,
+            value: tx.value,
+            gasLimit: tx.gasLimit,
+        })
+    }
+
     /**
      * triggered when the wallet is connected an account
      * @param address
@@ -132,6 +172,8 @@ export const useWeb3Store = defineStore('web3', () => {
         init,
         getBalance,
         switchToNetwork,
+        sendApprovalTransaction,
+        sendMainTransaction,
         getChainProvider,
     }
 

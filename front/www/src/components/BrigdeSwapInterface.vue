@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { ContractCaller } from '@/contracts/contractCaller'
 import ModalNetworkAndTokenSelect from './Modals/ModalNetworkAndTokenSelect.vue'
 import { ethers, providers } from 'ethers'
 import { useWeb3Store } from '@/store/web3'
@@ -12,14 +11,14 @@ import SwapBox from '@/components/SwapBox.vue'
 import IToken from '@/domain/tokens/IToken'
 import Route, { TransactionDetails } from '@/domain/paths/path'
 import Aggregators from '@/domain/aggregators/aggregators'
-import { TransactionReceipt } from '@ethersproject/abstract-provider'
-import { useToast } from "vue-toastification";
+import { useToast } from 'vue-toastification'
+import { TxHash } from '@/domain/wallets/IWallet'
 
 const web3Store = useWeb3Store()
 const tokensStore = useTokensStore()
 const routesStore = useRoutesStore()
 const transactionStore = useTransactionStore()
-const toast = useToast();
+const toast = useToast()
 
 const { switchToNetwork, getChainProvider, getBalance } = web3Store
 
@@ -240,12 +239,12 @@ const onExecuteTransaction = async () => {
     }
 
     await promise
-        .then((receipt: TransactionReceipt) => {
-            onInitialTxCompleted(route, receipt)
+        .then((txHash: TxHash) => {
+            onInitialTxCompleted(route, txHash)
         })
-        .catch((err)=> {
+        .catch(()=> {
             toast.error('Transaction failed')
-            closeModalStatus();
+            closeModalStatus()
         })
         .finally(() => {
             unsetExecutingButton()
@@ -255,23 +254,24 @@ const onExecuteTransaction = async () => {
 /**
  * Executes the route when the aggregator already sent all the callData
  */
-const executeRoute = async (): Promise<TransactionReceipt> => {
+const executeRoute = async (): Promise<TxHash> => {
     const approvalTx = transactionStore.getApprovalTx
     const mainTx = transactionStore.mainTx
     if (!mainTx) {
         throw new Error('trying to execute an empty transaction')
     }
     if (approvalTx) {
-        await ContractCaller.executeApproval(approvalTx)
+        await web3Store.sendApprovalTransaction(approvalTx)
     }
     openTransactionStatusModal()
-    return ContractCaller.executeTransaction(mainTx)
+
+    return web3Store.sendMainTransaction(mainTx)
 }
 
 /**
  * Executes the route when the aggregator requires quoting the callData
  */
-const executeSingleQuoteExecution = async (): Promise<TransactionReceipt> => {
+const executeSingleQuoteExecution = async (): Promise<TxHash> => {
     await transactionStore.fetchBothTxs(sourceTokenAmount.value)
     const approvalTx = transactionStore.getApprovalTx
     const mainTx = transactionStore.mainTx
@@ -279,20 +279,20 @@ const executeSingleQuoteExecution = async (): Promise<TransactionReceipt> => {
         throw new Error('trying to execute an empty transaction')
     }
     if (approvalTx) {
-        await ContractCaller.executeApproval(approvalTx)
+        await web3Store.sendApprovalTransaction(approvalTx)
     }
     openTransactionStatusModal()
-    return ContractCaller.executeTransaction(mainTx)
+    return web3Store.sendMainTransaction(mainTx)
 }
 
 /**
  * Executes the route when the aggregator requires quoting the callData
  */
-const executeDoubleQuoteExecution = async (): Promise<TransactionReceipt> => {
+const executeDoubleQuoteExecution = async (): Promise<TxHash> => {
     await transactionStore.fetchApprovalTx()
     const approvalTx = transactionStore.getApprovalTx
     if (approvalTx) {
-        await ContractCaller.executeApproval(approvalTx)
+        await web3Store.sendApprovalTransaction(approvalTx)
     }
     await transactionStore.fetchMainTx()
     const mainTx = transactionStore.mainTx
@@ -300,21 +300,21 @@ const executeDoubleQuoteExecution = async (): Promise<TransactionReceipt> => {
         throw new Error('trying to execute an empty transaction')
     }
     openTransactionStatusModal()
-    return ContractCaller.executeTransaction(mainTx)
+    return web3Store.sendMainTransaction(mainTx)
 }
 
 /**
  * Manages the process once the tx has been executed
  * @param route
- * @param receipt
+ * @param txHash
  */
-const onInitialTxCompleted = (route: Route, receipt: TransactionReceipt) => {
+const onInitialTxCompleted = (route: Route, txHash: TxHash) => {
     if (isCrossTransaction()) {
         routesStore.completeFirstStep()
         if (route.aggregator.id === Aggregators.Swidge) {
-            setUpEventListener(route.tx as TransactionDetails, receipt.transactionHash)
+            setUpEventListener(route.tx as TransactionDetails, txHash)
         } else {
-            transactionStore.informExecutedTx(receipt.transactionHash)
+            transactionStore.informExecutedTx(txHash)
             transactionStore.startCheckingStatus()
         }
     } else {
