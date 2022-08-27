@@ -28,6 +28,10 @@ export class Metamask implements IWallet {
         await this.connector.request({ method: 'eth_requestAccounts' })
     }
 
+    public async revokeAccess(): Promise<void> {
+        return this.callbacks.onDisconnect()
+    }
+
     public setListeners(): void {
         this.connector.on('accountsChanged', async (account: string[]) => {
             if (account.length === 0) {
@@ -43,7 +47,6 @@ export class Metamask implements IWallet {
             this.callbacks.onDisconnect()
         })
     }
-
     public async switchNetwork(chainId: string): Promise<boolean> {
         try {
             const hexChainId = '0x' + Number(chainId).toString(16)

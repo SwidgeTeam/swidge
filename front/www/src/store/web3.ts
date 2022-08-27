@@ -65,6 +65,11 @@ export const useWeb3Store = defineStore('web3', () => {
         }
     }
 
+    async function disconnect() {
+        if (!wallet.value) throw new Error('No wallet')
+        await wallet.value.revokeAccess()
+    }
+
     /**
      * checks that the connected chain is an accepted one
      */
@@ -238,6 +243,7 @@ export const useWeb3Store = defineStore('web3', () => {
         isCorrectNetwork,
         selectedNetworkId,
         init,
+        disconnect,
         getBalance,
         switchToNetwork,
         sendApprovalTransaction,

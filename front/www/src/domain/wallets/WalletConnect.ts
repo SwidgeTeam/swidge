@@ -38,6 +38,10 @@ export class WalletConnect implements IWallet {
         await this.provider.enable()
     }
 
+    public revokeAccess(): Promise<void> {
+        return this.connector.killSession()
+    }
+
     public setListeners(): void {
         // Subscribe to connection events
         this.connector.on('connect', (error, payload) => {
