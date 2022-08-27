@@ -35,7 +35,7 @@ const changeNetwork = (chainId: string) => {
 }
 
 const connect = () => {
-    web3Store.init(Wallet.Metamask, true)
+    web3Store.init(Wallet.WalletConnect, true)
 }
 
 const chainName = computed({
