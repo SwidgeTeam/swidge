@@ -3,8 +3,8 @@ import QRCodeModal from '@walletconnect/qrcode-modal'
 import { default as WalletConnectClient } from '@walletconnect/client'
 import { ExternalProvider } from '@ethersproject/providers'
 import WalletConnectProvider from '@walletconnect/web3-provider'
-import { Networks } from '@/domain/chains/Networks';
-import { IRPCMap } from '@walletconnect/types';
+import { Networks } from '@/domain/chains/Networks'
+import { IRPCMap } from '@walletconnect/types'
 
 export class WalletConnect implements IWallet {
     private readonly callbacks: WalletEvents

@@ -242,7 +242,8 @@ const onExecuteTransaction = async () => {
         .then((txHash: TxHash) => {
             onInitialTxCompleted(route, txHash)
         })
-        .catch(()=> {
+        .catch((error)=> {
+            console.log(error)
             toast.error('Transaction failed')
             closeModalStatus()
         })
