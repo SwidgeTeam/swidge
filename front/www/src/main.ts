@@ -6,11 +6,12 @@ import { createHead } from '@vueuse/head'
 import generatedRoutes from 'virtual:generated-pages'
 import { createPinia } from 'pinia'
 import { createGtm } from '@gtm-support/vue-gtm'
-import Toast, { PluginOptions } from "vue-toastification";
+import Toast, { PluginOptions } from 'vue-toastification'
+import VueLazyload from 'vue-lazyload'
 
 import '@/styles/index.css'
 // Import the CSS or use your own for toastification
-import "vue-toastification/dist/index.css";
+import 'vue-toastification/dist/index.css'
 
 const routes = setupLayouts(generatedRoutes)
 const head = createHead()
@@ -24,7 +25,7 @@ const router = createRouter({
 const options: PluginOptions = {
     // You can set your default options here
     pauseOnHover: true
-};
+}
 
 const app = createApp(App)
 
@@ -48,7 +49,8 @@ if (import.meta.env.PROD) {
 app.use(pinia)
 app.use(router)
 app.use(head)
-app.use(Toast, options);
+app.use(Toast, options)
+app.use(VueLazyload)
 app.mount('#app')
 
 

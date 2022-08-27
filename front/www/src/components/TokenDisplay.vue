@@ -18,7 +18,7 @@ const replaceByDefault = (e: Event) => {
     <div class="flex justify-between items-center">
         <div class="flex items-center gap-2">
             <img
-                :src="token.logo"
+                v-lazy="token.logo"
                 width="35"
                 height="35"
                 class="rounded-full overflow-hidden block"
