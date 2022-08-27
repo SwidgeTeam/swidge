@@ -1,30 +1,43 @@
 import { ethers, Signer } from 'ethers'
-import IERC20Abi from '@/contracts/IERC20.json'
 import { IWallet, Tx, WalletEvents } from '@/domain/wallets/IWallet'
+import { ExternalProvider } from '@ethersproject/providers'
 
 export class Metamask implements IWallet {
-    private callbacks: WalletEvents
+    private readonly callbacks: WalletEvents
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    private connector: any
+    private readonly connector: any
 
     constructor(callbacks: WalletEvents) {
-        this.callbacks = callbacks
-    }
-
-    public async connect(request: boolean): Promise<void> {
         if (!window.ethereum) {
             throw new Error('Metamask not installed')
         }
         this.connector = window.ethereum
-        const isConnected = await this.isAlreadyConnected()
-        if (!isConnected && request) {
-            await this.requestAccess()
-        }
-        const accounts: string[] = await this.connectedAccounts()
-        if (accounts.length > 0) {
-            this.callbacks.onConnect(accounts[0])
-            this.setListeners()
-        }
+        this.callbacks = callbacks
+    }
+
+    public async isConnected() {
+        const accounts: string[] = await this.connector.request({ method: 'eth_accounts' })
+        return accounts.length !== 0
+    }
+
+    public async requestAccess() {
+        await this.connector.request({ method: 'eth_requestAccounts' })
+    }
+
+    public setListeners(): void {
+        this.connector.on('accountsChanged', async (account: string[]) => {
+            if (account.length === 0) {
+                this.callbacks.onDisconnect()
+            } else {
+                this.callbacks.onConnect(account[0])
+            }
+        })
+        this.connector.on('chainChanged', async () => {
+            // pass
+        })
+        this.connector.on('disconnect', async () => {
+            this.callbacks.onDisconnect()
+        })
     }
 
     public async switchNetwork(chainId: string): Promise<boolean> {
@@ -37,29 +50,6 @@ export class Metamask implements IWallet {
             return true
         } catch {
             return false
-        }
-    }
-
-    public async getNativeBalance(account: string): Promise<string> {
-        if (!account) return ''
-        try {
-            const provider = new ethers.providers.Web3Provider(this.connector)
-            const balance = await provider.getBalance(account)
-            return ethers.utils.formatEther(balance)
-        } catch (error) {
-            return ''
-        }
-    }
-
-    public async getTokenBalance(account: string, address: string): Promise<string> {
-        try {
-            const provider = new ethers.providers.Web3Provider(this.connector)
-            const contract = new ethers.Contract(address, IERC20Abi, provider)
-            const balance = await contract.balanceOf(account)
-            const decimals = await contract.decimals()
-            return ethers.utils.formatUnits(balance, decimals)
-        } catch (error) {
-            return ''
         }
     }
 
@@ -87,31 +77,7 @@ export class Metamask implements IWallet {
         return receipt.transactionHash
     }
 
-    private async isAlreadyConnected() {
-        const accounts: string[] = await this.connectedAccounts()
-        return accounts.length !== 0
-    }
-
-    private async connectedAccounts(): Promise<string[]> {
-        return await this.connector.request({ method: 'eth_accounts' })
-    }
-
-    private async requestAccess() {
-        await this.connector.request({ method: 'eth_requestAccounts' })
-    }
-
-    private setListeners() {
-        this.connector.on('accountsChanged', async (account: string[]) => {
-            if (account.length === 0) {
-                this.callbacks.onDisconnect()
-            } else {
-                this.callbacks.onConnect(account[0])
-            }
-        })
-        this.connector.on('chainChanged', async () => {
-        })
-        this.connector.on('disconnect', async () => {
-            this.callbacks.onDisconnect()
-        })
+    getProvider(): ExternalProvider {
+        return this.connector
     }
 }

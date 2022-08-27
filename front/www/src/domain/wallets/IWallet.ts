@@ -1,10 +1,13 @@
+import { ExternalProvider } from '@ethersproject/providers'
+
 export interface IWallet {
-    connect: (request: boolean) => Promise<void>
+    isConnected: () => Promise<boolean>
+    requestAccess: () => Promise<void>
+    setListeners: () => void
     switchNetwork: (chainId: string) => Promise<boolean>
     getCurrentChain: () => Promise<string>
-    getNativeBalance: (account: string) => Promise<string>
-    getTokenBalance: (account: string, address: string) => Promise<string>
     sendTransaction: (tx: Tx) => Promise<TxHash>
+    getProvider: () => ExternalProvider
 }
 
 export interface WalletEvents {
@@ -25,13 +28,6 @@ export interface Tx {
     gas: string, // Optional
     nonce: string, // Optional
     gasPrice: string, // Optional
-}
-
-export interface TxDetails {
-    to: string,
-    data: string,
-    gasLimit: string,
-    value?: string,
 }
 
 export type TxHash = string

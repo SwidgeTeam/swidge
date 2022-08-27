@@ -1,11 +1,11 @@
 import { ethers } from 'ethers'
-import { acceptHMRUpdate, defineStore } from 'pinia'
 import { ref } from 'vue'
-import { Networks } from '@/domain/chains/Networks'
-import { IWallet, TxDetails, TxHash, Wallet, WalletEvents } from '@/domain/wallets/IWallet'
-import { Metamask } from '@/domain/wallets/Metamask'
+import { acceptHMRUpdate, defineStore } from 'pinia'
+import IERC20Abi from '@/contracts/IERC20.json'
+import { IWallet, TxHash, Wallet, WalletEvents } from '@/domain/wallets/IWallet'
 import { ApprovalTransactionDetails, TransactionDetails } from '@/domain/paths/path'
-import { useTokensStore } from '@/store/tokens'
+import { Metamask } from '@/domain/wallets/Metamask'
+import { Networks } from '@/domain/chains/Networks'
 
 export const NATIVE_COIN_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 
@@ -18,8 +18,8 @@ export const useWeb3Store = defineStore('web3', () => {
 
     /**
      * entrypoint to connect a wallet
-     * @param code Wallet to user
-     * @param request Whether to ask connection to user if not connected
+     * @param code Wallet to use
+     * @param request Whether to ask the user to connect if not connected already
      */
     async function init(code = Wallet.Metamask, request = false) {
         const events: WalletEvents = {
@@ -46,7 +46,11 @@ export const useWeb3Store = defineStore('web3', () => {
     async function connect(request: boolean) {
         if (!wallet.value) throw new Error('No wallet')
         try {
-            await wallet.value.connect(request)
+            const isConnected = await wallet.value.isConnected()
+            if (!isConnected && request) {
+                await wallet.value.requestAccess()
+            }
+            wallet.value.setListeners()
         } catch (e) {
             isConnected.value = false
         }
@@ -70,10 +74,47 @@ export const useWeb3Store = defineStore('web3', () => {
     async function getBalance(address: string) {
         if (!wallet.value) throw new Error('No wallet')
         if (address === NATIVE_COIN_ADDRESS) {
-            return wallet.value.getNativeBalance(account.value)
+            return getNativeBalance()
         } else {
-            return wallet.value.getTokenBalance(account.value, address)
+            return getTokenBalance(address)
         }
+    }
+
+    /**
+     * fetches and returns the amount of native coins
+     */
+    async function getNativeBalance(): Promise<string> {
+        if (!account.value) return ''
+        try {
+            const provider = getWalletProvider()
+            const balance = await provider.getBalance(account.value)
+            return ethers.utils.formatEther(balance)
+        } catch (error) {
+            return ''
+        }
+    }
+
+    /**
+     * fetches and returns the amount of certain token
+     */
+    async function getTokenBalance(address: string): Promise<string> {
+        try {
+            const provider = getWalletProvider()
+            const contract = new ethers.Contract(address, IERC20Abi, provider)
+            const balance = await contract.balanceOf(account.value)
+            const decimals = await contract.decimals()
+            return ethers.utils.formatUnits(balance, decimals)
+        } catch (error) {
+            return ''
+        }
+    }
+
+    /**
+     * creates a Web3Provider using the connected wallet provider
+     */
+    function getWalletProvider(): ethers.providers.Web3Provider {
+        if (!wallet.value) throw new Error('No wallet')
+        return new ethers.providers.Web3Provider(wallet.value.getProvider())
     }
 
     /**
@@ -88,9 +129,18 @@ export const useWeb3Store = defineStore('web3', () => {
         }
     }
 
-    async function sendTransaction(tx: TxDetails): Promise<TxHash> {
+    /**
+     * broadcasts a transactions using the connected wallet provider
+     * @param tx
+     */
+    async function sendTransaction(tx: {
+        to: string,
+        data: string,
+        gasLimit: string,
+        value?: string,
+    }): Promise<TxHash> {
         if (!wallet.value) throw new Error('No wallet')
-        const provider = getChainProvider(useTokensStore().getOriginChainId)
+        const provider = getWalletProvider()
         const nonce = await provider.getTransactionCount(account.value)
         const feeData = await provider.getFeeData()
 
@@ -109,6 +159,10 @@ export const useWeb3Store = defineStore('web3', () => {
         })
     }
 
+    /**
+     * sends an approval transaction
+     * @param tx
+     */
     async function sendApprovalTransaction(tx: ApprovalTransactionDetails): Promise<TxHash> {
         return sendTransaction({
             to: tx.to,
@@ -117,6 +171,10 @@ export const useWeb3Store = defineStore('web3', () => {
         })
     }
 
+    /**
+     * sends a main transaction(swap/bridge)
+     * @param tx
+     */
     async function sendMainTransaction(tx: TransactionDetails): Promise<TxHash> {
         return sendTransaction({
             to: tx.to,
@@ -127,7 +185,7 @@ export const useWeb3Store = defineStore('web3', () => {
     }
 
     /**
-     * triggered when the wallet is connected an account
+     * triggered when the wallet connects an account
      * @param address
      */
     function onConnect(address: string) {
@@ -136,7 +194,7 @@ export const useWeb3Store = defineStore('web3', () => {
     }
 
     /**
-     * triggered when the wallet is disconnected
+     * triggered when the wallet disconnects
      */
     function onDisconnect() {
         account.value = ''
@@ -153,6 +211,7 @@ export const useWeb3Store = defineStore('web3', () => {
 
     /**
      * returns a provider for the given chain
+     * @dev non-related to the connected wallet provider
      * @param chainId
      */
     function getChainProvider(chainId: string) {
@@ -176,7 +235,6 @@ export const useWeb3Store = defineStore('web3', () => {
         sendMainTransaction,
         getChainProvider,
     }
-
 })
 
 if (import.meta.hot)
