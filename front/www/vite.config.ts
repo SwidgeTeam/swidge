@@ -4,6 +4,7 @@ import { resolve } from 'path'
 import Pages from 'vite-plugin-pages'
 import Layouts from 'vite-plugin-vue-layouts'
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
+import NodeModulesPolyfillPlugin from '@esbuild-plugins/node-modules-polyfill';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -36,8 +37,9 @@ export default defineConfig({
             // Enable esbuild polyfill plugins
             plugins: [
                 NodeGlobalsPolyfillPlugin({
+                    process: true,
                     buffer: true
-                })
+                }),
             ]
         }
     },

@@ -33,6 +33,7 @@
 	},
 	"dependencies": {
 		"@esbuild-plugins/node-globals-polyfill": "^0.1.1",
+		"@esbuild-plugins/node-modules-polyfill": "^0.1.4",
 		"@ethersproject/providers": "^5.7.0",
 		"@gtm-support/vue-gtm": "^1.6.0",
 		"@headlessui/vue": "^1.6.6",
@@ -55,6 +56,7 @@
 		"pinia": "^2.0.13",
 		"postcss": "^8.4.12",
 		"tailwindcss": "^3.0.23",
+		"util": "^0.12.4",
 		"vue": "^3.2.31",
 		"vue-lazyload": "^3.0.0-rc.2",
 		"vue-router": "^4.0.14",
