@@ -13,6 +13,7 @@ export const useTransactionStore = defineStore('transaction', {
         trackingId: '',
         statusCheckInterval: 0,
         txHash: '',
+        currentNonce: 0,
     }),
     getters: {
         getApprovalTx(): ApprovalTransactionDetails | undefined {
@@ -114,6 +115,19 @@ export const useTransactionStore = defineStore('transaction', {
                     }
                 })
             }, 5000)
+        },
+        /**
+         * fetches and stores the current nonce of the wallet to have the correct count
+         */
+        setCurrentNonce: async function () {
+            const web3Store = useWeb3Store()
+            this.currentNonce = await web3Store.getCurrentNonce()
+        },
+        /**
+         * increment the current nonce
+         */
+        incrementNonce: async function () {
+            this.currentNonce = this.currentNonce + 1
         },
     }
 })

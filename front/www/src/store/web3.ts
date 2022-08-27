@@ -7,6 +7,7 @@ import { ApprovalTransactionDetails, TransactionDetails } from '@/domain/paths/p
 import { WalletConnect } from '@/domain/wallets/WalletConnect'
 import { Metamask } from '@/domain/wallets/Metamask'
 import { Networks } from '@/domain/chains/Networks'
+import { useTransactionStore } from '@/store/transaction'
 
 export const NATIVE_COIN_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 
@@ -155,22 +156,27 @@ export const useWeb3Store = defineStore('web3', () => {
     }): Promise<TxHash> {
         if (!wallet.value) throw new Error('No wallet')
         const provider = getWalletProvider()
-        const nonce = await provider.getTransactionCount(account.value)
         const feeData = await provider.getFeeData()
+        const transactionStore = useTransactionStore()
+        const currentNonce = transactionStore.currentNonce
 
         if (!feeData.gasPrice) {
             throw new Error('error fetching gas')
         }
 
-        return wallet.value.sendTransaction({
+        const txHash = await wallet.value.sendTransaction({
             from: account.value,
             to: tx.to,
             data: tx.data,
             gas: tx.gasLimit,
             value: tx.value ? tx.value : '0x0',
             gasPrice: feeData.gasPrice.toString(),
-            nonce: nonce.toString(),
+            nonce: currentNonce.toString(),
         })
+
+        await transactionStore.incrementNonce()
+
+        return txHash
     }
 
     /**
@@ -196,6 +202,14 @@ export const useWeb3Store = defineStore('web3', () => {
             value: tx.value,
             gasLimit: tx.gasLimit,
         })
+    }
+
+    /**
+     * returns the current nonce of the wallet
+     */
+    async function getCurrentNonce(): Promise<number> {
+        const provider = getWalletProvider()
+        return await provider.getTransactionCount(account.value)
     }
 
     /**
@@ -248,6 +262,7 @@ export const useWeb3Store = defineStore('web3', () => {
         switchToNetwork,
         sendApprovalTransaction,
         sendMainTransaction,
+        getCurrentNonce,
         getChainProvider,
     }
 })

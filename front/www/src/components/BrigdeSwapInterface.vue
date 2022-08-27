@@ -227,6 +227,8 @@ const onExecuteTransaction = async () => {
 
     setExecutingButton()
 
+    await transactionStore.setCurrentNonce()
+
     let promise
     const aggregator = route.aggregator
 
