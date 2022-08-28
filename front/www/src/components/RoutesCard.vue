@@ -9,7 +9,7 @@ import { useTokensStore } from '@/store/tokens'
 
 const tokensStore = useTokensStore()
 
-defineProps<{
+const props = defineProps<{
     route: Route
 }>()
 
@@ -18,6 +18,15 @@ const getOriginTokenLogo = () => {
 }
 const getDestinationTokenLogo = () => {
     return tokensStore.getDestinationToken()?.logo
+}
+const getExecutionTime = () => {
+    if(props.route.resume.executionTime < 60){
+        return props.route.resume.executionTime + 's'
+    }
+    else {
+        const minutes = props.route.resume.executionTime / 60
+        return minutes.toFixed(0) + 'm'
+    }
 }
 </script>
 
@@ -36,9 +45,9 @@ const getDestinationTokenLogo = () => {
                 <div class="field--amount-out">
                     {{ route.resume.amountOut }}
                 </div>
-                <div class="flex">
+                <div class="flex field--execution-time">
                     <ClockIcon class="h-6 pr-1"/>
-                    {{ route.steps.length }}
+                    {{ getExecutionTime() }}
                 </div>
                 <div class="flex text-ellipsis field--global-fee">
                     {{ route.fees.amountInUsd }}
@@ -65,8 +74,7 @@ const getDestinationTokenLogo = () => {
                     <div
                         v-for="(step, index) in route.steps"
                         :key="index"
-                        class="py-2"
-                    >
+                        class="py-2">
                         <img
                             :src="step.logo"
                             class="w-8 h-8"

@@ -14,7 +14,7 @@ describe('Routes store', () => {
     it('increments', () => {
         createTestingPinia({
             initialState: {
-                routes: RouteMother.route(),
+                routes: RouteMother.default(),
                 selectedRoute: 0,
             },
         })

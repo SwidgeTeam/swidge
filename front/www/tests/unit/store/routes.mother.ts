@@ -1,7 +1,19 @@
 import Route from '@/domain/paths/path'
 
 export default class RouteMother {
-    public static route(): Route {
+    public static slowRoute(): Route {
+        const route = this.default()
+        route.resume.executionTime = 330
+        return route
+    }
+
+    public static fastRoute(): Route {
+        const route = this.default()
+        route.resume.executionTime = 30
+        return route
+    }
+
+    public static default(): Route {
         return {
             'aggregator': {
                 'id': '0',
