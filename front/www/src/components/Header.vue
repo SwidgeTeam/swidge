@@ -10,7 +10,8 @@ import ConnectButton from '@/components/Buttons/ConnectButton.vue'
 import { Networks } from '@/domain/chains/Networks'
 import TransactionsButton from './Buttons/TransactionsButton.vue'
 import ModalTransactions from './Modals/ModalTransactions.vue'
-import { Wallet } from '@/domain/wallets/IWallet'
+import ModalWallets from '@/components/Modals/ModalWallets.vue'
+import { Wallet } from '@/domain/wallets/IWallet';
 
 const emits = defineEmits<{
     (event: 'switch-network', chainId: string): void
@@ -21,6 +22,7 @@ const { account, isConnected, isCorrectNetwork, selectedNetworkId } = storeToRef
 
 const isNetworkModalOpen = ref(false)
 const isTransactionsModalOpen = ref(false)
+const isWalletsModalOpen = ref(false)
 
 const createShortAddress = (address: string): string => {
     return address.substring(0, 6) + '...' + address.substring(address.length - 4)
@@ -35,7 +37,11 @@ const changeNetwork = (chainId: string) => {
 }
 
 const connect = () => {
-    web3Store.init(Wallet.WalletConnect, true)
+    isWalletsModalOpen.value = true
+}
+
+const setWallet = (wallet: Wallet) => {
+    web3Store.init(wallet, true)
 }
 
 const handleClickOnAddress = () => {
@@ -98,6 +104,11 @@ const chainIcon = computed({
     <ModalTransactions
         :is-open="isTransactionsModalOpen"
         @close-modal="isTransactionsModalOpen = false"
+    />
+    <ModalWallets
+        :is-open="isWalletsModalOpen"
+        @close-modal="isWalletsModalOpen = false"
+        @set-wallet="setWallet"
     />
 </template>
 
