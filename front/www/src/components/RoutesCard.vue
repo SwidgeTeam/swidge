@@ -62,7 +62,7 @@ const getExecutionTime = () => {
                     @click="detailsOpen = !detailsOpen"
                 >
                     <div class="flex justify-left">
-                        <ChevronDownIcon class="h-6 pl-2 pr-4"/>
+                        <ChevronDownIcon class="h-6 pr-4 ml-3"/>
                     </div>
                     <div>
                         <VerticalLine/>
@@ -75,14 +75,15 @@ const getExecutionTime = () => {
                         </div>
                     </div>
                 </div>
-                <div v-if="detailsOpen" class="justify-left w-full grid gap-2 items-center px-2">
+                <div v-if="detailsOpen" class="justify-left w-full grid gap-2 items-center px-2 vl-parent">
+                    <span class="vl"></span>
                     <div
                         v-for="(step, index) in route.steps"
                         :key="index"
                         class="py-2">
                         <img
                             :src="step.logo"
-                            class="w-8 h-8"
+                            class="w-8 h-8 ml-2 step-icon"
                             alt="provider logo">
                         <div class="flex justify-right items-center pl-24 pt-4">
                             <HorizontalLine/>
