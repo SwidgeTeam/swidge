@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { ChevronDownIcon } from '@heroicons/vue/outline'
 import VerticalLine from './svg/VerticalLine.vue'
 import { ClockIcon } from '@heroicons/vue/outline'
@@ -12,9 +11,8 @@ const tokensStore = useTokensStore()
 
 const props = defineProps<{
     route: Route
+    unique: string
 }>()
-
-const detailsOpen = ref<boolean>(false)
 
 const getOriginTokenLogo = () => {
     return tokensStore.getOriginToken()?.logo
@@ -57,10 +55,9 @@ const getExecutionTime = () => {
             </div>
             <div class=" bg-[#222129]/40 rounded-2xl block--steps">
                 <div
+                    :href="'#step-details-' + unique"
                     class="relative flex justify-left items-center cursor-pointer shadow-lg px-2 rounded-2xl hover:bg-[#222129]/100 transition duration-150 ease-out hover:ease-in py-4"
                     data-bs-toggle="collapse"
-                    href="#step-details"
-                    @click="detailsOpen = !detailsOpen"
                 >
                     <div class="flex justify-left">
                         <ChevronDownIcon class="h-6 pr-4 ml-3"/>
@@ -77,7 +74,7 @@ const getExecutionTime = () => {
                     </div>
                 </div>
                 <div
-                    id="step-details"
+                    :id="'step-details-' + unique"
                     class="justify-left w-full grid gap-2 items-center px-2 vl-parent collapse"
                 >
                     <span class="vl"></span>
