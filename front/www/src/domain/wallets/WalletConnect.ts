@@ -60,7 +60,7 @@ export class WalletConnect implements IWallet {
         if (this.provider.chainId.toString() === chainId) return true
         try {
             const hexChainId = '0x' + Number(chainId).toString(16)
-            await this.provider.request({
+            await this.provider.connector.sendCustomRequest({
                 method: 'wallet_switchEthereumChain',
                 params: [{ chainId: hexChainId }]
             })
