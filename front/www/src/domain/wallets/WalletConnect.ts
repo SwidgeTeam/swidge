@@ -50,11 +50,12 @@ export class WalletConnect implements IWallet {
             }
 
             // Get provided accounts and chainId
-            const { accounts, } = payload.params[0]
+            const { accounts, chainId } = payload.params[0]
             if (accounts.length === 0) {
                 this.callbacks.onDisconnect()
             } else {
                 this.callbacks.onConnect(accounts[0])
+                this.callbacks.onSwitchNetwork(chainId.toString())
             }
         })
 
@@ -64,11 +65,12 @@ export class WalletConnect implements IWallet {
             }
 
             // Get updated accounts and chainId
-            const { accounts, } = payload.params[0]
+            const { accounts, chainId} = payload.params[0]
             if (accounts.length === 0) {
                 this.callbacks.onDisconnect()
             } else {
                 this.callbacks.onConnect(accounts[0])
+                this.callbacks.onSwitchNetwork(chainId.toString())
             }
         })
 
@@ -81,6 +83,7 @@ export class WalletConnect implements IWallet {
     }
 
     public async switchNetwork(chainId: string): Promise<boolean> {
+        if (this.connector.chainId.toString() === chainId) return true
         try {
             const hexChainId = '0x' + Number(chainId).toString(16)
             await this.connector.sendCustomRequest({
@@ -94,7 +97,7 @@ export class WalletConnect implements IWallet {
     }
 
     public async getCurrentChain(): Promise<string> {
-        return this.connector.chainId.toString()
+        return this.provider.chainId.toString()
     }
 
     public async sendTransaction(tx: Tx): Promise<string> {

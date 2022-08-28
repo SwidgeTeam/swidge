@@ -95,16 +95,16 @@ const handleOpenTokenList = (isSource: boolean) => {
  * @param token
  */
 const handleUpdateTokenFromModal = (token: IToken) => {
-    const originChainId = tokensStore.getOriginChainId
-    const destinationChainId = tokensStore.getDestinationChainId
-    const originTokenAddress = tokensStore.getOriginTokenAddress
-    const destinationTokenAddress = tokensStore.getDestinationTokenAddress
+    const selectedOriginChainId = tokensStore.getOriginChainId
+    const selectedDestinationChainId = tokensStore.getDestinationChainId
+    const selectedOriginTokenAddress = tokensStore.getOriginTokenAddress
+    const selectedDestinationTokenAddress = tokensStore.getDestinationTokenAddress
 
     if (isSourceChainToken.value) {
         // If the origin network is being chosen
-        if (originChainId != token.chainId) {
+        if (selectedOriginChainId != token.chainId) {
             // If network and token of source and destination are the same, switch inputs instead of setting new ones.
-            if (token.chainId == destinationChainId && token.address == destinationTokenAddress) {
+            if (token.chainId == selectedDestinationChainId && token.address == selectedDestinationTokenAddress) {
                 switchHandlerFunction()
             } else {
                 // If we changed origin network, inform wallet
@@ -116,7 +116,7 @@ const handleUpdateTokenFromModal = (token: IToken) => {
             updateOriginToken(token)
         }
     } else {
-        if (token.chainId == originChainId && token.address == originTokenAddress) {
+        if (token.chainId == selectedOriginChainId && token.address == selectedOriginTokenAddress) {
             switchHandlerFunction()
         } else {
             // Update token details
