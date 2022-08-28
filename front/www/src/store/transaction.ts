@@ -126,7 +126,7 @@ export const useTransactionStore = defineStore('transaction', {
         /**
          * increment the current nonce
          */
-        incrementNonce: async function () {
+        incrementNonce: function () {
             this.currentNonce = this.currentNonce + 1
         },
     }

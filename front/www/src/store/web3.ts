@@ -163,7 +163,9 @@ export const useWeb3Store = defineStore('web3', () => {
             throw new Error('error fetching gas')
         }
 
-        const txHash = await wallet.value.sendTransaction({
+        transactionStore.incrementNonce()
+
+        return await wallet.value.sendTransaction({
             from: account.value,
             to: tx.to,
             data: tx.data,
@@ -172,10 +174,6 @@ export const useWeb3Store = defineStore('web3', () => {
             gasPrice: feeData.gasPrice.toString(),
             nonce: currentNonce.toString(),
         })
-
-        await transactionStore.incrementNonce()
-
-        return txHash
     }
 
     /**
