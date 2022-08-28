@@ -1,7 +1,7 @@
 import { setActivePinia, createPinia } from 'pinia'
 import { createTestingPinia } from '@pinia/testing'
 import { useRoutesStore } from '@/store/routes'
-import { RoutesMother } from './routes.mother'
+import RouteMother from './routes.mother';
 
 describe('Routes store', () => {
     beforeEach(() => {
@@ -14,7 +14,7 @@ describe('Routes store', () => {
     it('increments', () => {
         createTestingPinia({
             initialState: {
-                routes: RoutesMother.create(),
+                routes: RouteMother.route(),
                 selectedRoute: 0,
             },
         })
