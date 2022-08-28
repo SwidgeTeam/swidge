@@ -1,7 +1,6 @@
 import { setActivePinia, createPinia } from 'pinia'
-import { createTestingPinia } from '@pinia/testing'
 import { useRoutesStore } from '@/store/routes'
-import RouteMother from './routes.mother';
+import RouteMother from './routes.mother'
 
 describe('Routes store', () => {
     beforeEach(() => {
@@ -11,15 +10,23 @@ describe('Routes store', () => {
         setActivePinia(createPinia())
     })
 
-    it('increments', () => {
-        createTestingPinia({
-            initialState: {
-                routes: RouteMother.default(),
-                selectedRoute: 0,
-            },
-        })
-        const routes = useRoutesStore()
-        const route = routes.routes
-        console.log(route)
+    it('slippage default and storing value', () => {
+        const routes = routesStore()
+        expect(routes.getSlippage).toEqual('2')
+        routes.setSlippage('1')
+        expect(routes.getSlippage).toEqual('1')
+    })
+
+    it('gas priority default and storing value', () => {
+        const routes = routesStore()
+        expect(routes.getGasPriority).toEqual('medium')
+        routes.setGasPriority('fast')
+        expect(routes.getGasPriority).toEqual('fast')
     })
 })
+
+function routesStore() {
+    const routes = useRoutesStore()
+    routes.routes = [RouteMother.default()]
+    return routes
+}
