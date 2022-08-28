@@ -23,10 +23,9 @@ const getDestinationTokenLogo = () => {
     return tokensStore.getDestinationToken()?.logo
 }
 const getExecutionTime = () => {
-    if(props.route.resume.executionTime < 60){
+    if (props.route.resume.executionTime < 60) {
         return props.route.resume.executionTime + 's'
-    }
-    else {
+    } else {
         const minutes = props.route.resume.executionTime / 60
         return minutes.toFixed(0) + 'm'
     }
@@ -56,9 +55,11 @@ const getExecutionTime = () => {
                     {{ Number(route.fees.amountInUsd).toFixed(2) }}
                 </div>
             </div>
-            <div class=" bg-[#222129]/40 rounded-2xl ">
+            <div class=" bg-[#222129]/40 rounded-2xl block--steps">
                 <div
                     class="relative flex justify-left items-center cursor-pointer shadow-lg px-2 rounded-2xl hover:bg-[#222129]/100 transition duration-150 ease-out hover:ease-in py-4"
+                    data-bs-toggle="collapse"
+                    href="#step-details"
                     @click="detailsOpen = !detailsOpen"
                 >
                     <div class="flex justify-left">
@@ -75,7 +76,10 @@ const getExecutionTime = () => {
                         </div>
                     </div>
                 </div>
-                <div v-if="detailsOpen" class="justify-left w-full grid gap-2 items-center px-2 vl-parent">
+                <div
+                    id="step-details"
+                    class="justify-left w-full grid gap-2 items-center px-2 vl-parent collapse"
+                >
                     <span class="vl"></span>
                     <div
                         v-for="(step, index) in route.steps"
