@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { ChevronDownIcon } from '@heroicons/vue/outline'
 import VerticalLine from './svg/VerticalLine.vue'
 import { ClockIcon } from '@heroicons/vue/outline'
@@ -12,6 +13,8 @@ const tokensStore = useTokensStore()
 const props = defineProps<{
     route: Route
 }>()
+
+const detailsOpen = ref<boolean>(false)
 
 const getOriginTokenLogo = () => {
     return tokensStore.getOriginToken()?.logo
@@ -50,12 +53,14 @@ const getExecutionTime = () => {
                     {{ getExecutionTime() }}
                 </div>
                 <div class="flex text-ellipsis field--global-fee">
-                    {{ route.fees.amountInUsd }}
+                    {{ Number(route.fees.amountInUsd).toFixed(2) }}
                 </div>
             </div>
             <div class=" bg-[#222129]/40 rounded-2xl ">
                 <div
-                    class="relative flex justify-left items-center cursor-pointer shadow-lg px-2 rounded-2xl hover:bg-[#222129]/100 transition duration-150 ease-out hover:ease-in py-4">
+                    class="relative flex justify-left items-center cursor-pointer shadow-lg px-2 rounded-2xl hover:bg-[#222129]/100 transition duration-150 ease-out hover:ease-in py-4"
+                    @click="detailsOpen = !detailsOpen"
+                >
                     <div class="flex justify-left">
                         <ChevronDownIcon class="h-6 pl-2 pr-4"/>
                     </div>
@@ -70,7 +75,7 @@ const getExecutionTime = () => {
                         </div>
                     </div>
                 </div>
-                <div class="justify-left w-full grid gap-2 items-center px-2">
+                <div v-if="detailsOpen" class="justify-left w-full grid gap-2 items-center px-2">
                     <div
                         v-for="(step, index) in route.steps"
                         :key="index"

@@ -14,7 +14,7 @@ test('route general details are correctly displayed', async () => {
     tokensStore.tokens = TokensMother.list()
 
     // Assert
-    expect(wrapper.find('.field--global-fee').text()).toEqual('0.50415632')
+    expect(wrapper.find('.field--global-fee').text()).toEqual('0.50')
     expect(wrapper.find('.field--amount-out').text()).toEqual('77.144799376959137804')
 })
 
