@@ -23,7 +23,7 @@ const isFaqOpen = ref(false)
             <div class="flex items-center justify-between">
                 <span class="text-3xl">Swap & Bridge</span>
             </div>
-            <BrigdeSwapInterface />
+            <BrigdeSwapInterface/>
             <div class="flex items-center gap-[0.5rem]">
                 <ArrowCircleRightIcon
                     v-if="!isFaqOpen"
@@ -39,7 +39,7 @@ const isFaqOpen = ref(false)
             </div>
             <BrigdeSwapInterface/>
         </div>
-        <FAQCard v-if="isFaqOpen" />
+        <FAQCard v-if="isFaqOpen"/>
     </div>
 </template>
 

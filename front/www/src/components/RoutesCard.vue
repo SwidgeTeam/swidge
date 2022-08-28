@@ -62,10 +62,12 @@ const getLogo = (logo: any) =>{
                         </div>
                     </div>
                 </div>
-                <div class="justify-left w-full grid items-center px-2 py-2">
-                        <div  v-for="steps in route.steps">
+                <div class="justify-left w-full grid gap-2 items-center px-2">
+                        <div  v-for="steps in route.steps" class="py-2">
                             <img :scr=getFixedLogo(steps.logo)  class="w-8 h-8">
-                            <HorizontalLine/>
+                            <div class="flex justify-right items-center pl-24 pt-4">
+                                <HorizontalLine/>
+                            </div>
                         </div>
                 </div>
             </div>
