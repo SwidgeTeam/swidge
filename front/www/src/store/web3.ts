@@ -78,7 +78,6 @@ export const useWeb3Store = defineStore('web3', () => {
         if (!wallet.value) throw new Error('No wallet')
         const chainId = await wallet.value.getCurrentChain()
         const acceptedChains = Networks.ids()
-        selectedNetworkId.value = chainId
         isCorrectNetwork.value = acceptedChains.includes(chainId)
     }
 

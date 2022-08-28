@@ -1,6 +1,4 @@
 import { IWallet, Tx, WalletEvents } from '@/domain/wallets/IWallet'
-import QRCodeModal from '@walletconnect/qrcode-modal'
-import { default as WalletConnectClient } from '@walletconnect/client'
 import { ExternalProvider } from '@ethersproject/providers'
 import WalletConnectProvider from '@walletconnect/web3-provider'
 import { Networks } from '@/domain/chains/Networks'
@@ -8,14 +6,9 @@ import { IRPCMap } from '@walletconnect/types'
 
 export class WalletConnect implements IWallet {
     private readonly callbacks: WalletEvents
-    private readonly connector: WalletConnectClient
     private readonly provider: WalletConnectProvider
 
     constructor(callbacks: WalletEvents) {
-        this.connector = new WalletConnectClient({
-            bridge: 'https://bridge.walletconnect.org', // Required
-            qrcodeModal: QRCodeModal,
-        })
         const rpc: IRPCMap = {}
         for (const network of Networks.live()) {
             rpc[Number(network.id)] = network.rpcUrl
@@ -39,54 +32,35 @@ export class WalletConnect implements IWallet {
     }
 
     public revokeAccess(): Promise<void> {
-        return this.connector.killSession()
+        return this.provider.disconnect()
     }
 
     public setListeners(): void {
-        // Subscribe to connection events
-        this.connector.on('connect', (error, payload) => {
-            if (error) {
-                throw error
-            }
-
-            // Get provided accounts and chainId
-            const { accounts, chainId } = payload.params[0]
+        // Subscribe to accounts change
+        this.provider.on('accountsChanged', (accounts: string[]) => {
             if (accounts.length === 0) {
                 this.callbacks.onDisconnect()
             } else {
                 this.callbacks.onConnect(accounts[0])
-                this.callbacks.onSwitchNetwork(chainId.toString())
             }
         })
 
-        this.connector.on('session_update', (error, payload) => {
-            if (error) {
-                throw error
-            }
-
-            // Get updated accounts and chainId
-            const { accounts, chainId} = payload.params[0]
-            if (accounts.length === 0) {
-                this.callbacks.onDisconnect()
-            } else {
-                this.callbacks.onConnect(accounts[0])
-                this.callbacks.onSwitchNetwork(chainId.toString())
-            }
+        // Subscribe to chainId change
+        this.provider.on('chainChanged', (chainId: number) => {
+            this.callbacks.onSwitchNetwork(chainId.toString())
         })
 
-        this.connector.on('disconnect', (error, payload) => {
-            if (error) {
-                throw error
-            }
+        // Subscribe to session disconnection
+        this.provider.on('disconnect', (code: number, reason: string) => {
             this.callbacks.onDisconnect()
         })
     }
 
     public async switchNetwork(chainId: string): Promise<boolean> {
-        if (this.connector.chainId.toString() === chainId) return true
+        if (this.provider.chainId.toString() === chainId) return true
         try {
             const hexChainId = '0x' + Number(chainId).toString(16)
-            await this.connector.sendCustomRequest({
+            await this.provider.request({
                 method: 'wallet_switchEthereumChain',
                 params: [{ chainId: hexChainId }]
             })
@@ -101,7 +75,7 @@ export class WalletConnect implements IWallet {
     }
 
     public async sendTransaction(tx: Tx): Promise<string> {
-        const receipt = await this.connector.sendTransaction({
+        const receipt = await this.provider.connector.sendTransaction({
             from: tx.from,
             to: tx.to,
             data: tx.data,
