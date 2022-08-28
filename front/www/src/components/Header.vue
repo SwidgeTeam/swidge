@@ -11,13 +11,15 @@ import { Networks } from '@/domain/chains/Networks'
 import TransactionsButton from './Buttons/TransactionsButton.vue'
 import ModalTransactions from './Modals/ModalTransactions.vue'
 import ModalWallets from '@/components/Modals/ModalWallets.vue'
-import { Wallet } from '@/domain/wallets/IWallet';
+import { Wallet } from '@/domain/wallets/IWallet'
+import { useTokensStore } from '@/store/tokens'
 
 const emits = defineEmits<{
     (event: 'switch-network', chainId: string): void
 }>()
 
 const web3Store = useWeb3Store()
+const tokensStore = useTokensStore()
 const { account, isConnected, isCorrectNetwork, selectedNetworkId } = storeToRefs(web3Store)
 
 const isNetworkModalOpen = ref(false)
@@ -32,7 +34,7 @@ const changeNetwork = (chainId: string) => {
     web3Store.switchToNetwork(chainId)
         .then(() => {
             isNetworkModalOpen.value = false
-            emits('switch-network', chainId)
+            tokensStore.resetSelection()
         })
 }
 
