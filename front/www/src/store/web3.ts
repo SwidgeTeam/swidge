@@ -57,13 +57,20 @@ export const useWeb3Store = defineStore('web3', () => {
             }
             isConnected = await wallet.value.isConnected()
             if (isConnected) {
-                wallet.value.setListeners()
-                const accounts = await wallet.value.getConnectedAccounts()
-                onConnect(accounts[0])
+                await initialSetup()
             }
         } catch (e) {
             isConnected.value = false
         }
+    }
+
+    async function initialSetup() {
+        if (!wallet.value) throw new Error('No wallet')
+        wallet.value.setListeners()
+        const accounts = await wallet.value.getConnectedAccounts()
+        onConnect(accounts[0])
+        selectedNetworkId.value = await wallet.value.getCurrentChain()
+
     }
 
     async function disconnect() {
@@ -138,6 +145,7 @@ export const useWeb3Store = defineStore('web3', () => {
     async function switchToNetwork(chainId: string) {
         if (!wallet.value) throw new Error('No wallet')
         const changed = await wallet.value.switchNetwork(chainId)
+        console.log(changed)
         if (changed) {
             selectedNetworkId.value = chainId
             await checkIfCorrectNetwork()
