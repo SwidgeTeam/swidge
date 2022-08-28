@@ -14,6 +14,7 @@ export interface RouteStep {
     amountIn: string
     amountOut: string
     fee: string
+    executionTime: number
     completed: boolean
 }
 
@@ -24,6 +25,7 @@ interface RouteResume {
     tokenOut: TokenDetails
     amountIn: string
     amountOut: string
+    executionTime: number
 }
 
 interface RouteFees {
