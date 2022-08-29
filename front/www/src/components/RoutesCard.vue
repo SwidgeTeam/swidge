@@ -26,10 +26,12 @@ const getOriginChainLogo = () => {
     return Networks.get(chainId).icon
 }
 const getOriginTokenLogo = () => {
-    return tokensStore.getOriginToken()?.logo
+    const token = tokensStore.getOriginToken()
+    return token ? token.logo : ''
 }
 const getDestinationTokenLogo = () => {
-    return tokensStore.getDestinationToken()?.logo
+    const token = tokensStore.getDestinationToken()
+    return token ? token.logo : ''
 }
 const getExecutionTime = () => {
     if (props.route.resume.executionTime < 60) {
