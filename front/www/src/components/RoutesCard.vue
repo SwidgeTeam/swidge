@@ -6,6 +6,9 @@ import Route from '@/domain/paths/path'
 import SwidgeLogoNoText from './svg/SwidgeLogoNoText.vue'
 import HorizontalLine from './svg/HorizontalLine.vue'
 import { useTokensStore } from '@/store/tokens'
+import { Networks } from '@/domain/chains/Networks'
+import TokenLogo from './TokenLogo.vue'
+import ChainLogo from './ChainLogo.vue'
 
 const tokensStore = useTokensStore()
 
@@ -14,6 +17,10 @@ const props = defineProps<{
     unique: string
 }>()
 
+const getOriginChainLogo = () => {
+    const chainId = tokensStore.getOriginChainId
+    return Networks.get(chainId).icon
+}
 const getOriginTokenLogo = () => {
     return tokensStore.getOriginToken()?.logo
 }
@@ -38,9 +45,10 @@ const getExecutionTime = () => {
             RouteType
         </div>
         <div class="relative flex flex-col gap-4 py-2">
-            <div class="flex items-center justify-between px-4">
-                <div>
-                    icon
+            <div class="flex items-center justify-between px-4 text-2xl">
+                <div class="relative scale-100">
+                    <TokenLogo :logo="getOriginTokenLogo()" size="32"/>
+                    <ChainLogo :logo="getOriginChainLogo()" size="16"/>
                 </div>
                 <div class="field--amount-out">
                     {{ route.resume.amountOut }}
