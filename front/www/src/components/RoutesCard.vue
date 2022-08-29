@@ -16,7 +16,7 @@ const tokensStore = useTokensStore()
 
 const props = defineProps<{
     route: Route
-    unique: string
+    unique: number
 }>()
 
 const detailsOpen = ref<boolean>(false)
@@ -61,8 +61,8 @@ const dollarValue = () => {
                     <ChainLogo :logo="getOriginChainLogo()" size="14"/>
                 </div>
                 <div class="flex flex-col field--amount-out">
-                    <span>{{ amountOut() }}</span>
-                    <span class="text-sm text-slate-500 hover:text-slate-400">≈ $ {{ dollarValue() }}</span>
+                    <span class="amount-tokens">{{ amountOut() }}</span>
+                    <span class="amount-dollars text-sm text-slate-500 hover:text-slate-400">≈ $ {{ dollarValue() }}</span>
                 </div>
                 <div class="flex field--execution-time">
                     <ClockIcon class="h-6 pr-1"/>
