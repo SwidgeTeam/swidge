@@ -115,16 +115,20 @@ const dollarValue = () => {
                         class="flex h-20 items-center relative">
                         <img
                             :src="step.logo"
-                            class="relative z-10 w-8 h-8 ml-[10px] "
+                            class="relative z-10 w-8 h-8 ml-[10px] border-2 rounded-full border-gray-500 "
                             alt="provider logo">
                         <div class="justify-right pl-6 mr-4 w-full">
                             <div class="flex justify-center items-center ">
                                 <div class="mx-4">
-                                   <div v-if="step.type == 'bridge'">
-                                        <BridgeStepArrow/>
+                                   <div v-if="step.type == 'bridge'" class="flex justify-center items-center">
+                                        {{step.tokenIn.name}}
+                                        <span class="px-2"><BridgeStepArrow/></span>
+                                        {{step.tokenOut.name}}
                                    </div>
-                                   <div v-if="step.type == 'swap'">
-                                        <SwapStepArrow/>
+                                   <div v-if="step.type == 'swap'"  class="flex justify-center items-center">
+                                        {{step.tokenIn.name}}
+                                        <span class="px-2"><SwapStepArrow/></span>
+                                        {{step.tokenOut.name}}
                                    </div>
                                 </div>
                                 <div class="mx-4">
