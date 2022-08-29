@@ -147,15 +147,10 @@
     .vl {
         border-left: 2px solid #626262;
         box-shadow: 0 0 5px #626262;
-        height: 94%;
+        height: 96%;
         position: absolute;
         left: 33px;
         top: 0;
         z-index: 1;
-    }
-
-    .step-icon {
-        position: relative;
-        z-index: 2;
     }
 }

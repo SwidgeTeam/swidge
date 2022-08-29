@@ -64,7 +64,9 @@ const dollarValue = () => {
                 </div>
                 <div class="flex flex-col field--amount-out">
                     <span class="amount-tokens">{{ amountOut() }}</span>
-                    <span class="amount-dollars text-sm text-slate-500 hover:text-slate-400">≈ $ {{ dollarValue() }}</span>
+                    <span class="amount-dollars text-sm text-slate-500 hover:text-slate-400">≈ $ {{
+                            dollarValue()
+                        }}</span>
                 </div>
                 <div class="flex field--execution-time">
                     <ClockIcon class="h-6 pr-1"/>
@@ -76,7 +78,7 @@ const dollarValue = () => {
             </div>
             <div class=" bg-[#222129]/40 rounded-2xl block--steps">
                 <div
-                    :href="'#step-details-' + unique"
+                    :href="'#steps-details-' + unique"
                     class="relative flex justify-left items-center cursor-pointer shadow-lg px-2 rounded-2xl hover:bg-[#222129]/100 transition duration-150 ease-out hover:ease-in py-4"
                     data-bs-toggle="collapse"
                     @click="detailsOpen = !detailsOpen"
@@ -101,20 +103,22 @@ const dollarValue = () => {
                     </div>
                 </div>
                 <div
-                    :id="'step-details-' + unique"
+                    :id="'steps-details-' + unique"
                     class="justify-left w-full grid gap-2 items-center px-2 vl-parent collapse"
                 >
                     <span class="vl"></span>
                     <div
                         v-for="(step, index) in route.steps"
                         :key="index"
-                        class="py-2">
+                        class="flex h-20 items-center relative">
                         <img
                             :src="step.logo"
-                            class="w-8 h-8 ml-2 step-icon"
+                            class="relative z-10 w-8 h-8 ml-2 "
                             alt="provider logo">
-                        <div class="flex justify-right items-center pl-24 pt-4">
-                            <HorizontalLine class="w-full mr-4"/>
+                        <div class="absolute bottom-0 justify-right pl-24">
+                            <HorizontalLine
+                                v-if="index !== Object.keys(route.steps).length -1"
+                                class="w-full mr-4"/>
                         </div>
                     </div>
                 </div>
