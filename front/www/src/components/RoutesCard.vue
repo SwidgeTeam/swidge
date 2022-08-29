@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChevronDownIcon } from '@heroicons/vue/outline'
+import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/vue/outline'
 import VerticalLine from './svg/VerticalLine.vue'
 import { ClockIcon } from '@heroicons/vue/outline'
 import Route from '@/domain/paths/path'
@@ -9,6 +9,8 @@ import { useTokensStore } from '@/store/tokens'
 import { Networks } from '@/domain/chains/Networks'
 import TokenLogo from './TokenLogo.vue'
 import ChainLogo from './ChainLogo.vue'
+import AmountFormatter from '@/domain/shared/AmountFormatter'
+import { ref } from 'vue'
 
 const tokensStore = useTokensStore()
 
@@ -16,6 +18,8 @@ const props = defineProps<{
     route: Route
     unique: string
 }>()
+
+const detailsOpen = ref<boolean>(false)
 
 const getOriginChainLogo = () => {
     const chainId = tokensStore.getOriginChainId
@@ -35,6 +39,12 @@ const getExecutionTime = () => {
         return minutes.toFixed(0) + 'm'
     }
 }
+const amountOut = () => {
+    return AmountFormatter.format(props.route.resume.amountOut)
+}
+const dollarValue = () => {
+    return AmountFormatter.format(props.route.resume.amountOut)
+}
 </script>
 
 <template>
@@ -45,20 +55,21 @@ const getExecutionTime = () => {
             RouteType
         </div>
         <div class="relative flex flex-col gap-4 py-2">
-            <div class="flex items-center justify-between px-4 text-2xl">
+            <div class="flex items-center justify-between px-4 text-2xl h-16">
                 <div class="relative scale-100">
-                    <TokenLogo :logo="getOriginTokenLogo()" size="32"/>
-                    <ChainLogo :logo="getOriginChainLogo()" size="16"/>
+                    <TokenLogo :logo="getOriginTokenLogo()" size="24"/>
+                    <ChainLogo :logo="getOriginChainLogo()" size="14"/>
                 </div>
-                <div class="field--amount-out">
-                    {{ route.resume.amountOut }}
+                <div class="flex flex-col field--amount-out">
+                    <span>{{ amountOut() }}</span>
+                    <span class="text-sm text-slate-500 hover:text-slate-400">≈ $ {{ dollarValue() }}</span>
                 </div>
                 <div class="flex field--execution-time">
                     <ClockIcon class="h-6 pr-1"/>
                     {{ getExecutionTime() }}
                 </div>
                 <div class="flex text-ellipsis field--global-fee">
-                    {{ Number(route.fees.amountInUsd).toFixed(2) }}
+                    $ {{ Number(route.fees.amountInUsd).toFixed(2) }}
                 </div>
             </div>
             <div class=" bg-[#222129]/40 rounded-2xl block--steps">
@@ -66,9 +77,15 @@ const getExecutionTime = () => {
                     :href="'#step-details-' + unique"
                     class="relative flex justify-left items-center cursor-pointer shadow-lg px-2 rounded-2xl hover:bg-[#222129]/100 transition duration-150 ease-out hover:ease-in py-4"
                     data-bs-toggle="collapse"
+                    @click="detailsOpen = !detailsOpen"
                 >
                     <div class="flex justify-left">
-                        <ChevronDownIcon class="h-6 pr-4 ml-3"/>
+                        <ChevronUpIcon
+                            v-if="detailsOpen"
+                            class="h-6 pr-4 ml-3"/>
+                        <ChevronDownIcon
+                            v-else
+                            class="h-6 pr-4 ml-3"/>
                     </div>
                     <div>
                         <VerticalLine/>
@@ -95,7 +112,7 @@ const getExecutionTime = () => {
                             class="w-8 h-8 ml-2 step-icon"
                             alt="provider logo">
                         <div class="flex justify-right items-center pl-24 pt-4">
-                            <HorizontalLine/>
+                            <HorizontalLine class="w-full mr-4"/>
                         </div>
                     </div>
                 </div>
