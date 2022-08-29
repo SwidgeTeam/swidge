@@ -85,7 +85,7 @@ const getTokenSymbol = (): string => {
     <div
         class="flex flex-col gap-2 px-4 py-3 items-center gradient-border-selection-main w-[32rem]"
     >
-        <div class="flex flex-row">
+        <div class="flex flex-row w-full justify-between">
             <div class="flex">
                 <div class="flex items-center w-full gap-2 text-xl">
                     <div

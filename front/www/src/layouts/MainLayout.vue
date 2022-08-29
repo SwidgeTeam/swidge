@@ -5,10 +5,11 @@ import Header from '@/components/Header.vue'
 <template>
     <div class="flex flex-col flex-grow bg-background-main-dark">
         <Header
-            class="py-2"
+            class="py-2 z-[1]"
             @switch-network="() => null"
         />
-        <main class="flex items-center justify-center mt-20">
+        <div class="main-container-background"></div>
+        <main class="flex items-center justify-center mt-20 z-[1]">
             <router-view/>
         </main>
     </div>
