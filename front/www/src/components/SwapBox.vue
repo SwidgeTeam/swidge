@@ -5,6 +5,7 @@ import TransactionDetails from './TransactionDetails.vue'
 import BridgeSwapInteractiveButton from './BridgeSwapInteractiveButton.vue'
 import AdjustmentsIcon from './svg/AdjustmentIcon.vue'
 import ModalSettings from './Modals/ModalSettings.vue'
+import RecipientUserCard from './RecipientUserCard.vue'
 
 defineProps<{
     sourceTokenAmount: string
@@ -61,6 +62,9 @@ const emits = defineEmits<{
                 :disabled-input="true"
                 @open-token-list="() => emits('select-destination-token')"
             />
+        </div>
+        <div>
+            <RecipientUserCard :disabled-input="true"/>
         </div>
         <TransactionDetails
             v-if="transactionFees"
