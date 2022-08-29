@@ -11,6 +11,8 @@ import TokenLogo from './TokenLogo.vue'
 import ChainLogo from './ChainLogo.vue'
 import AmountFormatter from '@/domain/shared/AmountFormatter'
 import { ref } from 'vue'
+import BridgeStepArrow from './svg/BridgeStepArrow.vue'
+import SwapStepArrow from './svg/SwapStepArrow.vue'
 
 const tokensStore = useTokensStore()
 
@@ -21,8 +23,8 @@ const props = defineProps<{
 
 const detailsOpen = ref<boolean>(false)
 
-const getOriginChainLogo = () => {
-    const chainId = tokensStore.getOriginChainId
+const getDestinationChainLogo = () => {
+    const chainId = tokensStore.getDestinationChainId
     return Networks.get(chainId).icon
 }
 const getOriginTokenLogo = () => {
@@ -59,8 +61,8 @@ const dollarValue = () => {
         <div class="relative flex flex-col gap-4 py-2">
             <div class="flex items-center justify-between px-4 text-2xl h-16">
                 <div class="relative scale-100">
-                    <TokenLogo :logo="getOriginTokenLogo()" size="24"/>
-                    <ChainLogo :logo="getOriginChainLogo()" size="14"/>
+                    <TokenLogo :logo="getDestinationTokenLogo()" size="24"/>
+                    <ChainLogo :logo="getDestinationChainLogo()" size="14"/>
                 </div>
                 <div class="flex flex-col field--amount-out">
                     <span class="amount-tokens">{{ amountOut() }}</span>
@@ -113,12 +115,31 @@ const dollarValue = () => {
                         class="flex h-20 items-center relative">
                         <img
                             :src="step.logo"
-                            class="relative z-10 w-8 h-8 ml-2 "
+                            class="relative z-10 w-8 h-8 ml-[10px] "
                             alt="provider logo">
-                        <div class="absolute bottom-0 justify-right pl-24">
-                            <HorizontalLine
-                                v-if="index !== Object.keys(route.steps).length -1"
-                                class="w-full mr-4"/>
+                        <div class="justify-right pl-6 mr-4 w-full">
+                            <div class="flex justify-center items-center ">
+                                <div class="mx-4">
+                                   <div v-if="step.type == 'bridge'">
+                                        <BridgeStepArrow/>
+                                   </div>
+                                   <div v-if="step.type == 'swap'">
+                                        <SwapStepArrow/>
+                                   </div>
+                                </div>
+                                <div class="mx-4">
+                                    $ {{Number(step.fee).toFixed(2)}}
+                                </div>
+                                <div class="flex field--execution-time mx-4">
+                                    <ClockIcon class="h-6 pr-1"/>
+                                    {{step.executionTime}}s
+                                </div>
+                            </div>
+                            <div class="absolute bottom-0 ">
+                                <HorizontalLine
+                                    v-if="index !== Object.keys(route.steps).length -1"
+                                    class="w-full mr-4 pr-2"/>
+                            </div>
                         </div>
                     </div>
                 </div>
