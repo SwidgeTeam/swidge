@@ -3,7 +3,7 @@ import BridgeSwapSelectionCard from './BridgeSwapSelectionCard.vue'
 import SwitchButton from './Buttons/SwitchButton.vue'
 import TransactionDetails from './TransactionDetails.vue'
 import BridgeSwapInteractiveButton from './BridgeSwapInteractiveButton.vue'
-import {AdjustmentsIcon} from '@heroicons/vue/solid'
+import AdjustmentsIcon from './svg/AdjustmentIcon.vue'
 import ModalSettings from './Modals/ModalSettings.vue'
 
 defineProps<{
@@ -32,10 +32,10 @@ const emits = defineEmits<{
 <template>
     <div class="flex flex-col gap-6 px-12 py-6 rounded-3xl bg-cards-background-dark-grey">
         <div class="flex flex-col w-full gap-4">
-            <span class="relative text-2xl">
+            <span class="relative text-2xl px-4">
                 You send:
                     <AdjustmentsIcon 
-                        class="absolute w-7 right-0 top-0 cursor-pointer"
+                        class="absolute w-10 h-8 right-4 top-0 cursor-pointer"
                         @click="isSettingsModalOpen = true"
                     />
             </span>
