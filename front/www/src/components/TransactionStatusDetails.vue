@@ -26,8 +26,8 @@ const fixedAmount = (amount: number) => {
             class='tooltip rounded-xl shadow-lg p-1 bg-[#31313E] text-white text-sm font-light absolute border border-cyan-700 -bottom-6 -left-20 px-2'>
             {{ tokenName }}
         </span>
-            <TokenLogo :token-logo="tokenLogo"/>
-            <ChainLogo :chain-logo="chainLogo"/>
+            <TokenLogo :logo="tokenLogo" size="64"/>
+            <ChainLogo :logo="chainLogo" size="48"/>
     </div>
     <div
         class="flex pt-4 relative overflow-visible justify-center"
