@@ -22,10 +22,6 @@ const isNetworkModalOpen = ref(false)
 const isTransactionsModalOpen = ref(false)
 const isWalletsModalOpen = ref(false)
 
-const createShortAddress = (address: string): string => {
-    return address.substring(0, 6) + '...' + address.substring(address.length - 4)
-}
-
 const changeNetwork = (chainId: string) => {
     web3Store.switchToNetwork(chainId)
         .then(() => {
@@ -70,15 +66,15 @@ const chainIcon = computed({
 </script>
 
 <template>
-    <nav class="flex items-center justify-between w-full px-24 z-[1]">
+    <nav class="flex items-center justify-between w-full px-2 z-[1]">
         <a class="w-40" href="https://www.swidge.xyz/">
             <SwidgeLogo/>
         </a>
-        <div v-if="isConnected" class="flex gap-4">
+        <div v-if="isConnected" class="flex gap-4 text-sm sm:text-base">
             <TransactionsButton
                 @show-transactions="isTransactionsModalOpen = true"/>
             <AddressButton
-                :address="createShortAddress(account)"
+                :address="account"
                 @click="handleClickOnAddress"
             />
             <ChainButton
