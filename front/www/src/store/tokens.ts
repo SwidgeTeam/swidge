@@ -203,6 +203,15 @@ export const useTokensStore = defineStore('tokens', {
 
             this.destinationChainId = auxChainId
             this.destinationTokenAddress = auxAddress
+        },
+        /**
+         * Reset token selection
+         */
+        resetSelection() {
+            this.originChainId = ''
+            this.originTokenAddress = ''
+            this.destinationChainId = ''
+            this.destinationTokenAddress = ''
         }
     }
 })

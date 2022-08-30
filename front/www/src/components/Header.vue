@@ -10,28 +10,40 @@ import ConnectButton from '@/components/Buttons/ConnectButton.vue'
 import { Networks } from '@/domain/chains/Networks'
 import TransactionsButton from './Buttons/TransactionsButton.vue'
 import ModalTransactions from './Modals/ModalTransactions.vue'
-
-const emits = defineEmits<{
-    (event: 'switch-network', chainId: string): void
-}>()
+import ModalWallets from '@/components/Modals/ModalWallets.vue'
+import { Wallet } from '@/domain/wallets/IWallet'
+import { useTokensStore } from '@/store/tokens'
 
 const web3Store = useWeb3Store()
+const tokensStore = useTokensStore()
 const { account, isConnected, isCorrectNetwork, selectedNetworkId } = storeToRefs(web3Store)
-const { connect, switchToNetwork } = web3Store
 
 const isNetworkModalOpen = ref(false)
 const isTransactionsModalOpen = ref(false)
+const isWalletsModalOpen = ref(false)
 
 const createShortAddress = (address: string): string => {
     return address.substring(0, 6) + '...' + address.substring(address.length - 4)
 }
 
 const changeNetwork = (chainId: string) => {
-    switchToNetwork(chainId)
+    web3Store.switchToNetwork(chainId)
         .then(() => {
             isNetworkModalOpen.value = false
-            emits('switch-network', chainId)
+            tokensStore.resetSelection()
         })
+}
+
+const connect = () => {
+    isWalletsModalOpen.value = true
+}
+
+const setWallet = (wallet: Wallet) => {
+    web3Store.init(wallet, true)
+}
+
+const handleClickOnAddress = () => {
+    web3Store.disconnect()
 }
 
 const chainName = computed({
@@ -66,16 +78,19 @@ const chainIcon = computed({
             <ChainButton
                 :chain-name="chainName"
                 :icon-link="chainIcon"
-                :is-network="isCorrectNetwork"
+                :is-correct-network="isCorrectNetwork"
                 @switch-network="isNetworkModalOpen = true"
             />
-            <AddressButton :address="createShortAddress(account)"/>
+            <AddressButton
+                :address="createShortAddress(account)"
+                @click="handleClickOnAddress"
+            />
             <TransactionsButton
                 @show-transactions="isTransactionsModalOpen = true"/>
         </div>
         <div v-else class="flex gap-4 font-extralight">
             <ConnectButton
-                @connect="connect(true)"
+                @connect="connect"
             />
         </div>
     </nav>
@@ -87,6 +102,11 @@ const chainIcon = computed({
     <ModalTransactions
         :is-open="isTransactionsModalOpen"
         @close-modal="isTransactionsModalOpen = false"
+    />
+    <ModalWallets
+        :is-open="isWalletsModalOpen"
+        @close-modal="isWalletsModalOpen = false"
+        @set-wallet="setWallet"
     />
 </template>
 
