@@ -1,6 +1,7 @@
 import { ethers, Signer } from 'ethers'
 import { IWallet, Tx, WalletEvents } from '@/domain/wallets/IWallet'
 import { ExternalProvider } from '@ethersproject/providers'
+import { INetwork } from '@/domain/chains/INetwork'
 
 export class Metamask implements IWallet {
     private readonly callbacks: WalletEvents
@@ -33,6 +34,10 @@ export class Metamask implements IWallet {
     }
 
     public setListeners(): void {
+        this.connector.on('connect', async (connectInfo: any) => {
+            const chainId = parseInt(connectInfo.chainId, 16).toString()
+            this.callbacks.onSwitchNetwork(chainId)
+        })
         this.connector.on('accountsChanged', async (account: string[]) => {
             if (account.length === 0) {
                 this.callbacks.onDisconnect()
@@ -40,22 +45,49 @@ export class Metamask implements IWallet {
                 this.callbacks.onConnect(account[0])
             }
         })
-        this.connector.on('chainChanged', async (chainId: string) => {
+        this.connector.on('chainChanged', async (hexChainId: string) => {
+            const chainId = parseInt(hexChainId, 16).toString()
             this.callbacks.onSwitchNetwork(chainId)
         })
         this.connector.on('disconnect', async () => {
             this.callbacks.onDisconnect()
         })
     }
-    public async switchNetwork(chainId: string): Promise<boolean> {
+
+    public async switchNetwork(chain: INetwork): Promise<boolean> {
+        const hexChainId = '0x' + Number(chain.id).toString(16)
         try {
-            const hexChainId = '0x' + Number(chainId).toString(16)
             await this.connector.request({
                 method: 'wallet_switchEthereumChain',
                 params: [{ chainId: hexChainId }]
             })
+            // changed
             return true
-        } catch {
+        } catch (switchError: any) {
+            if (switchError.code === 4902) {
+                try {
+                    await this.connector.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [
+                            {
+                                chainId: hexChainId,
+                                chainName: chain.name,
+                                rpcUrls: [`${chain.rpcUrl}`],
+                            },
+                        ],
+                    })
+                    // it's added, try to switch
+                    return await this.switchNetwork(chain)
+                } catch (addError: any) {
+                    if (addError.code === 4001) {
+                        // user rejected
+                        return false
+                    }
+                    // unknown error, didn't change
+                    return false
+                }
+            }
+            // unknown error, didn't change
             return false
         }
     }

@@ -144,8 +144,8 @@ export const useWeb3Store = defineStore('web3', () => {
      */
     async function switchToNetwork(chainId: string) {
         if (!wallet.value) throw new Error('No wallet')
-        const changed = await wallet.value.switchNetwork(chainId)
-        console.log(changed)
+        const chain = Networks.get(chainId)
+        const changed = await wallet.value.switchNetwork(chain)
         if (changed) {
             selectedNetworkId.value = chainId
             await checkIfCorrectNetwork()
@@ -181,7 +181,7 @@ export const useWeb3Store = defineStore('web3', () => {
             gasPrice: feeData.gasPrice.toString(),
             nonce: currentNonce.toString(),
         })
-            .then((txHash) => {
+            .then((txHash: TxHash) => {
                 transactionStore.incrementNonce()
                 return txHash
             })
@@ -241,6 +241,10 @@ export const useWeb3Store = defineStore('web3', () => {
      * triggered when the wallet changes the network
      */
     async function onSwitchNetwork(chainId: string) {
+        if (!wallet.value) throw new Error('No wallet')
+        isConnected.value = true
+        const accounts = await wallet.value.getConnectedAccounts()
+        onConnect(accounts[0])
         selectedNetworkId.value = chainId
         await checkIfCorrectNetwork()
     }

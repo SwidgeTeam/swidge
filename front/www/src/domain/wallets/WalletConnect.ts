@@ -3,6 +3,7 @@ import { ExternalProvider } from '@ethersproject/providers'
 import WalletConnectProvider from '@walletconnect/web3-provider'
 import { Networks } from '@/domain/chains/Networks'
 import { IRPCMap } from '@walletconnect/types'
+import { INetwork } from '@/domain/chains/INetwork'
 
 export class WalletConnect implements IWallet {
     private readonly callbacks: WalletEvents
@@ -56,10 +57,10 @@ export class WalletConnect implements IWallet {
         })
     }
 
-    public async switchNetwork(chainId: string): Promise<boolean> {
-        if (this.provider.chainId.toString() === chainId) return true
+    public async switchNetwork(chain: INetwork): Promise<boolean> {
+        if (this.provider.chainId.toString() === chain.id) return true
         try {
-            const hexChainId = '0x' + Number(chainId).toString(16)
+            const hexChainId = '0x' + Number(chain.id).toString(16)
             await this.provider.connector.sendCustomRequest({
                 method: 'wallet_switchEthereumChain',
                 params: [{ chainId: hexChainId }]
