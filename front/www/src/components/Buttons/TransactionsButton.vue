@@ -9,7 +9,7 @@ const emits = defineEmits<{
 
 <template>
     <button
-        class="flex items-center gap-2 tracking-wide header-button"
+        class="header-button"
         @click="emits('show-transactions')"
     >
         <LinkIcon class="h-5"/>

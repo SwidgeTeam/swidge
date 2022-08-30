@@ -74,21 +74,17 @@
     }
 
     .header-button {
-        @apply px-4 py-2 gradient-border-header-main font-roboto font-light hover:gradient-border-header-main-hover
+        @apply flex items-center gap-2 tracking-wide px-4 py-2 gradient-border-header-main font-roboto font-light hover:gradient-border-header-main-hover
+    }
+
+    .network-button {
+        @apply px-4 header-button network-button-styles
     }
 
     .network-button-styles {
         display: inline-block;
         margin: 2%;
         width: 46%;
-    }
-
-    .network-button {
-        @apply px-4 py-2 gradient-border-header-main font-roboto network-button-styles hover:gradient-border-header-main-hover
-    }
-
-    .select-network-button {
-        @apply py-2 text-center font-roboto font-light
     }
 
     .network-button > img {
@@ -100,7 +96,7 @@
     }
 
     img.chain-icon {
-        width: 24px;
+        max-width: 24px;
         border-radius: 50%;
     }
 

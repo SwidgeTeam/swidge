@@ -15,7 +15,7 @@ const emits = defineEmits<{
 <template>
   <template v-if="isCorrectNetwork">
     <button
-      class="flex items-center gap-2 tracking-wide header-button"
+      class="header-button"
       @click="emits('switch-network')"
     >
         <img
@@ -23,12 +23,12 @@ const emits = defineEmits<{
             :alt="chainName + ' icon'"
             :src="iconLink"
         />
-      <span>{{ chainName }}</span>
+      <span class="hidden sm:block">{{ chainName }}</span>
     </button>
   </template>
   <template v-else>
     <button
-      class="flex items-center gap-2 tracking-wide header-button"
+      class="header-button"
       @click="emits('switch-network')"
     >
       <span>Wrong Network</span>

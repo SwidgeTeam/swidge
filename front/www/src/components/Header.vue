@@ -71,24 +71,24 @@ const chainIcon = computed({
 
 <template>
     <nav class="flex items-center justify-between w-full px-24 z-[1]">
-        <a class="flex items-center justify-center w-40" href="https://www.swidge.xyz/">
+        <a class="w-40" href="https://www.swidge.xyz/">
             <SwidgeLogo/>
         </a>
-        <div v-if="isConnected" class="flex gap-4 font-extralight">
+        <div v-if="isConnected" class="flex gap-4">
+            <TransactionsButton
+                @show-transactions="isTransactionsModalOpen = true"/>
+            <AddressButton
+                :address="createShortAddress(account)"
+                @click="handleClickOnAddress"
+            />
             <ChainButton
                 :chain-name="chainName"
                 :icon-link="chainIcon"
                 :is-correct-network="isCorrectNetwork"
                 @switch-network="isNetworkModalOpen = true"
             />
-            <AddressButton
-                :address="createShortAddress(account)"
-                @click="handleClickOnAddress"
-            />
-            <TransactionsButton
-                @show-transactions="isTransactionsModalOpen = true"/>
         </div>
-        <div v-else class="flex gap-4 font-extralight">
+        <div v-else class="flex gap-4">
             <ConnectButton
                 @connect="connect"
             />

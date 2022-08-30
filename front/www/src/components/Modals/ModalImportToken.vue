@@ -48,7 +48,7 @@ const accept = () => {
                     It's understood
                 </div>
                 <button
-                    class="flex items-center gap-2 tracking-wide header-button ml-auto"
+                    class="header-button ml-auto"
                     :disabled="!isUnderstood"
                     @click="accept">
                     Import

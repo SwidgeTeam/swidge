@@ -71,7 +71,7 @@ const getNetworks = () => {
             <button
               v-for="chain in getNetworks()"
               :key="chain.id"
-              class="flex items-center gap-2 tracking-wide network-button"
+              class="network-button"
               @click="selectChain(chain.id)"
             >
               <img :alt="chain.name + ' icon'" :src="chain.icon"/>
