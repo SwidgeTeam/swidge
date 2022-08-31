@@ -46,36 +46,50 @@
         border-radius: 24px;
     }
 
-    .gradient-border-header-main {
-        background: linear-gradient(#222129, #222129) padding-box,
+    .bg-gradient-border {
+        background: linear-gradient(var(--bg-color-from), var(--bg-color-to)) padding-box,
         linear-gradient(270deg, #3E3085 0%, #7C2F82 27.15%, #B22F7F 51.04%, #543E71 78.86%, #0C4966 100%) border-box;
         border: 1.5px solid transparent;
         border-radius: 12px;
-        transition: 0.3s;
+    }
+
+    .gradient-border-header-main {
+        --bg-color-from: #222129;
+        --bg-color-to: #222129;
+        @apply bg-gradient-border
     }
 
     .gradient-border-header-main-hover {
-        background: linear-gradient(#222129, #2221296b) padding-box,
-        linear-gradient(270deg, #3E3085 0%, #7C2F82 27.15%, #B22F7F 51.04%, #543E71 78.86%, #0C4966 100%) border-box;
-        border: 1.5px solid transparent;
-        border-radius: 12px;
-        transition: 0.3s;
+        --bg-color-to: #2221296b;
+        @apply bg-gradient-border
     }
 
-    .sending-box-border {
-        --bg-color: #2E283A;
-        background: linear-gradient(var(--bg-color), var(--bg-color)) padding-box,
-        linear-gradient(270deg, #3E3085 0%, #7C2F82 27.15%, #B22F7F 51.04%, #543E71 78.86%, #0C4966 100%) border-box;
-        border: 1.5px solid transparent;
-        border-radius: 12px;
+    .sending-box-colors {
+        --bg-color-from: #2E283A;
+        --bg-color-to: #2E283A;
+        @apply bg-gradient-border
+    }
+
+    .receiving-box-colors {
+        --bg-color-from: #403C49;
+        --bg-color-to: #403C49;
+        @apply bg-gradient-border
     }
 
     .swap-interface {
         @apply flex flex-col px-3 w-full max-w-xl
     }
 
+    .settings-line {
+        @apply flex justify-end gap-2 py-2
+    }
+
     .sending-box {
-        @apply flex flex-col px-2 py-2 sending-box-border
+        @apply flex flex-col px-2 py-2 sending-box-colors
+    }
+
+    .receiving-box {
+        @apply flex flex-col px-2 py-2 receiving-box-colors
     }
 
     .current-balance {
@@ -86,12 +100,38 @@
         @apply text-xs text-slate-200
     }
 
+    .route-card {
+        @apply flex w-full flex-col border rounded-lg border-[#733975]
+    }
+
     .header-button {
-        @apply flex items-center gap-2 tracking-wide px-3 py-1 gradient-border-header-main font-roboto font-light hover:gradient-border-header-main-hover
+        @apply flex
+        items-center
+        gap-2
+        tracking-wide
+        px-3 py-0
+        font-roboto
+        font-light
+        gradient-border-header-main hover:gradient-border-header-main-hover
     }
 
     .network-button {
         @apply px-4 header-button network-button-styles
+    }
+
+    .asset-selector {
+        @apply flex
+        justify-between
+        gap-2
+        cursor-pointer
+        bg-[#2A2934]/100 hover:bg-[#2A2934]/50
+        rounded-2xl
+        transition duration-150 ease-out hover:ease-in
+        asset-selector-shadow
+    }
+
+    .asset-selector-shadow {
+        box-shadow: 0 2px 3px #000000b5;
     }
 
     .network-button-styles {
@@ -113,6 +153,10 @@
         border-radius: 50%;
     }
 
+    .from-to-arrow {
+        @apply flex justify-center
+    }
+
     .standardArrow {
         width: 44px;
         height: 44px;
@@ -131,14 +175,6 @@
         transition: transform 0.4s ease-in;
         -o-transition: -o-transform 0.4s ease-in;
         background: #222129;
-    }
-
-    .w-120 {
-        width: 120px;
-    }
-
-    #app {
-        @apply flex flex-grow
     }
 
     .tooltip {

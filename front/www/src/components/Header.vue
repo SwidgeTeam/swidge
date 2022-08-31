@@ -66,7 +66,7 @@ const chainIcon = computed({
 </script>
 
 <template>
-    <nav class="flex items-center justify-between w-full px-2 z-[1]">
+    <nav class="flex items-center justify-between w-full px-2 z-[1] bg-[#222129] sm:bg-transparent">
         <a class="w-25 sm:w-40" href="https://www.swidge.xyz/">
             <SwidgeLogo/>
         </a>

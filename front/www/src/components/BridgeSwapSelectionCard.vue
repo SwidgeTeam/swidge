@@ -113,7 +113,7 @@ const getTokenSymbol = (): string => {
                                 </div>
                             </div>
                         </div>
-                        <div v-else class="flex flex-align-center text-md font-light py-4 w-120">Select token</div>
+                        <div v-else class="flex flex-align-center text-md font-light py-4 w-[120px]">Select token</div>
 
                         <div
                             v-if="getToken()"

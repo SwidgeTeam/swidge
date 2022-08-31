@@ -10,7 +10,7 @@ const props = defineProps<{
 const emits = defineEmits<{
     (event: 'update:value', value: string): void
     (event: 'input-changed'): void
-    (event: 'select-source-token'): void
+    (event: 'select-token'): void
 }>()
 
 const onChange = (event: Event) => {
@@ -46,13 +46,13 @@ const trimmedBalance = computed({
 <template>
     <div class="sending-box">
         <span class="text-xs text-slate-400">You send</span>
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between py-2">
             <AssetSelector
                 :is-origin="true"
-                @open-token-list="() => emits('select-source-token')"
+                @open-token-list="() => emits('select-token')"
             />
             <div
-                class="relative flex ">
+                class="relative flex">
                 <input
                     type="text"
                     :disabled="false"

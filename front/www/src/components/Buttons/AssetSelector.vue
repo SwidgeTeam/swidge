@@ -48,7 +48,7 @@ const getTokenSymbol = (): string => {
 
 <template>
     <div
-        class="flex justify-between gap-2 my-2 cursor-pointer shadow-md bg-[#24222d]/100 rounded-2xl hover:bg-[#24222d]/50 transition duration-150 ease-out hover:ease-in"
+        class="asset-selector"
         @click="emits('open-token-list')"
     >
         <div

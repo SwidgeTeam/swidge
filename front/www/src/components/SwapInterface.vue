@@ -6,6 +6,7 @@ import { useWeb3Store } from '@/store/web3'
 import { useTokensStore } from '@/store/tokens'
 import { useRoutesStore } from '@/store/routes'
 import { useTransactionStore } from '@/store/transaction'
+import { ArrowDownIcon } from '@heroicons/vue/outline'
 import ModalSwidgeStatus from './ModalSwidgeStatus.vue'
 import SwapBox from '@/components/SwapBox.vue'
 import IToken from '@/domain/tokens/IToken'
@@ -14,6 +15,9 @@ import Aggregators from '@/domain/aggregators/aggregators'
 import { useToast } from 'vue-toastification'
 import { TxHash } from '@/domain/wallets/IWallet'
 import SendingBox from '@/components/SendingBox.vue'
+import ReceivingBox from '@/components/ReceivingBox.vue'
+import AdjustmentsIcon from './svg/AdjustmentIcon.vue'
+import ReloadIcon from '@/components/svg/ReloadIcon.vue';
 
 const web3Store = useWeb3Store()
 const tokensStore = useTokensStore()
@@ -398,20 +402,29 @@ const closeModalStatus = () => {
 
 <template>
     <div class="swap-interface">
-        <div class="settings-line"></div>
+        <div class="settings-line">
+            <ReloadIcon
+                class="w-5 h-5 cursor-pointer"
+                @click="isSettingsModalOpen = true"
+            />
+            <AdjustmentsIcon
+                class="w-5 h-5 cursor-pointer"
+                @click="isSettingsModalOpen = true"
+            />
+        </div>
         <div class="flex flex-col">
             <SendingBox
                 v-model:value="sourceTokenAmount"
                 :balance="0"
                 @input-changed="handleSourceInputChanged"
-                @select-source-token="() => handleOpenTokenList(true)"
+                @select-token="() => handleOpenTokenList(true)"
             />
-            <div class="flex justify-center">arrow</div>
-            <div class="flex flex-col">
-                <span>You receive</span>
-                <div class="flex items-center justify-between"></div>
-                <div class="flex items-center justify-between"></div>
+            <div class="flex justify-center -mt-2 -mb-2 z-10">
+                <ArrowDownIcon class="flex h-6 border border-[#54545F] rounded-2xl bg-[#2F283A]/100" />
             </div>
+            <ReceivingBox
+                @select-token="() => handleOpenTokenList(false)"
+            />
         </div>
     </div>
 
