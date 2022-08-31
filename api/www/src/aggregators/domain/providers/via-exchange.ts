@@ -256,6 +256,7 @@ export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAg
       step.fromToken.address,
       step.fromToken.decimals,
       step.fromToken.symbol,
+      step.fromToken.logoURI,
     );
     const toToken = new Token(
       step.toToken.chainId.toString(),
@@ -263,6 +264,7 @@ export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAg
       step.toToken.address,
       step.toToken.decimals,
       step.toToken.symbol,
+      step.toToken.logoURI,
     );
     const details = new ProviderDetails(step.tool.name, step.tool.logoURI);
     const amountIn = BigInteger.fromString(step.fromTokenAmount.toString());

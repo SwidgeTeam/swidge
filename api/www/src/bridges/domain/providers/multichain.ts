@@ -58,6 +58,7 @@ export class Multichain implements Bridge {
       tokenOutDetails.underlying.address,
       tokenOutDetails.underlying.decimals,
       tokenOutDetails.underlying.symbol,
+      request.tokenIn.logo,
     );
 
     // Construct the object holding fees of the bridging process

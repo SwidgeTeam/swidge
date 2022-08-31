@@ -95,6 +95,7 @@ export class GetPathController {
       address: token.address,
       decimals: token.decimals,
       symbol: token.symbol,
+      icon: token.logo,
     };
   }
 }

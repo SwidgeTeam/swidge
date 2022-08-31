@@ -232,6 +232,7 @@ export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregat
       step.from.address,
       step.from.decimals,
       step.from.symbol,
+      step.from.image,
     );
     const toToken = new Token(
       this.getChainId(step.to.blockchain),
@@ -239,6 +240,7 @@ export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregat
       step.to.address,
       step.to.decimals,
       step.to.symbol,
+      step.to.image,
     );
     const details = new ProviderDetails(step.swapper.title, step.swapper.logo);
     const amountOut = BigInteger.fromString(step.expectedOutput);

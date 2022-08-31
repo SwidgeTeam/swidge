@@ -210,6 +210,7 @@ export class LiFi implements Aggregator, ExternalAggregator {
       step.action.fromToken.address,
       step.action.fromToken.decimals,
       step.action.fromToken.symbol,
+      step.action.fromToken.logoURI,
     );
     const toToken = new Token(
       step.action.toToken.chainId.toString(),
@@ -217,6 +218,7 @@ export class LiFi implements Aggregator, ExternalAggregator {
       step.action.toToken.address,
       step.action.toToken.decimals,
       step.action.toToken.symbol,
+      step.action.toToken.logoURI,
     );
 
     let feeInUSD = 0;

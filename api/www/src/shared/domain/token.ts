@@ -12,6 +12,7 @@ export class Token {
     private readonly _address: ContractAddress,
     private readonly _decimals: number,
     private readonly _symbol: string,
+    private readonly _logo = '',
   ) {}
 
   get chainId(): string {
@@ -32,6 +33,10 @@ export class Token {
 
   get symbol(): string {
     return this._symbol;
+  }
+
+  get logo(): string {
+    return this._logo;
   }
 
   public equals(other: Token): boolean {

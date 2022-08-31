@@ -64,6 +64,7 @@ interface SocketTokenDetails {
   symbol: string;
   decimals: number;
   name: string;
+  icon: string;
 }
 
 // details of the approval of tokens
@@ -273,6 +274,7 @@ export class Socket implements Aggregator, ExternalAggregator {
       step.fromAsset.address,
       step.fromAsset.decimals,
       step.fromAsset.symbol,
+      step.fromAsset.icon,
     );
     const toToken = new Token(
       step.toAsset.chainId,
@@ -280,6 +282,7 @@ export class Socket implements Aggregator, ExternalAggregator {
       step.toAsset.address,
       step.toAsset.decimals,
       step.toAsset.symbol,
+      step.toAsset.icon,
     );
     const details = new ProviderDetails(step.protocol.displayName, step.protocol.icon);
     const amountIn = BigInteger.fromString(step.fromAmount);
