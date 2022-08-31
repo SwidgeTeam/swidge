@@ -1,8 +1,10 @@
 interface TokenDetailsJson {
+    chainId: string
     name: string
     address: string
     decimals: number
     symbol: string
+    icon: string
 }
 
 interface RouteStepJson {

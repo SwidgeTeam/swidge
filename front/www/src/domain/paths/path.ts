@@ -1,8 +1,10 @@
 interface TokenDetails {
+    chainId: string
     name: string
     address: string
     decimals: number
     symbol: string
+    icon: string
 }
 
 export interface RouteStep {
