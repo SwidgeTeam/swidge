@@ -67,10 +67,10 @@ const chainIcon = computed({
 
 <template>
     <nav class="flex items-center justify-between w-full px-2 z-[1]">
-        <a class="w-40" href="https://www.swidge.xyz/">
+        <a class="w-25 sm:w-40" href="https://www.swidge.xyz/">
             <SwidgeLogo/>
         </a>
-        <div v-if="isConnected" class="flex gap-4 text-sm sm:text-base">
+        <div v-if="isConnected" class="flex gap-1 text-sm sm:text-base sm:gap-4">
             <TransactionsButton
                 @show-transactions="isTransactionsModalOpen = true"/>
             <AddressButton
@@ -84,7 +84,7 @@ const chainIcon = computed({
                 @switch-network="isNetworkModalOpen = true"
             />
         </div>
-        <div v-else class="flex gap-4">
+        <div v-else class="flex gap-1 sm:gap-4">
             <ConnectButton
                 @connect="connect"
             />
