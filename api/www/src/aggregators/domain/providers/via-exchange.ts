@@ -251,12 +251,14 @@ export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAg
    */
   private buildStep(step: IActionStep): RouteStep {
     const fromToken = new Token(
+      step.fromToken.chainId.toString(),
       step.fromToken.name,
       step.fromToken.address,
       step.fromToken.decimals,
       step.fromToken.symbol,
     );
     const toToken = new Token(
+      step.toToken.chainId.toString(),
       step.toToken.name,
       step.toToken.address,
       step.toToken.decimals,

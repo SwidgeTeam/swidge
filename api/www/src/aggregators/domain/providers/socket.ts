@@ -59,6 +59,7 @@ interface SocketUserTxStep {
 
 // details of a token
 interface SocketTokenDetails {
+  chainId: string;
   address: string;
   symbol: string;
   decimals: number;
@@ -267,12 +268,14 @@ export class Socket implements Aggregator, ExternalAggregator {
    */
   private buildStep(step: SocketUserTxStep): RouteStep {
     const fromToken = new Token(
+      step.fromAsset.chainId,
       step.fromAsset.name,
       step.fromAsset.address,
       step.fromAsset.decimals,
       step.fromAsset.symbol,
     );
     const toToken = new Token(
+      step.toAsset.chainId,
       step.toAsset.name,
       step.toAsset.address,
       step.toAsset.decimals,

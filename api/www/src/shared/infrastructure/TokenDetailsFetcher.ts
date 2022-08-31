@@ -8,7 +8,7 @@ export class TokenDetailsFetcher {
   public async fetch(address: ContractAddress, chainId: string): Promise<Token> {
     if (address.toLowerCase() === NATIVE_TOKEN_ADDRESS.toLowerCase()) {
       const details = Natives[chainId];
-      return new Token(details.name, address, details.decimals, details.symbol);
+      return new Token(chainId, details.name, address, details.decimals, details.symbol);
     }
 
     const provider = ethers.providers.getDefaultProvider(RpcNode[chainId]);
@@ -28,6 +28,6 @@ export class TokenDetailsFetcher {
       // TODO : check with web2 API
     }
 
-    return new Token(name[0], address, decimals[0], symbol[0]);
+    return new Token(chainId, name[0], address, decimals[0], symbol[0]);
   }
 }

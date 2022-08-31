@@ -205,12 +205,14 @@ export class LiFi implements Aggregator, ExternalAggregator {
    */
   private createStep(step: Step): RouteStep {
     const fromToken = new Token(
+      step.action.fromToken.chainId.toString(),
       step.action.fromToken.name,
       step.action.fromToken.address,
       step.action.fromToken.decimals,
       step.action.fromToken.symbol,
     );
     const toToken = new Token(
+      step.action.toToken.chainId.toString(),
       step.action.toToken.name,
       step.action.toToken.address,
       step.action.toToken.decimals,

@@ -245,12 +245,14 @@ export class SushiPoolsTheGraph {
 
   private buildPair(chainId: string, data: GraphPair): SushiPair {
     const t0 = new OwnToken(
+      chainId,
       data.token0.name,
       ethers.utils.getAddress(data.token0.id),
       Number(data.token0.decimals),
       data.token0.symbol,
     );
     const t1 = new OwnToken(
+      chainId,
       data.token1.name,
       ethers.utils.getAddress(data.token1.id),
       Number(data.token1.decimals),

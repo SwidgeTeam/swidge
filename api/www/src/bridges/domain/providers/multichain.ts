@@ -53,6 +53,7 @@ export class Multichain implements Bridge {
 
     // Construct destination receiving Token
     const tokenOut = new Token(
+      request.toChainId,
       tokenOutDetails.underlying.name,
       tokenOutDetails.underlying.address,
       tokenOutDetails.underlying.decimals,
