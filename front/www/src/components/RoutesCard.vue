@@ -15,6 +15,8 @@ import BridgeStepArrow from './svg/BridgeStepArrow.vue'
 import SwapStepArrow from './svg/SwapStepArrow.vue'
 
 const tokensStore = useTokensStore()
+const isBridged = ref<boolean>(false)
+
 
 const props = defineProps<{
     route: Route
@@ -49,6 +51,11 @@ const amountOut = () => {
 const dollarValue = () => {
     return AmountFormatter.format(props.route.resume.amountOut)
 }
+const toString = (input: number) :string =>  {  
+    return input.toString()
+}
+
+
 </script>
 
 <template>
@@ -120,15 +127,18 @@ const dollarValue = () => {
                         <div class="justify-right pl-6 mr-4 w-full">
                             <div class="flex justify-center items-center ">
                                 <div class="mx-4">
-                                   <div v-if="step.type == 'bridge'" class="flex justify-center items-center">
-                                        {{step.tokenIn.name}}
-                                        <span class="px-2"><BridgeStepArrow/></span>
-                                        {{step.tokenOut.name}}
-                                   </div>
-                                   <div v-if="step.type == 'swap'"  class="flex justify-center items-center">
-                                        {{step.tokenIn.name}}
+                                    <div v-if="step.type == 'swap'"  class="flex justify-center items-center">
+                                        <div v-if="isBridged===false">{{tokensStore.getToken(tokensStore.getOriginChainId,step.tokenIn.address)}}</div>
+                                        <div v-if="isBridged===true">{{tokensStore.getDestinationChainId}}{{step.tokenIn.address}}</div>
                                         <span class="px-2"><SwapStepArrow/></span>
-                                        {{step.tokenOut.name}}
+                                        <div v-if="isBridged===false">{{step.tokenOut.address}}{{tokensStore.getOriginChainId}}</div>
+                                        <div v-if="isBridged===true">{{step.tokenOut.address}}{{tokensStore.getDestinationChainId}}</div>
+                                   </div>
+                                   <div v-if="step.type == 'bridge'" class="flex justify-center items-center"> 
+                                        {{step.tokenIn.address}}{{tokensStore.getOriginChainId}}
+                                        <div class="invisible">{{isBridged=true}}</div>
+                                        <span class="px-2"><BridgeStepArrow/></span>
+                                        {{step.tokenOut.address}}{{tokensStore.getDestinationChainId}}
                                    </div>
                                 </div>
                                 <div class="mx-4">
