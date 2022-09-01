@@ -6,6 +6,25 @@
 @tailwind utilities;
 
 @layer base {
+    :root {
+        --header-height: 3rem;
+        --settings-line-height: 2.25rem;
+        --sending-line-height: 6.6rem;
+        --arrow-line-height: 1.5rem;
+        --receive-title-height: 0.75rem;
+        --receive-selector-height: 4rem;
+        --main-action-button-height: 4.5rem;
+        --routes-box-height: calc(100vh
+        - (var(--header-height)
+        + var(--settings-line-height)
+        + var(--sending-line-height)
+        + var(--arrow-line-height)
+        + var(--receive-title-height)
+        + var(--receive-selector-height)
+        + var(--main-action-button-height)
+        ))
+    }
+
     html {
         @apply text-white tracking-wide flex min-h-full
     }
@@ -13,9 +32,33 @@
     body {
         @apply flex flex-grow bg-background-main-dark background-gradient
     }
+
+    /* custom scrollbar */
+
+    ::-webkit-scrollbar {
+        width: 5px;
+        right: -10px;
+        position: absolute;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #888;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
 }
 
 @layer utilities {
+    .nav-header {
+        @apply flex items-center h-[var(--header-height)] justify-between w-full px-2 z-[1] bg-[#222129] sm:bg-transparent
+    }
+
     .swap-bridge-container {
         @apply bg-background-gray-accent rounded-xl w-full p-5
     }
@@ -80,15 +123,26 @@
     }
 
     .settings-line {
-        @apply flex justify-end gap-2 py-2
+        @apply flex justify-end gap-2 py-2 h-[var(--settings-line-height)]
     }
 
     .sending-box {
-        @apply flex flex-col px-2 py-2 sending-box-colors
+        @apply flex flex-col px-2 py-2 sending-box-colors h-[var(--sending-line-height)]
     }
 
     .receiving-box {
-        @apply flex flex-col px-2 pt-2 receiving-box-colors
+        @apply flex flex-col px-2 pt-2 receiving-box-colors h-full
+    }
+
+    .routes-container {
+        @apply flex flex-col py-3 gap-2
+        border-t border-[#34313D]
+        overflow-y-auto overflow-x-hidden
+        max-h-[var(--routes-box-height)]
+    }
+
+    .routes-container::-webkit-scrollbar {
+
     }
 
     .current-balance {
@@ -123,7 +177,7 @@
     }
 
     .route-card > .route-details {
-        @apply flex items-center justify-between px-4 text-lg h-14
+        @apply flex items-center justify-between px-4 text-lg h-8 sm:h-10
     }
 
     .route-card > .route-steps {
@@ -131,7 +185,7 @@
     }
 
     .route-card > .route-steps > .details-line {
-        @apply relative flex items-center cursor-pointer shadow-lg px-2 py-3
+        @apply relative flex items-center cursor-pointer shadow-lg px-2 py-2 sm:py-3
         rounded-2xl hover:bg-[#222129]/100
         transition duration-150
         ease-out hover:ease-in

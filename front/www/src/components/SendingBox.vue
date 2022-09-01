@@ -45,7 +45,7 @@ const trimmedBalance = computed({
 
 <template>
     <div class="sending-box">
-        <span class="text-xs text-slate-400">You send</span>
+        <span class="pl-2 text-xs text-slate-400">You send</span>
         <div class="flex items-center justify-between py-2">
             <AssetSelector
                 :is-origin="true"
@@ -72,7 +72,7 @@ const trimmedBalance = computed({
                 />
             </div>
         </div>
-        <div class="flex items-center justify-between">
+        <div class="pl-2 flex items-center justify-between">
             <div class="current-balance">
                 Balance:
                 <span

@@ -17,14 +17,14 @@ const onSelected = (index: number) => {
 
 <template>
     <div class="receiving-box">
-        <span class="text-xs text-slate-400">You receive</span>
-        <div class="flex items-center justify-between py-3">
+        <span class="pl-2 text-xs text-slate-400 h-[var(--receive-title-height)] ">You receive</span>
+        <div class="flex items-center justify-between py-3 h-[var(--receive-selector-height)]">
             <AssetSelector
                 :is-origin="false"
                 @open-token-list="() => emits('select-token')"
             />
         </div>
-        <div class="flex flex-col py-3 gap-2 border-t border-[#34313D]">
+        <div class="routes-container">
             <RoutesCard
                 v-for="(route, index) in RouteMother.list()"
                 :key="index"

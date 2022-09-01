@@ -421,7 +421,7 @@ const closeModalStatus = () => {
                 @select-token="() => handleOpenTokenList(true)"
             />
             <div class="flex justify-center -mt-2 -mb-2 z-10">
-                <ArrowDownIcon class="flex h-6 border border-[#54545F] rounded-2xl bg-[#2F283A]/100" />
+                <ArrowDownIcon class="flex h-[var(--arrow-line-height)] border border-[#54545F] rounded-2xl bg-[#2F283A]/100" />
             </div>
             <ReceivingBox
                 @select-token="() => handleOpenTokenList(false)"
