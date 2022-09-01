@@ -152,7 +152,7 @@
     }
 
     .swap-interface {
-        @apply flex flex-col px-3 w-full max-w-md
+        @apply flex flex-col px-3 pb-2 w-full max-w-md rounded-xl md:bg-[#5A5564]/30
     }
 
     .settings-line {
