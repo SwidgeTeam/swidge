@@ -416,7 +416,7 @@ const closeModalStatus = () => {
         <div class="flex flex-col">
             <SendingBox
                 v-model:value="sourceTokenAmount"
-                :balance="0"
+                :balance="sourceTokenMaxAmount"
                 @input-changed="handleSourceInputChanged"
                 @select-token="() => handleOpenTokenList(true)"
             />

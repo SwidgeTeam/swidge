@@ -141,11 +141,14 @@ const nextSteps = computed({
                     <StepConnectorArrow :step-type="firstStep.type"/>
                     <StepIcon :icon="firstStep.tokenOut.icon"/>
                     <template
-                        v-for="(step, index) in nextSteps"
-                        :key="index"
+                        v-for="(step) in nextSteps"
+                        :key="step.tokenIn.address"
                     >
-                        <StepConnectorArrow :step-type="step.type"/>
-                        <StepIcon :icon="step.tokenOut.icon"/>
+                        <StepConnectorArrow
+                            :step-type="step.type"/>
+                        <StepIcon
+                            :icon="step.tokenOut.icon"
+                        />
                     </template>
                 </div>
             </div>
