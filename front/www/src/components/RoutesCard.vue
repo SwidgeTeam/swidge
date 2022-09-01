@@ -51,11 +51,6 @@ const amountOut = () => {
 const dollarValue = () => {
     return AmountFormatter.format(props.route.resume.amountOut)
 }
-const toString = (input: number) :string =>  {  
-    return input.toString()
-}
-
-
 </script>
 
 <template>
@@ -134,7 +129,7 @@ const toString = (input: number) :string =>  {
                                         <div v-if="isBridged===false">{{step.tokenOut.address}}{{tokensStore.getOriginChainId}}</div>
                                         <div v-if="isBridged===true">{{step.tokenOut.address}}{{tokensStore.getDestinationChainId}}</div>
                                    </div>
-                                   <div v-if="step.type == 'bridge'" class="flex justify-center items-center"> 
+                                   <div v-if="step.type == 'bridge'" class="flex justify-center items-center">
                                         {{step.tokenIn.address}}{{tokensStore.getOriginChainId}}
                                         <div class="invisible">{{isBridged=true}}</div>
                                         <span class="px-2"><BridgeStepArrow/></span>
