@@ -2,10 +2,17 @@
 import AssetSelector from '@/components/Buttons/AssetSelector.vue'
 import RoutesCard from '@/components/RoutesCard.vue'
 import RouteMother from '../../tests/unit/store/routes.mother'
+import { ref } from 'vue'
 
 const emits = defineEmits<{
     (event: 'select-token'): void
 }>()
+
+const selectedRoute = ref<number>(0)
+
+const onSelected = (index: number) => {
+    selectedRoute.value = index
+}
 </script>
 
 <template>
@@ -22,7 +29,8 @@ const emits = defineEmits<{
                 v-for="(route, index) in RouteMother.list()"
                 :key="index"
                 :route="route"
-                :selected-index="0"
+                :selected-index="selectedRoute"
+                @select-route="onSelected"
             />
         </div>
     </div>

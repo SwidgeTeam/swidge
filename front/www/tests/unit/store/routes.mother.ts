@@ -145,9 +145,13 @@ export default class RouteMother {
     public static list(): Route[] {
         const first = this.default()
         const second = this.default()
+        const third = this.default()
+        const fourth = this.default()
         first.index = 0
         second.index = 1
+        third.index = 2
+        fourth.index = 3
 
-        return [first, second]
+        return [first, second, third, fourth]
     }
 }

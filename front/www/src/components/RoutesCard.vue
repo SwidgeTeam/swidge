@@ -15,7 +15,27 @@ const props = defineProps<{
     selectedIndex: number
 }>()
 
+const emits = defineEmits<{
+    (event: 'select-route', index: number): void
+}>()
+
 const detailsOpen = ref<boolean>(false)
+
+const onClick = (event: Event) => {
+    if (!(event.target instanceof HTMLElement)) return
+    const isClickOnSteps = hasParentWithClass(event.target.parentElement as HTMLElement, 'route-steps')
+    if (!isClickOnSteps) {
+        emits('select-route', props.route.index)
+    }
+}
+
+const hasParentWithClass = (element: HTMLElement, classname: string): boolean => {
+    const existsHere = element.className.split(' ').indexOf(classname) >= 0
+    const existsOnParent = element.parentElement
+        ? hasParentWithClass(element.parentElement, classname)
+        : false
+    return existsHere || existsOnParent
+}
 
 const getExecutionTime = (seconds: number) => {
     if (seconds < 60) {
@@ -77,6 +97,7 @@ const nextSteps = computed({
     <div
         class="route-card"
         :class="{'selected' : isSelected}"
+        @click="onClick"
     >
         <div v-if="isSelected" class="checked-mark">
             <Check class="h-4 w-4 m-[2px]"/>
