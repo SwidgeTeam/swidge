@@ -33,6 +33,10 @@
         @apply flex flex-grow bg-background-main-dark background-gradient
     }
 
+    #app {
+        @apply w-full
+    }
+
     /* custom scrollbar */
 
     ::-webkit-scrollbar {
@@ -57,6 +61,35 @@
 @layer utilities {
     .nav-header {
         @apply flex items-center h-[var(--header-height)] justify-between w-full px-2 z-[1] bg-[#222129] sm:bg-transparent
+    }
+
+    .header-button {
+        @apply flex
+        items-center
+        gap-2
+        tracking-wide
+        px-3 py-1
+        font-roboto
+        font-light
+        gradient-border-header-main hover:gradient-border-header-main-hover
+    }
+
+    .network-button {
+        @apply px-4 header-button network-button-styles
+    }
+
+    .network-button-styles {
+        display: inline-block;
+        margin: 2%;
+        width: 46%;
+    }
+
+    .network-button > img {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 10px;
     }
 
     .swap-bridge-container {
@@ -119,7 +152,7 @@
     }
 
     .swap-interface {
-        @apply flex flex-col px-3 w-full max-w-xl
+        @apply flex flex-col px-3 w-full max-w-md
     }
 
     .settings-line {
@@ -201,21 +234,6 @@
         z-index: 1;
     }
 
-    .header-button {
-        @apply flex
-        items-center
-        gap-2
-        tracking-wide
-        px-3 py-0
-        font-roboto
-        font-light
-        gradient-border-header-main hover:gradient-border-header-main-hover
-    }
-
-    .network-button {
-        @apply px-4 header-button network-button-styles
-    }
-
     .asset-selector {
         @apply flex
         justify-between
@@ -230,21 +248,6 @@
     .asset-selector-shadow {
         box-shadow: 0 2px 3px #000000b5;
     }
-
-    .network-button-styles {
-        display: inline-block;
-        margin: 2%;
-        width: 46%;
-    }
-
-    .network-button > img {
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        display: inline-block;
-        margin-right: 10px;
-    }
-
     img.chain-icon {
         max-width: 24px;
         border-radius: 50%;

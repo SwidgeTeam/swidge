@@ -7,7 +7,7 @@ import Header from '@/components/Header.vue'
         <Header
             class="py-2 z-[1]"
         />
-        <main class="flex z-[1]">
+        <main class="flex justify-center z-[1]">
             <router-view/>
         </main>
     </div>

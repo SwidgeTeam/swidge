@@ -5,7 +5,7 @@ import { ArrowCircleRightIcon, ArrowCircleUpIcon } from '@heroicons/vue/outline'
 import BrigdeSwapInterface from '@/components/BrigdeSwapInterface.vue'
 import FAQCard from '@/components/FAQCard.vue'
 import { useWeb3Store } from '@/store/web3'
-import SwapInterface from '@/components/SwapInterface.vue';
+import SwapInterface from '@/components/SwapInterface.vue'
 
 const { fetchTokens } = useTokensStore()
 const web3Store = useWeb3Store()

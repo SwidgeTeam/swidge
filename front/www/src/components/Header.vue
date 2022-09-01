@@ -13,6 +13,7 @@ import ModalTransactions from './Modals/ModalTransactions.vue'
 import ModalWallets from '@/components/Modals/ModalWallets.vue'
 import { Wallet } from '@/domain/wallets/IWallet'
 import { useTokensStore } from '@/store/tokens'
+import SwidgeLogoNoText from '@/components/svg/SwidgeLogoNoText.vue'
 
 const web3Store = useWeb3Store()
 const tokensStore = useTokensStore()
@@ -68,7 +69,8 @@ const chainIcon = computed({
 <template>
     <nav class="nav-header">
         <a class="w-25 sm:w-40" href="https://www.swidge.xyz/">
-            <SwidgeLogo/>
+            <SwidgeLogoNoText class="sm:hidden h-10"/>
+            <SwidgeLogo class="hidden sm:inline-block"/>
         </a>
         <div v-if="isConnected" class="flex gap-1 text-sm sm:text-base sm:gap-4">
             <TransactionsButton

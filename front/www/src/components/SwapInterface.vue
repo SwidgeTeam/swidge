@@ -6,7 +6,6 @@ import { useWeb3Store } from '@/store/web3'
 import { useTokensStore } from '@/store/tokens'
 import { useRoutesStore } from '@/store/routes'
 import { useTransactionStore } from '@/store/transaction'
-import { ArrowDownIcon } from '@heroicons/vue/outline'
 import ModalSwidgeStatus from './ModalSwidgeStatus.vue'
 import IToken from '@/domain/tokens/IToken'
 import Route, { TransactionDetails } from '@/domain/paths/path'
@@ -16,9 +15,10 @@ import { TxHash } from '@/domain/wallets/IWallet'
 import SendingBox from '@/components/SendingBox.vue'
 import ReceivingBox from '@/components/ReceivingBox.vue'
 import AdjustmentsIcon from './svg/AdjustmentIcon.vue'
-import ReloadIcon from '@/components/svg/ReloadIcon.vue';
+import ReloadIcon from '@/components/svg/ReloadIcon.vue'
 import ActionButton from '@/components/Buttons/ActionButton.vue'
 import ModalSettings from '@/components/Modals/ModalSettings.vue'
+import FromToArrow from '@/components/Icons/FromToArrow.vue'
 
 const web3Store = useWeb3Store()
 const tokensStore = useTokensStore()
@@ -406,7 +406,7 @@ const closeModalStatus = () => {
         <div class="settings-line">
             <ReloadIcon
                 class="w-5 h-5 cursor-pointer"
-                @click="isSettingsModalOpen = true"
+                @click=""
             />
             <AdjustmentsIcon
                 class="w-5 h-5 cursor-pointer"
@@ -420,9 +420,7 @@ const closeModalStatus = () => {
                 @input-changed="handleSourceInputChanged"
                 @select-token="() => handleOpenTokenList(true)"
             />
-            <div class="flex justify-center -mt-2 -mb-2 z-10">
-                <ArrowDownIcon class="flex h-[var(--arrow-line-height)] border border-[#54545F] rounded-2xl bg-[#2F283A]/100" />
-            </div>
+            <FromToArrow/>
             <ReceivingBox
                 @select-token="() => handleOpenTokenList(false)"
             />
@@ -444,5 +442,9 @@ const closeModalStatus = () => {
     <ModalSettings
         :is-open="isSettingsModalOpen"
         @close-modal="isSettingsModalOpen = false"
+    />
+    <ModalSwidgeStatus
+        :show="isModalStatusOpen"
+        @close-modal="closeModalStatus"
     />
 </template>
