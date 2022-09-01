@@ -56,7 +56,7 @@ function mountRouteWith(route: Route) {
     return mount(RouteCard, {
         props: {
             route: route,
-            unique: 1
+            selectedIndex: 1
         },
         global: {
             plugins: [getActivePinia() as TestingPinia],

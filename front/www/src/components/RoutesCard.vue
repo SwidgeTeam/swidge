@@ -105,7 +105,7 @@ const nextSteps = computed({
         <div class="route-details">
             <div class="flex flex-col field--amount-out pt-2">
                 <span class="amount-tokens leading-5 text-right">{{ amountOut }}</span>
-                <span class="amount-dollars leading-3 text-right text-[9px] text-slate-500 hover:text-slate-400">≈ ${{
+                <span class="amount-dollars leading-3 text-right text-[9px] text-slate-500 hover:text-slate-400">≈ $ {{
                         dollarValue
                     }}
                     </span>
