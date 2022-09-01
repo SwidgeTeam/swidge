@@ -1,8 +1,10 @@
 interface TokenDetailsJson {
+    chainId: string
     name: string
     address: string
     decimals: number
     symbol: string
+    icon: string
 }
 
 interface RouteStepJson {
@@ -14,6 +16,7 @@ interface RouteStepJson {
     amountIn: string
     amountOut: string
     fee: string
+    executionTime: number
 }
 
 export interface ApprovalTransactionDetailsJson {
@@ -36,6 +39,7 @@ interface RouteResumeJson {
     tokenOut: TokenDetailsJson
     amountIn: string
     amountOut: string
+    executionTime: number
 }
 
 interface RouteFeesJson {

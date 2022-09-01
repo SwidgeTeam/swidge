@@ -34,10 +34,6 @@ const onCloseModal = () => {
     emits('close-modal')
 }
 
-const focusInput = () => {
-    ownValue.value?.focus()
-}
-
 const onSlippageChange = (event: Event) => {
     if (!(event.target instanceof HTMLInputElement)) return
     const value = event.target.value

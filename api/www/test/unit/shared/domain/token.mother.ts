@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker';
 
 export class TokenMother {
   public static create(name: string, address: string, decimals: number, symbol: string) {
-    return new Token(name, address, decimals, symbol);
+    return new Token('', name, address, decimals, symbol);
   }
 
   public static link() {

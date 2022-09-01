@@ -3,15 +3,21 @@ import { NATIVE_TOKEN_ADDRESS } from '../enums/Natives';
 
 export class Token {
   static null() {
-    return new Token('', '0x0000000000000000000000000000000000000000', 0, '');
+    return new Token('', '', '0x0000000000000000000000000000000000000000', 0, '');
   }
 
   constructor(
+    private readonly _chainId: string,
     private readonly _name: string,
     private readonly _address: ContractAddress,
     private readonly _decimals: number,
     private readonly _symbol: string,
+    private readonly _logo = '',
   ) {}
+
+  get chainId(): string {
+    return this._chainId;
+  }
 
   get name(): string {
     return this._name;
@@ -27,6 +33,10 @@ export class Token {
 
   get symbol(): string {
     return this._symbol;
+  }
+
+  get logo(): string {
+    return this._logo;
   }
 
   public equals(other: Token): boolean {

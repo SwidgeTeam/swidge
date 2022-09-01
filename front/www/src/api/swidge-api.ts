@@ -63,6 +63,7 @@ class SwidgeAPI extends HttpClient {
                         tokenOut: r.resume.tokenOut,
                         amountIn: r.resume.amountIn,
                         amountOut: r.resume.amountOut,
+                        executionTime: r.resume.executionTime,
                     },
                     fees: {
                         amount: r.fees.amount,
@@ -78,6 +79,7 @@ class SwidgeAPI extends HttpClient {
                             amountIn: step.amountIn,
                             amountOut: step.amountOut,
                             fee: step.fee,
+                            executionTime: step.executionTime,
                             completed: false,
                         }
                     }),

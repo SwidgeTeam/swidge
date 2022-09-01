@@ -44,12 +44,14 @@ export class SushiPairsRepositoryMysql implements SushiPairsRepository {
   private constructPairs(result) {
     const items = result.map((row) => {
       const token0 = new Token(
+        row.chainId,
         row.token0_name,
         ethers.utils.getAddress(row.token0_id),
         Number(row.token0_decimals),
         row.token0_symbol,
       );
       const token1 = new Token(
+        row.chainId,
         row.token1_name,
         ethers.utils.getAddress(row.token1_id),
         Number(row.token1_decimals),

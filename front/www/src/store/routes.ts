@@ -4,7 +4,7 @@ import Route from '@/domain/paths/path'
 import { ethers } from 'ethers'
 import { useTokensStore } from '@/store/tokens'
 import { useWeb3Store } from '@/store/web3'
-import { useTransactionStore } from '@/store/transaction';
+import { useTransactionStore } from '@/store/transaction'
 
 export const useRoutesStore = defineStore('routes', {
     state: () => ({
@@ -28,7 +28,6 @@ export const useRoutesStore = defineStore('routes', {
         /**
          * Fetches the routes for a specific path
          * @param amount
-         * @param slippage
          */
         async quotePath(amount: string) {
             const tokensStore = useTokensStore()
@@ -73,9 +72,17 @@ export const useRoutesStore = defineStore('routes', {
             })
             this.routes[this.selectedRoute].completed = true
         },
+        /**
+         * sets slippage
+         * @param value
+         */
         setSlippage(value: string) {
             this.slippageValue = value
         },
+        /**
+         * sets gas priority
+         * @param value
+         */
         setGasPriority(value: string) {
             this.gasPriority = value
         }

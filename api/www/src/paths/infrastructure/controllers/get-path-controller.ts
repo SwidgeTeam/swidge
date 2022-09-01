@@ -90,10 +90,12 @@ export class GetPathController {
 
   private mapTokenDetails(token: Token) {
     return {
+      chainId: token.chainId,
       name: token.name,
       address: token.address,
       decimals: token.decimals,
       symbol: token.symbol,
+      icon: token.logo,
     };
   }
 }

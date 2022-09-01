@@ -227,12 +227,21 @@ export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregat
    */
   private buildStep(amountIn: BigInteger, step: QuotePath): RouteStep {
     const fromToken = new Token(
+      this.getChainId(step.from.blockchain),
       step.from.symbol,
       step.from.address,
       step.from.decimals,
       step.from.symbol,
+      step.from.image,
     );
-    const toToken = new Token(step.to.symbol, step.to.address, step.to.decimals, step.to.symbol);
+    const toToken = new Token(
+      this.getChainId(step.to.blockchain),
+      step.to.symbol,
+      step.to.address,
+      step.to.decimals,
+      step.to.symbol,
+      step.to.image,
+    );
     const details = new ProviderDetails(step.swapper.title, step.swapper.logo);
     const amountOut = BigInteger.fromString(step.expectedOutput);
     //const feeInUSD = step.gasFees.feesInUsd.toString();
@@ -269,6 +278,25 @@ export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregat
         return 'FANTOM';
       case Avalanche:
         return 'AVAX_CCHAIN';
+      default:
+        throw new Error('blockchain not supported');
+    }
+  }
+
+  private getChainId(code: string): string {
+    switch (code) {
+      case 'ETH':
+        return Mainnet;
+      case 'OPTIMISM':
+        return Optimism;
+      case 'BSC':
+        return BSC;
+      case 'POLYGON':
+        return Polygon;
+      case 'FANTOM':
+        return Fantom;
+      case 'AVAX_CCHAIN':
+        return Avalanche;
       default:
         throw new Error('blockchain not supported');
     }
