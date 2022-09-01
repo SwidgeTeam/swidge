@@ -8,7 +8,6 @@ import { useRoutesStore } from '@/store/routes'
 import { useTransactionStore } from '@/store/transaction'
 import { ArrowDownIcon } from '@heroicons/vue/outline'
 import ModalSwidgeStatus from './ModalSwidgeStatus.vue'
-import SwapBox from '@/components/SwapBox.vue'
 import IToken from '@/domain/tokens/IToken'
 import Route, { TransactionDetails } from '@/domain/paths/path'
 import Aggregators from '@/domain/aggregators/aggregators'
@@ -18,6 +17,8 @@ import SendingBox from '@/components/SendingBox.vue'
 import ReceivingBox from '@/components/ReceivingBox.vue'
 import AdjustmentsIcon from './svg/AdjustmentIcon.vue'
 import ReloadIcon from '@/components/svg/ReloadIcon.vue';
+import ActionButton from '@/components/Buttons/ActionButton.vue'
+import ModalSettings from '@/components/Modals/ModalSettings.vue'
 
 const web3Store = useWeb3Store()
 const tokensStore = useTokensStore()
@@ -426,6 +427,12 @@ const closeModalStatus = () => {
                 @select-token="() => handleOpenTokenList(false)"
             />
         </div>
+        <ActionButton
+            :text="buttonLabel"
+            :is-loading="isGettingQuote"
+            :disabled="isExecuteButtonDisabled"
+            :on-click="onExecuteTransaction"
+        />
     </div>
 
     <ModalNetworkAndTokenSelect
@@ -433,5 +440,9 @@ const closeModalStatus = () => {
         :is-origin="isSourceChainToken"
         @close-modal="isModalTokensOpen = false"
         @update-token="handleUpdateTokenFromModal($event)"
+    />
+    <ModalSettings
+        :is-open="isSettingsModalOpen"
+        @close-modal="isSettingsModalOpen = false"
     />
 </template>

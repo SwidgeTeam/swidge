@@ -1,17 +1,18 @@
 <script setup lang="ts">
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/vue/outline'
-import VerticalLine from './svg/VerticalLine.vue'
-import { ClockIcon } from '@heroicons/vue/outline'
-import Route, { RouteStep } from '@/domain/paths/path'
-import HorizontalLine from './svg/HorizontalLine.vue'
-import AmountFormatter from '@/domain/shared/AmountFormatter'
 import { computed, ref } from 'vue'
-import StepConnectorArrow from '@/components/Icons/StepConnectorArrow.vue';
-import StepIcon from '@/components/Icons/StepIcon.vue';
+import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/vue/outline'
+import { ClockIcon } from '@heroicons/vue/outline'
+import VerticalLine from './svg/VerticalLine.vue'
+import HorizontalLine from './svg/HorizontalLine.vue'
+import Route, { RouteStep } from '@/domain/paths/path'
+import AmountFormatter from '@/domain/shared/AmountFormatter'
+import StepConnectorArrow from '@/components/Icons/StepConnectorArrow.vue'
+import StepIcon from '@/components/Icons/StepIcon.vue'
+import Check from '@/components/svg/Check.vue'
 
 const props = defineProps<{
     route: Route
-    unique: number
+    selectedIndex: number
 }>()
 
 const detailsOpen = ref<boolean>(false)
@@ -24,6 +25,13 @@ const getExecutionTime = (seconds: number) => {
         return minutes.toFixed(0) + 'm'
     }
 }
+
+const isSelected = computed({
+    get: () => {
+        return props.route.index === props.selectedIndex
+    },
+    set: () => null
+})
 
 const totalExecutionTime = computed({
     get: () => {
@@ -64,8 +72,15 @@ const nextSteps = computed({
 })
 </script>
 
+
 <template>
-    <div class="route-card">
+    <div
+        class="route-card"
+        :class="{'selected' : isSelected}"
+    >
+        <div v-if="isSelected" class="checked-mark">
+            <Check class="h-4 w-4 m-[2px]"/>
+        </div>
         <div class="route-details">
             <div class="flex flex-col field--amount-out pt-2">
                 <span class="amount-tokens leading-5 text-right">{{ amountOut }}</span>
@@ -84,7 +99,7 @@ const nextSteps = computed({
         </div>
         <div class="route-steps">
             <div
-                :href="'#steps-details-' + unique"
+                :href="'#steps-details-' + route.index"
                 class="details-line"
                 data-bs-toggle="collapse"
                 @click="detailsOpen = !detailsOpen"
@@ -114,14 +129,14 @@ const nextSteps = computed({
                 </div>
             </div>
             <div
-                :id="'steps-details-' + unique"
+                :id="'steps-details-' + route.index"
                 class="w-full grid gap-2 items-center px-2 relative collapse"
             >
                 <span class="vl"></span>
                 <div
                     v-for="(step, index) in route.steps"
                     :key="index"
-                    class="flex h-20 items-center relative">
+                    class="flex h-16 items-center relative">
                     <img
                         :src="step.logo"
                         class="relative z-10 w-8 h-8 ml-2 rounded-full"

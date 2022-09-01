@@ -88,7 +88,7 @@
     }
 
     .receiving-box {
-        @apply flex flex-col px-2 py-2 receiving-box-colors
+        @apply flex flex-col px-2 pt-2 receiving-box-colors
     }
 
     .current-balance {
@@ -118,6 +118,10 @@
         border-2 border-[#733975]
     }
 
+    .route-card > .checked-mark {
+        @apply absolute -right-1 -top-1 bg-[#633767] rounded-3xl
+    }
+
     .route-card > .route-details {
         @apply flex items-center justify-between px-4 text-lg h-14
     }
@@ -127,7 +131,7 @@
     }
 
     .route-card > .route-steps > .details-line {
-        @apply relative flex items-center cursor-pointer shadow-lg px-2 py-4
+        @apply relative flex items-center cursor-pointer shadow-lg px-2 py-3
         rounded-2xl hover:bg-[#222129]/100
         transition duration-150
         ease-out hover:ease-in
@@ -218,6 +222,16 @@
 
     .tooltip {
         @apply invisible absolute;
+    }
+
+    .check {
+        position: absolute;
+        left: 29.17%;
+        right: 27.08%;
+        top: 33.33%;
+        bottom: 32.71%;
+
+        border: 2.4px solid #FFFFFF;
     }
 
     .has-tooltip:hover .tooltip {

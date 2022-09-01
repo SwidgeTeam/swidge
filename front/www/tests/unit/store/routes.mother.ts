@@ -15,6 +15,7 @@ export default class RouteMother {
 
     public static default(): Route {
         return {
+            'index': 0,
             'aggregator': {
                 'id': '0',
                 'routeId': '',
@@ -139,5 +140,14 @@ export default class RouteMother {
             },
             'completed': false
         }
+    }
+
+    public static list(): Route[] {
+        const first = this.default()
+        const second = this.default()
+        first.index = 0
+        second.index = 1
+
+        return [first, second]
     }
 }

@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import LoadingCircle from './svg/LoadingCircle.vue'
+import LoadingCircle from '../svg/LoadingCircle.vue'
 
 defineProps<{
   text: string
@@ -11,7 +11,7 @@ defineProps<{
 
 <template>
   <button
-    class="w-full py-3 rounded-xl gradient-main flex items-center justify-center text-3xl"
+    class="w-full py-3 mt-2 rounded-xl gradient-main flex items-center justify-center text-3xl"
     :class="[(disabled || isLoading) && 'opacity-50 pointer-events-none']"
     @click="onClick()">
     <span>{{ text }}</span>

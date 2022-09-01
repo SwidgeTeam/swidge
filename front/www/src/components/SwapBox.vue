@@ -2,7 +2,7 @@
 import BridgeSwapSelectionCard from './BridgeSwapSelectionCard.vue'
 import SwitchButton from './Buttons/SwitchButton.vue'
 import TransactionDetails from './TransactionDetails.vue'
-import BridgeSwapInteractiveButton from './BridgeSwapInteractiveButton.vue'
+import BridgeSwapInteractiveButton from './Buttons/ActionButton.vue'
 import AdjustmentsIcon from './svg/AdjustmentIcon.vue'
 import ModalSettings from './Modals/ModalSettings.vue'
 

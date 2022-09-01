@@ -6,9 +6,6 @@ import RouteMother from '../../tests/unit/store/routes.mother'
 const emits = defineEmits<{
     (event: 'select-token'): void
 }>()
-const route = () => {
-    return RouteMother.default()
-}
 </script>
 
 <template>
@@ -20,10 +17,12 @@ const route = () => {
                 @open-token-list="() => emits('select-token')"
             />
         </div>
-        <div class="flex pt-3 border-t border-[#34313D]">
+        <div class="flex flex-col py-3 gap-2 border-t border-[#34313D]">
             <RoutesCard
-                :route="route()"
-                :unique="1"
+                v-for="(route, index) in RouteMother.list()"
+                :key="index"
+                :route="route"
+                :selected-index="0"
             />
         </div>
     </div>
