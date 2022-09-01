@@ -10,6 +10,14 @@ module.exports = {
             sans: ['Outfit', 'system-ui', 'sans-serif'],
             roboto: ['Roboto', 'system-ui', 'sans-serif'],
         },
+        screens: {
+            'xs': '413px', // => @media (min-width: 413px)
+            'sm': '640px', // => @media (min-width: 640px)
+            'md': '768px', // => @media (min-width: 768px)
+            'lg': '1024px', // => @media (min-width: 1024px)
+            'xl': '1280px', // => @media (min-width: 1280px)
+            '2xl': '1536px', // => @media (min-width: 1536px)
+        },
         extend: {
             colors: {
                 // delete later
@@ -31,13 +39,6 @@ module.exports = {
                 'light-grey-2': '#6B6B6B',
                 'light-grey-1': '#EDEDED',
                 'light-grey-3': '#A5A5A5',
-            },
-            screens: {
-                'sm': '640px', // => @media (min-width: 640px)
-                'md': '768px', // => @media (min-width: 768px)
-                'lg': '1024px', // => @media (min-width: 1024px)
-                'xl': '1280px', // => @media (min-width: 1280px)
-                '2xl': '1536px', // => @media (min-width: 1536px)
             },
         },
     },

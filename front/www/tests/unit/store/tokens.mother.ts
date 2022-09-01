@@ -7,7 +7,7 @@ export class TokensMother {
             name: 'Wrapped Fantom',
             symbol: 'WFTM',
             decimals: 18,
-            logo: 'fantom-logo',
+            logo: 'https://api.rango.exchange/i/dDI50C',
         }
     }
 
@@ -19,7 +19,7 @@ export class TokensMother {
             name: 'Matic',
             symbol: 'MATIC',
             decimals: 18,
-            logo: 'matic-logo',
+            logo: 'https://api.rango.exchange/i/dDI50C',
         }
     }
 

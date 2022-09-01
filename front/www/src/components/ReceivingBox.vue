@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import AssetSelector from '@/components/Buttons/AssetSelector.vue'
+import RoutesCard from '@/components/RoutesCard.vue'
+import RouteMother from '../../tests/unit/store/routes.mother'
 
 const emits = defineEmits<{
     (event: 'select-token'): void
 }>()
+const route = () => {
+    return RouteMother.default()
+}
 </script>
 
 <template>
@@ -16,17 +21,10 @@ const emits = defineEmits<{
             />
         </div>
         <div class="flex pt-3 border-t border-[#34313D]">
-            <div class="route-card">
-                <div class="route-details flex items-center justify-around">
-                    <div class="flex">total</div>
-                    <div class="flex">time</div>
-                    <div class="flex">fees</div>
-                </div>
-                <div class="route-steps flex flex-row">
-                    <div class=""></div>
-                    <div class=""></div>
-                </div>
-            </div>
+            <RoutesCard
+                :route="route()"
+                :unique="1"
+            />
         </div>
     </div>
 </template>

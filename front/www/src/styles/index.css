@@ -43,7 +43,6 @@
         background: linear-gradient(#31313E, #31313E) padding-box,
         linear-gradient(270deg, #3E3085 0%, #7C2F82 27.15%, #B22F7F 51.04%, #543E71 78.86%, #0C4966 100%) border-box;
         border: 1.5px solid transparent;
-        border-radius: 24px;
     }
 
     .bg-gradient-border {
@@ -101,7 +100,47 @@
     }
 
     .route-card {
-        @apply flex w-full flex-col border rounded-lg border-[#733975]
+        @apply relative flex flex-col w-full
+        bg-[#2A2934]/30
+        border border-[#545454] rounded-3xl
+        gap-4 py-3 px-2
+    }
+
+    .route-card:not(.selected):hover {
+        @apply
+        border-[#6B6B6B]
+        bg-[#31313E]
+    }
+
+    .route-card.selected {
+        @apply
+        bg-[#272730]
+        border-2 border-[#733975]
+    }
+
+    .route-card > .route-details {
+        @apply flex items-center justify-between px-4 text-lg h-14
+    }
+
+    .route-card > .route-steps {
+        @apply bg-[#222129]/40 rounded-2xl
+    }
+
+    .route-card > .route-steps > .details-line {
+        @apply relative flex items-center cursor-pointer shadow-lg px-2 py-4
+        rounded-2xl hover:bg-[#222129]/100
+        transition duration-150
+        ease-out hover:ease-in
+    }
+
+    .route-steps .vl {
+        border-left: 2px solid #626262;
+        box-shadow: 0 0 5px #626262;
+        height: 96%;
+        position: absolute;
+        left: 33px;
+        top: 0;
+        z-index: 1;
     }
 
     .header-button {
@@ -185,17 +224,4 @@
         @apply visible z-50;
     }
 
-    .vl-parent {
-        position: relative;
-    }
-
-    .vl {
-        border-left: 2px solid #626262;
-        box-shadow: 0 0 5px #626262;
-        height: 96%;
-        position: absolute;
-        left: 33px;
-        top: 0;
-        z-index: 1;
-    }
 }
