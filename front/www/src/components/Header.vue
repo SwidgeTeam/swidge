@@ -4,7 +4,7 @@ import { storeToRefs } from 'pinia'
 import AddressButton from './Buttons/AddressButton.vue'
 import ChainButton from './Buttons/ChainButton.vue'
 import SwidgeLogo from './svg/SwidgeLogo.vue'
-import ModalNetworks from '@/components/ModalNetworks.vue'
+import ModalNetworks from '@/components/Modals/ModalNetworks.vue'
 import { computed, ref } from 'vue'
 import ConnectButton from '@/components/Buttons/ConnectButton.vue'
 import { Networks } from '@/domain/chains/Networks'
@@ -93,7 +93,7 @@ const chainIcon = computed({
         </div>
     </nav>
     <ModalNetworks
-        :is-network-modal-open="isNetworkModalOpen"
+        :is-open="isNetworkModalOpen"
         @close-modal="isNetworkModalOpen = false"
         @set-chain="changeNetwork($event)"
     />
