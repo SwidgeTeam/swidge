@@ -13,7 +13,7 @@
         --arrow-line-height: 1.5rem;
         --receive-title-height: 0.75rem;
         --receive-selector-height: 4rem;
-        --main-action-button-height: 4.5rem;
+        --main-action-button-height: 5.2rem;
         --routes-box-height: calc(100vh
         - (var(--header-height)
         + var(--settings-line-height)
@@ -41,8 +41,7 @@
 
     ::-webkit-scrollbar {
         width: 5px;
-        right: -10px;
-        position: absolute;
+        margin-left: 5px;
     }
 
     ::-webkit-scrollbar-track {
@@ -163,12 +162,8 @@
         @apply flex flex-col px-2 py-2 sending-box-colors h-[var(--sending-line-height)]
     }
 
-    .receiving-box {
-        @apply flex flex-col px-2 pt-2 receiving-box-colors h-full
-    }
-
     .routes-container {
-        @apply flex flex-col py-3 gap-2
+        @apply flex flex-col py-3 gap-2 px-1
         border-t border-[#34313D]
         overflow-y-auto overflow-x-hidden
         max-h-[var(--routes-box-height)]
