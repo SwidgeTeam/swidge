@@ -120,9 +120,7 @@ const nextSteps = computed({
         </div>
         <div class="route-steps">
             <div
-                :href="'#steps-details-' + route.index"
                 class="details-line"
-                data-bs-toggle="collapse"
                 @click="detailsOpen = !detailsOpen"
             >
                 <div class="flex justify-left">
@@ -153,8 +151,8 @@ const nextSteps = computed({
                 </div>
             </div>
             <div
-                :id="'steps-details-' + route.index"
-                class="w-full grid gap-2 items-center px-2 relative collapse"
+                class="w-full grid gap-2 items-center px-2 relative max-h-0 overflow-hidden transition transition-all duration-400 ease-in-out"
+                :class="{'max-h-52':detailsOpen}"
             >
                 <span class="vl"></span>
                 <div

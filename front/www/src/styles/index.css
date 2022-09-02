@@ -174,10 +174,6 @@
         max-h-[var(--routes-box-height)]
     }
 
-    .routes-container::-webkit-scrollbar {
-
-    }
-
     .current-balance {
         @apply text-xs text-slate-400
     }
