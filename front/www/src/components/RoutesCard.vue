@@ -9,6 +9,7 @@ import AmountFormatter from '@/domain/shared/AmountFormatter'
 import StepConnectorArrow from '@/components/Icons/StepConnectorArrow.vue'
 import StepIcon from '@/components/Icons/StepIcon.vue'
 import Check from '@/components/svg/Check.vue'
+import ProviderIcon from '@/components/Icons/ProviderIcon.vue'
 
 const props = defineProps<{
     route: Route
@@ -159,10 +160,10 @@ const nextSteps = computed({
                     v-for="(step, index) in route.steps"
                     :key="index"
                     class="flex h-16 items-center relative">
-                    <img
-                        :src="step.logo"
-                        class="relative z-10 w-8 h-8 ml-2 rounded-full"
-                        alt="provider logo">
+                    <ProviderIcon
+                        :name="step.name"
+                        :logo="step.logo"
+                    />
                     <div class="pl-4 w-full">
                         <div class="flex justify-around items-center">
                             <div class="">
