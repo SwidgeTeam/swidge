@@ -169,14 +169,9 @@ const updateTokenBalance = async (address: string) => {
  */
 const switchHandlerFunction = () => {
     tokensStore.switchTokens()
-
-    //Reset Input Values on Switch of Network+Token
     sourceTokenAmount.value = ''
     destinationTokenAmount.value = ''
     totalFee.value = ''
-
-    // Clean alert message in case there is
-    transactionAlertMessage.value = 'Swidge'
     isExecuteButtonDisabled.value = true
 }
 
@@ -406,7 +401,7 @@ const closeModalStatus = () => {
         <div class="settings-line">
             <ReloadIcon
                 class="w-5 h-5 cursor-pointer"
-                @click=""
+                @click="onQuote"
             />
             <AdjustmentsIcon
                 class="w-5 h-5 cursor-pointer"
