@@ -12,11 +12,6 @@
     routesStore.setReceiverAddress(account.value)
     
     const tokensStore = useTokensStore()
-    
-    const props = defineProps<{
-        disabledInput: boolean
-    }>()
-    
     const getTokenLogo = (): string => {
         const token = tokensStore.getDestinationToken()
         return token ? token.logo : ''

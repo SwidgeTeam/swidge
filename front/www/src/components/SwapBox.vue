@@ -64,7 +64,7 @@ const emits = defineEmits<{
             />
         </div>
         <div>
-            <RecipientUserCard :disabled-input="true"/>
+            <RecipientUserCard />
         </div>
         <TransactionDetails
             v-if="transactionFees"
