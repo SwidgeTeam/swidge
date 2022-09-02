@@ -228,6 +228,7 @@ export const useWeb3Store = defineStore('web3', () => {
      */
     function onConnect(address: string) {
         account.value = address
+        routesStore.setReceiverAddress(address)
         isConnected.value = true
     }
 
