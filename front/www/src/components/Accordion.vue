@@ -12,7 +12,7 @@ defineProps<{
   <Disclosure
 v-slot="{ open }"
     as="div"
-    class="p-6 bg-cards-background-dark-grey w-[38rem] rounded-xl ease-in-out duration-700">
+    class="p-6 bg-cards-background-dark-grey w-full rounded-xl ease-in-out duration-700">
     <h3 class="-my-3 flow-root">
       <DisclosureButton class="py-3 w-full flex items-center justify-between">
         <span class="text-xl">
