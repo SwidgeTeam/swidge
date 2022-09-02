@@ -45,7 +45,7 @@ const accept = () => {
             <div class="flex mt-3">
                 <div>
                     <input type="checkbox" @click="toggleUnderstood">
-                    It's understood
+                    I understand
                 </div>
                 <button
                     class="header-button ml-auto"
