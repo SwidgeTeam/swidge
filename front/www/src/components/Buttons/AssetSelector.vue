@@ -2,6 +2,7 @@
 import { useTokensStore } from '@/store/tokens'
 import AssetButtonSelected from '@/components/Buttons/AssetButtonSelected.vue'
 import AssetButtonUnselected from '@/components/Buttons/AssetButtonUnselected.vue'
+import IToken from '@/domain/tokens/IToken'
 
 const tokensStore = useTokensStore()
 
@@ -15,9 +16,9 @@ const emits = defineEmits<{
 
 const getToken = () => {
     if (props.isOrigin) {
-        return tokensStore.getOriginToken()
+        return tokensStore.getOriginToken() as IToken
     } else {
-        return tokensStore.getDestinationToken()
+        return tokensStore.getDestinationToken() as IToken
     }
 }
 </script>

@@ -14,11 +14,6 @@ const getChainLogo = () => {
     const chain = Networks.get(props.token.chainId)
     return chain.icon
 }
-const onFallbackImgHandler = (e: Event) => {
-    const chainLogo = getChainLogo()
-    const imageTarget = e.target as HTMLImageElement
-    imageTarget.src = chainLogo
-}
 </script>
 
 <template>
