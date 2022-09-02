@@ -12,6 +12,7 @@ export const useRoutesStore = defineStore('routes', {
         selectedRoute: 0,
         slippageValue: '2',
         gasPriority: 'medium',
+        receiverAddress: ''
     }),
     getters: {
         getSelectedRoute(): Route {
@@ -22,6 +23,9 @@ export const useRoutesStore = defineStore('routes', {
         },
         getGasPriority(): string {
             return this.gasPriority
+        },
+        getReceiverAddress(): string {
+            return this.receiverAddress
         },
     },
     actions: {
@@ -41,9 +45,9 @@ export const useRoutesStore = defineStore('routes', {
                 amount: amount,
                 slippage: Number(routesStore.getSlippage),
                 senderAddress: web3Store.account || ethers.constants.AddressZero,
-                receiverAddress: web3Store.account || ethers.constants.AddressZero
+                receiverAddress: routesStore.getReceiverAddress
             })
-            this.selectRoute(0) // selects the top route
+            this.selectRoute(0) // selects the top route       
         },
         /**
          * Marks the route `index` as selected
@@ -85,7 +89,10 @@ export const useRoutesStore = defineStore('routes', {
          */
         setGasPriority(value: string) {
             this.gasPriority = value
-        }
+        },
+        setReceiverAddress(value: string) {
+            this.receiverAddress = value
+        },
     }
 })
 
