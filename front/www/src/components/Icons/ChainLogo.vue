@@ -5,7 +5,7 @@ const props = defineProps<{
 }>()
 
 const getPad = () => {
-    return (Number(props.size) * 0.66).toFixed(0)
+    return (Number(props.size) * 0.50).toFixed(0)
 }
 
 </script>

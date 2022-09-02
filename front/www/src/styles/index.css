@@ -230,27 +230,13 @@
         z-index: 1;
     }
 
-    .asset-selector {
-        @apply flex
-        justify-between
-        gap-2
-        cursor-pointer
-        bg-[#2A2934]/100 hover:bg-[#2A2934]/50
-        rounded-2xl
-        transition duration-150 ease-out hover:ease-in
-        asset-selector-shadow
-    }
-
     .asset-selector-shadow {
         box-shadow: 0 2px 3px #000000b5;
     }
+
     img.chain-icon {
         max-width: 24px;
         border-radius: 50%;
-    }
-
-    .from-to-arrow {
-        @apply flex justify-center
     }
 
     .standardArrow {
@@ -275,16 +261,6 @@
 
     .tooltip {
         @apply invisible absolute;
-    }
-
-    .check {
-        position: absolute;
-        left: 29.17%;
-        right: 27.08%;
-        top: 33.33%;
-        bottom: 32.71%;
-
-        border: 2.4px solid #FFFFFF;
     }
 
     .has-tooltip:hover .tooltip {
