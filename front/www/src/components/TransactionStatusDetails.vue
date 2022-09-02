@@ -1,6 +1,6 @@
 <script setup lang='ts'>
-import TokenLogo from './TokenLogo.vue'
-import ChainLogo from './ChainLogo.vue'
+import TokenLogo from './Icons/TokenLogo.vue'
+import ChainLogo from './Icons/ChainLogo.vue'
 
 defineProps<{
     amount: string
