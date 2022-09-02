@@ -127,6 +127,12 @@
         border-radius: 12px;
     }
 
+    .tx-step-box-colors {
+        --bg-color-from: #31313E;
+        --bg-color-to: #31313E;
+        @apply bg-gradient-border
+    }
+
     .gradient-border-header-main {
         --bg-color-from: #222129;
         --bg-color-to: #222129;

@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import ModalNetworkAndTokenSelect from './Modals/ModalNetworkAndTokenSelect.vue'
 import { ethers, providers } from 'ethers'
 import { useWeb3Store } from '@/store/web3'
 import { useTokensStore } from '@/store/tokens'
 import { useRoutesStore } from '@/store/routes'
 import { useTransactionStore } from '@/store/transaction'
-import ModalSwidgeStatus from './ModalSwidgeStatus.vue'
+import ModalNetworkAndTokenSelect from '@/components/Modals/ModalNetworkAndTokenSelect.vue'
+import ModalTransactionStatus from '@/components/Modals/ModalTransactionStatus.vue'
+import ModalSettings from '@/components/Modals/ModalSettings.vue'
 import IToken from '@/domain/tokens/IToken'
 import Route, { TransactionDetails } from '@/domain/paths/path'
 import Aggregators from '@/domain/aggregators/aggregators'
@@ -17,7 +18,6 @@ import ReceivingBox from '@/components/ReceivingBox.vue'
 import AdjustmentsIcon from './svg/AdjustmentIcon.vue'
 import ReloadIcon from '@/components/svg/ReloadIcon.vue'
 import ActionButton from '@/components/Buttons/ActionButton.vue'
-import ModalSettings from '@/components/Modals/ModalSettings.vue'
 import FromToArrow from '@/components/Icons/FromToArrow.vue'
 
 const web3Store = useWeb3Store()
@@ -443,7 +443,7 @@ const closeModalStatus = () => {
         :is-open="isSettingsModalOpen"
         @close-modal="isSettingsModalOpen = false"
     />
-    <ModalSwidgeStatus
+    <ModalTransactionStatus
         :show="isModalStatusOpen"
         @close-modal="closeModalStatus"
     />
