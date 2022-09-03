@@ -184,6 +184,7 @@
         bg-[#2A2934]/30
         border border-[#545454] rounded-3xl
         gap-4 py-3 px-2
+        cursor-pointer
     }
 
     .route-card:not(.selected):hover {
