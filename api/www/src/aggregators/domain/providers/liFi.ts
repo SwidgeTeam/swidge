@@ -1,4 +1,4 @@
-import { Aggregator, ExternalAggregator } from '../aggregator';
+import { Aggregator, ExternalAggregator, MetadataProviderAggregator } from '../aggregator';
 import { AggregatorRequest } from '../aggregator-request';
 import LIFI, { Estimate, GasCost, Step } from '@lifi/sdk';
 import { BigInteger } from '../../../shared/domain/big-integer';
@@ -15,13 +15,11 @@ import { ApprovalTransactionDetails } from '../../../shared/domain/route/approva
 import { RouterCallEncoder } from '../../../shared/domain/router-call-encoder';
 import { RouteFees } from '../../../shared/domain/route/route-fees';
 import { RouteSteps } from '../../../shared/domain/route/route-steps';
-import {
-  ExternalTransactionStatus,
-  StatusCheckRequest,
-  StatusCheckResponse,
-} from '../status-check';
+import { ExternalTransactionStatus, StatusCheckRequest, StatusCheckResponse, } from '../status-check';
+import { flatten } from '@nestjs/common';
+import { AggregatorMetadata } from '../../../shared/domain/metadata';
 
-export class LiFi implements Aggregator, ExternalAggregator {
+export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAggregator {
   private enabledChains = [];
   private client: LIFI;
   private routerCallEncoder: RouterCallEncoder;
@@ -37,6 +35,36 @@ export class LiFi implements Aggregator, ExternalAggregator {
 
   isEnabledOn(fromChainId: string, toChainId: string): boolean {
     return this.enabledChains.includes(fromChainId) && this.enabledChains.includes(toChainId);
+  }
+
+  public async getMetadata(): Promise<AggregatorMetadata> {
+    const chains = await this.client.getChains();
+    const tokens = await this.client.getTokens();
+
+    return {
+      chains: chains.map((chain) => {
+        return {
+          type: chain.chainType,
+          id: chain.id.toString(),
+          name: chain.name,
+          logo: chain.logoURI,
+          coin: chain.coin,
+          decimals: chain.metamask.nativeCurrency.decimals,
+          rpcUrls: chain.metamask.rpcUrls,
+        };
+      }),
+      tokens: flatten(Object.values(tokens.tokens)).map((token) => {
+        return {
+          chainId: token.chainId.toString(),
+          address: token.address,
+          name: token.name,
+          symbol: token.symbol,
+          decimals: token.decimals,
+          logo: token.logoURI,
+          price: token.priceUSD,
+        };
+      }),
+    };
   }
 
   /**
