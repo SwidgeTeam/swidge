@@ -4,13 +4,13 @@ import { useWeb3Store } from '@/store/web3'
 import { onUpdated, ref } from 'vue'
 import { Transaction } from '@/api/models/transactions'
 import { Networks } from '@/domain/chains/Networks'
-import IToken from '@/domain/tokens/IToken'
 import { INetwork } from '@/domain/chains/INetwork'
 import { ethers } from 'ethers'
 import TransactionSplash from '../TransactionSplash.vue'
 import TransactionStatus from '../TransactionStatus.vue'
 import { useTokensStore } from '@/store/tokens'
 import Modal from '@/components/Modals/Modal.vue'
+import { IToken } from '@/domain/metadata/Metadata'
 
 const web3Store = useWeb3Store()
 const tokensStore = useTokensStore()

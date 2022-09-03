@@ -8,11 +8,11 @@ import { useRoutesStore } from '@/store/routes'
 import { useTransactionStore } from '@/store/transaction'
 import ModalSwidgeStatus from './Modals/ModalTransactionStatus.vue'
 import SwapBox from '@/components/SwapBox.vue'
-import IToken from '@/domain/tokens/IToken'
 import Route, { TransactionDetails } from '@/domain/paths/path'
 import Aggregators from '@/domain/aggregators/aggregators'
 import { useToast } from 'vue-toastification'
 import { TxHash } from '@/domain/wallets/IWallet'
+import { IToken } from '@/domain/metadata/Metadata'
 
 const web3Store = useWeb3Store()
 const tokensStore = useTokensStore()

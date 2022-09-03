@@ -3,36 +3,52 @@ import HttpClient from './http-base-client'
 import { GetQuoteRequest, GetQuoteResponse, indexedErrors } from './models/get-quote'
 import { ApiErrorResponse } from '@/api/models/ApiErrorResponse'
 import { TransactionsList } from '@/api/models/transactions'
-import { TokenList } from '@/domain/tokens/TokenList'
-import IToken from '@/domain/tokens/IToken'
-import { Networks } from '@/domain/chains/Networks'
 import Route, { ApprovalTransactionDetails, TransactionDetails } from '@/domain/paths/path'
 import GetApprovalTxResponseJson from '@/api/models/get-approval-tx-response'
 import GetMainTxResponse from '@/api/models/get-main-tx-response'
 import GetBothTxsResponse from '@/api/models/get-both-txs-response'
 import GetBothTxsRequest from '@/api/models/get-both-txs-request'
 import { StatusCheckRequest, StatusCheckResponse } from '@/api/models/get-status-check'
+import { MetadataJson } from '@/api/models/get-metadata'
+import { Metadata } from '@/domain/metadata/Metadata'
 
 class SwidgeAPI extends HttpClient {
     public constructor() {
         super(import.meta.env.VITE_APP_API_HOST)
     }
 
-    public async fetchTokens(): Promise<IToken[]> {
+    public async fetchMetadata(): Promise<Metadata> {
         try {
-            const response = await this.instance.get<TokenList>('/token-list')
-            return response.data.list.map(token => {
-                const networkName = Networks.get(token.c).name
+            const response = await this.instance.get<MetadataJson>('/meta')
+            const chainNames: Record<string, string> = {} // temp store to use on tokens
+            const chains = response.data.chains.map(chain => {
+                chainNames[chain.i] = chain.n
+                return {
+                    type: chain.t,
+                    id: chain.i,
+                    name: chain.n,
+                    logo: chain.l,
+                    coin: chain.c,
+                    decimals: chain.d,
+                    rpcUrls: chain.r,
+                }
+            })
+            const tokens = response.data.tokens.map(token => {
                 return {
                     chainId: token.c,
-                    chainName: networkName,
+                    chainName: chainNames[token.c],
                     address: token.a,
                     name: token.n,
                     symbol: token.s,
                     decimals: token.d,
                     logo: token.l,
+                    price: token.p,
                 }
             })
+            return {
+                tokens: tokens,
+                chains: chains
+            }
         } catch (e: unknown) {
             if (axios.isAxiosError(e)) {
                 const apiErrorResponse = e.response?.data as ApiErrorResponse

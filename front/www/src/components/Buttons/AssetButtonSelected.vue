@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ChevronDownIcon } from '@heroicons/vue/outline'
 import { Networks } from '@/domain/chains/Networks'
-import IToken from '@/domain/tokens/IToken'
 import TokenLogo from '@/components/Icons/TokenLogo.vue'
 import ChainLogo from '@/components/Icons/ChainLogo.vue'
+import { IToken } from '@/domain/metadata/Metadata'
 
 const props = defineProps<{
     isOrigin: boolean

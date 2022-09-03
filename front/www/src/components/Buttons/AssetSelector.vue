@@ -2,7 +2,7 @@
 import { useTokensStore } from '@/store/tokens'
 import AssetButtonSelected from '@/components/Buttons/AssetButtonSelected.vue'
 import AssetButtonUnselected from '@/components/Buttons/AssetButtonUnselected.vue'
-import IToken from '@/domain/tokens/IToken'
+import { IToken } from '@/domain/metadata/Metadata'
 
 const tokensStore = useTokensStore()
 

@@ -4,11 +4,11 @@ import { onMounted } from 'vue'
 import { useWeb3Store } from '@/store/web3'
 import SwapInterface from '@/components/SwapInterface.vue'
 
-const { fetchTokens } = useTokensStore()
+const { fetchMetadata } = useTokensStore()
 const web3Store = useWeb3Store()
 
 onMounted(async () => {
-    fetchTokens()
+    fetchMetadata()
     web3Store.init()
 })
 </script>

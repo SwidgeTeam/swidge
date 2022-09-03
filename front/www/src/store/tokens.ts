@@ -1,13 +1,14 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import swidgeApi from '@/api/swidge-api'
-import IToken from '@/domain/tokens/IToken'
 import { useWeb3Store } from '@/store/web3'
+import { IChain, IToken } from '@/domain/metadata/Metadata'
 
 const CUSTOM_TOKENS_STORAGE_KEY = 'custom-tokens'
 
 export const useTokensStore = defineStore('tokens', {
     state: () => ({
         tokens: [] as IToken[],
+        chains: [] as IChain[],
         originChainId: '',
         originTokenAddress: '',
         destinationChainId: '',
@@ -146,8 +147,10 @@ export const useTokensStore = defineStore('tokens', {
         /**
          * Loads tokens list from API
          */
-        async fetchTokens() {
-            this.tokens = await swidgeApi.fetchTokens()
+        async fetchMetadata() {
+            const metadata = await swidgeApi.fetchMetadata()
+            this.tokens = metadata.tokens
+            this.chains = metadata.chains
             const customTokens = getCustomTokens()
             if (customTokens) {
                 this.tokens.push(...customTokens)

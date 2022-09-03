@@ -3,7 +3,6 @@ import { ref } from 'vue'
 import SearchInputBox from '../SearchInputBox.vue'
 import NetworkLineSelector from '../NetworkLineSelector.vue'
 import SelectTokenList from '../SelectTokenList.vue'
-import IToken from '@/domain/tokens/IToken'
 import { Networks } from '@/domain/chains/Networks'
 import Modal from '@/components/Modals/Modal.vue'
 import { ethers } from 'ethers'
@@ -12,6 +11,7 @@ import IERC20Abi from '@/contracts/IERC20.json'
 import { INetwork } from '@/domain/chains/INetwork'
 import ModalImportToken from '@/components/Modals/ModalImportToken.vue'
 import { debounce } from 'lodash'
+import { IToken } from '@/domain/metadata/Metadata'
 
 const tokensStore = useTokensStore()
 
@@ -110,7 +110,7 @@ const handlerUpdateSearchTerm = debounce(updateSearchTerm, 100)
  */
 const loadMatchingTokens = () => {
     const address = searchTerm.value.toLowerCase().trim()
-    const liveNetworks = Networks.live()
+    const liveNetworks = getNetworks()
     checkingNetworks.value = liveNetworks.length
     liveNetworks.forEach(network => {
         fetchToken(network, address).then(token => {
@@ -149,6 +149,7 @@ const fetchToken = async (network: INetwork, address: string): Promise<IToken | 
             symbol: symbol[0],
             decimals: decimals[0],
             logo: '',
+            price: '0',
         }
     } catch (e) {
         // nothing to return

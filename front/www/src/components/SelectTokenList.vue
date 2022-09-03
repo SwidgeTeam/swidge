@@ -2,8 +2,8 @@
 import TokenDisplay from './TokenDisplay.vue'
 import NetworkAndTokenNothingFound from './NetworkAndTokenNothingFound.vue'
 import { INetwork } from '@/domain/chains/INetwork'
-import IToken from '@/domain/tokens/IToken'
 import Spinner from 'vue-spinner/src/ScaleLoader.vue'
+import { IToken } from '@/domain/metadata/Metadata'
 
 const props = defineProps<{
     chainList: INetwork[]

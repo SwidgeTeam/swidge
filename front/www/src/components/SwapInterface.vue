@@ -8,7 +8,6 @@ import { useTransactionStore } from '@/store/transaction'
 import ModalNetworkAndTokenSelect from '@/components/Modals/ModalNetworkAndTokenSelect.vue'
 import ModalTransactionStatus from '@/components/Modals/ModalTransactionStatus.vue'
 import ModalSettings from '@/components/Modals/ModalSettings.vue'
-import IToken from '@/domain/tokens/IToken'
 import Route, { TransactionDetails } from '@/domain/paths/path'
 import Aggregators from '@/domain/aggregators/aggregators'
 import { useToast } from 'vue-toastification'
@@ -19,6 +18,7 @@ import AdjustmentsIcon from './svg/AdjustmentIcon.vue'
 import ReloadIcon from '@/components/svg/ReloadIcon.vue'
 import ActionButton from '@/components/Buttons/ActionButton.vue'
 import FromToArrow from '@/components/Icons/FromToArrow.vue'
+import { IToken } from '@/domain/metadata/Metadata'
 
 const web3Store = useWeb3Store()
 const tokensStore = useTokensStore()
