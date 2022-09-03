@@ -25,7 +25,7 @@ export class BuildBothTxsHandler implements IQueryHandler<BuildBothTxsQuery> {
     @Inject(Class.Logger) private readonly logger: Logger,
   ) {
     this.aggregators = new Map<string, OneSteppedAggregator>([
-      [AggregatorProviders.Via, Rango.create(configService.getRangoApiKey(), priceFeedFetcher)],
+      [AggregatorProviders.Rango, Rango.create(configService.getRangoApiKey(), priceFeedFetcher)],
     ]);
   }
 

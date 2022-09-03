@@ -7,6 +7,7 @@ import databaseConfiguration from './config/database.configuration';
 import { AddressesModule } from './addresses/addresses.module';
 import { TokensModule } from './tokens/tokens.module';
 import { AggregatorsModule } from './aggregators/aggregators.module';
+import { MetadataModule } from './metadata/metadata.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { AggregatorsModule } from './aggregators/aggregators.module';
     SwapsModule,
     TokensModule,
     AggregatorsModule,
+    MetadataModule,
   ],
 })
 export class AppModule {}
