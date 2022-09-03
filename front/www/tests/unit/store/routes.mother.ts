@@ -152,6 +152,6 @@ export default class RouteMother {
         third.index = 2
         fourth.index = 3
 
-        return [first, second, third, fourth]
+        return [first, second, third]
     }
 }

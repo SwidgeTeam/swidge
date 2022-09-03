@@ -398,7 +398,7 @@ const closeModalStatus = () => {
 
 <template>
     <div class="swap-interface">
-        <div class="settings-line">
+        <div class="flex justify-end gap-2 py-2 h-[var(--settings-line-height)]">
             <ReloadIcon
                 class="w-5 h-5 cursor-pointer"
                 @click="onQuote"

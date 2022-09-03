@@ -160,10 +160,6 @@
         @apply flex flex-col px-3 pb-2 w-full max-w-md rounded-xl md:bg-[#5A5564]/30
     }
 
-    .settings-line {
-        @apply flex justify-end gap-2 py-2 h-[var(--settings-line-height)]
-    }
-
     .sending-box {
         @apply flex flex-col px-2 py-2 sending-box-colors h-[var(--sending-line-height)]
     }
