@@ -1,4 +1,5 @@
 import { ExternalProvider } from '@ethersproject/providers'
+import { INetwork } from '@/domain/chains/INetwork';
 
 export interface IWallet {
     isConnected: () => Promise<boolean>
@@ -6,7 +7,7 @@ export interface IWallet {
     revokeAccess: () => Promise<void>
     requestAccess: () => Promise<void>
     setListeners: () => void
-    switchNetwork: (chainId: string) => Promise<boolean>
+    switchNetwork: (chain: INetwork) => Promise<boolean>
     getCurrentChain: () => Promise<string>
     sendTransaction: (tx: Tx) => Promise<TxHash>
     getProvider: () => ExternalProvider
