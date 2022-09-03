@@ -22,7 +22,7 @@ const getRoute = (): Route => {
 
 <template>
     <Modal
-        :is-open="true"
+        :is-open="show"
         @close="emits('close-modal')">
 
         <StatusStep
@@ -31,7 +31,7 @@ const getRoute = (): Route => {
             :step="step"
         />
 
-        <div v-if="true" class="flex flex-col items-center">
+        <div v-if="getRoute().completed" class="flex flex-col items-center">
             <div class="text-3xl font-bold">Swidge successful!</div>
         </div>
     </Modal>
