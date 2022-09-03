@@ -20,7 +20,7 @@ const faqTexts = [
 defineProps({
     isOpen: {
         type: Boolean,
-        default: true
+        default: false
     },
 })
 

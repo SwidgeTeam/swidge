@@ -22,7 +22,7 @@ const isFilled = ref(false)
 defineProps({
     isOpen: {
         type: Boolean,
-        default: true
+        default: false
     },
 })
 

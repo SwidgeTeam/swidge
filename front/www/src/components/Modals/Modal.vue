@@ -5,7 +5,7 @@ import { XIcon } from '@heroicons/vue/solid'
 defineProps({
     isOpen: {
         type: Boolean,
-        default: true
+        default: false
     },
 })
 
