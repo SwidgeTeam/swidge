@@ -1,3 +1,5 @@
+import { BigNumber } from 'ethers';
+
 export class TokensMother {
     public static fantomWFTM() {
         return {
@@ -8,7 +10,8 @@ export class TokensMother {
             symbol: 'WFTM',
             decimals: 18,
             logo: 'https://api.rango.exchange/i/dDI50C',
-            price: '0.5'
+            price: '0.5',
+            balance: BigNumber.from(0),
         }
     }
 
@@ -21,7 +24,8 @@ export class TokensMother {
             symbol: 'MATIC',
             decimals: 18,
             logo: 'https://api.rango.exchange/i/dDI50C',
-            price: '0.5'
+            price: '0.5',
+            balance: BigNumber.from(0),
         }
     }
 
