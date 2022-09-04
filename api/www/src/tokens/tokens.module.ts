@@ -18,17 +18,18 @@ import { UpdateTokensDetailsCmc } from './application/command/update-tokens-deta
 import coinmarketcapApiProvider from './infrastructure/external/coinmarketcap-api-provider';
 import { ConfigService } from '../config/config.service';
 import { ConfigModule } from '../config/config.module';
+import { GetWalletBalancesController } from './infrastructure/controllers/get-wallet-balances-controller';
+import { GetWalletTokenListHandler } from './application/query/get-wallet-token-list-handler';
+import walletBalancesRepositoryProvider from './infrastructure/external/wallet-balances-repository-provider';
 
 @Module({
-  imports: [
-    CqrsModule,
-    ConfigModule,
-  ],
+  imports: [CqrsModule, ConfigModule],
   controllers: [
     GetTokenListController,
     AddTokensController,
     UpdateTokensPriceController,
     AddImportedTokenController,
+    GetWalletBalancesController,
   ],
   providers: [
     GetTokenListHandler,
@@ -37,6 +38,7 @@ import { ConfigModule } from '../config/config.module';
     UpdateTokensDetailsCoingecko,
     UpdateTokensDetailsCmc,
     AddImportedTokenHandler,
+    GetWalletTokenListHandler,
     ConfigService,
     tokensRepositoryProvider(),
     coingeckoTokensPriceFetcherProvider(),
@@ -44,6 +46,7 @@ import { ConfigModule } from '../config/config.module';
     coinmarketcapApiProvider(),
     consoleLoggerProvider(),
     httpClientProvider(),
+    walletBalancesRepositoryProvider(),
   ],
 })
 export class TokensModule {}
