@@ -13,8 +13,6 @@ import ModalWallets from '@/components/Modals/ModalWallets.vue'
 import { Wallet } from '@/domain/wallets/IWallet'
 import { useTokensStore } from '@/store/tokens'
 import SwidgeLogoNoText from '@/components/svg/SwidgeLogoNoText.vue'
-import ModalFaq from '@/components/Modals/ModalFaq.vue'
-import QuestionMark from '@/components/svg/QuestionMark.vue'
 
 const web3Store = useWeb3Store()
 const tokensStore = useTokensStore()
@@ -23,7 +21,6 @@ const { account, isConnected, isCorrectNetwork, selectedNetworkId } = storeToRef
 const isNetworkModalOpen = ref(false)
 const isTransactionsModalOpen = ref(false)
 const isWalletsModalOpen = ref(false)
-const isFaqOpen = ref(false)
 
 const changeNetwork = (chainId: string) => {
     web3Store.switchToNetwork(chainId)
@@ -75,9 +72,6 @@ const chainIcon = computed({
             <SwidgeLogo class="hidden sm:inline-block"/>
         </a>
         <div v-if="isConnected" class="flex gap-2 text-sm sm:text-base sm:gap-4">
-            <QuestionMark
-                @click="isFaqOpen = true"
-            />
             <TransactionsButton
                 @show-transactions="isTransactionsModalOpen = true"/>
             <AddressButton
@@ -92,9 +86,6 @@ const chainIcon = computed({
             />
         </div>
         <div v-else class="flex gap-1 sm:gap-4">
-            <QuestionMark
-                @click="isFaqOpen = true"
-            />
             <ConnectButton
                 @connect="connect"
             />
@@ -113,10 +104,6 @@ const chainIcon = computed({
         :is-open="isWalletsModalOpen"
         @close-modal="isWalletsModalOpen = false"
         @set-wallet="setWallet"
-    />
-    <ModalFaq
-        :is-open="isFaqOpen"
-        @close="isFaqOpen = false"
     />
 </template>
 

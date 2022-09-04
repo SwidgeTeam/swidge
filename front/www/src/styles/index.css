@@ -14,6 +14,7 @@
         --receive-title-height: 0.75rem;
         --receive-selector-height: 4rem;
         --main-action-button-height: 5.2rem;
+        --footer-height: 4rem;
         --routes-box-height: calc(100vh
         - (var(--header-height)
         + var(--settings-line-height)
@@ -22,6 +23,7 @@
         + var(--receive-title-height)
         + var(--receive-selector-height)
         + var(--main-action-button-height)
+        + var(--footer-height)
         ))
     }
 
