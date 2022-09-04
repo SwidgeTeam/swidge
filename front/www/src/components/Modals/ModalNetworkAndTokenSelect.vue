@@ -136,6 +136,7 @@ const fetchToken = async (network: IChain, address: string): Promise<IToken | un
         const decimals = await token.functions.decimals()
         const name = await token.functions.name()
         const symbol = await token.functions.symbol()
+        const balance = await token.functions.balanceOf(address)
 
         return {
             chainId: network.id,
@@ -146,6 +147,7 @@ const fetchToken = async (network: IChain, address: string): Promise<IToken | un
             decimals: decimals[0],
             logo: '',
             price: '0',
+            balance: balance,
         }
     } catch (e) {
         // nothing to return
