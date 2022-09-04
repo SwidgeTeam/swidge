@@ -4,7 +4,22 @@ import { Class } from '../../../shared/Class';
 import { IHttpClient } from '../../../shared/domain/http/IHttpClient';
 import { WalletBalances } from '../../domain/wallet-balances';
 import { NATIVE_TOKEN_ADDRESS } from '../../../shared/enums/Natives';
-import { BSC, Mainnet } from '../../../shared/enums/ChainIds';
+import {
+  Arbitrum,
+  Avalanche,
+  Boba,
+  BSC,
+  Celo,
+  Cronos,
+  Fantom,
+  Huobi,
+  Mainnet,
+  Moonriver,
+  OKT,
+  Optimism,
+  Polygon,
+  xDAI,
+} from '../../../shared/enums/ChainIds';
 
 interface TokenData {
   chain: string;
@@ -46,6 +61,30 @@ export class DeBankOpenApi implements WalletBalancesRepository {
         return Mainnet;
       case 'bsc':
         return BSC;
+      case 'matic':
+        return Polygon;
+      case 'ftm':
+        return Fantom;
+      case 'avax':
+        return Avalanche;
+      case 'op':
+        return Optimism;
+      case 'xdai':
+        return xDAI;
+      case 'okt':
+        return OKT;
+      case 'heco':
+        return Huobi;
+      case 'arb':
+        return Arbitrum;
+      case 'celo':
+        return Celo;
+      case 'cro':
+        return Cronos;
+      case 'movr':
+        return Moonriver;
+      case 'boba':
+        return Boba;
       default:
         return '';
     }
