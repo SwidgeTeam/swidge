@@ -91,8 +91,6 @@ const handleModalClick = () => {
  * @param term
  */
 const updateSearchTerm = (term: string) => {
-    if(term.length < 3) return
-
     searchTerm.value = term
     matchingTokens.value = []
 
@@ -197,6 +195,10 @@ const existsAddressOnList = (): boolean => {
  * Returns the filtered token list
  */
 const filteredTokens = () => {
+    // for performance issues,
+    // we only search the whole set of tokens if at least 3 characters
+    if (!selectedNetworkId.value && searchTerm.value.length < 3) return []
+
     let tokens: IToken[]
 
     if (selectedNetworkId.value) {
@@ -236,13 +238,12 @@ const filteredTokens = () => {
         <SearchInputBox
             ref="searchComponent"
             :search-term="searchTerm"
-            placeholder="Search by token, network or address"
             @update:search-term="handlerUpdateSearchTerm"
             @clear-input="searchTerm = ''"/>
         <NetworkLineSelector
             v-model:selected-network-id="selectedNetworkId"
             :networks="getNetworks()"
-            class="my-6"/>
+            class="my-3"/>
         <SelectTokenList
             :is-origin="isOrigin"
             :tokens="listTokens()"

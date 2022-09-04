@@ -27,6 +27,9 @@ const clickOnToken = (token: IToken) => {
     }
 }
 
+const getChain = (chainId: string) => {
+    return props.chainList.find((chain) => chain.id === chainId)
+}
 </script>
 
 <template>
@@ -52,6 +55,7 @@ const clickOnToken = (token: IToken) => {
                 >
                     <TokenDisplay
                         :token="token"
+                        :chain="getChain(token.chainId)"
                     />
                 </li>
             </ul>
