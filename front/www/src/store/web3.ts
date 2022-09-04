@@ -6,19 +6,21 @@ import { IWallet, TxHash, Wallet, WalletEvents } from '@/domain/wallets/IWallet'
 import { ApprovalTransactionDetails, TransactionDetails } from '@/domain/paths/path'
 import { WalletConnect } from '@/domain/wallets/WalletConnect'
 import { Metamask } from '@/domain/wallets/Metamask'
-import { Networks } from '@/domain/chains/Networks'
 import { useTransactionStore } from '@/store/transaction'
 import { useRoutesStore } from '@/store/routes'
+import { useTokensStore } from '@/store/tokens'
+import { IChain } from '@/domain/metadata/Metadata'
 
 export const NATIVE_COIN_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 
 export const useWeb3Store = defineStore('web3', () => {
+    const metadataStore = useTokensStore()
+    const routesStore = useRoutesStore()
     const account = ref('')
     const isConnected = ref(false)
     const isCorrectNetwork = ref(true)
     const selectedNetworkId = ref('')
     const wallet = ref<IWallet | null>(null)
-    const routesStore = useRoutesStore()
 
     /**
      * entrypoint to connect a wallet
@@ -86,8 +88,8 @@ export const useWeb3Store = defineStore('web3', () => {
     async function checkIfCorrectNetwork() {
         if (!wallet.value) throw new Error('No wallet')
         const chainId = await wallet.value.getCurrentChain()
-        const acceptedChains = Networks.ids()
-        isCorrectNetwork.value = acceptedChains.includes(chainId)
+        const chains = metadataStore.getChains
+        isCorrectNetwork.value = chains.map((chain: IChain) => chain.id).includes(chainId)
     }
 
     /**
@@ -146,7 +148,7 @@ export const useWeb3Store = defineStore('web3', () => {
      */
     async function switchToNetwork(chainId: string) {
         if (!wallet.value) throw new Error('No wallet')
-        const chain = Networks.get(chainId)
+        const chain = metadataStore.getChain(chainId)
         const changed = await wallet.value.switchNetwork(chain)
         if (changed) {
             selectedNetworkId.value = chainId
@@ -258,11 +260,11 @@ export const useWeb3Store = defineStore('web3', () => {
      * @param chainId
      */
     function getChainProvider(chainId: string) {
-        const chain = Networks.get(chainId)
+        const chain = metadataStore.getChain(chainId)
         return ethers.getDefaultProvider({
             name: chain.name,
             chainId: Number(chain.id),
-            _defaultProvider: (providers) => new providers.JsonRpcProvider(chain.rpcUrl)
+            _defaultProvider: (providers) => new providers.JsonRpcProvider(chain.rpcUrls[0])
         })
     }
 

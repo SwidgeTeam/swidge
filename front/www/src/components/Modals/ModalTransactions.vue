@@ -3,8 +3,6 @@ import SwidgeAPI from '@/api/swidge-api'
 import { useWeb3Store } from '@/store/web3'
 import { onUpdated, ref } from 'vue'
 import { Transaction } from '@/api/models/transactions'
-import { Networks } from '@/domain/chains/Networks'
-import { INetwork } from '@/domain/chains/INetwork'
 import { ethers } from 'ethers'
 import TransactionSplash from '../TransactionSplash.vue'
 import TransactionStatus from '../TransactionStatus.vue'
@@ -74,20 +72,12 @@ const transformDate = (timestamp: string) => {
 }
 
 /**
- * Fetches a chain by ID
- * @param chainId
- */
-const getNetwork = (chainId: string): INetwork => {
-    return Networks.get(chainId)
-}
-
-/**
  * Returns the chain icon
  * @param chainId
  */
 const getChainIcon = (chainId: string): string => {
-    const network = getNetwork(chainId)
-    return network.icon
+    const network = tokensStore.getChain(chainId)
+    return network.logo
 }
 
 /**

@@ -3,15 +3,13 @@ import { ref } from 'vue'
 import SearchInputBox from '../SearchInputBox.vue'
 import NetworkLineSelector from '../NetworkLineSelector.vue'
 import SelectTokenList from '../SelectTokenList.vue'
-import { Networks } from '@/domain/chains/Networks'
 import Modal from '@/components/Modals/Modal.vue'
 import { ethers } from 'ethers'
 import { useTokensStore } from '@/store/tokens'
 import IERC20Abi from '@/contracts/IERC20.json'
-import { INetwork } from '@/domain/chains/INetwork'
 import ModalImportToken from '@/components/Modals/ModalImportToken.vue'
 import { debounce } from 'lodash'
-import { IToken } from '@/domain/metadata/Metadata'
+import { IChain, IToken } from '@/domain/metadata/Metadata'
 
 const tokensStore = useTokensStore()
 
@@ -34,7 +32,7 @@ const isImportModalOpen = ref<boolean>(false)
 const selectedTokenToImport = ref<IToken | null>(null)
 
 const getNetworks = () => {
-    return Networks.live()
+    return tokensStore.getChains
 }
 
 /**
@@ -128,8 +126,8 @@ const loadMatchingTokens = () => {
  * @param address Address to check
  * @returns A token or undefined
  */
-const fetchToken = async (network: INetwork, address: string): Promise<IToken | undefined> => {
-    const provider = new ethers.providers.JsonRpcProvider(network.rpcUrl)
+const fetchToken = async (network: IChain, address: string): Promise<IToken | undefined> => {
+    const provider = new ethers.providers.JsonRpcProvider(network.rpcUrls[0])
     const token = new ethers.Contract(
         address,
         IERC20Abi,

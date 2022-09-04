@@ -1,12 +1,11 @@
 <script setup lang='ts'>
 import TokenDisplay from './TokenDisplay.vue'
 import NetworkAndTokenNothingFound from './NetworkAndTokenNothingFound.vue'
-import { INetwork } from '@/domain/chains/INetwork'
 import Spinner from 'vue-spinner/src/ScaleLoader.vue'
-import { IToken } from '@/domain/metadata/Metadata'
+import { IChain, IToken } from '@/domain/metadata/Metadata'
 
 const props = defineProps<{
-    chainList: INetwork[]
+    chainList: IChain[]
     tokens: IToken[]
     selectedNetworkId: string
     searchTerm: string

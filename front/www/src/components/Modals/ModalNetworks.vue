@@ -1,6 +1,8 @@
 <script setup lang='ts'>
-import { Networks } from '@/domain/chains/Networks'
 import Modal from '@/components/Modals/Modal.vue'
+import { useTokensStore } from '@/store/tokens'
+
+const metadataStore = useTokensStore()
 
 defineProps<{
     isOpen: boolean
@@ -20,7 +22,7 @@ const selectChain = (chain: string) => {
 }
 
 const getNetworks = () => {
-    return Networks.live()
+    return metadataStore.getChains
 }
 </script>
 
@@ -46,7 +48,7 @@ const getNetworks = () => {
                     <span class="flex items-center gap-8">
                         <img
                             class="rounded-[100px] w-10"
-                            :src="chain.icon"
+                            :src="chain.logo"
                             :alt="chain.name + ' icon'"
                         />
                         <span>{{ chain.name }}</span>

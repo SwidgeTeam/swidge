@@ -1,18 +1,18 @@
 <script setup lang='ts'>
 import { ChevronRightIcon, ChevronLeftIcon } from '@heroicons/vue/outline'
 import { ref, watchEffect } from 'vue'
-import {INetwork} from '@/domain/chains/INetwork'
+import { IChain } from '@/domain/metadata/Metadata'
 
 const scrollContainer = ref()
 const isRightScrollable = ref()
 const isLeftScrollable = ref()
 
 const props = defineProps<{
-  networks: INetwork[]
-  selectedNetworkId: string
+    networks: IChain[]
+    selectedNetworkId: string
 }>()
 const emits = defineEmits<{
-  (event: 'update:selected-network-id', selectedNetworkId: string): void
+    (event: 'update:selected-network-id', selectedNetworkId: string): void
 }>()
 
 const isRightScrollableFunc = () => {
@@ -47,32 +47,32 @@ const onSelect = (id: string) => {
 </script>
 
 <template>
-  <div class="relative flex flex-col gap-2 text-lg font-roboto">
-    Select Network:
-    <div
-ref="scrollContainer"
-      class="flex gap-6 py-2 overflow-hidden text-xl text-white border-y border-light-grey-2">
-      <button
-v-for="network in networks"
-        :key="network.id"
-        class="flex items-center flex-grow-0 flex-shrink-0 gap-2"
-        :class="[selectedNetworkId !== network.id && selectedNetworkId !== '' && 'opacity-50',]"
-        @click="onSelect(network.id)">
-        <img
-:src="network.icon"
-          width="36"
-          class="rounded-full"
-          height="36" />
-        <span>{{ network.name }}</span>
-      </button>
+    <div class="relative flex flex-col gap-2 text-lg font-roboto">
+        Select Network:
+        <div
+            ref="scrollContainer"
+            class="flex gap-6 py-2 overflow-hidden text-xl text-white border-y border-light-grey-2">
+            <button
+                v-for="network in networks"
+                :key="network.id"
+                class="flex items-center flex-grow-0 flex-shrink-0 gap-2"
+                :class="[selectedNetworkId !== network.id && selectedNetworkId !== '' && 'opacity-50',]"
+                @click="onSelect(network.id)">
+                <img
+                    :src="network.logo"
+                    width="36"
+                    class="rounded-full"
+                    height="36"/>
+                <span>{{ network.name }}</span>
+            </button>
+        </div>
+        <ChevronRightIcon
+            v-if="isRightScrollable"
+            class="absolute w-8 top-[46px] -right-7"
+            @click="scroll(100)"/>
+        <ChevronLeftIcon
+            v-if="isLeftScrollable"
+            class="absolute w-8 top-[46px] -left-7"
+            @click="scroll(-100)"/>
     </div>
-    <ChevronRightIcon
-v-if="isRightScrollable"
-      class="absolute w-8 top-[46px] -right-7"
-      @click="scroll(100)" />
-    <ChevronLeftIcon
-v-if="isLeftScrollable"
-      class="absolute w-8 top-[46px] -left-7"
-      @click="scroll(-100)" />
-  </div>
 </template>

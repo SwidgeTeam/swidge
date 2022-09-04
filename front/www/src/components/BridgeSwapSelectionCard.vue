@@ -2,7 +2,6 @@
 import { ChevronDownIcon } from '@heroicons/vue/outline'
 import { computed } from 'vue'
 import { useTokensStore } from '@/store/tokens'
-import { Networks } from '@/domain/chains/Networks'
 
 const tokensStore = useTokensStore()
 
@@ -39,9 +38,9 @@ const setToMaxAmount = () => {
 const onFallbackImgHandler = (e: Event) => {
     const token = getToken()
     if (token) {
-        const chain = Networks.get(token.chainId)
+        const chain = tokensStore.getChain(token.chainId)
         const imageTarget = e.target as HTMLImageElement
-        imageTarget.src = chain.icon
+        imageTarget.src = chain.logo
     }
 }
 

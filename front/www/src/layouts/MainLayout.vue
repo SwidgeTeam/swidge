@@ -1,5 +1,18 @@
 <script setup lang="ts">
 import Header from '@/components/Header.vue'
+import { tryOnBeforeMount } from '@vueuse/core'
+import { useTokensStore } from '@/store/tokens'
+import { useWeb3Store } from '@/store/web3'
+
+const { fetchMetadata } = useTokensStore()
+const web3Store = useWeb3Store()
+
+tryOnBeforeMount(async () => {
+    fetchMetadata()
+        .then(() => {
+            web3Store.init()
+        })
+})
 </script>
 
 <template>

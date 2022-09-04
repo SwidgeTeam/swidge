@@ -1,15 +1,17 @@
 <script setup lang='ts'>
-import { Networks } from '@/domain/chains/Networks'
 import { IToken } from '@/domain/metadata/Metadata'
+import { useTokensStore } from '@/store/tokens'
+
+const metadataStore = useTokensStore()
 
 const props = defineProps<{
     token: IToken
 }>()
 
 const replaceByDefault = (e: Event) => {
-    const chain = Networks.get(props.token.chainId)
+    const chain = metadataStore.getChain(props.token.chainId)
     const imageTarget = e.target as HTMLImageElement
-    imageTarget.src = chain.icon
+    imageTarget.src = chain.logo
 }
 
 </script>

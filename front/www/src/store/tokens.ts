@@ -22,6 +22,28 @@ export const useTokensStore = defineStore('tokens', {
             return this.tokens
         },
         /**
+         * Returns whole list of chains
+         */
+        getChains(): IChain[] {
+            return this.chains
+        },
+        /**
+         * Returns a specific chain
+         * @param state
+         */
+        getChain(state) {
+            return (chainId: string): IChain => {
+                const chain = state.chains
+                    .find(chain => {
+                        return chain.id === chainId
+                    })
+                if (!chain) {
+                    throw new Error('Unsupported chain')
+                }
+                return chain
+            }
+        },
+        /**
          * Returns list of tokens of a specific chain
          * @param state
          */

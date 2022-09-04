@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ChevronDownIcon } from '@heroicons/vue/outline'
-import { Networks } from '@/domain/chains/Networks'
 import TokenLogo from '@/components/Icons/TokenLogo.vue'
 import ChainLogo from '@/components/Icons/ChainLogo.vue'
 import { IToken } from '@/domain/metadata/Metadata'
+import { useTokensStore } from '@/store/tokens'
+
+const metadataStore = useTokensStore()
 
 const props = defineProps<{
     isOrigin: boolean
@@ -11,8 +13,8 @@ const props = defineProps<{
 }>()
 
 const getChainLogo = () => {
-    const chain = Networks.get(props.token.chainId)
-    return chain.icon
+    const chain = metadataStore.getChain(props.token.chainId)
+    return chain.logo
 }
 </script>
 

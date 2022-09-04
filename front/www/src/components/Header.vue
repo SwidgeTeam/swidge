@@ -7,7 +7,6 @@ import SwidgeLogo from './svg/SwidgeLogo.vue'
 import ModalNetworks from '@/components/Modals/ModalNetworks.vue'
 import { computed, ref } from 'vue'
 import ConnectButton from '@/components/Buttons/ConnectButton.vue'
-import { Networks } from '@/domain/chains/Networks'
 import TransactionsButton from './Buttons/TransactionsButton.vue'
 import ModalTransactions from './Modals/ModalTransactions.vue'
 import ModalWallets from '@/components/Modals/ModalWallets.vue'
@@ -51,7 +50,7 @@ const chainName = computed({
         if (!selectedNetworkId.value) {
             return ''
         }
-        const chain = Networks.get(selectedNetworkId.value)
+        const chain = tokensStore.getChain(selectedNetworkId.value)
         return chain.name
     },
     set: () => null
@@ -62,8 +61,8 @@ const chainIcon = computed({
         if (!selectedNetworkId.value) {
             return ''
         }
-        const chain = Networks.get(selectedNetworkId.value)
-        return chain.icon
+        const chain = tokensStore.getChain(selectedNetworkId.value)
+        return chain.logo
     },
     set: () => null
 })
