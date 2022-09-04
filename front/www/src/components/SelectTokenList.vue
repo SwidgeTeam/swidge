@@ -38,7 +38,7 @@ const getChain = (chainId: string) => {
             <span>Select Token:</span>
             <span
                 v-if="selectedNetworkId !== '' || searchTerm !== ''"
-                class="text-sm font-extralight mt-1 ml-auto">Network</span>
+                class="text-sm font-extralight mt-1 ml-auto">Balance</span>
         </div>
         <div class="h-80 w-full overflow-y-auto">
             <NetworkAndTokenNothingFound
