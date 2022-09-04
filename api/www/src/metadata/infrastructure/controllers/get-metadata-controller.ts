@@ -17,24 +17,24 @@ export class GetMetadataController {
     return res.json({
       chains: meta.chains.map((chain) => {
         return {
-          type: chain.type,
-          id: chain.id,
-          name: chain.name,
-          logo: chain.logo,
-          coin: chain.coin,
-          decimals: chain.decimals,
-          rpcUrls: chain.rpcUrls,
+          t: chain.type,
+          i: chain.id,
+          n: chain.name,
+          l: chain.logo,
+          c: chain.coin,
+          d: chain.decimals,
+          r: chain.rpcUrls,
         };
       }),
       tokens: meta.tokens.map((token) => {
         return {
-          chainId: token.chainId,
-          address: token.address,
-          name: token.name,
-          symbol: token.symbol,
-          decimals: token.decimals,
-          logo: token.logo,
-          price: token.price,
+          c: token.chainId,
+          a: token.address,
+          n: token.name,
+          s: token.symbol,
+          d: token.decimals,
+          l: token.logo,
+          p: token.price,
         };
       }),
     });
