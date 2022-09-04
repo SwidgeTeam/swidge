@@ -5,6 +5,7 @@ export class Class {
   public static TransactionRepository = 'TransactionRepository';
   public static SushiPairsRepository = 'SushiPairsRepository';
   public static CoinmarketcapApi = 'CoinmarketcapApi';
+  public static WalletBalancesRepo = 'WalletBalancesRepo';
 
   /* Libraries */
   public static HttpClient = 'httpClient';
