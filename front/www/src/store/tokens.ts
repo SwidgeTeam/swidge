@@ -28,6 +28,18 @@ export const useTokensStore = defineStore('tokens', {
             return this.chains
         },
         /**
+         * Returns list of tokens of a specific chain
+         * @param state
+         */
+        getChainTokens(state) {
+            return (chainId: string): IToken[] => {
+                return state.tokens
+                    .filter(token => {
+                        return token.chainId === chainId
+                    })
+            }
+        },
+        /**
          * Returns a specific chain
          * @param state
          */
@@ -41,18 +53,6 @@ export const useTokensStore = defineStore('tokens', {
                     throw new Error('Unsupported chain')
                 }
                 return chain
-            }
-        },
-        /**
-         * Returns list of tokens of a specific chain
-         * @param state
-         */
-        getChainTokens(state) {
-            return (chainId: string): IToken[] => {
-                return state.tokens
-                    .filter(token => {
-                        return token.chainId === chainId
-                    })
             }
         },
         /**
@@ -179,6 +179,21 @@ export const useTokensStore = defineStore('tokens', {
             }
         },
         /**
+         * Loads token balances
+         */
+        async fetchBalances(wallet: string) {
+            const tokenBalances = await swidgeApi.fetchBalances(wallet)
+            this.tokens = this.tokens.map(token => {
+                const tokenBalance = tokenBalances.find(tokenBalance => {
+                    return tokenBalance.chainId === token.chainId && tokenBalance.address === token.address
+                })
+                if (tokenBalance) {
+                    token.balance = tokenBalance.balance
+                }
+                return token
+            })
+        },
+        /**
          * Imports a token into the list if it doesn't exist already
          * @param token
          */
@@ -238,7 +253,7 @@ export const useTokensStore = defineStore('tokens', {
             this.destinationChainId = ''
             this.destinationTokenAddress = ''
         }
-    }
+    },
 })
 
 function getCustomTokens(): IToken[] {

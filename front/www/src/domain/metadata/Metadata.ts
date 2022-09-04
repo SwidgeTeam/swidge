@@ -1,3 +1,5 @@
+import { BigNumber } from 'ethers'
+
 export interface Metadata {
     tokens: IToken[]
     chains: IChain[]
@@ -12,6 +14,7 @@ export interface IToken {
     decimals: number
     logo: string
     price: string;
+    balance: BigNumber;
 }
 
 export interface IChain {
@@ -22,4 +25,10 @@ export interface IChain {
     coin: string;
     decimals: number;
     rpcUrls: string[];
+}
+
+export interface TokenBalance {
+    chainId: string;
+    address: string;
+    balance: BigNumber;
 }

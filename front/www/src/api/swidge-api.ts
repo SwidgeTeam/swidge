@@ -10,7 +10,9 @@ import GetBothTxsResponse from '@/api/models/get-both-txs-response'
 import GetBothTxsRequest from '@/api/models/get-both-txs-request'
 import { StatusCheckRequest, StatusCheckResponse } from '@/api/models/get-status-check'
 import { MetadataJson } from '@/api/models/get-metadata'
-import { Metadata } from '@/domain/metadata/Metadata'
+import { Metadata, TokenBalance } from '@/domain/metadata/Metadata'
+import { WalletBalancesJson } from '@/api/models/get-balances'
+import { BigNumber } from 'ethers'
 
 class SwidgeAPI extends HttpClient {
     public constructor() {
@@ -43,12 +45,37 @@ class SwidgeAPI extends HttpClient {
                     decimals: token.d,
                     logo: token.l,
                     price: token.p,
+                    balance: BigNumber.from(0)
                 }
             })
             return {
                 tokens: tokens,
                 chains: chains
             }
+        } catch (e: unknown) {
+            if (axios.isAxiosError(e)) {
+                const apiErrorResponse = e.response?.data as ApiErrorResponse
+                const errorMessage = apiErrorResponse.message ?? 'Unhandled error!'
+                throw new Error(errorMessage)
+            }
+            throw new Error('UnknownError no axios error')
+        }
+    }
+
+    public async fetchBalances(wallet: string): Promise<TokenBalance[]> {
+        try {
+            const response = await this.instance.get<WalletBalancesJson>('/token-balances', {
+                params: {
+                    wallet: wallet
+                }
+            })
+            return response.data.tokens.map(token => {
+                return {
+                    chainId: token.chainId,
+                    address: token.address,
+                    balance: BigNumber.from(token.amount)
+                }
+            })
         } catch (e: unknown) {
             if (axios.isAxiosError(e)) {
                 const apiErrorResponse = e.response?.data as ApiErrorResponse
