@@ -226,7 +226,15 @@ const filteredTokens = () => {
             })
     }
 
-    return tokens
+    return tokens.sort((a: IToken, b: IToken) => {
+        if (a.balance.gt(b.balance)) {
+            return -1
+        } else if (b.balance.gt(a.balance)) {
+            return 1
+        } else {
+            return 0
+        }
+    })
 }
 
 </script>
