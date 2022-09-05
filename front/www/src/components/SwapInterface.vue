@@ -29,9 +29,7 @@ const toast = useToast()
 const { switchToNetwork, getChainProvider, getBalance } = web3Store
 
 const sourceTokenAmount = ref<string>('')
-const destinationTokenAmount = ref<string>('')
 const sourceTokenMaxAmount = ref<string>('')
-const totalFee = ref<string>('')
 
 const isModalTokensOpen = ref(false)
 const isSourceChainToken = ref(false)
@@ -170,8 +168,6 @@ const updateTokenBalance = async (address: string) => {
 const switchHandlerFunction = () => {
     tokensStore.switchTokens()
     sourceTokenAmount.value = ''
-    destinationTokenAmount.value = ''
-    totalFee.value = ''
     isExecuteButtonDisabled.value = true
 }
 
@@ -189,10 +185,6 @@ const onQuote = async () => {
 
     try {
         await routesStore.quotePath(sourceTokenAmount.value)
-        const route = routesStore.getSelectedRoute
-
-        destinationTokenAmount.value = route.resume.amountOut
-        totalFee.value = Number(route.fees.amountInUsd).toFixed(2)
 
         if (Number(sourceTokenAmount.value) > Number(sourceTokenMaxAmount.value)) {
             setButtonAlert('Insufficient Balance')
@@ -213,8 +205,6 @@ const onQuote = async () => {
 const onQuotingError = (e: Error) => {
     setButtonAlert(e.message)
     isExecuteButtonDisabled.value = true
-    destinationTokenAmount.value = ''
-    totalFee.value = ''
 }
 
 /**
