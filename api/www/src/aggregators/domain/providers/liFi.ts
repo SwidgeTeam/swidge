@@ -15,14 +15,49 @@ import { ApprovalTransactionDetails } from '../../../shared/domain/route/approva
 import { RouterCallEncoder } from '../../../shared/domain/router-call-encoder';
 import { RouteFees } from '../../../shared/domain/route/route-fees';
 import { RouteSteps } from '../../../shared/domain/route/route-steps';
-import { ExternalTransactionStatus, StatusCheckRequest, StatusCheckResponse, } from '../status-check';
+import {
+  ExternalTransactionStatus,
+  StatusCheckRequest,
+  StatusCheckResponse,
+} from '../status-check';
 import { flatten } from '@nestjs/common';
 import { AggregatorMetadata } from '../../../shared/domain/metadata';
 import { ethers } from 'ethers';
 import { NATIVE_TOKEN_ADDRESS } from '../../../shared/enums/Natives';
+import {
+  Arbitrum,
+  Avalanche,
+  Boba,
+  BSC,
+  Celo,
+  Cronos,
+  Fantom,
+  Huobi,
+  Mainnet,
+  Moonriver,
+  OKT,
+  Optimism,
+  Polygon,
+  xDAI,
+} from '../../../shared/enums/ChainIds';
 
 export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAggregator {
-  private enabledChains = [];
+  private enabledChains = [
+    Mainnet,
+    Optimism,
+    Cronos,
+    BSC,
+    OKT,
+    xDAI,
+    Huobi,
+    Polygon,
+    Fantom,
+    Boba,
+    Moonriver,
+    Arbitrum,
+    Avalanche,
+    Celo,
+  ];
   private client: LIFI;
   private routerCallEncoder: RouterCallEncoder;
 

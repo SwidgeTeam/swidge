@@ -42,14 +42,9 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
     @Inject(Class.SushiPairsTheGraph) private readonly theGraph: SushiPoolsTheGraph,
     @Inject(Class.Logger) private readonly logger: Logger,
   ) {
-    const bridges = new Bridges([
-      [BridgeProviders.Multichain, new Multichain(cachedHttpClient)]
-    ]);
+    const bridges = new Bridges([]);
 
-    const exchanges = new Exchanges([
-      [ExchangeProviders.ZeroEx, new ZeroEx(httpClient)],
-      [ExchangeProviders.Sushi, new Sushiswap(theGraph, sushiPairsRepository)],
-    ]);
+    const exchanges = new Exchanges([]);
 
     const aggregators = new Aggregators([
       [AggregatorProviders.LiFi, LiFi.create()],
