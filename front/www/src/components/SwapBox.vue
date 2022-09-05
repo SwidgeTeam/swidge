@@ -34,12 +34,12 @@ const emits = defineEmits<{
         <div class="flex flex-col w-full gap-4">
             <span class="relative text-2xl px-4">
                 You send:
-                    <AdjustmentsIcon 
+                    <AdjustmentsIcon
                         class="absolute w-10 h-8 right-4 top-0 cursor-pointer"
                         @click="isSettingsModalOpen = true"
                     />
             </span>
-            
+
             <BridgeSwapSelectionCard
                 :value="sourceTokenAmount"
                 :is-origin="true"
@@ -72,7 +72,7 @@ const emits = defineEmits<{
             :disabled="isExecuteButtonDisabled"
             :on-click="() => emits('execute-transaction')"
         />
-        <ModalSettings 
+        <ModalSettings
         :is-open="isSettingsModalOpen"
         @close-modal="isSettingsModalOpen = false"
         />

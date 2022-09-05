@@ -12,6 +12,7 @@ export const useRoutesStore = defineStore('routes', {
         selectedRoute: 0,
         slippageValue: '2',
         gasPriority: 'medium',
+        receiverAddress: ''
     }),
     getters: {
         getSelectedRoute(): Route {
@@ -23,6 +24,9 @@ export const useRoutesStore = defineStore('routes', {
         getGasPriority(): string {
             return this.gasPriority
         },
+        getReceiverAddress(): string {
+            return this.receiverAddress
+        },
     },
     actions: {
         /**
@@ -32,16 +36,15 @@ export const useRoutesStore = defineStore('routes', {
         async quotePath(amount: string) {
             const tokensStore = useTokensStore()
             const web3Store = useWeb3Store()
-            const routesStore = useRoutesStore()
             this.routes = await SwidgeAPI.getQuote({
                 fromChainId: tokensStore.getOriginChainId,
                 srcToken: tokensStore.getOriginTokenAddress,
                 toChainId: tokensStore.getDestinationChainId,
                 dstToken: tokensStore.getDestinationTokenAddress,
                 amount: amount,
-                slippage: Number(routesStore.getSlippage),
+                slippage: Number(this.getSlippage),
                 senderAddress: web3Store.account || ethers.constants.AddressZero,
-                receiverAddress: web3Store.account || ethers.constants.AddressZero
+                receiverAddress: this.getReceiverAddress
             })
             this.selectRoute(0) // selects the top route
         },
@@ -85,7 +88,10 @@ export const useRoutesStore = defineStore('routes', {
          */
         setGasPriority(value: string) {
             this.gasPriority = value
-        }
+        },
+        setReceiverAddress(value: string) {
+            this.receiverAddress = value
+        },
     }
 })
 

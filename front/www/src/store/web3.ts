@@ -8,6 +8,7 @@ import { WalletConnect } from '@/domain/wallets/WalletConnect'
 import { Metamask } from '@/domain/wallets/Metamask'
 import { Networks } from '@/domain/chains/Networks'
 import { useTransactionStore } from '@/store/transaction'
+import { useRoutesStore } from '@/store/routes'
 
 export const NATIVE_COIN_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 
@@ -17,6 +18,7 @@ export const useWeb3Store = defineStore('web3', () => {
     const isCorrectNetwork = ref(true)
     const selectedNetworkId = ref('')
     const wallet = ref<IWallet | null>(null)
+    const routesStore = useRoutesStore()
 
     /**
      * entrypoint to connect a wallet
@@ -226,6 +228,7 @@ export const useWeb3Store = defineStore('web3', () => {
      */
     function onConnect(address: string) {
         account.value = address
+        routesStore.setReceiverAddress(address)
         isConnected.value = true
     }
 

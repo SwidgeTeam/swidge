@@ -48,7 +48,7 @@ export const useTransactionStore = defineStore('transaction', {
                 aggregatorId: route.aggregator.id,
                 routeId: route.aggregator.routeId,
                 senderAddress: web3Store.account,
-                receiverAddress: web3Store.account,
+                receiverAddress: routesStore.receiverAddress,
             })
         },
         /**
@@ -69,7 +69,7 @@ export const useTransactionStore = defineStore('transaction', {
                 amount: amount,
                 slippage: Number(routesStore.getSlippage),
                 senderAddress: web3Store.account,
-                receiverAddress: web3Store.account
+                receiverAddress: routesStore.receiverAddress
             })
             this.trackingId = txs.trackingId
             this.approvalTx = txs.approvalTx
@@ -86,7 +86,7 @@ export const useTransactionStore = defineStore('transaction', {
             swidgeApi.informExecutedTx({
                 aggregatorId: route.aggregator.id,
                 fromAddress: web3Store.account,
-                toAddress: web3Store.account,
+                toAddress: routesStore.receiverAddress,
                 txHash: this.txHash,
                 trackingId: this.trackingId,
             })
