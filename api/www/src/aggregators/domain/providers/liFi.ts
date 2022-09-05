@@ -18,6 +18,8 @@ import { RouteSteps } from '../../../shared/domain/route/route-steps';
 import { ExternalTransactionStatus, StatusCheckRequest, StatusCheckResponse, } from '../status-check';
 import { flatten } from '@nestjs/common';
 import { AggregatorMetadata } from '../../../shared/domain/metadata';
+import { ethers } from 'ethers';
+import { NATIVE_TOKEN_ADDRESS } from '../../../shared/enums/Natives';
 
 export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAggregator {
   private enabledChains = [];
@@ -56,7 +58,7 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
       tokens: flatten(Object.values(tokens.tokens)).map((token) => {
         return {
           chainId: token.chainId.toString(),
-          address: token.address,
+          address: this.getAddress(token.address),
           name: token.name,
           symbol: token.symbol,
           decimals: token.decimals,
@@ -65,6 +67,10 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
         };
       }),
     };
+  }
+
+  private getAddress(address: string): string {
+    return address === ethers.constants.AddressZero ? NATIVE_TOKEN_ADDRESS : address;
   }
 
   /**
