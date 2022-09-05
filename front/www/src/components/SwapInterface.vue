@@ -19,6 +19,7 @@ import ReloadIcon from '@/components/svg/ReloadIcon.vue'
 import ActionButton from '@/components/Buttons/ActionButton.vue'
 import FromToArrow from '@/components/Icons/FromToArrow.vue'
 import { IToken } from '@/domain/metadata/Metadata'
+import RecipientUserCard from '@/components/RecipientUserCard.vue'
 
 const web3Store = useWeb3Store()
 const tokensStore = useTokensStore()
@@ -387,7 +388,7 @@ const closeModalStatus = () => {
 </script>
 
 <template>
-    <div class="swap-interface">
+    <div class="flex flex-col gap-2 px-3 pb-2 w-full max-w-md rounded-xl md:bg-[#5A5564]/30">
         <div class="flex justify-end gap-2 py-2 h-[var(--settings-line-height)]">
             <ReloadIcon
                 class="w-5 h-5 cursor-pointer"
@@ -410,6 +411,7 @@ const closeModalStatus = () => {
                 @select-token="() => handleOpenTokenList(false)"
             />
         </div>
+        <RecipientUserCard/>
         <ActionButton
             :text="buttonLabel"
             :is-loading="isGettingQuote"

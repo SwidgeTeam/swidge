@@ -8,11 +8,12 @@
 @layer base {
     :root {
         --header-height: 3rem;
-        --settings-line-height: 2.25rem;
+        --settings-line-height: 1.75rem;
         --sending-line-height: 6.8rem;
         --arrow-line-height: 1.5rem;
         --receive-title-height: 0.75rem;
         --receive-selector-height: 4rem;
+        --recipient-address-height: 2.5rem;
         --main-action-button-height: 5.2rem;
         --footer-height: 4rem;
         --routes-box-height: calc(100vh
@@ -22,8 +23,10 @@
         + var(--arrow-line-height)
         + var(--receive-title-height)
         + var(--receive-selector-height)
+        + var(--recipient-address-height)
         + var(--main-action-button-height)
         + var(--footer-height)
+        + 1rem /* for the gaps */
         ))
     }
 
@@ -156,10 +159,6 @@
         --bg-color-from: #403C49;
         --bg-color-to: #403C49;
         @apply bg-gradient-border
-    }
-
-    .swap-interface {
-        @apply flex flex-col px-3 pb-2 w-full max-w-md rounded-xl md:bg-[#5A5564]/30
     }
 
     .sending-box {
