@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue'
 import { ethers, providers } from 'ethers'
 import { useWeb3Store } from '@/store/web3'
-import { useTokensStore } from '@/store/tokens'
+import { useMetadataStore } from '@/store/metadata'
 import { useRoutesStore } from '@/store/routes'
 import { useTransactionStore } from '@/store/transaction'
 import ModalNetworkAndTokenSelect from '@/components/Modals/ModalNetworkAndTokenSelect.vue'
@@ -22,7 +22,7 @@ import { IToken } from '@/domain/metadata/Metadata'
 import RecipientUserCard from '@/components/RecipientUserCard.vue'
 
 const web3Store = useWeb3Store()
-const tokensStore = useTokensStore()
+const tokensStore = useMetadataStore()
 const routesStore = useRoutesStore()
 const transactionStore = useTransactionStore()
 const toast = useToast()

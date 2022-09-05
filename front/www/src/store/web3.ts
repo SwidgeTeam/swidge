@@ -8,13 +8,13 @@ import { WalletConnect } from '@/domain/wallets/WalletConnect'
 import { Metamask } from '@/domain/wallets/Metamask'
 import { useTransactionStore } from '@/store/transaction'
 import { useRoutesStore } from '@/store/routes'
-import { useTokensStore } from '@/store/tokens'
+import { useMetadataStore } from '@/store/metadata'
 import { IChain } from '@/domain/metadata/Metadata'
 
 export const NATIVE_COIN_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 
 export const useWeb3Store = defineStore('web3', () => {
-    const metadataStore = useTokensStore()
+    const metadataStore = useMetadataStore()
     const routesStore = useRoutesStore()
     const account = ref('')
     const isConnected = ref(false)

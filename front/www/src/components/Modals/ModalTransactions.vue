@@ -6,12 +6,12 @@ import { Transaction } from '@/api/models/transactions'
 import { ethers } from 'ethers'
 import TransactionSplash from '../TransactionSplash.vue'
 import TransactionStatus from '../TransactionStatus.vue'
-import { useTokensStore } from '@/store/tokens'
+import { useMetadataStore } from '@/store/metadata'
 import Modal from '@/components/Modals/Modal.vue'
 import { IToken } from '@/domain/metadata/Metadata'
 
 const web3Store = useWeb3Store()
-const tokensStore = useTokensStore()
+const tokensStore = useMetadataStore()
 
 const props = defineProps({
     isOpen: {

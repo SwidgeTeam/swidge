@@ -2,7 +2,7 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 import SwidgeAPI from '@/api/swidge-api'
 import Route from '@/domain/paths/path'
 import { ethers } from 'ethers'
-import { useTokensStore } from '@/store/tokens'
+import { useMetadataStore } from '@/store/metadata'
 import { useWeb3Store } from '@/store/web3'
 import { useTransactionStore } from '@/store/transaction'
 
@@ -34,7 +34,7 @@ export const useRoutesStore = defineStore('routes', {
          * @param amount
          */
         async quotePath(amount: string) {
-            const tokensStore = useTokensStore()
+            const tokensStore = useMetadataStore()
             const web3Store = useWeb3Store()
             this.routes = await SwidgeAPI.getQuote({
                 fromChainId: tokensStore.getOriginChainId,

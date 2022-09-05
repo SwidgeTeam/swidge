@@ -1,8 +1,8 @@
 <script setup lang='ts'>
 import Modal from '@/components/Modals/Modal.vue'
-import { useTokensStore } from '@/store/tokens'
+import { useMetadataStore } from '@/store/metadata'
 
-const metadataStore = useTokensStore()
+const metadataStore = useMetadataStore()
 
 defineProps<{
     isOpen: boolean

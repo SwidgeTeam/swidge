@@ -3,9 +3,9 @@ import { ChevronDownIcon } from '@heroicons/vue/outline'
 import TokenLogo from '@/components/Icons/TokenLogo.vue'
 import ChainLogo from '@/components/Icons/ChainLogo.vue'
 import { IToken } from '@/domain/metadata/Metadata'
-import { useTokensStore } from '@/store/tokens'
+import { useMetadataStore } from '@/store/metadata'
 
-const metadataStore = useTokensStore()
+const metadataStore = useMetadataStore()
 
 const props = defineProps<{
     isOrigin: boolean

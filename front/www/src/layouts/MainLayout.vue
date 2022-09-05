@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { tryOnBeforeMount } from '@vueuse/core'
-import { useTokensStore } from '@/store/tokens'
+import { useMetadataStore } from '@/store/metadata'
 import { useWeb3Store } from '@/store/web3'
 import Header from '@/components/Header.vue'
 import QuestionMark from '@/components/svg/QuestionMark.vue'
 import ModalFaq from '@/components/Modals/ModalFaq.vue'
 
-const { fetchMetadata } = useTokensStore()
+const { fetchMetadata } = useMetadataStore()
 const web3Store = useWeb3Store()
 const isFaqOpen = ref(false)
 

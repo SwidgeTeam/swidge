@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import RouteCard from '@/components/RoutesCard.vue'
 import RouteMother from '../store/routes.mother'
 import { createTestingPinia, TestingPinia } from '@pinia/testing'
-import { useTokensStore } from '@/store/tokens'
+import { useMetadataStore } from '@/store/metadata'
 import { TokensMother } from '../store/tokens.mother'
 import Route from '@/domain/paths/path'
 import { setActivePinia, getActivePinia } from 'pinia'
@@ -43,7 +43,7 @@ describe('route card', function () {
 })
 
 function prepareTokenStore() {
-    const tokensStore = useTokensStore()
+    const tokensStore = useMetadataStore()
     tokensStore.tokens = TokensMother.list()
     tokensStore.originChainId = '250'
     tokensStore.originTokenAddress = '0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83'

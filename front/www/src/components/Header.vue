@@ -11,11 +11,11 @@ import TransactionsButton from './Buttons/TransactionsButton.vue'
 import ModalTransactions from './Modals/ModalTransactions.vue'
 import ModalWallets from '@/components/Modals/ModalWallets.vue'
 import { Wallet } from '@/domain/wallets/IWallet'
-import { useTokensStore } from '@/store/tokens'
+import { useMetadataStore } from '@/store/metadata'
 import SwidgeLogoNoText from '@/components/svg/SwidgeLogoNoText.vue'
 
 const web3Store = useWeb3Store()
-const tokensStore = useTokensStore()
+const tokensStore = useMetadataStore()
 const { account, isConnected, isCorrectNetwork, selectedNetworkId } = storeToRefs(web3Store)
 
 const isNetworkModalOpen = ref(false)

@@ -1,6 +1,6 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { ApprovalTransactionDetails, TransactionDetails } from '@/domain/paths/path'
-import { useTokensStore } from '@/store/tokens'
+import { useMetadataStore } from '@/store/metadata'
 import { useWeb3Store } from '@/store/web3'
 import swidgeApi from '@/api/swidge-api'
 import { useRoutesStore } from '@/store/routes'
@@ -56,7 +56,7 @@ export const useTransactionStore = defineStore('transaction', {
          * @param amount
          */
         async fetchBothTxs(amount: string) {
-            const tokensStore = useTokensStore()
+            const tokensStore = useMetadataStore()
             const web3Store = useWeb3Store()
             const routesStore = useRoutesStore()
             const route = routesStore.getSelectedRoute
@@ -97,7 +97,7 @@ export const useTransactionStore = defineStore('transaction', {
         startCheckingStatus: function () {
             this.statusCheckInterval = window.setInterval(() => {
                 const routesStore = useRoutesStore()
-                const tokensStore = useTokensStore()
+                const tokensStore = useMetadataStore()
                 const route = routesStore.getSelectedRoute
                 swidgeApi.checkTxStatus({
                     aggregatorId: route.aggregator.id,

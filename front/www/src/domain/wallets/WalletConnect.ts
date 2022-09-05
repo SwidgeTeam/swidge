@@ -3,7 +3,7 @@ import { ExternalProvider } from '@ethersproject/providers'
 import WalletConnectProvider from '@walletconnect/web3-provider'
 import { IRPCMap } from '@walletconnect/types'
 import { IChain } from '@/domain/metadata/Metadata'
-import { useTokensStore } from '@/store/tokens'
+import { useMetadataStore } from '@/store/metadata'
 
 export class WalletConnect implements IWallet {
     private readonly callbacks: WalletEvents
@@ -11,7 +11,7 @@ export class WalletConnect implements IWallet {
 
     constructor(callbacks: WalletEvents) {
         const rpc: IRPCMap = {}
-        for (const network of useTokensStore().getChains) {
+        for (const network of useMetadataStore().getChains) {
             rpc[Number(network.id)] = network.rpcUrls[0]
         }
         this.provider = new WalletConnectProvider({

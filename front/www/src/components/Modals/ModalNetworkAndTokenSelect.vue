@@ -5,13 +5,13 @@ import NetworkLineSelector from '../NetworkLineSelector.vue'
 import SelectTokenList from '../SelectTokenList.vue'
 import Modal from '@/components/Modals/Modal.vue'
 import { ethers } from 'ethers'
-import { useTokensStore } from '@/store/tokens'
+import { useMetadataStore } from '@/store/metadata'
 import IERC20Abi from '@/contracts/IERC20.json'
 import ModalImportToken from '@/components/Modals/ModalImportToken.vue'
 import { debounce } from 'lodash'
 import { IChain, IToken } from '@/domain/metadata/Metadata'
 
-const tokensStore = useTokensStore()
+const tokensStore = useMetadataStore()
 
 defineProps<{
     isModalOpen: boolean

@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { useWeb3Store } from '@/store/web3'
 import { storeToRefs } from 'pinia'
-import { useTokensStore } from '@/store/tokens'
+import { useMetadataStore } from '@/store/metadata'
 import { useRoutesStore } from '@/store/routes'
 import { ethers } from 'ethers'
 
 const web3Store = useWeb3Store()
 const routesStore = useRoutesStore()
-const tokensStore = useTokensStore()
+const tokensStore = useMetadataStore()
 const { isConnected } = storeToRefs(web3Store)
 const { receiverAddress } = storeToRefs(routesStore)
 

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { useTokensStore } from '@/store/tokens'
+import { useMetadataStore } from '@/store/metadata'
 import AssetButtonSelected from '@/components/Buttons/AssetButtonSelected.vue'
 import AssetButtonUnselected from '@/components/Buttons/AssetButtonUnselected.vue'
 import { IToken } from '@/domain/metadata/Metadata'
 
-const tokensStore = useTokensStore()
+const tokensStore = useMetadataStore()
 
 const props = defineProps<{
     isOrigin: boolean

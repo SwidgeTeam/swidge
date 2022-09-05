@@ -5,7 +5,7 @@ import { IChain, IToken } from '@/domain/metadata/Metadata'
 
 const CUSTOM_TOKENS_STORAGE_KEY = 'custom-tokens'
 
-export const useTokensStore = defineStore('tokens', {
+export const useMetadataStore = defineStore('metadata', {
     state: () => ({
         tokens: [] as IToken[],
         chains: [] as IChain[],
@@ -268,4 +268,4 @@ function setCustomTokens(customTokens: IToken[]) {
 }
 
 if (import.meta.hot)
-    import.meta.hot.accept(acceptHMRUpdate(useTokensStore, import.meta.hot))
+    import.meta.hot.accept(acceptHMRUpdate(useMetadataStore, import.meta.hot))
