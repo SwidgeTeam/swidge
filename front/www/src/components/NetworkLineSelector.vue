@@ -30,9 +30,7 @@ const onSelect = (id: string) => {
             @click="onSelect(network.id)">
             <img
                 :src="network.logo"
-                class="rounded-full"
-                width="36"
-                height="36"
+                class="rounded-full h-8 sm:h-10"
                 :alt="network.name"/>
         </button>
     </div>
