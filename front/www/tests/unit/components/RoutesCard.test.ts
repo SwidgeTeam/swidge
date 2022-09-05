@@ -6,6 +6,7 @@ import { useMetadataStore } from '@/store/metadata'
 import { TokensMother } from '../store/tokens.mother'
 import Route from '@/domain/paths/path'
 import { setActivePinia, getActivePinia } from 'pinia'
+import { useRoutesStore } from '@/store/routes'
 
 describe('route card', function () {
     beforeEach(() => {
@@ -43,13 +44,13 @@ describe('route card', function () {
 })
 
 function prepareTokenStore() {
-    const tokensStore = useMetadataStore()
-    tokensStore.tokens = TokensMother.list()
-    tokensStore.originChainId = '250'
-    tokensStore.originTokenAddress = '0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83'
-    tokensStore.destinationChainId = '137'
-    tokensStore.destinationTokenAddress = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
-    return tokensStore
+    const metadataStore = useMetadataStore()
+    const routesStore = useRoutesStore()
+    metadataStore.tokens = TokensMother.list()
+    routesStore.originChainId = '250'
+    routesStore.originTokenAddress = '0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83'
+    routesStore.destinationChainId = '137'
+    routesStore.destinationTokenAddress = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 }
 
 function mountRouteWith(route: Route) {
