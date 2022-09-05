@@ -69,12 +69,15 @@ const address = () => {
             maxlength="79"
             @change="onAccountChange"
             @focusout="onFocusOut"
-            @focus="$event.target.select()"
+            @focus="(event) => {
+                if (!(event.target instanceof HTMLInputElement)) return
+                event.target.select()
+            }"
         />
         <button
             class="w-full flex justify-between text-xs sm:text-sm py-3 px-3 "
             :class="{'hidden' : isFocused}"
-            @click="onFocusIn($refs.inputReceiverAddress)"
+            @click="onFocusIn()"
         >
             <span class="text-slate-300">Receiver address</span>
             <span>{{ address() }}</span>
