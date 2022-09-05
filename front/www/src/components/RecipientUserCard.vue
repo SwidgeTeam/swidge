@@ -42,6 +42,11 @@ const onFocusOut = () => {
     }
 }
 
+const onInputFocus = (event: Event) => {
+    if (!(event.target instanceof HTMLInputElement)) return
+    event.target.select()
+}
+
 const address = () => {
     return new Address(receiverAddress.value).shortFormat()
 }
@@ -69,10 +74,7 @@ const address = () => {
             maxlength="79"
             @change="onAccountChange"
             @focusout="onFocusOut"
-            @focus="(event) => {
-                if (!(event.target instanceof HTMLInputElement)) return
-                event.target.select()
-            }"
+            @focusin="onInputFocus"
         />
         <button
             class="w-full flex justify-between text-xs sm:text-sm py-3 px-3 "
