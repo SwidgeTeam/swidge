@@ -35,7 +35,11 @@ const onFocusIn = () => {
 }
 
 const onFocusOut = () => {
-    isFocused.value = false
+    if (routesStore.isValidReceiverAddress) {
+        isFocused.value = false
+    } else {
+        onFocusIn()
+    }
 }
 
 const address = () => {
@@ -45,37 +49,35 @@ const address = () => {
 
 <template>
     <div
-        class="flex align-center justify-center h-[var(--recipient-address-height)] px-4 border-[#626060]/40 border rounded-xl">
-        <div v-if="isConnected" class="flex w-full">
-            <div class="self-center">
-                <RedCross v-if="!routesStore.isValidReceiverAddress" class="h-5 w-6"/>
-                <img
-                    v-else-if="routesStore.getDestinationChainId"
-                    :src="getChainLogo()"
-                    class="rounded-full h-5 w-6"
-                    alt="chain logo"/>
-            </div>
-            <input
-                ref="inputReceiverAddress"
-                type="text"
-                class="w-full py-3 bg-transparent text-xs sm:text-sm text-center border-none outline-none appearance-none focus:border-transparent focus:ring-0 truncate"
-                :class="{'hidden' : !isFocused}"
-                :value="receiverAddress"
-                minlength="1"
-                maxlength="79"
-                @change="onAccountChange"
-                @focusout="onFocusOut"
-                @focus="$event.target.select()"
-            />
-            <button
-                class="w-full flex justify-between text-xs sm:text-sm py-2 px-3 "
-                :class="{'hidden' : isFocused}"
-                @click="onFocusIn($refs.inputReceiverAddress)"
-            >
-                <span class="text-slate-300">Receiver address</span>
-                <span>{{ address() }}</span>
-            </button>
+        v-if="isConnected"
+        class="flex w-full align-center justify-center h-[var(--recipient-address-height)] px-4 border-[#626060]/40 border rounded-xl">
+        <div class="self-center">
+            <RedCross v-if="!routesStore.isValidReceiverAddress" class="h-5 w-6"/>
+            <img
+                v-else-if="routesStore.getDestinationChainId"
+                :src="getChainLogo()"
+                class="rounded-full h-5 w-6"
+                alt="chain logo"/>
         </div>
-        <span v-else class="py-3 text-xs sm:text-sm">Recipient Address</span>
+        <input
+            ref="inputReceiverAddress"
+            type="text"
+            class="w-full py-3 bg-transparent text-xs sm:text-sm text-center border-none outline-none appearance-none focus:border-transparent focus:ring-0 truncate"
+            :class="{'hidden' : !isFocused}"
+            :value="receiverAddress"
+            minlength="1"
+            maxlength="79"
+            @change="onAccountChange"
+            @focusout="onFocusOut"
+            @focus="$event.target.select()"
+        />
+        <button
+            class="w-full flex justify-between text-xs sm:text-sm py-3 px-3 "
+            :class="{'hidden' : isFocused}"
+            @click="onFocusIn($refs.inputReceiverAddress)"
+        >
+            <span class="text-slate-300">Receiver address</span>
+            <span>{{ address() }}</span>
+        </button>
     </div>
 </template>
