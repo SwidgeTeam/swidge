@@ -40,7 +40,9 @@ const isExecutingTransaction = ref<boolean>(false)
 
 const buttonLabel = computed({
     get: () => {
-        if (showTransactionAlert.value) {
+        if (!web3Store.isConnected) {
+            return 'Connect wallet'
+        } else if (showTransactionAlert.value) {
             return transactionAlertMessage.value
         } else if (isExecutingTransaction.value) {
             return 'Executing'
