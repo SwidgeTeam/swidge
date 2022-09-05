@@ -1,15 +1,19 @@
 <script setup lang="ts">
-import { useWeb3Store } from '@/store/web3'
+import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useWeb3Store } from '@/store/web3'
 import { useMetadataStore } from '@/store/metadata'
 import { useRoutesStore } from '@/store/routes'
-import { ethers } from 'ethers'
+import RedCross from '@/components/svg/RedCross.vue'
+import Address from '@/domain/shared/address'
 
 const web3Store = useWeb3Store()
 const routesStore = useRoutesStore()
 const metadataStore = useMetadataStore()
 const { isConnected } = storeToRefs(web3Store)
 const { receiverAddress } = storeToRefs(routesStore)
+const isFocused = ref<boolean>(false)
+const inputReceiverAddress = ref<any | null>(null)
 
 const getChainLogo = (): string => {
     const chainId = routesStore.getDestinationChainId
@@ -20,51 +24,57 @@ const getChainLogo = (): string => {
 const onAccountChange = (event: Event) => {
     if (!(event.target instanceof HTMLInputElement)) return
     const value = event.target.value.toLowerCase().trim()
-    if (isValidAddress(value)) {
-        console.log('valid')
-        routesStore.setReceiverAddress(value)
-    }
-    else {
-        // todo
-    }
+    routesStore.setReceiverAddress(value)
+}
+
+const onFocusIn = () => {
+    isFocused.value = true
+    setTimeout(() => {
+        inputReceiverAddress.value.focus()
+    }, 0)
 }
 
 const onFocusOut = () => {
-    console.log('out')
+    isFocused.value = false
 }
 
-const isValidAddress = (string: string) => {
-    try {
-        ethers.utils.getAddress(string)
-        return true
-    } catch (e) {
-        // not an address, just a term
-        return false
-    }
+const address = () => {
+    return new Address(receiverAddress.value).shortFormat()
 }
 </script>
 
 <template>
     <div
-        class="flex align-center justify-center h-[var(--recipient-address-height)] px-4 border-[#626060]/40 border rounded-2xl">
+        class="flex align-center justify-center h-[var(--recipient-address-height)] px-4 border-[#626060]/40 border rounded-xl">
         <div v-if="isConnected" class="flex w-full">
-            <div v-if="routesStore.getDestinationChainId" class="self-center">
+            <div class="self-center">
+                <RedCross v-if="!routesStore.isValidReceiverAddress" class="h-5 w-6"/>
                 <img
+                    v-else-if="routesStore.getDestinationChainId"
                     :src="getChainLogo()"
-                    class="rounded-full"
-                    width="24"
-                    height="24"
+                    class="rounded-full h-5 w-6"
                     alt="chain logo"/>
             </div>
             <input
+                ref="inputReceiverAddress"
                 type="text"
                 class="w-full py-3 bg-transparent text-xs sm:text-sm text-center border-none outline-none appearance-none focus:border-transparent focus:ring-0 truncate"
+                :class="{'hidden' : !isFocused}"
                 :value="receiverAddress"
                 minlength="1"
                 maxlength="79"
                 @change="onAccountChange"
                 @focusout="onFocusOut"
+                @focus="$event.target.select()"
             />
+            <button
+                class="w-full flex justify-between text-xs sm:text-sm py-2 px-3 "
+                :class="{'hidden' : isFocused}"
+                @click="onFocusIn($refs.inputReceiverAddress)"
+            >
+                <span class="text-slate-300">Receiver address</span>
+                <span>{{ address() }}</span>
+            </button>
         </div>
         <span v-else class="py-3 text-xs sm:text-sm">Recipient Address</span>
     </div>

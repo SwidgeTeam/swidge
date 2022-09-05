@@ -1,5 +1,6 @@
 <script setup lang='ts'>
 import WalletIcon from '@/components/svg/WalletIcon.vue'
+import Address from '@/domain/shared/address'
 
 defineProps<{
     address: string
@@ -10,11 +11,11 @@ const emits = defineEmits<{
 }>()
 
 const createShortAddress = (address: string): string => {
-    return address.substring(0, 6) + '...' + address.substring(address.length - 4)
+    return new Address(address).shortFormat()
 }
 
 const createShorterAddress = (address: string): string => {
-    return address.substring(0, 6) + '...'
+    return new Address(address).extraShortFormat()
 }
 
 </script>

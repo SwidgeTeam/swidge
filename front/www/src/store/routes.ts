@@ -116,6 +116,18 @@ export const useRoutesStore = defineStore('routes', {
         getReceiverAddress(): string {
             return this.receiverAddress
         },
+        /**
+         * checks if the receiver is a valid address
+         */
+        isValidReceiverAddress(): boolean {
+            try {
+                ethers.utils.getAddress(this.receiverAddress)
+                return true
+            } catch (e) {
+                // not an address, just a term
+                return false
+            }
+        }
     },
     actions: {
         /**

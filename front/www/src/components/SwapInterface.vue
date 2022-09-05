@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watchEffect } from 'vue'
 import { ethers, providers } from 'ethers'
 import { useWeb3Store } from '@/store/web3'
 import { useRoutesStore } from '@/store/routes'
@@ -64,6 +64,15 @@ const unsetButtonAlert = () => {
     transactionAlertMessage.value = ''
     showTransactionAlert.value = false
 }
+
+watchEffect(() => {
+    if (!routesStore.isValidReceiverAddress) {
+        setButtonAlert('Invalid receiver')
+    }
+    else {
+        unsetButtonAlert()
+    }
+})
 
 /**
  * Decides if should quote for a possible path
@@ -213,6 +222,11 @@ const onExecuteTransaction = async () => {
     const route = routesStore.getSelectedRoute
     if (!route) {
         throw new Error('No route')
+    }
+    if (!routesStore.isValidReceiverAddress) {
+        // should never happen because button should be disabled
+        // but better safe than sorry
+        throw new Error('Invalid receiver address')
     }
 
     setExecutingButton()
