@@ -17,7 +17,7 @@ export const useRoutesStore = defineStore('routes', {
         selectedRoute: 0,
         slippageValue: '2',
         gasPriority: 'medium',
-        receiverAddress: ''
+        receiverAddress: ethers.constants.AddressZero
     }),
     getters: {
         /**

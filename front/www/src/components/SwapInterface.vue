@@ -71,6 +71,12 @@ watchEffect(() => {
     }
 })
 
+watchEffect(() => {
+    if (web3Store.isConnected) {
+        onQuote()
+    }
+})
+
 /**
  * Decides if should quote for a possible path
  */
