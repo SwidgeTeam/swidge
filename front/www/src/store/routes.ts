@@ -2,28 +2,117 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 import SwidgeAPI from '@/api/swidge-api'
 import Route from '@/domain/paths/path'
 import { ethers } from 'ethers'
-import { useMetadataStore } from '@/store/metadata'
 import { useWeb3Store } from '@/store/web3'
 import { useTransactionStore } from '@/store/transaction'
+import { useMetadataStore } from '@/store/metadata'
+import { IToken } from '@/domain/metadata/Metadata'
 
 export const useRoutesStore = defineStore('routes', {
     state: () => ({
         routes: [] as Route[],
+        originChainId: '',
+        originTokenAddress: '',
+        destinationChainId: '',
+        destinationTokenAddress: '',
         selectedRoute: 0,
         slippageValue: '2',
         gasPriority: 'medium',
         receiverAddress: ''
     }),
     getters: {
+        /**
+         * Returns the selected origin chain ID
+         */
+        getOriginChainId(): string {
+            return this.originChainId
+        },
+        /**
+         * Returns the selected destination chain ID
+         */
+        getDestinationChainId(): string {
+            return this.destinationChainId
+        },
+        /**
+         * Returns the selected origin token address
+         */
+        getOriginTokenAddress(): string {
+            return this.originTokenAddress
+        },
+        /**
+         * Returns the selected destination token address
+         */
+        getDestinationTokenAddress(): string {
+            return this.destinationTokenAddress
+        },
+        /**
+         * Returns whether both tokens are selected
+         */
+        bothTokensSelected(): boolean {
+            return (
+                this.originChainId !== '' &&
+                this.originTokenAddress !== '' &&
+                this.destinationChainId !== '' &&
+                this.destinationTokenAddress !== ''
+            )
+        },
+
+        /**
+         * Returns the selected origin token object
+         */
+        getOriginToken() {
+            return (): IToken | undefined => {
+                const metadataStore = useMetadataStore()
+                return metadataStore.tokens
+                    .find(token => {
+                        return (
+                            token.chainId === this.originChainId &&
+                            token.address === this.originTokenAddress
+                        )
+                    })
+            }
+        },
+        /**
+         * Returns the selected destination token object
+         */
+        getDestinationToken() {
+            return (): IToken | undefined => {
+                const metadataStore = useMetadataStore()
+                return metadataStore.tokens
+                    .find(token => {
+                        return (
+                            token.chainId === this.destinationChainId &&
+                            token.address === this.destinationTokenAddress
+                        )
+                    })
+            }
+        },
+        /**
+         * Returns whether the tokens belong to the same chain
+         */
+        sameChainAssets(): boolean {
+            return this.originChainId === this.destinationChainId
+        },
+        /**
+         * returns the currently selected route
+         */
         getSelectedRoute(): Route {
             return this.routes[this.selectedRoute]
         },
+        /**
+         * returns the selected slippage
+         */
         getSlippage(): string {
             return this.slippageValue
         },
+        /**
+         * returns the selected gas priority
+         */
         getGasPriority(): string {
             return this.gasPriority
         },
+        /**
+         * returns the receiver address
+         */
         getReceiverAddress(): string {
             return this.receiverAddress
         },
@@ -34,13 +123,12 @@ export const useRoutesStore = defineStore('routes', {
          * @param amount
          */
         async quotePath(amount: string) {
-            const tokensStore = useMetadataStore()
             const web3Store = useWeb3Store()
             this.routes = await SwidgeAPI.getQuote({
-                fromChainId: tokensStore.getOriginChainId,
-                srcToken: tokensStore.getOriginTokenAddress,
-                toChainId: tokensStore.getDestinationChainId,
-                dstToken: tokensStore.getDestinationTokenAddress,
+                fromChainId: this.originChainId,
+                srcToken: this.originTokenAddress,
+                toChainId: this.destinationChainId,
+                dstToken: this.destinationTokenAddress,
                 amount: amount,
                 slippage: Number(this.getSlippage),
                 senderAddress: web3Store.account || ethers.constants.AddressZero,
@@ -76,6 +164,46 @@ export const useRoutesStore = defineStore('routes', {
             this.routes[this.selectedRoute].completed = true
         },
         /**
+         * Sets a specific token as selected on origin
+         * @param chainId
+         * @param address
+         */
+        selectOriginToken(chainId: string, address: string) {
+            this.originChainId = chainId
+            this.originTokenAddress = address
+        },
+        /**
+         * Selects a specific token as selected on destination
+         * @param chainId
+         * @param address
+         */
+        selectDestinationToken(chainId: string, address: string) {
+            this.destinationChainId = chainId
+            this.destinationTokenAddress = address
+        },
+        /**
+         * Switches origin and destination tokens one for the other
+         */
+        switchTokens() {
+            const auxChainId = this.originChainId
+            const auxAddress = this.originTokenAddress
+
+            this.originChainId = this.destinationChainId
+            this.originTokenAddress = this.destinationTokenAddress
+
+            this.destinationChainId = auxChainId
+            this.destinationTokenAddress = auxAddress
+        },
+        /**
+         * Reset token selection
+         */
+        resetSelection() {
+            this.originChainId = ''
+            this.originTokenAddress = ''
+            this.destinationChainId = ''
+            this.destinationTokenAddress = ''
+        },
+        /**
          * sets slippage
          * @param value
          */
@@ -89,6 +217,10 @@ export const useRoutesStore = defineStore('routes', {
         setGasPriority(value: string) {
             this.gasPriority = value
         },
+        /**
+         * sets an address as a receiver
+         * @param value
+         */
         setReceiverAddress(value: string) {
             this.receiverAddress = value
         },

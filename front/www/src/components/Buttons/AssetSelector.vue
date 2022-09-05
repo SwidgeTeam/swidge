@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { useMetadataStore } from '@/store/metadata'
 import AssetButtonSelected from '@/components/Buttons/AssetButtonSelected.vue'
 import AssetButtonUnselected from '@/components/Buttons/AssetButtonUnselected.vue'
 import { IToken } from '@/domain/metadata/Metadata'
+import { useRoutesStore } from '@/store/routes'
 
-const tokensStore = useMetadataStore()
+const routesStore = useRoutesStore()
 
 const props = defineProps<{
     isOrigin: boolean
@@ -16,9 +16,9 @@ const emits = defineEmits<{
 
 const getToken = () => {
     if (props.isOrigin) {
-        return tokensStore.getOriginToken() as IToken
+        return routesStore.getOriginToken() as IToken
     } else {
-        return tokensStore.getDestinationToken() as IToken
+        return routesStore.getDestinationToken() as IToken
     }
 }
 </script>

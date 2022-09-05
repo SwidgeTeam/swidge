@@ -7,13 +7,13 @@ import { ethers } from 'ethers'
 
 const web3Store = useWeb3Store()
 const routesStore = useRoutesStore()
-const tokensStore = useMetadataStore()
+const metadataStore = useMetadataStore()
 const { isConnected } = storeToRefs(web3Store)
 const { receiverAddress } = storeToRefs(routesStore)
 
 const getChainLogo = (): string => {
-    const chainId = tokensStore.getDestinationChainId
-    const chain = tokensStore.getChain(chainId)
+    const chainId = routesStore.getDestinationChainId
+    const chain = metadataStore.getChain(chainId)
     return chain.logo
 }
 
@@ -48,7 +48,7 @@ const isValidAddress = (string: string) => {
     <div
         class="flex align-center justify-center h-[var(--recipient-address-height)] px-4 border-[#626060]/40 border rounded-2xl">
         <div v-if="isConnected" class="flex w-full">
-            <div v-if="tokensStore.getDestinationChainId" class="self-center">
+            <div v-if="routesStore.getDestinationChainId" class="self-center">
                 <img
                     :src="getChainLogo()"
                     class="rounded-full"

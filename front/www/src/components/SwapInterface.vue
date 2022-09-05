@@ -2,7 +2,6 @@
 import { ref, computed } from 'vue'
 import { ethers, providers } from 'ethers'
 import { useWeb3Store } from '@/store/web3'
-import { useMetadataStore } from '@/store/metadata'
 import { useRoutesStore } from '@/store/routes'
 import { useTransactionStore } from '@/store/transaction'
 import ModalNetworkAndTokenSelect from '@/components/Modals/ModalNetworkAndTokenSelect.vue'
@@ -22,7 +21,6 @@ import { IToken } from '@/domain/metadata/Metadata'
 import RecipientUserCard from '@/components/RecipientUserCard.vue'
 
 const web3Store = useWeb3Store()
-const tokensStore = useMetadataStore()
 const routesStore = useRoutesStore()
 const transactionStore = useTransactionStore()
 const toast = useToast()
@@ -72,7 +70,7 @@ const unsetButtonAlert = () => {
  */
 const shouldQuote = () => {
     return (
-        tokensStore.bothTokensSelected &&
+        routesStore.bothTokensSelected &&
         Number(sourceTokenAmount.value) !== 0
     )
 }
@@ -100,10 +98,10 @@ const handleOpenTokenList = (isSource: boolean) => {
  * @param token
  */
 const handleUpdateTokenFromModal = (token: IToken) => {
-    const selectedOriginChainId = tokensStore.getOriginChainId
-    const selectedDestinationChainId = tokensStore.getDestinationChainId
-    const selectedOriginTokenAddress = tokensStore.getOriginTokenAddress
-    const selectedDestinationTokenAddress = tokensStore.getDestinationTokenAddress
+    const selectedOriginChainId = routesStore.getOriginChainId
+    const selectedDestinationChainId = routesStore.getDestinationChainId
+    const selectedOriginTokenAddress = routesStore.getOriginTokenAddress
+    const selectedDestinationTokenAddress = routesStore.getDestinationTokenAddress
 
     if (isSourceChainToken.value) {
         // If the origin network is being chosen
@@ -125,7 +123,7 @@ const handleUpdateTokenFromModal = (token: IToken) => {
             switchHandlerFunction()
         } else {
             // Update token details
-            tokensStore.selectDestinationToken(token.chainId, token.address)
+            routesStore.selectDestinationToken(token.chainId, token.address)
         }
     }
 
@@ -143,11 +141,11 @@ const handleUpdateTokenFromModal = (token: IToken) => {
  * @param token
  */
 const updateOriginToken = async (token: IToken) => {
-    const originTokenAddress = tokensStore.getOriginTokenAddress
+    const originTokenAddress = routesStore.getOriginTokenAddress
     // If user selected a different token, update
     if (originTokenAddress !== token.address) {
         // Update token details
-        tokensStore.selectOriginToken(token.chainId, token.address)
+        routesStore.selectOriginToken(token.chainId, token.address)
         // Reset amount
         sourceTokenAmount.value = ''
         // Check user's token balance
@@ -167,7 +165,7 @@ const updateTokenBalance = async (address: string) => {
  * Sets the transition variable switchDestinationChain to Current source Chain info
  */
 const switchHandlerFunction = () => {
-    tokensStore.switchTokens()
+    routesStore.switchTokens()
     sourceTokenAmount.value = ''
     isExecuteButtonDisabled.value = true
 }
@@ -176,7 +174,7 @@ const switchHandlerFunction = () => {
  * Quotes the possible path for a given pair and amount
  */
 const onQuote = async () => {
-    if (!tokensStore.bothTokensSelected) {
+    if (!routesStore.bothTokensSelected) {
         return
     }
     unsetButtonAlert()
@@ -324,7 +322,7 @@ const onInitialTxCompleted = (route: Route, txHash: TxHash) => {
  * @param executedTxHash
  */
 const setUpEventListener = (tx: TransactionDetails, executedTxHash: string) => {
-    const toChainId = tokensStore.getDestinationChainId
+    const toChainId = routesStore.getDestinationChainId
     const provider = getChainProvider(toChainId)
 
     const filter = {
@@ -348,7 +346,7 @@ const setUpEventListener = (tx: TransactionDetails, executedTxHash: string) => {
 }
 
 const isCrossTransaction = () => {
-    return !tokensStore.sameChainAssets
+    return !routesStore.sameChainAssets
 }
 
 /**

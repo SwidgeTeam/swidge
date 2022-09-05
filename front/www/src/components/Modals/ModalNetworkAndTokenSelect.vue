@@ -11,7 +11,7 @@ import ModalImportToken from '@/components/Modals/ModalImportToken.vue'
 import { debounce } from 'lodash'
 import { IChain, IToken } from '@/domain/metadata/Metadata'
 
-const tokensStore = useMetadataStore()
+const metadataStore = useMetadataStore()
 
 defineProps<{
     isModalOpen: boolean
@@ -32,7 +32,7 @@ const isImportModalOpen = ref<boolean>(false)
 const selectedTokenToImport = ref<IToken | null>(null)
 
 const getNetworks = () => {
-    return tokensStore.getChains
+    return metadataStore.getChains
 }
 
 /**
@@ -61,7 +61,7 @@ const handleSelectTokenToImport = (token: IToken) => {
 const handleImportToken = () => {
     if (selectedTokenToImport.value) {
         const token = selectedTokenToImport.value
-        tokensStore.importToken(token)
+        metadataStore.importToken(token)
         handleSetToken(token)
         selectedTokenToImport.value = null
     }
@@ -189,7 +189,7 @@ const showCustomTokens = () => {
  * Checks if an address exists on the list
  */
 const existsAddressOnList = (): boolean => {
-    const tokens = tokensStore.getTokensByAddress(searchTerm.value)
+    const tokens = metadataStore.getTokensByAddress(searchTerm.value)
     return tokens ? tokens.length > 0 : false
 }
 
@@ -205,10 +205,10 @@ const filteredTokens = () => {
 
     if (selectedNetworkId.value) {
         // If there's a selected network, get only the chain's tokens
-        tokens = tokensStore.getChainTokens(selectedNetworkId.value)
+        tokens = metadataStore.getChainTokens(selectedNetworkId.value)
     } else {
         // Otherwise get them all
-        tokens = tokensStore.getTokens
+        tokens = metadataStore.getTokens
     }
 
     const pattern = searchTerm.value.toLowerCase().trim()

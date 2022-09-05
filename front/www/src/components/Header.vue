@@ -13,9 +13,11 @@ import ModalWallets from '@/components/Modals/ModalWallets.vue'
 import { Wallet } from '@/domain/wallets/IWallet'
 import { useMetadataStore } from '@/store/metadata'
 import SwidgeLogoNoText from '@/components/svg/SwidgeLogoNoText.vue'
+import { useRoutesStore } from '@/store/routes'
 
 const web3Store = useWeb3Store()
-const tokensStore = useMetadataStore()
+const metadataStore = useMetadataStore()
+const routesStore = useRoutesStore()
 const { account, isConnected, isCorrectNetwork, selectedNetworkId } = storeToRefs(web3Store)
 
 const isNetworkModalOpen = ref(false)
@@ -26,7 +28,7 @@ const changeNetwork = (chainId: string) => {
     web3Store.switchToNetwork(chainId)
         .then(() => {
             isNetworkModalOpen.value = false
-            tokensStore.resetSelection()
+            routesStore.resetSelection()
         })
 }
 
@@ -47,7 +49,7 @@ const chainName = computed({
         if (!selectedNetworkId.value) {
             return ''
         }
-        const chain = tokensStore.getChain(selectedNetworkId.value)
+        const chain = metadataStore.getChain(selectedNetworkId.value)
         return chain.name
     },
     set: () => null
@@ -58,7 +60,7 @@ const chainIcon = computed({
         if (!selectedNetworkId.value) {
             return ''
         }
-        const chain = tokensStore.getChain(selectedNetworkId.value)
+        const chain = metadataStore.getChain(selectedNetworkId.value)
         return chain.logo
     },
     set: () => null

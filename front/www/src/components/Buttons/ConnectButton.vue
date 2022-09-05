@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { LinkIcon } from '@heroicons/vue/outline';
+import { LinkIcon } from '@heroicons/vue/outline'
 
 const emits = defineEmits<{
     (event: 'connect'): void

@@ -11,7 +11,7 @@ import Modal from '@/components/Modals/Modal.vue'
 import { IToken } from '@/domain/metadata/Metadata'
 
 const web3Store = useWeb3Store()
-const tokensStore = useMetadataStore()
+const metadataStore = useMetadataStore()
 
 const props = defineProps({
     isOpen: {
@@ -76,7 +76,7 @@ const transformDate = (timestamp: string) => {
  * @param chainId
  */
 const getChainIcon = (chainId: string): string => {
-    const network = tokensStore.getChain(chainId)
+    const network = metadataStore.getChain(chainId)
     return network.logo
 }
 
@@ -86,7 +86,7 @@ const getChainIcon = (chainId: string): string => {
  * @param address
  */
 const getToken = (chainId: string, address: string): IToken | undefined => {
-    return tokensStore.getToken(chainId, address)
+    return metadataStore.getToken(chainId, address)
 }
 
 /**

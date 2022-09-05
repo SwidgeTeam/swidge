@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { useRoutesStore } from '@/store/routes';
+import { useRoutesStore } from '@/store/routes'
 
 const routesStore = useRoutesStore()
 
