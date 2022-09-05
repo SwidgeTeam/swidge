@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import AssetSelector from '@/components/Buttons/AssetSelector.vue'
 import RoutesCard from '@/components/RoutesCard.vue'
-import RouteMother from '../../tests/unit/store/routes.mother'
-import { ref } from 'vue'
+import { useRoutesStore } from '@/store/routes'
+
+const routesStore = useRoutesStore()
 
 const emits = defineEmits<{
     (event: 'select-token'): void
@@ -11,7 +13,15 @@ const emits = defineEmits<{
 const selectedRoute = ref<number>(0)
 
 const onSelected = (index: number) => {
-    selectedRoute.value = index
+    routesStore.selectRoute(index)
+}
+
+const routes = () => {
+    return routesStore.getAllRoutes
+}
+
+const thereAreRoutes = () => {
+    return routesStore.getAllRoutes.length > 0
 }
 </script>
 
@@ -26,9 +36,9 @@ const onSelected = (index: number) => {
                 />
             </div>
         </div>
-        <div class="routes-container">
+        <div v-if="thereAreRoutes()" class="routes-container">
             <RoutesCard
-                v-for="(route, index) in RouteMother.list()"
+                v-for="(route, index) in routes()"
                 :key="index"
                 :route="route"
                 :selected-index="selectedRoute"

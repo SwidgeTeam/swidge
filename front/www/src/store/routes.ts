@@ -21,6 +21,22 @@ export const useRoutesStore = defineStore('routes', {
     }),
     getters: {
         /**
+         * returns the currently selected route
+         */
+        getSelectedRoute(): Route {
+            const route = this.routes.find(route => route.index === this.selectedRoute)
+            if (!route) {
+                throw new Error('Route does not exist')
+            }
+            return route
+        },
+        /**
+         * returns all routes
+         */
+        getAllRoutes(): Route[] {
+            return this.routes
+        },
+        /**
          * Returns the selected origin chain ID
          */
         getOriginChainId(): string {
@@ -44,6 +60,7 @@ export const useRoutesStore = defineStore('routes', {
         getDestinationTokenAddress(): string {
             return this.destinationTokenAddress
         },
+
         /**
          * Returns whether both tokens are selected
          */
@@ -55,7 +72,6 @@ export const useRoutesStore = defineStore('routes', {
                 this.destinationTokenAddress !== ''
             )
         },
-
         /**
          * Returns the selected origin token object
          */
@@ -91,12 +107,6 @@ export const useRoutesStore = defineStore('routes', {
          */
         isCrossChainRoute(): boolean {
             return this.originChainId !== this.destinationChainId
-        },
-        /**
-         * returns the currently selected route
-         */
-        getSelectedRoute(): Route {
-            return this.routes[this.selectedRoute]
         },
         /**
          * returns the selected slippage
@@ -164,16 +174,16 @@ export const useRoutesStore = defineStore('routes', {
          * Sets as completed the first step of the selected route
          */
         completeFirstStep() {
-            this.routes[this.selectedRoute].steps[0].completed = true
+            this.getSelectedRoute.steps[0].completed = true
         },
         /**
          * Sets as completed the whole selected route
          */
         completeRoute() {
-            this.routes[this.selectedRoute].steps.forEach(step => {
+            this.getSelectedRoute.steps.forEach(step => {
                 step.completed = true
             })
-            this.routes[this.selectedRoute].completed = true
+            this.getSelectedRoute.completed = true
         },
         /**
          * Sets a specific token as selected on origin
