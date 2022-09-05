@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { ref, computed, watchEffect } from 'vue'
-import { ethers, providers } from 'ethers'
 import { useWeb3Store } from '@/store/web3'
 import { useRoutesStore } from '@/store/routes'
 import { useTransactionStore } from '@/store/transaction'
 import ModalNetworkAndTokenSelect from '@/components/Modals/ModalNetworkAndTokenSelect.vue'
 import ModalTransactionStatus from '@/components/Modals/ModalTransactionStatus.vue'
 import ModalSettings from '@/components/Modals/ModalSettings.vue'
-import Route, { TransactionDetails } from '@/domain/paths/path'
-import Aggregators from '@/domain/aggregators/aggregators'
+import Route from '@/domain/paths/path'
 import { useToast } from 'vue-toastification'
 import { TxHash } from '@/domain/wallets/IWallet'
 import SendingBox from '@/components/SendingBox.vue'
@@ -25,7 +23,7 @@ const routesStore = useRoutesStore()
 const transactionStore = useTransactionStore()
 const toast = useToast()
 
-const { switchToNetwork, getChainProvider, getBalance } = web3Store
+const { switchToNetwork, getBalance } = web3Store
 
 const sourceTokenAmount = ref<string>('')
 const sourceTokenMaxAmount = ref<string>('')
@@ -39,8 +37,6 @@ const isSettingsModalOpen = ref(false)
 const showTransactionAlert = ref(false)
 const transactionAlertMessage = ref<string>('')
 const isExecutingTransaction = ref<boolean>(false)
-
-const providersOnUse = ref<providers.BaseProvider[]>([])
 
 const buttonLabel = computed({
     get: () => {
@@ -68,8 +64,7 @@ const unsetButtonAlert = () => {
 watchEffect(() => {
     if (!routesStore.isValidReceiverAddress) {
         setButtonAlert('Invalid receiver')
-    }
-    else {
+    } else {
         unsetButtonAlert()
     }
 })
@@ -316,51 +311,13 @@ const executeDoubleQuoteExecution = async (): Promise<TxHash> => {
  * @param txHash
  */
 const onInitialTxCompleted = (route: Route, txHash: TxHash) => {
-    if (isCrossTransaction()) {
+    if (routesStore.isCrossChainRoute) {
         routesStore.completeFirstStep()
-        if (route.aggregator.id === Aggregators.Swidge) {
-            setUpEventListener(route.tx as TransactionDetails, txHash)
-        } else {
-            transactionStore.informExecutedTx(txHash)
-            transactionStore.startCheckingStatus()
-        }
+        transactionStore.informExecutedTx(txHash)
+        transactionStore.startCheckingStatus()
     } else {
         routesStore.completeRoute()
     }
-}
-
-/**
- * Sets up the required listener to check for the events on the destination chain
- * It allows the frontend to know when the transaction has been completed
- * @param tx
- * @param executedTxHash
- */
-const setUpEventListener = (tx: TransactionDetails, executedTxHash: string) => {
-    const toChainId = routesStore.getDestinationChainId
-    const provider = getChainProvider(toChainId)
-
-    const filter = {
-        address: tx.to,
-        topics: [ethers.utils.id('CrossFinalized(bytes32,uint256,address)')],
-    }
-
-    provider.on(filter, (event: { data: ethers.utils.BytesLike }) => {
-        const [txHash] = ethers.utils.defaultAbiCoder.decode(
-            ['bytes32', 'uint256', 'address'],
-            event.data
-        )
-        if (executedTxHash === txHash) {
-            routesStore.completeRoute()
-            provider.off(filter)
-        }
-        // TODO : store finalAmount if we want it visible on the modal
-    })
-
-    providersOnUse.value.push(provider)
-}
-
-const isCrossTransaction = () => {
-    return !routesStore.sameChainAssets
 }
 
 /**
@@ -391,10 +348,6 @@ const openTransactionStatusModal = () => {
  * closing also all the listeners set on the providers
  */
 const closeModalStatus = () => {
-    providersOnUse.value.forEach((provider) => {
-        provider.removeAllListeners()
-    })
-    providersOnUse.value = []
     isModalStatusOpen.value = false
 }
 </script>

@@ -89,8 +89,8 @@ export const useRoutesStore = defineStore('routes', {
         /**
          * Returns whether the tokens belong to the same chain
          */
-        sameChainAssets(): boolean {
-            return this.originChainId === this.destinationChainId
+        isCrossChainRoute(): boolean {
+            return this.originChainId !== this.destinationChainId
         },
         /**
          * returns the currently selected route
