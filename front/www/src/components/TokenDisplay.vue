@@ -8,7 +8,7 @@ const props = defineProps<{
 }>()
 
 const formattedBalance = () => {
-    return ethers.utils.formatUnits(props.token.balance, props.token.decimals)
+    return Number(ethers.utils.formatUnits(props.token.balance, props.token.decimals)).toFixed(2)
 }
 </script>
 
