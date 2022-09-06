@@ -73,7 +73,9 @@ watchEffect(() => {
 
 watchEffect(() => {
     if (web3Store.isConnected) {
-        onQuote()
+        if (shouldQuote()) {
+            onQuote()
+        }
     }
 })
 
