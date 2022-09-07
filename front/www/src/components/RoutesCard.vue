@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/vue/outline'
-import { ClockIcon } from '@heroicons/vue/outline'
 import VerticalLine from './svg/VerticalLine.vue'
 import HorizontalLine from './svg/HorizontalLine.vue'
-import Route, { RouteStep } from '@/domain/paths/path'
-import AmountFormatter from '@/domain/shared/AmountFormatter'
+import Check from './svg/Check.vue'
+import DollarSign from './svg/DollarSign.vue'
+import Clock from './svg/Clock.vue'
 import StepConnectorArrow from '@/components/Icons/StepConnectorArrow.vue'
 import StepIcon from '@/components/Icons/StepIcon.vue'
-import Check from '@/components/svg/Check.vue'
 import ProviderIcon from '@/components/Icons/ProviderIcon.vue'
+import Route, { RouteStep } from '@/domain/paths/path'
+import AmountFormatter from '@/domain/shared/AmountFormatter'
 
 const props = defineProps<{
     route: Route
@@ -22,6 +23,10 @@ const emits = defineEmits<{
 
 const detailsOpen = ref<boolean>(false)
 
+/**
+ * when a click happens on the domain of the route card
+ * @param event
+ */
 const onClick = (event: Event) => {
     if (!(event.target instanceof HTMLElement)) return
     const isClickOnSteps = hasParentWithClass(event.target.parentElement as HTMLElement, 'route-steps')
@@ -30,6 +35,11 @@ const onClick = (event: Event) => {
     }
 }
 
+/**
+ * recursively checks if an element or its parents contains a class
+ * @param element
+ * @param classname
+ */
 const hasParentWithClass = (element: HTMLElement, classname: string): boolean => {
     const existsHere = element.className.split(' ').indexOf(classname) >= 0
     const existsOnParent = element.parentElement
@@ -38,6 +48,10 @@ const hasParentWithClass = (element: HTMLElement, classname: string): boolean =>
     return existsHere || existsOnParent
 }
 
+/**
+ * converts the seconds to a readable string
+ * @param seconds
+ */
 const getExecutionTime = (seconds: number) => {
     if (seconds < 60) {
         return seconds + 's'
@@ -120,20 +134,21 @@ const nextSteps = computed({
         >
             {{ tag }}
         </div>
-        <div class="route-details">
+        <div class="route-details ml-2 mt-1">
             <div class="flex flex-col field--amount-out pt-2">
-                <span class="amount-tokens leading-5 text-right">{{ amountOut }}</span>
-                <span class="amount-dollars leading-3 text-right text-[9px] text-slate-500 hover:text-slate-400">≈ $ {{
+                <span class="amount-tokens leading-5 text-right text-xl">{{ amountOut }}</span>
+                <span class="amount-dollars leading-3 text-right text-[11px] text-slate-500 hover:text-slate-400">≈ $ {{
                         dollarValue
                     }}
                     </span>
             </div>
-            <div class="flex field--execution-time">
-                <ClockIcon class="h-6 pr-1"/>
-                {{ totalExecutionTime }}
+            <div class="flex text-ellipsis text-md field--global-fee">
+                <DollarSign class="h-6 mr-1"/>
+                {{ Number(route.fees.amountInUsd).toFixed(2) }}
             </div>
-            <div class="flex text-ellipsis field--global-fee">
-                $ {{ Number(route.fees.amountInUsd).toFixed(2) }}
+            <div class="flex text-md field--execution-time">
+                <Clock class="h-6 mr-1"/>
+                {{ totalExecutionTime }}
             </div>
         </div>
         <div class="route-steps">
@@ -169,32 +184,31 @@ const nextSteps = computed({
                 </div>
             </div>
             <div
-                class="w-full grid gap-2 items-center px-2 relative max-h-0 overflow-hidden transition transition-all duration-400 ease-in-out"
-                :class="{'max-h-52':detailsOpen}"
+                class="w-full grid items-center px-2 relative max-h-0 overflow-hidden transition transition-all duration-400 ease-in-out"
+                :class="{'max-h-44':detailsOpen}"
             >
                 <span class="vl"></span>
                 <div
                     v-for="(step, index) in route.steps"
                     :key="index"
-                    class="flex h-16 items-center relative">
+                    class="flex h-14 items-center relative">
                     <ProviderIcon
                         :name="step.name"
                         :logo="step.logo"
                     />
                     <div class="pl-4 w-full">
                         <div class="flex justify-around items-center">
-                            <div class="">
-                                <div class="flex justify-center items-center">
-                                    <StepIcon :icon="step.tokenIn.icon"/>
-                                    <StepConnectorArrow :step-type="step.type"/>
-                                    <StepIcon :icon="step.tokenOut.icon"/>
-                                </div>
+                            <div class="flex justify-center items-center">
+                                <StepIcon :icon="step.tokenIn.icon"/>
+                                <StepConnectorArrow :step-type="step.type"/>
+                                <StepIcon :icon="step.tokenOut.icon"/>
                             </div>
-                            <div class="mx-1 xs:mx-2 text-xs xs:text-base">
-                                $ {{ Number(step.fee).toFixed(2) }}
+                            <div class="flex mx-1 xs:mx-2 text-xs xs:text-base">
+                                <DollarSign class="h-4 xs:h-6 mr-1"/>
+                                {{ Number(step.fee).toFixed(2) }}
                             </div>
-                            <div class="flex field--execution-time mx-1 text-xs xs:mx-2 xs:text-base">
-                                <ClockIcon class="h-6 pr-1"/>
+                            <div class="flex mx-1 xs:mx-2 text-xs xs:text-base field--execution-time ">
+                                <Clock class="h-4 xs:h-6 mr-1"/>
                                 {{ getExecutionTime(step.executionTime) }}
                             </div>
                         </div>

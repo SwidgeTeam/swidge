@@ -207,11 +207,11 @@
     .route-card.selected > .route-tag {
         @apply
         bg-[#272730]
-        border-2 border-[#733975]
+        border border-[#733975]
     }
 
     .route-card > .route-details {
-        @apply flex items-center justify-between px-4 text-lg h-8 sm:h-10
+        @apply flex items-center justify-around px-4 h-8 sm:h-10
     }
 
     .route-card > .route-steps {
@@ -219,7 +219,7 @@
     }
 
     .route-card > .route-steps > .details-line {
-        @apply relative flex items-center cursor-pointer shadow-lg px-2 py-2 sm:py-3
+        @apply relative flex items-center cursor-pointer shadow-lg px-2 py-2
         rounded-2xl hover:bg-[#222129]/100
         transition duration-150
         ease-out hover:ease-in
