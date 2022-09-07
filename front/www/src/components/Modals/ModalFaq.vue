@@ -1,6 +1,7 @@
 <script setup lang='ts'>
 import { Dialog, DialogOverlay, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import Accordion from '../Accordion.vue'
+import { XIcon } from '@heroicons/vue/solid'
 
 const faqTexts = [
     {
@@ -68,11 +69,10 @@ const onCloseModal = () => {
                     <div
                         class="absolute -bottom-4 max-w-2xl md:max-w-xl left-1/2 -translate-x-1/2 w-full max-h-screen px-10 py-8 overflow-y-auto bg-[#222129] rounded-2xl"
                     >
-                        <button
-                            class="mx-auto mt-0 mb-6 block underline pointer"
-                            @click="onCloseModal()">
-                            Close
-                        </button>
+                        <XIcon
+                            class="absolute w-5 top-3 right-3 cursor-pointer"
+                            @click="onCloseModal()"
+                        />
                         <ul class="flex flex-col gap-5">
                             <Accordion
                                 v-for="faq in faqTexts"
