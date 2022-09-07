@@ -31,9 +31,21 @@ export const useRoutesStore = defineStore('routes', {
             return route
         },
         /**
+         * returns the index of selected route
+         */
+        getSelectedIndex(): number {
+            return this.selectedRoute
+        },
+        /**
          * returns all routes
          */
         getAllRoutes(): Route[] {
+            return this.routes
+        },
+        /**
+         * returns the promoted routes
+         */
+        getPromotedRoutes(): Route[] {
             return this.routes
         },
         /**
