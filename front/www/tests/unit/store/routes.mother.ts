@@ -16,7 +16,7 @@ export default class RouteMother {
     public static default(): Route {
         return {
             'id': '',
-            'tag': '',
+            'tags': [],
             'aggregator': {
                 'id': '0',
                 'routeId': '',

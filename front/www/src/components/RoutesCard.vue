@@ -63,7 +63,9 @@ const getExecutionTime = (seconds: number) => {
 
 const tag = computed({
     get: () => {
-        if (props.route.tags.length > 1) {
+        if (props.route.tags.length === 0) {
+            return ''
+        } else if (props.route.tags.length > 1) {
             return 'Best'
         } else {
             return props.route.tags[0].toString()
@@ -137,7 +139,7 @@ const nextSteps = computed({
         <div class="route-details ml-2 mt-1">
             <div class="flex flex-col field--amount-out pt-2">
                 <span class="amount-tokens leading-5 text-right text-xl">{{ amountOut }}</span>
-                <span class="amount-dollars leading-3 text-right text-[11px] text-slate-500 hover:text-slate-400">≈ $ {{
+                <span class="amount-dollars leading-3 text-right text-[11px] text-slate-500 hover:text-slate-400">~ $ {{
                         dollarValue
                     }}
                     </span>

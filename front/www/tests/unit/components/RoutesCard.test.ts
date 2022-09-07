@@ -19,9 +19,9 @@ describe('route card', function () {
         const wrapper = mountRouteWith(RouteMother.default())
 
         // Assert
-        expect(wrapper.find('.field--global-fee').text()).toEqual('$ 0.50')
+        expect(wrapper.find('.field--global-fee').text()).toEqual('0.50')
         expect(wrapper.find('.field--amount-out .amount-tokens').text()).toEqual('77.14')
-        expect(wrapper.find('.field--amount-out .amount-dollars').text()).toEqual('≈ $ 77.14')
+        expect(wrapper.find('.field--amount-out .amount-dollars').text()).toEqual('~ $ 77.14')
     })
 
     test('fast route shows time in seconds', async () => {
@@ -57,7 +57,7 @@ function mountRouteWith(route: Route) {
     return mount(RouteCard, {
         props: {
             route: route,
-            selectedIndex: 1
+            selectedId: ''
         },
         global: {
             plugins: [getActivePinia() as TestingPinia],
