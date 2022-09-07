@@ -14,7 +14,7 @@ export const useRoutesStore = defineStore('routes', {
         originTokenAddress: '',
         destinationChainId: '',
         destinationTokenAddress: '',
-        selectedRoute: 0,
+        selectedRoute: '',
         slippageValue: '2',
         gasPriority: 'medium',
         receiverAddress: ethers.constants.AddressZero
@@ -24,16 +24,16 @@ export const useRoutesStore = defineStore('routes', {
          * returns the currently selected route
          */
         getSelectedRoute(): Route {
-            const route = this.routes.find(route => route.index === this.selectedRoute)
+            const route = this.routes.find(route => route.id === this.selectedRoute)
             if (!route) {
                 throw new Error('Route does not exist')
             }
             return route
         },
         /**
-         * returns the index of selected route
+         * returns the id of selected route
          */
-        getSelectedIndex(): number {
+        getSelectedId(): string {
             return this.selectedRoute
         },
         /**
@@ -168,15 +168,14 @@ export const useRoutesStore = defineStore('routes', {
                 senderAddress: web3Store.account || ethers.constants.AddressZero,
                 receiverAddress: this.getReceiverAddress
             })
-            this.selectRoute(0) // selects the top route
         },
         /**
          * Marks the route `index` as selected
-         * @param index
+         * @param id
          */
-        selectRoute(index: number) {
+        selectRoute(id: string) {
             const transactionStore = useTransactionStore()
-            this.selectedRoute = index
+            this.selectedRoute = id
             const route = this.getSelectedRoute
             transactionStore.trackingId = route.aggregator.trackingId
             transactionStore.approvalTx = route.approvalTx

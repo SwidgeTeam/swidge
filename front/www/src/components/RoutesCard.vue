@@ -13,11 +13,11 @@ import ProviderIcon from '@/components/Icons/ProviderIcon.vue'
 
 const props = defineProps<{
     route: Route
-    selectedIndex: number
+    selectedId: string
 }>()
 
 const emits = defineEmits<{
-    (event: 'select-route', index: number): void
+    (event: 'select-route', index: string): void
 }>()
 
 const detailsOpen = ref<boolean>(false)
@@ -26,7 +26,7 @@ const onClick = (event: Event) => {
     if (!(event.target instanceof HTMLElement)) return
     const isClickOnSteps = hasParentWithClass(event.target.parentElement as HTMLElement, 'route-steps')
     if (!isClickOnSteps) {
-        emits('select-route', props.route.index)
+        emits('select-route', props.route.id)
     }
 }
 
@@ -49,7 +49,7 @@ const getExecutionTime = (seconds: number) => {
 
 const isSelected = computed({
     get: () => {
-        return props.route.index === props.selectedIndex
+        return props.route.id === props.selectedId
     },
     set: () => null
 })

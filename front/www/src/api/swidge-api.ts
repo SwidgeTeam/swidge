@@ -90,9 +90,10 @@ class SwidgeAPI extends HttpClient {
         try {
             const response = await this.instance.get<GetQuoteResponse>('/path', { params: getQuotePayload })
             const r = response.data
-            return r.routes.map((r, index) => {
+            return r.routes.map(r => {
                 const route: Route = {
-                    index: index,
+                    id: r.id,
+                    tag: r.tag,
                     aggregator: {
                         id: r.aggregator.id,
                         routeId: r.aggregator.routeId,

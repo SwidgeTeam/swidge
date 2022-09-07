@@ -12,12 +12,12 @@ const emits = defineEmits<{
 
 const expandedRoutes = ref<boolean>(false)
 
-const onSelected = (index: number) => {
+const onSelected = (index: string) => {
     routesStore.selectRoute(index)
 }
 
-const selectedIndex = () => {
-    return routesStore.getSelectedIndex
+const selectedId = () => {
+    return routesStore.getSelectedId
 }
 
 const routes = () => {
@@ -51,7 +51,7 @@ const thereAreMoreRoutes = () => {
                 v-for="(route, index) in routes()"
                 :key="index"
                 :route="route"
-                :selected-index="selectedIndex()"
+                :selected-id="selectedId()"
                 @select-route="onSelected"
             />
             <div v-if="thereAreMoreRoutes()" class="flex justify-center">

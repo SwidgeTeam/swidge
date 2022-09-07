@@ -15,7 +15,8 @@ export default class RouteMother {
 
     public static default(): Route {
         return {
-            'index': 0,
+            'id': '',
+            'tag': '',
             'aggregator': {
                 'id': '0',
                 'routeId': '',
@@ -147,10 +148,10 @@ export default class RouteMother {
         const second = this.default()
         const third = this.default()
         const fourth = this.default()
-        first.index = 0
-        second.index = 1
-        third.index = 2
-        fourth.index = 3
+        first.id = '0'
+        second.id = '1'
+        third.id = '2'
+        fourth.id = '3'
 
         return [first, second, third]
     }

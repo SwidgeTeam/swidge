@@ -49,7 +49,8 @@ export interface TransactionDetails {
 }
 
 export default interface Route {
-    index: number
+    id: string
+    tag: string
     aggregator: AggregatorDetails
     resume: RouteResume
     steps: RouteStep[]
