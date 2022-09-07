@@ -22,19 +22,21 @@ tryOnBeforeMount(async () => {
 <template>
     <div class="flex flex-col flex-grow">
         <Header
-            class="py-2 z-[1]"
+            class="py-2"
         />
-        <main class="flex justify-center z-[1]">
+        <main class="flex justify-center">
             <router-view/>
         </main>
-        <div class="flex justify-between px-4 py-2 h-16 font-extralight text-xs sm:text-base">
-            <div class="flex flex-col">
-                <span>This is a beta version. Use at your own risk.</span>
-                <span>Swidge™</span>
+        <div class="flex justify-center">
+            <div class="flex justify-between px-4 py-2 h-16 font-extralight text-xs sm:text-base w-full max-w-md">
+                <div class="flex flex-col">
+                    <span>This is a beta version</span>
+                    <span>Swidge™</span>
+                </div>
+                <QuestionMark
+                    @click="isFaqOpen = true"
+                />
             </div>
-            <QuestionMark
-                @click="isFaqOpen = true"
-            />
         </div>
         <ModalFaq
             :is-open="isFaqOpen"
