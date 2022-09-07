@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watchEffect } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useWeb3Store } from '@/store/web3'
 import { useRoutesStore } from '@/store/routes'
 import { useTransactionStore } from '@/store/transaction'
@@ -17,10 +17,13 @@ import ActionButton from '@/components/Buttons/ActionButton.vue'
 import FromToArrow from '@/components/Icons/FromToArrow.vue'
 import { IToken } from '@/domain/metadata/Metadata'
 import RecipientUserCard from '@/components/RecipientUserCard.vue'
+import { storeToRefs } from 'pinia'
 
 const web3Store = useWeb3Store()
 const routesStore = useRoutesStore()
 const transactionStore = useTransactionStore()
+const { isValidReceiverAddress } = storeToRefs(routesStore)
+const { isConnected } = storeToRefs(web3Store)
 const toast = useToast()
 
 const { switchToNetwork, getBalance } = web3Store
@@ -63,16 +66,16 @@ const unsetButtonAlert = () => {
     showTransactionAlert.value = false
 }
 
-watchEffect(() => {
-    if (!routesStore.isValidReceiverAddress) {
+watch(isValidReceiverAddress, (isValid) => {
+    if (!isValid) {
         setButtonAlert('Invalid receiver')
     } else {
         unsetButtonAlert()
     }
 })
 
-watchEffect(() => {
-    if (web3Store.isConnected) {
+watch(isConnected, (connected) => {
+    if (connected) {
         if (shouldQuote()) {
             onQuote()
         }
