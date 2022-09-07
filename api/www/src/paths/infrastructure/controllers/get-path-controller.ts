@@ -50,7 +50,7 @@ export class GetPathController {
     return {
       amountOut: route.amountOut,
       id: route.id,
-      tag: route.tags,
+      tags: route.tags,
       aggregator: {
         id: route.aggregator.id,
         routeId: route.aggregator.routeId,
