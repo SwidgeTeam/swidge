@@ -40,8 +40,6 @@ import {
   Polygon,
   xDAI,
 } from '../../../shared/enums/ChainIds';
-import { ethers } from 'ethers';
-import { NATIVE_TOKEN_ADDRESS } from '../../../shared/enums/Natives';
 
 export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAggregator {
   private enabledChains = [
