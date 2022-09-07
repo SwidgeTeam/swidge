@@ -1,6 +1,6 @@
 import { Aggregator, ExternalAggregator, MetadataProviderAggregator } from '../aggregator';
 import { AggregatorRequest } from '../aggregator-request';
-import LIFI, { Estimate, GasCost, Step } from '@lifi/sdk';
+import LIFI, { Estimate, GasCost, Step, Token as LifiToken } from '@lifi/sdk';
 import { BigInteger } from '../../../shared/domain/big-integer';
 import { TransactionDetails } from '../../../shared/domain/route/transaction-details';
 import { Route } from '../../../shared/domain/route/route';
@@ -255,18 +255,7 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
       step.action.toToken.logoURI,
     );
 
-    let feeInUSD = 0;
-    // include all the fees from the step
-    if (step.estimate.gasCosts) {
-      for (const entry of step.estimate.gasCosts) {
-        feeInUSD += Number(entry.amountUSD);
-      }
-    }
-    if (step.estimate.feeCosts) {
-      for (const entry of step.estimate.feeCosts) {
-        feeInUSD += Number(entry.amountUSD);
-      }
-    }
+    const feeInUSD = this.computeFeeInUsd(step.estimate);
 
     let type;
     switch (step.type) {
@@ -290,5 +279,30 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
       feeInUSD.toString(),
       step.estimate.executionDuration,
     );
+  }
+
+  private computeFeeInUsd(estimate: Estimate): number {
+    let feeInUSD = 0;
+    if (estimate.gasCosts) {
+      for (const entry of estimate.gasCosts) {
+        feeInUSD += this.computeEntryCost(entry.amountUSD, entry.amount, entry.token);
+      }
+    }
+    if (estimate.feeCosts) {
+      for (const entry of estimate.feeCosts) {
+        feeInUSD += this.computeEntryCost(entry.amountUSD, entry.amount, entry.token);
+      }
+    }
+    return feeInUSD;
+  }
+
+  private computeEntryCost(amountUSD: string, amount: string, token: LifiToken): number {
+    if (amountUSD) {
+      return Number(amountUSD);
+    } else if (amount && token.priceUSD) {
+      return Number(ethers.utils.formatUnits(amount, token.decimals)) * Number(token.priceUSD);
+    } else {
+      return 0;
+    }
   }
 }
