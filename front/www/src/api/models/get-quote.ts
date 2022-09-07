@@ -50,7 +50,7 @@ interface RouteFeesJson {
 interface RouteJson {
     amountOut: string
     id: string
-    tag: string
+    tags: string[]
     aggregator: AggregatorDetailsJson
     resume: RouteResumeJson
     steps: RouteStepJson[]

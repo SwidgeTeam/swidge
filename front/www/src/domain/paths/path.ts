@@ -50,7 +50,7 @@ export interface TransactionDetails {
 
 export default interface Route {
     id: string
-    tag: string
+    tags: string[]
     aggregator: AggregatorDetails
     resume: RouteResume
     steps: RouteStep[]
@@ -66,4 +66,9 @@ interface AggregatorDetails {
     requiresCallDataQuoting: boolean
     bothQuotesInOne: boolean
     trackingId: string
+}
+
+export const RouteTag = {
+    Cheapest: 'cheapest',
+    Fastest: 'fastest',
 }

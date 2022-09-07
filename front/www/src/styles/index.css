@@ -200,8 +200,14 @@
         border-2 border-[#733975]
     }
 
-    .route-card > .checked-mark {
-        @apply absolute -right-1 -top-1 bg-[#633767] rounded-3xl
+    .route-card > .route-tag {
+        @apply absolute -top-3 left-6 text-sm border rounded-lg border-[#54545F] bg-[#2F283A]/100 px-1
+    }
+
+    .route-card.selected > .route-tag {
+        @apply
+        bg-[#272730]
+        border-2 border-[#733975]
     }
 
     .route-card > .route-details {

@@ -93,7 +93,7 @@ class SwidgeAPI extends HttpClient {
             return r.routes.map(r => {
                 const route: Route = {
                     id: r.id,
-                    tag: r.tag,
+                    tags: r.tags,
                     aggregator: {
                         id: r.aggregator.id,
                         routeId: r.aggregator.routeId,

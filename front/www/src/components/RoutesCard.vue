@@ -47,6 +47,17 @@ const getExecutionTime = (seconds: number) => {
     }
 }
 
+const tag = computed({
+    get: () => {
+        if (props.route.tags.length > 1) {
+            return 'Best'
+        } else {
+            return props.route.tags[0].toString()
+        }
+    },
+    set: () => null
+})
+
 const isSelected = computed({
     get: () => {
         return props.route.id === props.selectedId
@@ -100,8 +111,13 @@ const nextSteps = computed({
         :class="{'selected' : isSelected}"
         @click="onClick"
     >
-        <div v-if="isSelected" class="checked-mark">
+        <div v-if="isSelected" class="absolute -right-1 -top-1 bg-[#633767] rounded-3xl">
             <Check class="h-4 w-4 m-[2px]"/>
+        </div>
+        <div
+            class="route-tag"
+        >
+            {{ tag }}
         </div>
         <div class="route-details">
             <div class="flex flex-col field--amount-out pt-2">
