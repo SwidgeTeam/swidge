@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useRoutesStore } from '@/store/routes'
 import AssetSelector from '@/components/Buttons/AssetSelector.vue'
+import AmountFormatter from '@/domain/shared/AmountFormatter'
+
+const routesStore = useRoutesStore()
 
 const props = defineProps<{
     value: string
@@ -41,6 +45,19 @@ const trimmedBalance = computed({
     },
     set: () => null,
 })
+
+const dollarValue = computed({
+    get: () => {
+        const token = routesStore.getOriginToken()
+        if (!token) {
+            return '0.0'
+        }
+        const amount = Number(props.value) * Number(token.price)
+        return AmountFormatter.format(amount.toFixed(2))
+    },
+    set: () => null,
+})
+
 </script>
 
 <template>
@@ -81,7 +98,7 @@ const trimmedBalance = computed({
                         {{ trimmedBalance }}
                 </span>
             </div>
-            <div class="input-dollar-value">~ $ 1,234.45</div>
+            <div class="input-dollar-value">~ $ {{ dollarValue }}</div>
         </div>
     </div>
 </template>
