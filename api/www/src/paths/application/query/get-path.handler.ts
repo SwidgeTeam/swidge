@@ -6,14 +6,9 @@ import { Class } from '../../../shared/Class';
 import { PathComputer } from '../../domain/path-computer';
 import { Route } from '../../../shared/domain/route/route';
 import { Bridges } from '../../../bridges/domain/bridges';
-import { Multichain } from '../../../bridges/domain/providers/multichain';
 import { HttpClient } from '../../../shared/infrastructure/http/httpClient';
 import { CachedHttpClient } from '../../../shared/infrastructure/http/cachedHttpClient';
-import { BridgeProviders } from '../../../bridges/domain/providers/bridge-providers';
 import { Exchanges } from '../../../swaps/domain/exchanges';
-import { ExchangeProviders } from '../../../swaps/domain/providers/exchange-providers';
-import { ZeroEx } from '../../../swaps/domain/providers/zero-ex';
-import { Sushiswap } from '../../../swaps/domain/providers/sushiswap';
 import { SushiPairsRepository } from '../../../swaps/domain/sushi-pairs-repository';
 import { Aggregators } from '../../../aggregators/domain/aggregators';
 import { AggregatorProviders } from '../../../aggregators/domain/providers/aggregator-providers';
@@ -26,6 +21,7 @@ import { Rango } from '../../../aggregators/domain/providers/rango';
 import { CachedGasPriceFetcher } from '../../../shared/domain/cached-gas-price-fetcher';
 import { CachedPriceFeedFetcher } from '../../../shared/domain/cached-price-feed-fetcher';
 import { SushiPoolsTheGraph } from '../../../swaps/infrastructure/theGraph/sushi-pools-the-graph';
+import { OrderStrategy } from '../../domain/route-order-strategy/order-strategy';
 
 @QueryHandler(GetPathQuery)
 export class GetPathHandler implements IQueryHandler<GetPathQuery> {
@@ -67,7 +63,36 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
     );
   }
 
+  /**
+   * Entrypoint
+   * @param query
+   */
   async execute(query: GetPathQuery): Promise<Route[]> {
-    return this.pathComputer.compute(query);
+    const routes = await this.pathComputer.compute(query);
+
+    return this.tagRoutes(routes);
+  }
+
+  /**
+   * Add tags to the routes depending on their specifics
+   * @param routes
+   * @private
+   */
+  private tagRoutes(routes: Route[]): Route[] {
+    const cheapestStrategy = OrderStrategy.get(OrderStrategy.HIGHEST_RETURN);
+    const fastestStrategy = OrderStrategy.get(OrderStrategy.LOWEST_TIME);
+
+    const cheapestId = cheapestStrategy.order(routes)[0].id;
+    const fastestId = fastestStrategy.order(routes)[0].id;
+
+    return routes.map((route) => {
+      if (route.id === cheapestId) {
+        route.addTag('cheapest');
+      }
+      if (route.id === fastestId) {
+        route.addTag('fastest');
+      }
+      return route;
+    });
   }
 }

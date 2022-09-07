@@ -87,7 +87,7 @@ export class PathComputer {
    * Computes the routes
    * @param query
    */
-  public async compute(query: GetPathQuery) {
+  public async compute(query: GetPathQuery): Promise<Route[]> {
     this.fromChain = query.fromChainId;
     this.toChain = query.toChainId;
     this.srcToken = await this.tokenDetailsFetcher.fetch(query.srcToken, this.fromChain);
@@ -113,9 +113,7 @@ export class PathComputer {
       throw new PathNotFound();
     }
 
-    const orderStrategy = OrderStrategy.get(OrderStrategy.HIGHEST_RETURN);
-
-    return orderStrategy.order(routes);
+    return routes;
   }
 
   /**
