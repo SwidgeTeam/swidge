@@ -20,7 +20,6 @@ import { DeployedAddresses } from '../../shared/DeployedAddresses';
 import { RouterCallEncoder } from '../../shared/domain/router-call-encoder';
 import { BridgeDetails, BridgeProviders } from '../../bridges/domain/providers/bridge-providers';
 import { ExchangeDetails } from '../../swaps/domain/providers/exchange-providers';
-import { OrderStrategy } from './route-order-strategy/order-strategy';
 import { RouteResume } from '../../shared/domain/route/route-resume';
 import { Bridges } from '../../bridges/domain/bridges';
 import { Exchanges } from '../../swaps/domain/exchanges';

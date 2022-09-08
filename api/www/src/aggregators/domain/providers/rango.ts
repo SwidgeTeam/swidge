@@ -10,11 +10,34 @@ import { Token } from '../../../shared/domain/token';
 import { ProviderDetails } from '../../../shared/domain/provider-details';
 import { InsufficientLiquidity } from '../../../swaps/domain/insufficient-liquidity';
 import { QuotePath } from 'rango-sdk-basic/lib/types/api/common';
-import { Avalanche, BSC, Fantom, Mainnet, Optimism, Polygon } from '../../../shared/enums/ChainIds';
+import {
+  Arbitrum,
+  Aurora,
+  Avalanche,
+  Boba,
+  BSC,
+  Cronos,
+  Evmos,
+  Fantom,
+  Fuse,
+  Harmony,
+  Huobi,
+  Mainnet,
+  Moonbeam,
+  Moonriver,
+  Optimism,
+  Polygon,
+  xDAI,
+} from '../../../shared/enums/ChainIds';
 import { TransactionDetails } from '../../../shared/domain/route/transaction-details';
 import { ApprovalTransactionDetails } from '../../../shared/domain/route/approval-transaction-details';
 import BothTxs from '../both-txs';
-import { Aggregator, ExternalAggregator, OneSteppedAggregator } from '../aggregator';
+import {
+  Aggregator,
+  ExternalAggregator,
+  MetadataProviderAggregator,
+  OneSteppedAggregator,
+} from '../aggregator';
 import {
   ExternalTransactionStatus,
   StatusCheckRequest,
@@ -24,9 +47,60 @@ import { RouteFees } from '../../../shared/domain/route/route-fees';
 import { IPriceFeedFetcher } from '../../../shared/domain/price-feed-fetcher';
 import { PriceFeed } from '../../../shared/domain/price-feed';
 import { RouteSteps } from '../../../shared/domain/route/route-steps';
+import { AggregatorMetadata } from '../../../shared/domain/metadata';
+import { NATIVE_TOKEN_ADDRESS } from '../../../shared/enums/Natives';
 
-export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregator {
-  private enabledChains: string[];
+interface MetadataResponse {
+  blockchains: BlockchainMeta[];
+  tokens: RangoToken[];
+}
+
+declare type BlockchainMeta = {
+  name: string;
+  displayName: string;
+  chainId: string | null;
+  defaultDecimals: number;
+  logo: string;
+  type: string;
+  info: {
+    nativeCurrency: {
+      symbol: string;
+    };
+    rpcUrls: string[];
+  };
+};
+
+declare type RangoToken = {
+  blockchain: string;
+  address: string | null;
+  symbol: string;
+  decimals: number;
+  image: string;
+  usdPrice: number;
+};
+
+export class Rango
+  implements Aggregator, OneSteppedAggregator, ExternalAggregator, MetadataProviderAggregator
+{
+  private enabledChains = [
+    Mainnet,
+    Optimism,
+    BSC,
+    Polygon,
+    Fantom,
+    Avalanche,
+    Moonriver,
+    Boba,
+    Huobi,
+    Moonbeam,
+    Cronos,
+    Aurora,
+    xDAI,
+    Harmony,
+    Arbitrum,
+    Evmos,
+    Fuse,
+  ];
   private client: RangoClient;
   private priceFeedFetcher: IPriceFeedFetcher;
 
@@ -35,13 +109,52 @@ export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregat
   }
 
   constructor(client: RangoClient, priceFeedFetcher: IPriceFeedFetcher) {
-    this.enabledChains = [];
     this.client = client;
     this.priceFeedFetcher = priceFeedFetcher;
   }
 
   isEnabledOn(fromChainId: string, toChainId: string): boolean {
     return this.enabledChains.includes(fromChainId) && this.enabledChains.includes(toChainId);
+  }
+
+  public async getMetadata(): Promise<AggregatorMetadata> {
+    const metaResponse = (await this.client.meta()) as unknown as MetadataResponse;
+
+    const acceptedChains = [];
+
+    return {
+      chains: metaResponse.blockchains
+        .filter((chain) => chain.type === 'EVM')
+        .map((chain) => {
+          acceptedChains.push(chain.name);
+          return {
+            id: chain.chainId,
+            type: chain.type,
+            name: chain.displayName,
+            logo: chain.logo,
+            coin: chain.info.nativeCurrency.symbol,
+            decimals: chain.defaultDecimals,
+            rpcUrls: chain.info.rpcUrls,
+          };
+        }),
+      tokens: metaResponse.tokens
+        .filter((token) => acceptedChains.includes(token.blockchain))
+        .map((token) => {
+          return {
+            chainId: this.getChainId(token.blockchain),
+            address: this.getAddress(token.address),
+            name: token.symbol,
+            symbol: token.symbol,
+            decimals: token.decimals,
+            logo: token.image,
+            price: token.usdPrice ? token.usdPrice.toString() : '0',
+          };
+        }),
+    };
+  }
+
+  private getAddress(address: string): string {
+    return address === null ? NATIVE_TOKEN_ADDRESS : address;
   }
 
   /**
@@ -52,12 +165,12 @@ export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregat
     const response = await this.client.quote({
       from: {
         blockchain: this.getBlockchainCode(request.fromChain),
-        address: request.fromToken.address,
+        address: request.fromToken.isNative() ? null : request.fromToken.address,
         symbol: request.fromToken.symbol,
       },
       to: {
         blockchain: this.getBlockchainCode(request.toChain),
-        address: request.toToken.address,
+        address: request.toToken.isNative() ? null : request.toToken.address,
         symbol: request.toToken.symbol,
       },
       amount: request.amountIn.toString(),
@@ -191,7 +304,7 @@ export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregat
   private buildFees(fees: SwapFee[], nativePrice: PriceFeed): RouteFees {
     const totalFee = fees.reduce((total: BigInteger, current: SwapFee) => {
       if (current.expenseType === 'FROM_SOURCE_WALLET') {
-        return total.plus(BigInteger.fromDecimal(current.amount, current.token.decimals));
+        return total.plus(BigInteger.fromString(current.amount));
       }
       return total;
     }, BigInteger.zero());
@@ -256,7 +369,18 @@ export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregat
         break;
     }
 
-    return new RouteStep(type, details, fromToken, toToken, amountIn, amountOut, '', 0);
+    return new RouteStep(
+      type,
+      details,
+      fromToken,
+      toToken,
+      amountIn,
+      amountOut,
+      '',
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      step.estimatedTimeInSeconds,
+    );
   }
 
   /**
@@ -278,6 +402,28 @@ export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregat
         return 'FANTOM';
       case Avalanche:
         return 'AVAX_CCHAIN';
+      case Moonriver:
+        return 'MOONRIVER';
+      case Boba:
+        return 'BOBA';
+      case Huobi:
+        return 'HECO';
+      case Moonbeam:
+        return 'MOONBEAM';
+      case Cronos:
+        return 'CRONOS';
+      case Aurora:
+        return 'AURORA';
+      case xDAI:
+        return 'GNOSIS';
+      case Harmony:
+        return 'HARMONY';
+      case Arbitrum:
+        return 'ARBITRUM';
+      case Evmos:
+        return 'EVMOS';
+      case Fuse:
+        return 'FUSE';
       default:
         throw new Error('blockchain not supported');
     }
@@ -297,6 +443,28 @@ export class Rango implements Aggregator, OneSteppedAggregator, ExternalAggregat
         return Fantom;
       case 'AVAX_CCHAIN':
         return Avalanche;
+      case 'MOONRIVER':
+        return Moonriver;
+      case 'BOBA':
+        return Boba;
+      case 'HECO':
+        return Huobi;
+      case 'MOONBEAM':
+        return Moonbeam;
+      case 'CRONOS':
+        return Cronos;
+      case 'AURORA':
+        return Aurora;
+      case 'GNOSIS':
+        return xDAI;
+      case 'HARMONY':
+        return Harmony;
+      case 'ARBITRUM':
+        return Arbitrum;
+      case 'EVMOS':
+        return Evmos;
+      case 'FUSE':
+        return Fuse;
       default:
         throw new Error('blockchain not supported');
     }
