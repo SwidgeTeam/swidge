@@ -168,6 +168,8 @@ export const useRoutesStore = defineStore('routes', {
                 senderAddress: web3Store.account || ethers.constants.AddressZero,
                 receiverAddress: this.getReceiverAddress
             })
+            const idToSelect = this.routes.find(route => route.tags.includes('cheapest'))?.id as string
+            this.selectRoute(idToSelect)
         },
         /**
          * Marks the route `index` as selected
