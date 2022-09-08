@@ -62,8 +62,7 @@ const dollarValue = computed({
 
 <template>
     <div class="sending-box">
-        <span class="pl-2 text-xs text-slate-400">You send</span>
-        <div class="flex items-center justify-between py-2">
+        <div class="flex items-center justify-between pb-2 pt-3">
             <AssetSelector
                 :is-origin="true"
                 @open-token-list="() => emits('select-token')"

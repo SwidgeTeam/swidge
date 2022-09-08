@@ -9,9 +9,8 @@
     :root {
         --header-height: 3rem;
         --settings-line-height: 1.75rem;
-        --sending-line-height: 6.8rem;
+        --sending-line-height: 5.5rem;
         --arrow-line-height: 1.5rem;
-        --receive-title-height: 0.75rem;
         --receive-selector-height: 4rem;
         --recipient-address-height: 2.5rem;
         --main-action-button-height: 5.2rem;
@@ -21,12 +20,11 @@
         + var(--settings-line-height)
         + var(--sending-line-height)
         + var(--arrow-line-height)
-        + var(--receive-title-height)
         + var(--receive-selector-height)
         + var(--recipient-address-height)
         + var(--main-action-button-height)
         + var(--footer-height)
-        + 1rem /* for the gaps */
+        + 0.2rem
         ))
     }
 
@@ -139,16 +137,14 @@
     }
 
     .gradient-border-header-main {
-        --bg-color-from: #222129;
-        --bg-color-to: #222129;
-        @apply bg-gradient-border
+        background: #2E283A;
+        border: 2px solid #2E283A;
+        border-radius: 12px;
     }
 
     .gradient-border-header-main-hover {
-        --bg-color-to: #2221296b;
-        @apply bg-gradient-border
+        border: 2px solid grey;
     }
-
     .sending-box-colors {
         --bg-color-from: #2E283A;
         --bg-color-to: #2E283A;
@@ -162,11 +158,11 @@
     }
 
     .sending-box {
-        @apply flex flex-col px-2 py-2 sending-box-colors h-[var(--sending-line-height)]
+        @apply flex flex-col px-2 sending-box-colors h-[var(--sending-line-height)]
     }
 
     .routes-container {
-        @apply flex flex-col py-3 gap-2 px-1
+        @apply flex flex-col pt-3 pb-1 gap-2 px-1
         border-t border-[#34313D]
         overflow-y-auto overflow-x-hidden
         max-h-[var(--routes-box-height)]
@@ -184,7 +180,7 @@
         @apply relative flex flex-col w-full
         bg-[#2A2934]/30
         border border-[#545454] rounded-3xl
-        gap-4 py-3 px-2
+        gap-4 pt-3 pb-2 px-2 mb-2
         cursor-pointer
     }
 
@@ -219,7 +215,7 @@
     }
 
     .route-card > .route-steps > .details-line {
-        @apply relative flex items-center cursor-pointer shadow-lg px-2 py-2
+        @apply relative flex items-center cursor-pointer shadow-lg px-2 py-1
         rounded-2xl hover:bg-[#222129]/100
         transition duration-150
         ease-out hover:ease-in
@@ -228,7 +224,7 @@
     .route-steps .vl {
         border-left: 2px solid #626262;
         box-shadow: 0 0 5px #626262;
-        height: 96%;
+        height: 90%;
         position: absolute;
         left: 33px;
         top: 0;

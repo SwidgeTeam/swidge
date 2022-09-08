@@ -13,7 +13,6 @@ const emits = defineEmits<{
         @click="emits('show-transactions')"
     >
         <BookIcon class="h-5"/>
-        <span class="inline-block sm:hidden">Txs</span>
         <span class="hidden sm:block">Transactions</span>
     </button>
 </template>

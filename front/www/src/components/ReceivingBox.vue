@@ -36,9 +36,8 @@ const thereAreMoreRoutes = () => {
 </script>
 
 <template>
-    <div class="flex flex-col px-1 pt-2 receiving-box-colors h-full relative">
+    <div class="flex flex-col px-1 receiving-box-colors relative">
         <div class="px-1">
-            <span class="pl-2 text-xs text-slate-400 h-[var(--receive-title-height)] ">You receive</span>
             <div class="flex items-center justify-between py-3 h-[var(--receive-selector-height)]">
                 <AssetSelector
                     :is-origin="false"

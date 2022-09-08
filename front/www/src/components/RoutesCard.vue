@@ -187,13 +187,13 @@ const nextSteps = computed({
             </div>
             <div
                 class="w-full grid items-center px-2 relative max-h-0 overflow-hidden transition transition-all duration-400 ease-in-out"
-                :class="{'max-h-44':detailsOpen}"
+                :class="{'max-h-36':detailsOpen}"
             >
                 <span class="vl"></span>
                 <div
                     v-for="(step, index) in route.steps"
                     :key="index"
-                    class="flex h-14 items-center relative">
+                    class="flex h-12 items-center relative">
                     <ProviderIcon
                         :name="step.name"
                         :logo="step.logo"
