@@ -6041,10 +6041,10 @@ range-parser@~1.2.1:
   resolved "https://registry.yarnpkg.com/range-parser/-/range-parser-1.2.1.tgz#3cf37023d199e1c24d1a55b84800c2f3e6468031"
   integrity sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==
 
-rango-sdk-basic@^0.0.6:
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/rango-sdk-basic/-/rango-sdk-basic-0.0.6.tgz#0f33c5e2e1ccc8aac3c0716a39b2337c8942f742"
-  integrity sha512-WtwRuEOQqIjEt66YDimZZyFVDVgPH0mIPg78t29qAxz4U5IYExlfwGi/hspAUVyjf9jy37zaItd/FP3tB5hdQg==
+rango-sdk-basic@0.0.7:
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/rango-sdk-basic/-/rango-sdk-basic-0.0.7.tgz#11a855c9c6a0e468f54222c72fb4330bbfe7f939"
+  integrity sha512-gihpZUUQHSFkGsKk+ksxprYGFum8hP7WgyuFQmoCyWNPgCIWb3QxyA07vFRduqhXxoizHEi8MD8os8B7xYGOrg==
   dependencies:
     axios "^0.24.0"
     bignumber.js "^9.0.2"
