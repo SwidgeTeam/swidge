@@ -180,7 +180,7 @@
         @apply relative flex flex-col w-full
         bg-[#2A2934]/30
         border border-[#545454] rounded-3xl
-        gap-4 pt-3 pb-2 px-2 mb-2
+        gap-4 pt-3 pb-2 px-2
         cursor-pointer
     }
 
@@ -197,7 +197,7 @@
     }
 
     .route-card > .route-tag {
-        @apply absolute -top-3 left-6 text-sm border rounded-lg border-[#54545F] bg-[#2F283A]/100 px-3 py-[2px] uppercase
+        @apply absolute -top-3 left-6 text-xs border rounded-lg border-[#54545F] bg-[#2F283A]/100 px-3 py-[2px] uppercase
     }
 
     .route-card.selected > .route-tag {

@@ -36,7 +36,7 @@ const thereAreMoreRoutes = () => {
 </script>
 
 <template>
-    <div class="flex flex-col px-1 receiving-box-colors relative">
+    <div class="flex flex-col px-1 pb-2 receiving-box-colors relative">
         <div class="px-1">
             <div class="flex items-center justify-between py-3 h-[var(--receive-selector-height)]">
                 <AssetSelector

@@ -131,7 +131,7 @@ const nextSteps = computed({
             <Check class="h-4 w-4 m-[2px]"/>
         </div>
         <div
-            v-if="route.tags"
+            v-if="route.tags.length > 0"
             class="route-tag"
         >
             {{ tag }}
