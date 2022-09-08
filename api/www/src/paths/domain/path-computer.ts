@@ -89,8 +89,8 @@ export class PathComputer {
   public async compute(query: GetPathQuery): Promise<Route[]> {
     this.fromChain = query.fromChainId;
     this.toChain = query.toChainId;
-    this.srcToken = await this.tokenDetailsFetcher.fetch(query.srcToken, this.fromChain);
-    this.dstToken = await this.tokenDetailsFetcher.fetch(query.dstToken, this.toChain);
+    this.srcToken = query.srcToken;
+    this.dstToken = query.dstToken;
     this.amountIn = BigInteger.fromDecimal(query.amountIn, this.srcToken.decimals);
     this.totalSlippage = query.slippage;
     this.originSlippage = query.slippage / 2;

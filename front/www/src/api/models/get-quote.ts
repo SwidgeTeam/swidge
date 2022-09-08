@@ -73,9 +73,13 @@ export interface GetQuoteResponse {
 
 export interface GetQuoteRequest {
     fromChainId: string
-    srcToken: string,
+    srcTokenAddress: string,
+    srcTokenSymbol: string,
+    srcTokenDecimals: string,
     toChainId: string
-    dstToken: string,
+    dstTokenAddress: string,
+    dstTokenSymbol: string,
+    dstTokenDecimals: string,
     amount: string
     slippage: number,
     senderAddress: string,

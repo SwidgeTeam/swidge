@@ -158,11 +158,20 @@ export const useRoutesStore = defineStore('routes', {
          */
         async quotePath(amount: string) {
             const web3Store = useWeb3Store()
+            const srcToken = this.getOriginToken()
+            const dstToken = this.getDestinationToken()
+            if (!srcToken || !dstToken) {
+                throw new Error('Some token is not selected')
+            }
             this.routes = await SwidgeAPI.getQuote({
                 fromChainId: this.originChainId,
-                srcToken: this.originTokenAddress,
+                srcTokenAddress: srcToken.address,
+                srcTokenSymbol: srcToken.symbol,
+                srcTokenDecimals: srcToken.decimals.toString(),
                 toChainId: this.destinationChainId,
-                dstToken: this.destinationTokenAddress,
+                dstTokenAddress: dstToken.address,
+                dstTokenSymbol: dstToken.symbol,
+                dstTokenDecimals: dstToken.decimals.toString(),
                 amount: amount,
                 slippage: Number(this.getSlippage),
                 senderAddress: web3Store.account || ethers.constants.AddressZero,

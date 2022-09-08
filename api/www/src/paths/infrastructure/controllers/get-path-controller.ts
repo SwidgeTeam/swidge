@@ -12,11 +12,25 @@ export class GetPathController {
 
   @Get('path')
   async getPossiblePath(@Query() getPathDto: GetPathDto, @Res() res: Response) {
+    const srcToken = new Token(
+      getPathDto.fromChainId,
+      getPathDto.srcTokenSymbol,
+      getPathDto.srcTokenAddress,
+      getPathDto.srcTokenDecimals,
+      getPathDto.srcTokenSymbol,
+    );
+    const dstToken = new Token(
+      getPathDto.toChainId,
+      getPathDto.dstTokenSymbol,
+      getPathDto.dstTokenAddress,
+      getPathDto.dstTokenDecimals,
+      getPathDto.dstTokenSymbol,
+    );
     const query = new GetPathQuery(
       getPathDto.fromChainId,
       getPathDto.toChainId,
-      getPathDto.srcToken,
-      getPathDto.dstToken,
+      srcToken,
+      dstToken,
       getPathDto.amount,
       getPathDto.slippage,
       getPathDto.senderAddress,

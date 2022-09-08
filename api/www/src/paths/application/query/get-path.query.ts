@@ -1,11 +1,11 @@
-import { ContractAddress } from '../../../shared/types';
+import { Token } from '../../../shared/domain/token';
 
 export class GetPathQuery {
   constructor(
     private readonly _fromChainId: string,
     private readonly _toChainId: string,
-    private readonly _srcToken: ContractAddress,
-    private readonly _dstToken: ContractAddress,
+    private readonly _srcToken: Token,
+    private readonly _dstToken: Token,
     private readonly _amountIn: string,
     private readonly _slippage: number,
     private readonly _senderAddress: string,
@@ -20,11 +20,11 @@ export class GetPathQuery {
     return this._toChainId;
   }
 
-  get srcToken(): ContractAddress {
+  get srcToken(): Token {
     return this._srcToken;
   }
 
-  get dstToken(): ContractAddress {
+  get dstToken(): Token {
     return this._dstToken;
   }
 
