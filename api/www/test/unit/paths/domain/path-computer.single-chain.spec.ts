@@ -137,14 +137,14 @@ describe('path-computer - single chain', () => {
       expect(routes[0].approvalTransaction.to).toEqual(srcToken.address);
       expect(routes[0].transaction.to).toEqual(DeployedAddresses.Router);
       expect(routes[0].resume.amountIn).toEqual(BigInteger.fromDecimal('1000', srcToken.decimals));
-      expect(routes[0].amountOut).toEqual('4.0');
+      expect(routes[0].amountOut).toEqual('2.0');
 
       expect(routes[1].resume.fromToken).toEqual(srcToken);
       expect(routes[1].resume.toToken).toEqual(dstToken);
       expect(routes[1].approvalTransaction.to).toEqual(srcToken.address);
       expect(routes[1].transaction.to).toEqual(DeployedAddresses.Router);
       expect(routes[1].resume.amountIn).toEqual(BigInteger.fromDecimal('1000', srcToken.decimals));
-      expect(routes[1].amountOut).toEqual('2.0');
+      expect(routes[1].amountOut).toEqual('4.0');
     });
 
     it('should compute route without approval if native token in', async () => {
@@ -164,9 +164,7 @@ describe('path-computer - single chain', () => {
         isEnabledOn: () => true,
       });
 
-      const exchanges = new Exchanges([
-        [ExchangeProviders.ZeroEx, mockZeroEx],
-      ]);
+      const exchanges = new Exchanges([[ExchangeProviders.ZeroEx, mockZeroEx]]);
 
       // mock GasPriceFetcher
       const gasPriceFetcher = new GasPriceFetcher();

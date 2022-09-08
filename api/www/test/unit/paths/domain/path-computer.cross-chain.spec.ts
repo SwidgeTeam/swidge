@@ -570,10 +570,10 @@ describe('path-computer - cross chain', () => {
       /** Assert */
       expect(routes.length).toEqual(2);
 
-      expect(routes[0].steps[0].name).toEqual('Sushiswap');
+      expect(routes[0].steps[0].name).toEqual('ZeroEx');
       expect(routes[0].steps[2].name).toEqual('ZeroEx');
 
-      expect(routes[1].steps[0].name).toEqual('ZeroEx');
+      expect(routes[1].steps[0].name).toEqual('Sushiswap');
       expect(routes[1].steps[2].name).toEqual('ZeroEx');
     });
   });
