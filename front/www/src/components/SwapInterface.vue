@@ -82,6 +82,12 @@ watch(isConnected, (connected) => {
     }
 })
 
+const destinationChainSelected = computed({
+    get: () => {
+        return routesStore.getDestinationChainId
+    },
+    set: () => null
+})
 /**
  * Decides if should quote for a possible path
  */
@@ -389,7 +395,9 @@ const closeModalStatus = () => {
                 @select-token="() => handleOpenTokenList(false)"
             />
         </div>
-        <RecipientUserCard/>
+        <RecipientUserCard
+            v-if="destinationChainSelected"
+        />
         <ActionButton
             :text="buttonLabel"
             :is-loading="isGettingQuote"
