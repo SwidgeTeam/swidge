@@ -93,7 +93,7 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
       tokens: flatten(Object.values(tokens.tokens)).map((token) => {
         return {
           chainId: token.chainId.toString(),
-          address: this.getAddress(token.address),
+          address: this.getOurAddress(token.address),
           name: token.name,
           symbol: token.symbol,
           decimals: token.decimals,
@@ -104,8 +104,12 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
     };
   }
 
-  private getAddress(address: string): string {
+  private getOurAddress(address: string): string {
     return address === ethers.constants.AddressZero ? NATIVE_TOKEN_ADDRESS : address;
+  }
+
+  private getAddress(token: Token): string {
+    return token.isNative() ? ethers.constants.AddressZero : token.address;
   }
 
   /**
@@ -117,9 +121,9 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
     try {
       response = await this.client.getQuote({
         fromChain: request.fromChain,
-        fromToken: request.fromToken.address,
+        fromToken: this.getAddress(request.fromToken),
         toChain: request.toChain,
-        toToken: request.toToken.address,
+        toToken: this.getAddress(request.toToken),
         fromAmount: request.amountIn.toString(),
         fromAddress: request.senderAddress,
         slippage: request.slippage / 100,
