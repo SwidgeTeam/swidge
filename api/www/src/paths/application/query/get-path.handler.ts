@@ -3,17 +3,12 @@ import { GetPathQuery } from './get-path.query';
 import { Inject } from '@nestjs/common';
 import { Class } from '../../../shared/Class';
 import { Route } from '../../../shared/domain/route/route';
-import { HttpClient } from '../../../shared/infrastructure/http/httpClient';
 import { Aggregators } from '../../../aggregators/domain/aggregators';
 import { AggregatorProviders } from '../../../aggregators/domain/providers/aggregator-providers';
 import { LiFi } from '../../../aggregators/domain/providers/liFi';
 import { Logger } from '../../../shared/domain/logger';
-import { ViaExchange } from '../../../aggregators/domain/providers/via-exchange';
 import { ConfigService } from '../../../config/config.service';
-import { Socket } from '../../../aggregators/domain/providers/socket';
 import { Rango } from '../../../aggregators/domain/providers/rango';
-import { CachedGasPriceFetcher } from '../../../shared/domain/cached-gas-price-fetcher';
-import { CachedPriceFeedFetcher } from '../../../shared/domain/cached-price-feed-fetcher';
 import { OrderStrategy } from '../../domain/route-order-strategy/order-strategy';
 import { AggregatorsPathComputer } from '../../../aggregators/domain/aggregators-path-computer';
 
@@ -23,18 +18,10 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
 
   constructor(
     private readonly configService: ConfigService,
-    @Inject(Class.HttpClient) private readonly httpClient: HttpClient,
-    @Inject(Class.PriceFeedFetcher) private readonly priceFeedFetcher: CachedPriceFeedFetcher,
-    @Inject(Class.GasPriceFetcher) private readonly gasPriceFetcher: CachedGasPriceFetcher,
     @Inject(Class.Logger) private readonly logger: Logger,
   ) {
     const aggregators = new Aggregators([
       [AggregatorProviders.LiFi, LiFi.create()],
-      [AggregatorProviders.Socket, new Socket(httpClient, configService.getSocketApiKey())],
-      [
-        AggregatorProviders.Via,
-        ViaExchange.create(configService.getViaApiKey(), gasPriceFetcher, priceFeedFetcher),
-      ],
       [AggregatorProviders.Rango, Rango.create(configService.getRangoApiKey())],
     ]);
 
