@@ -10,4 +10,5 @@ docker_packges:
   - "docker-ce"
   - "docker-ce-cli"
   - "containerd.io"
+  - "rsync"
 docker_compose_url: https://github.com/docker/compose/releases/download/v2.7.0/docker-compose-Linux-x86_64
