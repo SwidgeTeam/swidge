@@ -29,7 +29,7 @@ export class CheckTxStatusHandler implements IQueryHandler<CheckTxStatusQuery> {
         AggregatorProviders.Via,
         ViaExchange.create(configService.getViaApiKey(), gasPriceFetcher, priceFeedFetcher),
       ],
-      [AggregatorProviders.Rango, Rango.create(configService.getRangoApiKey(), priceFeedFetcher)],
+      [AggregatorProviders.Rango, Rango.create(configService.getRangoApiKey())],
     ]);
   }
 

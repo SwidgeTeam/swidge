@@ -4,7 +4,6 @@ import consoleLoggerProvider from '../shared/infrastructure/console-logger-provi
 import { GetMetadataController } from './infrastructure/controllers/get-metadata-controller';
 import { GetMetadataHandler } from './application/query/get-metadata-handler';
 import { ConfigModule } from '../config/config.module';
-import priceFeedFetcherProvider from '../shared/infrastructure/price-feed-fetcher.provider';
 
 @Module({
   imports: [CqrsModule, ConfigModule],
@@ -12,7 +11,6 @@ import priceFeedFetcherProvider from '../shared/infrastructure/price-feed-fetche
   providers: [
     GetMetadataHandler,
     consoleLoggerProvider(),
-    priceFeedFetcherProvider(),
   ],
 })
 export class MetadataModule {}

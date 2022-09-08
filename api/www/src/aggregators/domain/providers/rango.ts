@@ -44,7 +44,6 @@ import {
   StatusCheckResponse,
 } from '../status-check';
 import { RouteFees } from '../../../shared/domain/route/route-fees';
-import { IPriceFeedFetcher } from '../../../shared/domain/price-feed-fetcher';
 import { RouteSteps } from '../../../shared/domain/route/route-steps';
 import { AggregatorMetadata } from '../../../shared/domain/metadata';
 import { NATIVE_TOKEN_ADDRESS } from '../../../shared/enums/Natives';
@@ -102,15 +101,13 @@ export class Rango
     Fuse,
   ];
   private client: RangoClient;
-  private priceFeedFetcher: IPriceFeedFetcher;
 
-  public static create(apiKey: string, priceFeedFetcher: IPriceFeedFetcher): Rango {
-    return new Rango(new RangoClient(apiKey), priceFeedFetcher);
+  public static create(apiKey: string): Rango {
+    return new Rango(new RangoClient(apiKey));
   }
 
-  constructor(client: RangoClient, priceFeedFetcher: IPriceFeedFetcher) {
+  constructor(client: RangoClient) {
     this.client = client;
-    this.priceFeedFetcher = priceFeedFetcher;
   }
 
   isEnabledOn(fromChainId: string, toChainId: string): boolean {

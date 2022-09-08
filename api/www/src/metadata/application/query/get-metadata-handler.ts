@@ -9,7 +9,6 @@ import { LiFi } from '../../../aggregators/domain/providers/liFi';
 import Metadata from '../../domain/Metadata';
 import { Rango } from '../../../aggregators/domain/providers/rango';
 import { ConfigService } from '../../../config/config.service';
-import { CachedPriceFeedFetcher } from '../../../shared/domain/cached-price-feed-fetcher';
 
 @QueryHandler(GetMetadataQuery)
 export class GetMetadataHandler implements IQueryHandler<GetMetadataQuery> {
@@ -17,12 +16,11 @@ export class GetMetadataHandler implements IQueryHandler<GetMetadataQuery> {
 
   constructor(
     private readonly configService: ConfigService,
-    @Inject(Class.PriceFeedFetcher) private readonly priceFeedFetcher: CachedPriceFeedFetcher,
     @Inject(Class.Logger) private readonly logger: Logger,
   ) {
     this.aggregators = new Map<string, MetadataProviderAggregator>([
       [AggregatorProviders.LiFi, LiFi.create()],
-      [AggregatorProviders.Rango, Rango.create(configService.getRangoApiKey(), priceFeedFetcher)],
+      [AggregatorProviders.Rango, Rango.create(configService.getRangoApiKey())],
     ]);
   }
 

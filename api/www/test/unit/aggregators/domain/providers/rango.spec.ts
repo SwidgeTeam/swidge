@@ -5,8 +5,6 @@ import { faker } from '@faker-js/faker';
 import { Rango } from '../../../../../src/aggregators/domain/providers/rango';
 import { QuoteRequest, QuoteResponse, RangoClient } from 'rango-sdk-basic';
 import { createMock } from 'ts-auto-mock';
-import { PriceFeed } from '../../../../../src/shared/domain/price-feed';
-import { IPriceFeedFetcher } from '../../../../../src/shared/domain/price-feed-fetcher';
 
 describe('aggregators', () => {
   it('should throw exception resultType is NO_ROUTE', async () => {
@@ -20,8 +18,7 @@ describe('aggregators', () => {
         });
       },
     });
-    const priceFeedMock = createMock<IPriceFeedFetcher>();
-    const rango = new Rango(client, priceFeedMock);
+    const rango = new Rango(client);
     const request = getAggregatorRoute();
 
     // Act
@@ -42,8 +39,7 @@ describe('aggregators', () => {
         });
       },
     });
-    const priceFeedMock = createMock<IPriceFeedFetcher>();
-    const rango = new Rango(client, priceFeedMock);
+    const rango = new Rango(client);
     const request = getAggregatorRoute();
 
     // Act
@@ -64,8 +60,7 @@ describe('aggregators', () => {
         });
       },
     });
-    const priceFeedMock = createMock<IPriceFeedFetcher>();
-    const rango = new Rango(client, priceFeedMock);
+    const rango = new Rango(client);
     const request = getAggregatorRoute();
 
     // Act
@@ -162,8 +157,7 @@ describe('aggregators', () => {
         });
       },
     });
-    const priceFeedMock = createMock<IPriceFeedFetcher>();
-    const rango = new Rango(client, priceFeedMock);
+    const rango = new Rango(client);
     const request = getAggregatorRoute();
 
     // Act
