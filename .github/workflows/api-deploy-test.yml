@@ -1,4 +1,4 @@
-name: Deploy Backend - Prod
+name: Deploy Backend - Test
 
 on:
   push:
