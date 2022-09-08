@@ -54,7 +54,6 @@ describe('path-computer - single chain', () => {
       const pathComputer = new PathComputer(
         exchanges,
         new Bridges([]),
-        new Aggregators([]),
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
@@ -116,7 +115,6 @@ describe('path-computer - single chain', () => {
       const pathComputer = new PathComputer(
         exchanges,
         new Bridges([]),
-        new Aggregators([]),
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
@@ -177,7 +175,6 @@ describe('path-computer - single chain', () => {
       const pathComputer = new PathComputer(
         exchanges,
         new Bridges([]),
-        new Aggregators([]),
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
@@ -185,7 +182,16 @@ describe('path-computer - single chain', () => {
       );
 
       // create pat query
-      const query = getPathQuery();
+      const query = new GetPathQuery(
+        Polygon,
+        Polygon,
+        TokenMother.polygonMatic(),
+        TokenMother.sushi(),
+        '1000',
+        2,
+        faker.finance.ethereumAddress(),
+        faker.finance.ethereumAddress(),
+      );
 
       /** Act */
       const routes = await pathComputer.compute(query);
@@ -207,8 +213,8 @@ function getPathQuery(): GetPathQuery {
   return new GetPathQuery(
     Polygon,
     Polygon,
-    '0xLINK',
-    '0xSUSHI',
+    TokenMother.link(),
+    TokenMother.sushi(),
     '1000',
     2,
     faker.finance.ethereumAddress(),

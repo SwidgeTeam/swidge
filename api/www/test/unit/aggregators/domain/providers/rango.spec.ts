@@ -79,6 +79,7 @@ describe('aggregators', () => {
     // Arrange
     const client = createMock<RangoClient>({
       quote(quoteRequest: QuoteRequest): Promise<QuoteResponse> {
+        // @ts-ignore
         return Promise.resolve({
           requestId: '',
           resultType: 'OK',
@@ -123,9 +124,10 @@ describe('aggregators', () => {
                   symbol: 'MATIC',
                   decimals: 18,
                   image: 'imgurl',
+                  usdPrice: '0.5',
                 },
                 expenseType: 'FROM_SOURCE_WALLET',
-                amount: '1',
+                amount: '1000000000000000000',
               },
               {
                 name: '',
@@ -135,9 +137,10 @@ describe('aggregators', () => {
                   symbol: 'MATIC',
                   decimals: 18,
                   image: 'imgurl',
+                  usdPrice: '0.5',
                 },
                 expenseType: 'FROM_SOURCE_WALLET',
-                amount: '0.5',
+                amount: '5000000000000000000',
               },
               {
                 name: '',
@@ -147,9 +150,10 @@ describe('aggregators', () => {
                   symbol: 'USDC',
                   decimals: 6,
                   image: 'imgurl',
+                  usdPrice: '0.5',
                 },
                 expenseType: 'DECREASE_FROM_OUTPUT',
-                amount: '200.123456',
+                amount: '200',
               },
             ],
             amountRestriction: null,
@@ -158,9 +162,7 @@ describe('aggregators', () => {
         });
       },
     });
-    const priceFeedMock = createMock<IPriceFeedFetcher>({
-      fetch: () => Promise.resolve(new PriceFeed(BigInteger.fromDecimal('0.5'), 18)),
-    });
+    const priceFeedMock = createMock<IPriceFeedFetcher>();
     const rango = new Rango(client, priceFeedMock);
     const request = getAggregatorRoute();
 
@@ -170,8 +172,8 @@ describe('aggregators', () => {
     // Assert
     expect(route.aggregator.id).toEqual('4');
     expect(route.amountOut.toString()).toEqual('18.123456');
-    expect(route.fees.nativeWei.toString()).toEqual('1500000000000000000');
-    expect(route.fees.feeInUsd).toEqual('0.75');
+    expect(route.fees.nativeWei.toString()).toEqual('6000000000000000000');
+    expect(route.fees.feeInUsd).toEqual('3');
   });
 });
 

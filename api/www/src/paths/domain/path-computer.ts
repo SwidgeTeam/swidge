@@ -23,7 +23,6 @@ import { ExchangeDetails } from '../../swaps/domain/providers/exchange-providers
 import { RouteResume } from '../../shared/domain/route/route-resume';
 import { Bridges } from '../../bridges/domain/bridges';
 import { Exchanges } from '../../swaps/domain/exchanges';
-import { Aggregators } from '../../aggregators/domain/aggregators';
 import { Logger } from '../../shared/domain/logger';
 import { AggregatorProviders } from '../../aggregators/domain/providers/aggregator-providers';
 import { AggregatorDetails } from '../../shared/domain/aggregator-details';
@@ -37,7 +36,6 @@ export class PathComputer {
   /** Providers */
   private readonly exchanges: Exchanges;
   private readonly bridges: Bridges;
-  private readonly aggregators: Aggregators;
   private readonly tokenDetailsFetcher: TokenDetailsFetcher;
   private readonly priceFeedFetcher: IPriceFeedFetcher;
   private readonly gasPriceFetcher: IGasPriceFetcher;
@@ -64,7 +62,6 @@ export class PathComputer {
   constructor(
     _exchanges: Exchanges,
     _bridges: Bridges,
-    _aggregators: Aggregators,
     _tokenDetailsFetcher: TokenDetailsFetcher,
     _priceFeedFetcher: IPriceFeedFetcher,
     _gasPriceFetcher: IGasPriceFetcher,
@@ -72,7 +69,6 @@ export class PathComputer {
   ) {
     this.exchanges = _exchanges;
     this.bridges = _bridges;
-    this.aggregators = _aggregators;
     this.tokenDetailsFetcher = _tokenDetailsFetcher;
     this.priceFeedFetcher = _priceFeedFetcher;
     this.gasPriceFetcher = _gasPriceFetcher;
@@ -103,47 +99,13 @@ export class PathComputer {
     this.priceOriginCoin = await this.priceFeedFetcher.fetch(this.fromChain);
     this.priceDestinationCoin = await this.priceFeedFetcher.fetch(this.toChain);
 
-    const promiseComputedRoutes = this.getComputedProviderRoutes();
-    const promiseAggregatorRoutes = this.getAggregatorsRoutes();
-
-    const routes = flatten(await Promise.all([promiseComputedRoutes, promiseAggregatorRoutes]));
+    const routes = await this.getComputedProviderRoutes();
 
     if (routes.length === 0) {
       throw new PathNotFound();
     }
 
     return routes;
-  }
-
-  /**
-   * Fetches all the possible routes
-   * from the different aggregator providers
-   * @private
-   */
-  private async getAggregatorsRoutes(): Promise<Route[]> {
-    const aggregatorRequest = new AggregatorRequest(
-      this.fromChain,
-      this.toChain,
-      this.srcToken,
-      this.dstToken,
-      this.amountIn,
-      this.totalSlippage,
-      this.senderAddress,
-      this.receiverAddress,
-    );
-    const promises = [];
-    // for every integrated aggregator
-    for (const aggregatorId of this.getPossibleAggregators()) {
-      // ask for their routes
-      const promiseRoute = this.aggregators.execute(aggregatorId, aggregatorRequest);
-      promises.push(promiseRoute);
-    }
-
-    // resolve promises and flatten results
-    const results = (await Promise.allSettled(promises))
-      .filter((result) => result.status === 'fulfilled')
-      .map((result: PromiseFulfilledResult<Route>) => result.value);
-    return flatten(results);
   }
 
   /**
@@ -597,13 +559,5 @@ export class PathComputer {
    */
   private getPossibleBridges(): string[] {
     return this.bridges.getEnabled(this.fromChain, this.toChain);
-  }
-
-  /**
-   * Returns the available aggregators given the origin/destination chain combination
-   * @private
-   */
-  private getPossibleAggregators(): string[] {
-    return this.aggregators.getEnabled(this.fromChain, this.toChain);
   }
 }

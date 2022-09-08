@@ -76,7 +76,6 @@ describe('path-computer - cross chain', () => {
       const pathComputer = new PathComputer(
         exchanges,
         bridges,
-        new Aggregators([]),
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
@@ -132,7 +131,6 @@ describe('path-computer - cross chain', () => {
       const pathComputer = new PathComputer(
         exchanges,
         bridges,
-        new Aggregators([]),
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
@@ -195,7 +193,6 @@ describe('path-computer - cross chain', () => {
       const pathComputer = new PathComputer(
         exchanges,
         bridges,
-        new Aggregators([]),
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
@@ -266,7 +263,6 @@ describe('path-computer - cross chain', () => {
       const pathComputer = new PathComputer(
         exchanges,
         bridges,
-        new Aggregators([]),
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
@@ -380,7 +376,6 @@ describe('path-computer - cross chain', () => {
       const pathComputer = new PathComputer(
         exchanges,
         bridges,
-        new Aggregators([]),
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
@@ -463,7 +458,6 @@ describe('path-computer - cross chain', () => {
       const pathComputer = new PathComputer(
         exchanges,
         bridges,
-        new Aggregators([]),
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
@@ -554,7 +548,6 @@ describe('path-computer - cross chain', () => {
       const pathComputer = new PathComputer(
         exchanges,
         bridges,
-        new Aggregators([]),
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
@@ -583,8 +576,8 @@ function getPathQuery(): GetPathQuery {
   return new GetPathQuery(
     Polygon,
     Fantom,
-    '0xLINK',
-    '0xSUSHI',
+    TokenMother.link(),
+    TokenMother.sushi(),
     '1000',
     2,
     faker.finance.ethereumAddress(),

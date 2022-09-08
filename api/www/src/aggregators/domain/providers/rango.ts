@@ -303,23 +303,18 @@ export class Rango
     let amountWei = BigInteger.zero();
     let feesInUsd = 0;
     for (const fee of fees) {
-      const amount = BigInteger.fromString(fee.amount);
-      amountWei = amountWei.plus(amount);
-      const usdAmount =
-        Number(ethers.utils.formatUnits(fee.amount, fee.token.decimals)) *
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        Number(fee.token.usdPrice);
-      feesInUsd += usdAmount;
-    }
-    const totalFee = fees.reduce((total: BigInteger, current: SwapFee) => {
-      if (current.expenseType === 'FROM_SOURCE_WALLET') {
-        return total.plus(BigInteger.fromString(current.amount));
+      if (fee.expenseType === 'FROM_SOURCE_WALLET') {
+        const amount = BigInteger.fromString(fee.amount);
+        amountWei = amountWei.plus(amount);
+        const usdAmount =
+          Number(ethers.utils.formatUnits(fee.amount, fee.token.decimals)) *
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          Number(fee.token.usdPrice);
+        feesInUsd += usdAmount;
       }
-      return total;
-    }, BigInteger.zero());
-
-    return new RouteFees(totalFee, feesInUsd.toString());
+    }
+    return new RouteFees(amountWei, feesInUsd.toString());
   }
 
   /**
