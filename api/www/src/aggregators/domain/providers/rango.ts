@@ -45,10 +45,10 @@ import {
 } from '../status-check';
 import { RouteFees } from '../../../shared/domain/route/route-fees';
 import { IPriceFeedFetcher } from '../../../shared/domain/price-feed-fetcher';
-import { PriceFeed } from '../../../shared/domain/price-feed';
 import { RouteSteps } from '../../../shared/domain/route/route-steps';
 import { AggregatorMetadata } from '../../../shared/domain/metadata';
 import { NATIVE_TOKEN_ADDRESS } from '../../../shared/enums/Natives';
+import { ethers } from 'ethers';
 
 interface MetadataResponse {
   blockchains: BlockchainMeta[];
@@ -194,9 +194,8 @@ export class Rango
       response.route.estimatedTimeInSeconds,
     );
 
-    const nativePrice = await this.priceFeedFetcher.fetch(request.fromChain);
     const steps = this.buildSteps(request.amountIn, response.route.path);
-    const fees = this.buildFees(response.route.fee, nativePrice);
+    const fees = this.buildFees(response.route.fee);
 
     return new Route(aggregatorDetails, resume, steps, fees);
   }
@@ -298,10 +297,21 @@ export class Rango
   /**
    * Computes and returns the fees
    * @param fees
-   * @param nativePrice
    * @private
    */
-  private buildFees(fees: SwapFee[], nativePrice: PriceFeed): RouteFees {
+  private buildFees(fees: SwapFee[]): RouteFees {
+    let amountWei = BigInteger.zero();
+    let feesInUsd = 0;
+    for (const fee of fees) {
+      const amount = BigInteger.fromString(fee.amount);
+      amountWei = amountWei.plus(amount);
+      const usdAmount =
+        Number(ethers.utils.formatUnits(fee.amount, fee.token.decimals)) *
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        Number(fee.token.usdPrice);
+      feesInUsd += usdAmount;
+    }
     const totalFee = fees.reduce((total: BigInteger, current: SwapFee) => {
       if (current.expenseType === 'FROM_SOURCE_WALLET') {
         return total.plus(BigInteger.fromString(current.amount));
@@ -309,12 +319,7 @@ export class Rango
       return total;
     }, BigInteger.zero());
 
-    const feesInUsd = totalFee
-      .times(nativePrice.lastPrice)
-      .div(BigInteger.weiInEther())
-      .toDecimal(nativePrice.decimals);
-
-    return new RouteFees(totalFee, feesInUsd);
+    return new RouteFees(totalFee, feesInUsd.toString());
   }
 
   /**
