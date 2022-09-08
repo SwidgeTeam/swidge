@@ -9,7 +9,7 @@ import { Metamask } from '@/domain/wallets/Metamask'
 import { useTransactionStore } from '@/store/transaction'
 import { useRoutesStore } from '@/store/routes'
 import { useMetadataStore } from '@/store/metadata'
-import { IChain } from '@/domain/metadata/Metadata'
+import { IChain, IToken } from '@/domain/metadata/Metadata'
 
 export const NATIVE_COIN_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 
@@ -94,24 +94,24 @@ export const useWeb3Store = defineStore('web3', () => {
 
     /**
      * fetches and returns the balance of an asset
-     * @param address Address of the asset to query
+     * @param token
      */
-    async function getBalance(address: string) {
+    async function getBalance(token: IToken) {
         if (!wallet.value) throw new Error('No wallet')
-        if (address === NATIVE_COIN_ADDRESS) {
-            return getNativeBalance()
+        if (token.address === NATIVE_COIN_ADDRESS) {
+            return getNativeBalance(token.chainId)
         } else {
-            return getTokenBalance(address)
+            return getTokenBalance(token.chainId, token.address)
         }
     }
 
     /**
      * fetches and returns the amount of native coins
      */
-    async function getNativeBalance(): Promise<string> {
+    async function getNativeBalance(chainId: string): Promise<string> {
         if (!account.value) return ''
         try {
-            const provider = getWalletProvider()
+            const provider = getChainProvider(chainId)
             const balance = await provider.getBalance(account.value)
             return ethers.utils.formatEther(balance)
         } catch (error) {
@@ -122,9 +122,9 @@ export const useWeb3Store = defineStore('web3', () => {
     /**
      * fetches and returns the amount of certain token
      */
-    async function getTokenBalance(address: string): Promise<string> {
+    async function getTokenBalance(chainId: string, address: string): Promise<string> {
         try {
-            const provider = getWalletProvider()
+            const provider = getChainProvider(chainId)
             const contract = new ethers.Contract(address, IERC20Abi, provider)
             const balance = await contract.balanceOf(account.value)
             const decimals = await contract.decimals()
@@ -148,6 +148,10 @@ export const useWeb3Store = defineStore('web3', () => {
      */
     async function switchToNetwork(chainId: string) {
         if (!wallet.value) throw new Error('No wallet')
+        const currentChainId = await wallet.value.getCurrentChain()
+        if (currentChainId === chainId) {
+            return
+        }
         const chain = metadataStore.getChain(chainId)
         const changed = await wallet.value.switchNetwork(chain)
         if (changed) {

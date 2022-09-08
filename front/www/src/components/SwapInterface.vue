@@ -26,7 +26,7 @@ const { isValidReceiverAddress } = storeToRefs(routesStore)
 const { isConnected } = storeToRefs(web3Store)
 const toast = useToast()
 
-const { switchToNetwork, getBalance } = web3Store
+const { getBalance } = web3Store
 
 const sourceTokenAmount = ref<string>('')
 const sourceTokenMaxAmount = ref<string>('')
@@ -127,10 +127,7 @@ const handleUpdateTokenFromModal = (token: IToken) => {
             if (token.chainId == selectedDestinationChainId && token.address == selectedDestinationTokenAddress) {
                 switchHandlerFunction()
             } else {
-                // If we changed origin network, inform wallet
-                switchToNetwork(token.chainId).then(() => {
-                    updateOriginToken(token)
-                })
+                updateOriginToken(token)
             }
         } else {
             updateOriginToken(token)
@@ -166,16 +163,16 @@ const updateOriginToken = async (token: IToken) => {
         // Reset amount
         sourceTokenAmount.value = ''
         // Check user's token balance
-        await updateTokenBalance(token.address)
+        await updateTokenBalance(token)
     }
 }
 
 /**
  * Updates the balance of the selected token
- * @param address
+ * @param token
  */
-const updateTokenBalance = async (address: string) => {
-    sourceTokenMaxAmount.value = await getBalance(address)
+const updateTokenBalance = async (token: IToken) => {
+    sourceTokenMaxAmount.value = await getBalance(token)
 }
 
 /**
@@ -237,6 +234,9 @@ const onExecuteTransaction = async () => {
         throw new Error('Invalid receiver address')
     }
 
+    // Make sure on the correct chain
+    await web3Store.switchToNetwork(route.resume.fromChain)
+
     setExecutingButton()
 
     await transactionStore.setCurrentNonce()
@@ -271,7 +271,7 @@ const onExecuteTransaction = async () => {
  */
 const executeRoute = async (): Promise<TxHash> => {
     const approvalTx = transactionStore.getApprovalTx
-    const mainTx = transactionStore.mainTx
+    const mainTx = transactionStore.getMainTx
     if (!mainTx) {
         throw new Error('trying to execute an empty transaction')
     }
@@ -289,7 +289,7 @@ const executeRoute = async (): Promise<TxHash> => {
 const executeSingleQuoteExecution = async (): Promise<TxHash> => {
     await transactionStore.fetchBothTxs(sourceTokenAmount.value)
     const approvalTx = transactionStore.getApprovalTx
-    const mainTx = transactionStore.mainTx
+    const mainTx = transactionStore.getMainTx
     if (!mainTx) {
         throw new Error('trying to execute an empty transaction')
     }
@@ -310,7 +310,7 @@ const executeDoubleQuoteExecution = async (): Promise<TxHash> => {
         await web3Store.sendApprovalTransaction(approvalTx)
     }
     await transactionStore.fetchMainTx()
-    const mainTx = transactionStore.mainTx
+    const mainTx = transactionStore.getMainTx
     if (!mainTx) {
         throw new Error('trying to execute an empty transaction')
     }
