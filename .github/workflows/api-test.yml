@@ -2,7 +2,7 @@ name: Test Backend
 
 on:
   push:
-    branches-ignore:  [ 'master' ]
+    branches-ignore: [ 'master', 'release/**' ]
     paths:
       - 'api/www/**'
       - '.github/workflows/api-test.yml'
