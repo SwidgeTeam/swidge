@@ -3,7 +3,6 @@ import { QueryBus } from '@nestjs/cqrs';
 import { Response } from 'express';
 import CheckTxStatusQuery from '../../application/query/check-tx-status-query';
 import { GetTxStatusDto } from './get-tx-status-dto';
-import { StatusCheckResponse } from '../../domain/status-check';
 
 @Controller()
 export class GetTxStatusController {
@@ -19,10 +18,10 @@ export class GetTxStatusController {
       params.trackingId,
     );
 
-    const status = await this.queryBus.execute<CheckTxStatusQuery, StatusCheckResponse>(query);
+    const status = await this.queryBus.execute<CheckTxStatusQuery, string>(query);
 
     return res.json({
-      status: status.status,
+      status: status,
     });
   }
 }
