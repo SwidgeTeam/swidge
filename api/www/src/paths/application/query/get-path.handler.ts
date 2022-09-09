@@ -33,7 +33,12 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
    * @param query
    */
   async execute(query: GetPathQuery): Promise<Route[]> {
+    this.logger.log(
+      `Quoting ${query.srcToken}/${query.fromChainId} to ${query.dstToken}/${query.toChainId}...`,
+    );
     const routes = await this.pathComputer.compute(query);
+
+    this.logger.log(`Found ${routes.length} routes`);
 
     return this.tagRoutes(routes);
   }

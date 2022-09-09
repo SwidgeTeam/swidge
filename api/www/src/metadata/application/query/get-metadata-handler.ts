@@ -25,6 +25,7 @@ export class GetMetadataHandler implements IQueryHandler<GetMetadataQuery> {
   }
 
   async execute(): Promise<Metadata> {
+    this.logger.log('Fetching metadata...');
     const metadata = new Metadata();
     for (const aggregator of this.aggregators.values()) {
       const meta = await aggregator.getMetadata();

@@ -69,6 +69,7 @@ export class AggregatorsPathComputer {
     const promises = [];
     // for every integrated aggregator
     for (const aggregatorId of this.getPossibleAggregators()) {
+      this.logger.log(`Checking aggregator ${aggregatorId}`);
       // ask for their routes
       const promiseRoute = this.aggregators.execute(aggregatorId, aggregatorRequest);
       promises.push(promiseRoute);

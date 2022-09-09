@@ -15,6 +15,7 @@ export class CheckTxStatusHandler implements IQueryHandler<CheckTxStatusQuery> {
   ) {}
 
   async execute(query: CheckTxStatusQuery): Promise<string> {
+    this.logger.log(`Checking status of tx ${query.txHash}`);
     const tx = await this.repository.find(query.txHash);
     return tx.status;
   }

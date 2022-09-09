@@ -34,6 +34,8 @@ export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
    * @param command
    */
   async execute(command: ExecutedTxCommand): Promise<void> {
+    this.logger.log(`Executed txHash ${command.txHash}`);
+
     // informs tx has started
     await this.aggregators
       .get(command.aggregatorId)
@@ -61,21 +63,29 @@ export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
    * @private
    */
   private async processSingleChainTx(command: ExecutedTxCommand) {
-    const status = await this.checkTxStatus(command);
+    try {
+      this.logger.log(`Processing single chain tx ${command.txHash}...`);
 
-    const tx = Transaction.create(
-      command.txHash,
-      command.fromAddress,
-      command.toAddress,
-      command.fromChain,
-      command.toChain,
-      status.fromToken,
-      status.toToken,
-      status.amountIn,
-      status.amountOut,
-      ExternalTransactionStatus.Success,
-    );
-    await this.repository.create(tx);
+      const status = await this.checkTxStatus(command);
+
+      const tx = Transaction.create(
+        command.txHash,
+        command.fromAddress,
+        command.toAddress,
+        command.fromChain,
+        command.toChain,
+        status.fromToken,
+        status.toToken,
+        status.amountIn,
+        status.amountOut,
+        ExternalTransactionStatus.Success,
+      );
+      await this.repository.create(tx);
+    } catch (e) {
+      this.logger.error(`Single chain tx ${command.txHash} processing failed: ${e}`);
+      // retry, we need to leave that done
+      await this.processSingleChainTx(command);
+    }
   }
 
   /**
@@ -84,21 +94,30 @@ export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
    * @private
    */
   private async processCrossChainTx(command: ExecutedTxCommand) {
-    const status = await this.checkTxStatus(command);
+    try {
+      this.logger.log(`Processing cross chain tx ${command.txHash}...`);
 
-    const tx = Transaction.create(
-      command.txHash,
-      command.fromAddress,
-      command.toAddress,
-      command.fromChain,
-      command.toChain,
-      status.fromToken,
-      '',
-      status.amountIn,
-      BigInteger.zero(),
-      ExternalTransactionStatus.Pending,
-    );
-    await this.repository.create(tx);
+      const status = await this.checkTxStatus(command);
+
+      const tx = Transaction.create(
+        command.txHash,
+        command.fromAddress,
+        command.toAddress,
+        command.fromChain,
+        command.toChain,
+        status.fromToken,
+        '',
+        status.amountIn,
+        BigInteger.zero(),
+        ExternalTransactionStatus.Pending,
+      );
+      await this.repository.create(tx);
+    } catch (e) {
+      this.logger.error(`cross chain tx ${command.txHash} processing failed: ${e}`);
+      // this needs to succeed
+      await this.processCrossChainTx(command);
+      return;
+    }
 
     // sets interval to keep checking until resolved
     const interval = window.setInterval(() => {
@@ -114,17 +133,24 @@ export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
    * @private
    */
   private async recheckTx(command: ExecutedTxCommand) {
-    const status = await this.checkTxStatus(command);
+    try {
+      this.logger.log(`Rechecking tx ${command.txHash}...`);
 
-    if (status.status !== ExternalTransactionStatus.Pending) {
-      const tx = await this.repository.find(command.txHash);
-      tx.markAsCompleted(new Date())
-        .setAmountOut(status.amountOut)
-        .setDestinationTxHash(status.dstTxHash)
-        .setStatus(status.status);
-      await this.repository.update(tx);
+      const status = await this.checkTxStatus(command);
 
-      this.removeInterval(command.txHash);
+      if (status.status !== ExternalTransactionStatus.Pending) {
+        const tx = await this.repository.find(command.txHash);
+        tx.markAsCompleted(new Date())
+          .setAmountOut(status.amountOut)
+          .setDestinationTxHash(status.dstTxHash)
+          .setStatus(status.status);
+        await this.repository.update(tx);
+
+        this.removeInterval(command.txHash);
+        this.logger.error(`tx ${command.txHash} finished w/ status ${status.status}`);
+      }
+    } catch (e) {
+      this.logger.error(`Rechecking tx ${command.txHash} failed: ${e}`);
     }
   }
 

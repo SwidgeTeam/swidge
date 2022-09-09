@@ -28,6 +28,7 @@ export class BuildBothTxsHandler implements IQueryHandler<BuildBothTxsQuery> {
   }
 
   async execute(query: BuildBothTxsQuery): Promise<BothTxs> {
+    this.logger.log(`Building txs for ${query.aggregatorId}...`);
     const srcToken = await this.tokenDetailsFetcher.fetch(query.srcToken, query.fromChainId);
     const dstToken = await this.tokenDetailsFetcher.fetch(query.dstToken, query.toChainId);
     const request = new AggregatorRequest(
