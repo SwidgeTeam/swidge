@@ -74,8 +74,8 @@ describe('path-computer - single chain', () => {
   describe('path-computer - with routes', () => {
     it('should compute two different routes', async () => {
       /** Arrange */
-      const srcToken = TokenMother.link();
-      const dstToken = TokenMother.sushi();
+      const srcToken = TokenMother.polygonLink();
+      const dstToken = TokenMother.polygonSushi();
 
       const fetcher = getTokenDetailsFetcher([srcToken, dstToken]);
 
@@ -148,7 +148,7 @@ describe('path-computer - single chain', () => {
     it('should compute route without approval if native token in', async () => {
       /** Arrange */
       const srcToken = TokenMother.polygonMatic();
-      const dstToken = TokenMother.sushi();
+      const dstToken = TokenMother.polygonSushi();
 
       const fetcher = getTokenDetailsFetcher([srcToken, dstToken]);
 
@@ -184,7 +184,7 @@ describe('path-computer - single chain', () => {
       // create pat query
       const query = new GetPathQuery(
         TokenMother.polygonMatic(),
-        TokenMother.sushi(),
+        TokenMother.polygonSushi(),
         '1000',
         2,
         faker.finance.ethereumAddress(),
@@ -209,8 +209,8 @@ describe('path-computer - single chain', () => {
 
 function getPathQuery(): GetPathQuery {
   return new GetPathQuery(
-    TokenMother.link(),
-    TokenMother.sushi(),
+    TokenMother.polygonLink(),
+    TokenMother.polygonSushi(),
     '1000',
     2,
     faker.finance.ethereumAddress(),
