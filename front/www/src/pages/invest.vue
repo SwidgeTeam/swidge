@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import MainLayout from '@/layouts/MainLayout.vue'
+import ComingSoon from '@/components/ComingSoon.vue'
 </script>
 
 <template>
-    <MainLayout/>
+    <ComingSoon/>
 </template>
 
 <route lang="yaml">
-name: indexPage
-meta:
+name: Invest
 layout: MainLayout
 </route>
