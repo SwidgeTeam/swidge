@@ -1,7 +1,6 @@
 export class ExecutedTxCommand {
   constructor(
     readonly aggregatorId: string,
-    readonly wallet: string,
     readonly fromChain: string,
     readonly toChain: string,
     readonly fromAddress: string,

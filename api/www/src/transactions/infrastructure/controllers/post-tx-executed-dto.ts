@@ -6,9 +6,6 @@ export class PostTxExecutedDto {
   @IsNotEmpty()
   aggregatorId: string;
 
-  @IsEthereumAddress()
-  wallet: string;
-
   @IsString()
   @IsNotEmpty()
   fromChainId: string;

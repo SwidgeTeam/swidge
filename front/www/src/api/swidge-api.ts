@@ -250,6 +250,8 @@ class SwidgeAPI extends HttpClient {
 
     async informExecutedTx(params: {
         aggregatorId: string,
+        fromChainId: string,
+        toChainId: string,
         fromAddress: string,
         toAddress: string,
         txHash: string,

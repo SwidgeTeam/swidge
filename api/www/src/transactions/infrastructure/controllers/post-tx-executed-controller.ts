@@ -12,7 +12,6 @@ export class PostTxExecutedController {
   async build(@Query() params: PostTxExecutedDto, @Res() res: Response) {
     const command = new ExecutedTxCommand(
       params.aggregatorId,
-      params.wallet,
       params.fromChainId,
       params.toChainId,
       params.fromAddress,

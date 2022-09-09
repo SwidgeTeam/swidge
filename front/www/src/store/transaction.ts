@@ -83,6 +83,8 @@ export const useTransactionStore = defineStore('transaction', {
             const route = routesStore.getSelectedRoute
             swidgeApi.informExecutedTx({
                 aggregatorId: route.aggregator.id,
+                fromChainId: routesStore.getOriginChainId,
+                toChainId: routesStore.getDestinationChainId,
                 fromAddress: web3Store.account,
                 toAddress: routesStore.receiverAddress,
                 txHash: this.txHash,
@@ -94,21 +96,16 @@ export const useTransactionStore = defineStore('transaction', {
          */
         startCheckingStatus: function () {
             this.statusCheckInterval = window.setInterval(() => {
-                const routesStore = useRoutesStore()
-                const route = routesStore.getSelectedRoute
                 swidgeApi.checkTxStatus({
-                    aggregatorId: route.aggregator.id,
-                    fromChainId: routesStore.getOriginChainId,
-                    toChainId: routesStore.getDestinationChainId,
                     txHash: this.txHash,
-                    trackingId: this.trackingId,
                 }).then(response => {
+                    const routesStore = useRoutesStore()
                     if (response.status === TransactionStatus.Success) {
-                        const routesStore = useRoutesStore()
                         routesStore.completeRoute()
                         clearInterval(this.statusCheckInterval)
                     } else if (response.status === TransactionStatus.Failed) {
                         // TODO do something
+                        clearInterval(this.statusCheckInterval)
                     }
                 })
             }, 5000)
