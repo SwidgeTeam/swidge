@@ -11,12 +11,6 @@ export class TransactionEntity {
   @Column({ length: 80 })
   walletAddress: string;
 
-  @Column({ length: 80 })
-  receiver: string;
-
-  @Column({ length: 80 })
-  routerAddress: string;
-
   @Column({ length: 50 })
   fromChainId: string;
 
@@ -25,12 +19,6 @@ export class TransactionEntity {
 
   @Column({ length: 80 })
   srcToken: string;
-
-  @Column({ length: 80 })
-  bridgeTokenIn: string;
-
-  @Column({ length: 80 })
-  bridgeTokenOut: string;
 
   @Column({ length: 80 })
   dstToken: string;
@@ -42,16 +30,13 @@ export class TransactionEntity {
   amountOut: string;
 
   @Column()
-  bridgeAmountIn: string;
+  aggregatorId: number;
 
   @Column()
-  bridgeAmountOut: string;
+  trackingId: string;
 
   @Column({ type: 'timestamp', nullable: true })
   executed: Date;
-
-  @Column({ type: 'timestamp', nullable: true })
-  bridged: Date;
 
   @Column({ type: 'timestamp', nullable: true })
   completed: Date;
