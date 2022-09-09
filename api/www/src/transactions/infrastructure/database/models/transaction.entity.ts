@@ -11,6 +11,9 @@ export class TransactionEntity {
   @Column({ length: 80 })
   walletAddress: string;
 
+  @Column({ length: 80 })
+  receiver: string;
+
   @Column({ length: 50 })
   fromChainId: string;
 
