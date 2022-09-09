@@ -265,8 +265,16 @@ export class Rango
         status = ExternalTransactionStatus.Success;
         break;
     }
+    const d = response.bridgeData;
+
     return {
       status: status,
+      srcTxHash: d ? d.srcTxHash : '',
+      dstTxHash: d ? d.destTxHash : '',
+      amountIn: d ? BigInteger.fromString(d.srcTokenAmt) : BigInteger.zero(),
+      amountOut: d ? BigInteger.fromString(d.destTokenAmt) : BigInteger.zero(),
+      fromToken: d ? d.srcToken : '',
+      toToken: d ? d.destToken : '',
     };
   }
 

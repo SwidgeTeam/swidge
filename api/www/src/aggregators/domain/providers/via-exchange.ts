@@ -177,6 +177,12 @@ export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAg
 
     return {
       status: status,
+      srcTxHash: '',
+      dstTxHash: '',
+      amountIn: BigInteger.zero(),
+      amountOut: BigInteger.zero(),
+      fromToken: '',
+      toToken: '',
     };
   }
 

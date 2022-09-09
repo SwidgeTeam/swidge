@@ -220,6 +220,12 @@ export class Socket implements Aggregator, ExternalAggregator {
 
     return {
       status: status,
+      srcTxHash: '',
+      dstTxHash: '',
+      amountIn: BigInteger.zero(),
+      amountOut: BigInteger.zero(),
+      fromToken: '',
+      toToken: '',
     };
   }
 
