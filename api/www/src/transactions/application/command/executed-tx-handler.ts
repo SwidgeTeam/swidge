@@ -73,6 +73,7 @@ export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
       status.toToken,
       status.amountIn,
       status.amountOut,
+      ExternalTransactionStatus.Success,
     );
     await this.repository.create(tx);
   }
@@ -95,6 +96,7 @@ export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
       '',
       status.amountIn,
       BigInteger.zero(),
+      ExternalTransactionStatus.Pending,
     );
     await this.repository.create(tx);
 
@@ -115,11 +117,11 @@ export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
     const status = await this.checkTxStatus(command);
 
     if (status.status !== ExternalTransactionStatus.Pending) {
-      // TODO : maybe need to check difference between Failed/Success ?
       const tx = await this.repository.find(command.txHash);
       tx.markAsCompleted(new Date())
         .setAmountOut(status.amountOut)
-        .setDestinationTxHash(status.dstTxHash);
+        .setDestinationTxHash(status.dstTxHash)
+        .setStatus(status.status);
       await this.repository.update(tx);
 
       this.removeInterval(command.txHash);

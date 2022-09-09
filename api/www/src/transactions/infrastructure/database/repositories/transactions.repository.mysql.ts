@@ -4,6 +4,7 @@ import { Transaction } from '../../../domain/Transaction';
 import { TransactionEntity } from '../models/transaction.entity';
 import { BigInteger } from '../../../../shared/domain/big-integer';
 import { Transactions } from '../../../domain/Transactions';
+import { ExternalTransactionStatus } from '../../../../aggregators/domain/status-check';
 
 @EntityRepository(TransactionEntity)
 export class TransactionsRepositoryMysql implements TransactionsRepository {
@@ -26,6 +27,7 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
       amountOut: transaction.amountOut.toString(),
       executed: transaction.executed,
       completed: transaction.completed,
+      status: transaction.status,
     });
   }
 
@@ -50,6 +52,7 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
         amountOut: transaction.amountOut.toString(),
         executed: transaction.executed,
         completed: transaction.completed,
+        status: transaction.status,
       },
     );
   }
@@ -80,6 +83,7 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
       BigInteger.fromString(result.amountOut),
       new Date(result.executed),
       result.completed ? new Date(result.completed) : null,
+      ExternalTransactionStatus[result.status],
     );
   }
 
@@ -106,6 +110,7 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
         BigInteger.fromString(row.amountOut),
         new Date(row.executed),
         row.completed ? new Date(row.completed) : null,
+        ExternalTransactionStatus[row.status],
       );
     });
 

@@ -1,5 +1,6 @@
 import { ContractAddress } from '../../shared/types';
 import { BigInteger } from '../../shared/domain/big-integer';
+import { ExternalTransactionStatus } from '../../aggregators/domain/status-check';
 
 export class Transaction {
   private COMPLETED_STATUS = 'completed';
@@ -15,6 +16,7 @@ export class Transaction {
     _dstToken: ContractAddress,
     _amountIn: BigInteger,
     _amountOut: BigInteger,
+    _status: ExternalTransactionStatus,
   ) {
     const executed = new Date();
     const completed = _fromChainId == _toChainId ? executed : null;
@@ -31,6 +33,7 @@ export class Transaction {
       _amountOut,
       executed,
       completed,
+      _status,
     );
   }
 
@@ -47,6 +50,7 @@ export class Transaction {
     private _amountOut: BigInteger,
     private readonly _executed: Date,
     private _completed: Date,
+    private _status: ExternalTransactionStatus,
   ) {}
 
   get txHash(): string {
@@ -111,6 +115,11 @@ export class Transaction {
 
   public setDestinationTxHash(destinationTxHash: string): Transaction {
     this._destinationTxHash = destinationTxHash;
+    return this;
+  }
+
+  public setStatus(status: ExternalTransactionStatus): Transaction {
+    this._status = status;
     return this;
   }
 }

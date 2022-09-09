@@ -38,6 +38,9 @@ export class TransactionEntity {
   @Column()
   trackingId: string;
 
+  @Column()
+  status: string;
+
   @Column({ type: 'timestamp', nullable: true })
   executed: Date;
 
