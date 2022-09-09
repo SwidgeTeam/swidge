@@ -2,7 +2,7 @@
 import { useHead } from '@vueuse/head'
 useHead({
     title: '404. Not Found',
-});
+})
 </script>
 
 <template>
@@ -15,5 +15,5 @@ useHead({
 <route lang="yaml">
 name : not-found
 meta:
-    layout: 404
+layout: 404
 </route>

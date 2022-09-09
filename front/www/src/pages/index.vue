@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import SwapInterface from '@/components/SwapInterface.vue'
+import MainLayout from '@/layouts/MainLayout.vue'
 </script>
 
 <template>
-    <SwapInterface/>
+    <MainLayout/>
 </template>
 
 <route lang="yaml">

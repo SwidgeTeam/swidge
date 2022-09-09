@@ -15,6 +15,7 @@ import { useMetadataStore } from '@/store/metadata'
 import SwidgeLogoNoText from '@/components/svg/SwidgeLogoNoText.vue'
 import { useRoutesStore } from '@/store/routes'
 
+
 const web3Store = useWeb3Store()
 const metadataStore = useMetadataStore()
 const routesStore = useRoutesStore()
@@ -72,7 +73,7 @@ const chainIcon = computed({
         <a class="w-25 sm:w-40" href="https://www.swidge.xyz/">
             <SwidgeLogoNoText class="sm:hidden h-10"/>
             <SwidgeLogo class="hidden sm:inline-block"/>
-        </a>
+        </a> 
         <div v-if="isConnected" class="flex gap-2 text-sm sm:text-base sm:gap-4">
             <TransactionsButton
                 @show-transactions="isTransactionsModalOpen = true"/>

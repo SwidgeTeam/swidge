@@ -6,6 +6,7 @@ import { useWeb3Store } from '@/store/web3'
 import Header from '@/components/Header.vue'
 import QuestionMark from '@/components/svg/QuestionMark.vue'
 import ModalFaq from '@/components/Modals/ModalFaq.vue'
+import SwapInterface from '@/components/SwapInterface.vue'
 
 const { fetchMetadata } = useMetadataStore()
 const web3Store = useWeb3Store()
@@ -32,7 +33,7 @@ const year = computed({
             class="py-2"
         />
         <main class="flex justify-center">
-            <router-view/>
+            <SwapInterface/>
         </main>
         <div class="flex justify-center">
             <div class="flex justify-between px-4 py-2 h-16 font-extralight text-xs sm:text-base w-full max-w-sm">
