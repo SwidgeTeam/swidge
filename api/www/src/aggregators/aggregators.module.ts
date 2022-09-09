@@ -10,8 +10,8 @@ import { BuildMainTxHandler } from './application/query/build-main-tx-handler';
 import { GetMainTxCalldataController } from './infrastructure/controllers/get-main-tx-calldata-controller';
 import gasPriceFetcherProvider from '../shared/infrastructure/gas-price-fetcher.provider';
 import priceFeedFetcherProvider from '../shared/infrastructure/price-feed-fetcher.provider';
-import { GetTxStatusController } from './infrastructure/controllers/get-tx-status-controller';
-import { CheckTxStatusHandler } from './application/query/check-tx-status-handler';
+import { GetTxStatusController } from '../transactions/infrastructure/controllers/get-tx-status-controller';
+import { CheckTxStatusHandler } from '../transactions/application/query/check-tx-status-handler';
 
 @Module({
   imports: [

@@ -13,8 +13,8 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
    * Persists a transaction
    * @param transaction
    */
-  async save(transaction: Transaction): Promise<void> {
-    await this.manager.save(TransactionEntity, {
+  async create(transaction: Transaction): Promise<void> {
+    await this.manager.create(TransactionEntity, {
       txHash: transaction.txHash,
       destinationTxHash: transaction.destinationTxHash,
       walletAddress: transaction.walletAddress,
@@ -27,6 +27,31 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
       executed: transaction.executed,
       completed: transaction.completed,
     });
+  }
+
+  /**
+   * Persists a transaction
+   * @param transaction
+   */
+  async update(transaction: Transaction): Promise<void> {
+    await this.manager.update(
+      TransactionEntity,
+      {
+        txHash: transaction.txHash,
+      },
+      {
+        destinationTxHash: transaction.destinationTxHash,
+        walletAddress: transaction.walletAddress,
+        fromChainId: transaction.fromChainId,
+        toChainId: transaction.toChainId,
+        srcToken: transaction.srcToken,
+        dstToken: transaction.dstToken,
+        amountIn: transaction.amountIn.toString(),
+        amountOut: transaction.amountOut.toString(),
+        executed: transaction.executed,
+        completed: transaction.completed,
+      },
+    );
   }
 
   /**
@@ -46,6 +71,7 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
       result.txHash,
       result.destinationTxHash,
       result.walletAddress,
+      result.receiver,
       result.fromChainId,
       result.toChainId,
       result.srcToken,
@@ -71,6 +97,7 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
         row.txHash,
         row.destinationTxHash,
         row.walletAddress,
+        row.receiver,
         row.fromChainId,
         row.toChainId,
         row.srcToken,

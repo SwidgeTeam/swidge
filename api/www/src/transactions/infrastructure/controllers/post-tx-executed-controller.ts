@@ -12,13 +12,16 @@ export class PostTxExecutedController {
   async build(@Query() params: PostTxExecutedDto, @Res() res: Response) {
     const command = new ExecutedTxCommand(
       params.aggregatorId,
+      params.wallet,
+      params.fromChainId,
+      params.toChainId,
       params.fromAddress,
       params.toAddress,
       params.txHash,
       params.trackingId,
     );
 
-    await this.commandBus.execute<ExecutedTxCommand, void>(command);
+    this.commandBus.execute<ExecutedTxCommand, void>(command);
 
     return res.json({
       status: 'ok',

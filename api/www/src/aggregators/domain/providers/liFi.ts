@@ -226,8 +226,17 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
       case 'INVALID':
         break;
     }
+
     return {
       status: status,
+      srcTxHash: response.sending.txHash,
+      dstTxHash: response.receiving?.txHash,
+      amountIn: BigInteger.fromString(response.sending.amount),
+      amountOut: response.receiving
+        ? BigInteger.fromString(response.receiving.amount)
+        : BigInteger.zero(),
+      fromToken: response.sending.token.address,
+      toToken: response.receiving ? response.receiving.token.address : '',
     };
   }
 

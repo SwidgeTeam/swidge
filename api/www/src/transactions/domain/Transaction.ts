@@ -8,11 +8,13 @@ export class Transaction {
   public static create(
     _txHash: string,
     _walletAddress: string,
+    _receiver: string,
     _fromChainId: string,
     _toChainId: string,
     _srcToken: ContractAddress,
     _dstToken: ContractAddress,
-    _amount: string,
+    _amountIn: BigInteger,
+    _amountOut: BigInteger,
   ) {
     const executed = new Date();
     const completed = _fromChainId == _toChainId ? executed : null;
@@ -20,12 +22,13 @@ export class Transaction {
       _txHash,
       '',
       _walletAddress,
+      _receiver,
       _fromChainId,
       _toChainId,
       _srcToken,
       _dstToken,
-      BigInteger.fromString(_amount),
-      BigInteger.zero(),
+      _amountIn,
+      _amountOut,
       executed,
       completed,
     );
@@ -35,6 +38,7 @@ export class Transaction {
     private readonly _txHash: string,
     private _destinationTxHash: string,
     private readonly _walletAddress: string,
+    private readonly _receiver: string,
     private readonly _fromChainId: string,
     private readonly _toChainId: string,
     private readonly _srcToken: ContractAddress,
@@ -91,5 +95,22 @@ export class Transaction {
 
   get status(): string {
     return this.completed ? this.COMPLETED_STATUS : this.ONGOING_STATUS;
+  }
+
+  /** Modifiers */
+
+  public markAsCompleted(now: Date): Transaction {
+    this._completed = now;
+    return this;
+  }
+
+  public setAmountOut(amount: BigInteger): Transaction {
+    this._amountOut = amount;
+    return this;
+  }
+
+  public setDestinationTxHash(destinationTxHash: string): Transaction {
+    this._destinationTxHash = destinationTxHash;
+    return this;
   }
 }
