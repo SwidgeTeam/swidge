@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import httpClientProvider from '../shared/infrastructure/http/httpClient.provider';
 import consoleLoggerProvider from '../shared/infrastructure/console-logger-provider';
 import { GetApprovalTxCalldataController } from './infrastructure/controllers/get-approval-tx-calldata-controller';
 import { BuildTxApprovalHandler } from './application/query/build-tx-approval-handler';
@@ -12,6 +11,8 @@ import gasPriceFetcherProvider from '../shared/infrastructure/gas-price-fetcher.
 import priceFeedFetcherProvider from '../shared/infrastructure/price-feed-fetcher.provider';
 import { GetTxStatusController } from '../transactions/infrastructure/controllers/get-tx-status-controller';
 import { CheckTxStatusHandler } from '../transactions/application/query/check-tx-status-handler';
+import transactionRepositoryProvider
+  from '../transactions/infrastructure/database/repositories/transaction.repository.provider';
 
 @Module({
   imports: [
@@ -26,9 +27,9 @@ import { CheckTxStatusHandler } from '../transactions/application/query/check-tx
   providers: [
     BuildTxApprovalHandler,
     BuildMainTxHandler,
-    ConfigService,
     CheckTxStatusHandler,
-    httpClientProvider(),
+    ConfigService,
+    transactionRepositoryProvider(),
     gasPriceFetcherProvider(),
     priceFeedFetcherProvider(),
     consoleLoggerProvider(),

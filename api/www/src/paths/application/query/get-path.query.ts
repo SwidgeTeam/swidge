@@ -2,8 +2,6 @@ import { Token } from '../../../shared/domain/token';
 
 export class GetPathQuery {
   constructor(
-    private readonly _fromChainId: string,
-    private readonly _toChainId: string,
     private readonly _srcToken: Token,
     private readonly _dstToken: Token,
     private readonly _amountIn: string,
@@ -13,11 +11,11 @@ export class GetPathQuery {
   ) {}
 
   get fromChainId(): string {
-    return this._fromChainId;
+    return this._srcToken.chainId;
   }
 
   get toChainId(): string {
-    return this._toChainId;
+    return this._dstToken.chainId;
   }
 
   get srcToken(): Token {

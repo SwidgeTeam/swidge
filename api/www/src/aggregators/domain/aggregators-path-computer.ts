@@ -32,8 +32,8 @@ export class AggregatorsPathComputer {
    * @param query
    */
   public async compute(query: GetPathQuery): Promise<Route[]> {
-    this.fromChain = query.fromChainId;
-    this.toChain = query.toChainId;
+    this.fromChain = query.srcToken.chainId;
+    this.toChain = query.dstToken.chainId;
     this.srcToken = query.srcToken;
     this.dstToken = query.dstToken;
     this.amountIn = BigInteger.fromDecimal(query.amountIn, this.srcToken.decimals);
@@ -57,8 +57,6 @@ export class AggregatorsPathComputer {
    */
   private async getAggregatorsRoutes(): Promise<Route[]> {
     const aggregatorRequest = new AggregatorRequest(
-      this.fromChain,
-      this.toChain,
       this.srcToken,
       this.dstToken,
       this.amountIn,

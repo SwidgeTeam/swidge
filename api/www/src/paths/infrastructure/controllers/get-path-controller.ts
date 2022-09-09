@@ -27,8 +27,6 @@ export class GetPathController {
       getPathDto.dstTokenSymbol,
     );
     const query = new GetPathQuery(
-      getPathDto.fromChainId,
-      getPathDto.toChainId,
       srcToken,
       dstToken,
       getPathDto.amount,

@@ -183,8 +183,6 @@ describe('path-computer - single chain', () => {
 
       // create pat query
       const query = new GetPathQuery(
-        Polygon,
-        Polygon,
         TokenMother.polygonMatic(),
         TokenMother.sushi(),
         '1000',
@@ -211,8 +209,6 @@ describe('path-computer - single chain', () => {
 
 function getPathQuery(): GetPathQuery {
   return new GetPathQuery(
-    Polygon,
-    Polygon,
     TokenMother.link(),
     TokenMother.sushi(),
     '1000',

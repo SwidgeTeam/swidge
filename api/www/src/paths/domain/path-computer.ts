@@ -12,7 +12,6 @@ import { PathNotFound } from './path-not-found';
 import { flatten } from 'lodash';
 import { GasConverter } from '../../shared/domain/gas-converter';
 import { PriceFeed } from '../../shared/domain/price-feed';
-import { AggregatorRequest } from '../../aggregators/domain/aggregator-request';
 import { Route } from '../../shared/domain/route/route';
 import { RouteStep } from '../../shared/domain/route/route-step';
 import { TransactionDetails } from '../../shared/domain/route/transaction-details';
@@ -83,8 +82,8 @@ export class PathComputer {
    * @param query
    */
   public async compute(query: GetPathQuery): Promise<Route[]> {
-    this.fromChain = query.fromChainId;
-    this.toChain = query.toChainId;
+    this.fromChain = query.srcToken.chainId;
+    this.toChain = query.dstToken.chainId;
     this.srcToken = query.srcToken;
     this.dstToken = query.dstToken;
     this.amountIn = BigInteger.fromDecimal(query.amountIn, this.srcToken.decimals);

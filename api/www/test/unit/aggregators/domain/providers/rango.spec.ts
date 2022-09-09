@@ -173,8 +173,6 @@ describe('aggregators', () => {
 
 function getAggregatorRoute() {
   return new AggregatorRequest(
-    '137',
-    '250',
     TokenMother.polygonLink(),
     TokenMother.fantomUsdc(),
     BigInteger.fromDecimal('100'),

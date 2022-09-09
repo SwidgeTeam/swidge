@@ -574,8 +574,6 @@ describe('path-computer - cross chain', () => {
 
 function getPathQuery(): GetPathQuery {
   return new GetPathQuery(
-    Polygon,
-    Fantom,
     TokenMother.link(),
     TokenMother.sushi(),
     '1000',

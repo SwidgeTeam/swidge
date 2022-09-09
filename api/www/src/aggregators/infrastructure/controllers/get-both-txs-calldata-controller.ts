@@ -5,6 +5,7 @@ import { GetBothTxsCalldataDto } from './get-both-txs-calldata-dto';
 import BuildBothTxsQuery from '../../application/query/build-both-txs-query';
 import BothTxs from '../../domain/both-txs';
 import { BigInteger } from '../../../shared/domain/big-integer';
+import { Token } from '../../../shared/domain/token';
 
 @Controller()
 export class GetBothTxsCalldataController {
@@ -12,12 +13,24 @@ export class GetBothTxsCalldataController {
 
   @Get('build-both-txs')
   async build(@Query() params: GetBothTxsCalldataDto, @Res() res: Response) {
+    const srcToken = new Token(
+      params.fromChainId,
+      params.srcTokenSymbol,
+      params.srcTokenAddress,
+      params.srcTokenDecimals,
+      params.srcTokenSymbol,
+    );
+    const dstToken = new Token(
+      params.toChainId,
+      params.dstTokenSymbol,
+      params.dstTokenAddress,
+      params.dstTokenDecimals,
+      params.dstTokenSymbol,
+    );
     const query = new BuildBothTxsQuery(
       params.aggregatorId,
-      params.fromChainId,
-      params.srcToken,
-      params.toChainId,
-      params.dstToken,
+      srcToken,
+      dstToken,
       BigInteger.fromString(params.amount),
       params.slippage,
       params.senderAddress,

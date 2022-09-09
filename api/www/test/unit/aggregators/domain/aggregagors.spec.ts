@@ -50,8 +50,6 @@ describe('aggregators', () => {
     ]);
 
     const request = new AggregatorRequest(
-      '1',
-      '2',
       TokenMother.random(),
       TokenMother.random(),
       BigIntegerMother.random(),
