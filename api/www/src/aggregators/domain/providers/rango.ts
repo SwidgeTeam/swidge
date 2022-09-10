@@ -80,7 +80,8 @@ declare type RangoToken = {
 };
 
 export class Rango
-  implements Aggregator, OneSteppedAggregator, ExternalAggregator, MetadataProviderAggregator {
+  implements Aggregator, OneSteppedAggregator, ExternalAggregator, MetadataProviderAggregator
+{
   private enabledChains = [
     Mainnet,
     Optimism,
@@ -189,6 +190,9 @@ export class Rango
 
     const aggregatorDetails = new AggregatorDetails(AggregatorProviders.Rango, '', true, true);
 
+    const steps = this.buildSteps(request.amountIn, response.route.path);
+    const fees = this.buildFees(response.route.fee);
+
     const amountOut = BigInteger.fromString(response.route.outputAmount);
     const resume = new RouteResume(
       request.fromChain,
@@ -198,11 +202,8 @@ export class Rango
       request.amountIn,
       amountOut,
       amountOut,
-      response.route.estimatedTimeInSeconds,
+      steps.totalExecutionTime(),
     );
-
-    const steps = this.buildSteps(request.amountIn, response.route.path);
-    const fees = this.buildFees(response.route.fee);
 
     return new Route(aggregatorDetails, resume, steps, fees);
   }
