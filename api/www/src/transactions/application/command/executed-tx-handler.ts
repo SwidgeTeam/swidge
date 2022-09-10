@@ -19,7 +19,7 @@ import { BigInteger } from '../../../shared/domain/big-integer';
 @CommandHandler(ExecutedTxCommand)
 export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
   private aggregators: Map<string, ExternalAggregator>;
-  private intervals: Map<string, number>;
+  private intervals: Map<string, ReturnType<typeof setInterval>>;
 
   constructor(
     private readonly configService: ConfigService,
@@ -123,7 +123,7 @@ export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
     }
 
     // sets interval to keep checking until resolved
-    const interval = window.setInterval(() => {
+    const interval = setInterval(() => {
       this.recheckTx(command);
     }, 5000);
 
