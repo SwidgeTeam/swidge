@@ -80,7 +80,9 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
   public async getMetadata(): Promise<AggregatorMetadata> {
     let chains, tokens;
     try {
-      const chainsResponse = await this.client.getChains();
+      const results = await Promise.all([this.client.getChains(), this.client.getTokens()]);
+      const chainsResponse = results[0];
+      const tokensResponse = results[1];
       chains = chainsResponse.map((chain) => {
         return {
           type: chain.chainType,
@@ -92,7 +94,6 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
           rpcUrls: chain.metamask.rpcUrls,
         };
       });
-      const tokensResponse = await this.client.getTokens();
       tokens = flatten(Object.values(tokensResponse.tokens)).map((token) => {
         return {
           chainId: token.chainId.toString(),
