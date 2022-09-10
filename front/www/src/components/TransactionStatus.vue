@@ -3,9 +3,7 @@ import ProcessingLabel from './ProcessingLabel.vue'
 import CompletedLabel from './CompletedLabel.vue'
 import StatusArrow from './svg/StatusArrow.vue'
 import TransactionStatusDetails from './TransactionStatusDetails.vue'
-
-const STATUS_PROCESSING = 'ongoing'
-const STATUS_COMPLETED = 'completed'
+import { TransactionStatus } from '@/api/models/get-status-check'
 
 defineProps<{
     date: string
@@ -27,8 +25,8 @@ defineProps<{
         class="content-center gradient-border-header-main flex flex-wrap justify-between gap-2 mb-4 p-2">
         <div class="w-full flex justify-between">
             <div class="grid flex justify-start content-center"> {{ date }}</div>
-            <ProcessingLabel v-if="status === STATUS_PROCESSING"/>
-            <CompletedLabel v-if="status === STATUS_COMPLETED"/>
+            <ProcessingLabel v-if="status === TransactionStatus.Pending"/>
+            <CompletedLabel v-if="status === TransactionStatus.Success"/>
         </div>
         <div
             class="grid grid-cols-3 gap-2 flex flex-wrap justify-between grid-flow-col auto-cols-max w-full mx-16 pt-4">

@@ -7,7 +7,7 @@ export interface StatusCheckResponse {
 }
 
 export enum TransactionStatus {
-    Pending,
-    Failed,
-    Success,
+    Pending = 'pending',
+    Failed = 'failed',
+    Success = 'success',
 }
