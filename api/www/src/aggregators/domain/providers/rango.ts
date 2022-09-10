@@ -141,7 +141,7 @@ export class Rango
         .map((token) => {
           return {
             chainId: this.getChainId(token.blockchain),
-            address: this.getAddress(token.address),
+            address: this.fromProviderAddress(token.address),
             name: token.symbol,
             symbol: token.symbol,
             decimals: token.decimals,
@@ -161,10 +161,6 @@ export class Rango
     };
   }
 
-  private getAddress(address: string): string {
-    return address === null ? NATIVE_TOKEN_ADDRESS : address;
-  }
-
   /**
    * Entrypoint to quote a Route from Rango.exchange
    * @param request
@@ -173,12 +169,12 @@ export class Rango
     const response = await this.client.quote({
       from: {
         blockchain: this.getBlockchainCode(request.fromChain),
-        address: request.fromToken.isNative() ? null : request.fromToken.address,
+        address: this.toProviderAddress(request.fromToken),
         symbol: request.fromToken.symbol,
       },
       to: {
         blockchain: this.getBlockchainCode(request.toChain),
-        address: request.toToken.isNative() ? null : request.toToken.address,
+        address: this.toProviderAddress(request.toToken),
         symbol: request.toToken.symbol,
       },
       amount: request.amountIn.toString(),
@@ -284,8 +280,8 @@ export class Rango
       dstTxHash: d ? d.destTxHash : '',
       amountIn: d ? BigInteger.fromString(d.srcTokenAmt) : BigInteger.zero(),
       amountOut: d ? BigInteger.fromString(d.destTokenAmt) : BigInteger.zero(),
-      fromToken: d ? d.srcToken : '',
-      toToken: d ? d.destToken : '',
+      fromToken: d ? this.fromProviderAddress(d.srcToken) : '',
+      toToken: d ? this.fromProviderAddress(d.destToken) : '',
     };
   }
 
@@ -484,5 +480,13 @@ export class Rango
       default:
         throw new Error('blockchain not supported');
     }
+  }
+
+  private fromProviderAddress(address: string): string {
+    return address === null ? NATIVE_TOKEN_ADDRESS : address;
+  }
+
+  private toProviderAddress(token: Token): string {
+    return token.isNative() ? null : token.address;
   }
 }

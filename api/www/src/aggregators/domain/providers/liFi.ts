@@ -97,7 +97,7 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
       tokens = flatten(Object.values(tokensResponse.tokens)).map((token) => {
         return {
           chainId: token.chainId.toString(),
-          address: this.getOurAddress(token.address),
+          address: this.fromProviderAddress(token.address),
           name: token.name,
           symbol: token.symbol,
           decimals: token.decimals,
@@ -117,14 +117,6 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
     };
   }
 
-  private getOurAddress(address: string): string {
-    return address === ethers.constants.AddressZero ? NATIVE_TOKEN_ADDRESS : address;
-  }
-
-  private getAddress(token: Token): string {
-    return token.isNative() ? ethers.constants.AddressZero : token.address;
-  }
-
   /**
    * Entrypoint to quote a Route from Li.fi
    * @param request
@@ -134,9 +126,9 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
     try {
       response = await this.client.getQuote({
         fromChain: request.fromChain,
-        fromToken: this.getAddress(request.fromToken),
+        fromToken: this.toProviderAddress(request.fromToken),
         toChain: request.toChain,
-        toToken: this.getAddress(request.toToken),
+        toToken: this.toProviderAddress(request.toToken),
         fromAmount: request.amountIn.toString(),
         fromAddress: request.senderAddress,
         slippage: request.slippage / 100,
@@ -256,8 +248,8 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
       amountOut: response.receiving
         ? BigInteger.fromString(response.receiving.amount)
         : BigInteger.zero(),
-      fromToken: response.sending.token.address,
-      toToken: response.receiving ? response.receiving.token.address : '',
+      fromToken: this.fromProviderAddress(response.sending.token.address),
+      toToken: response.receiving ? this.fromProviderAddress(response.receiving.token.address) : '',
     };
   }
 
@@ -373,5 +365,23 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
     } else {
       return 0;
     }
+  }
+
+  /**
+   * converts an address to our internal format
+   * @param address
+   * @private
+   */
+  private fromProviderAddress(address: string): string {
+    return address === ethers.constants.AddressZero ? NATIVE_TOKEN_ADDRESS : address;
+  }
+
+  /**
+   * makes sure an address is in the format the provider uses
+   * @param token
+   * @private
+   */
+  private toProviderAddress(token: Token): string {
+    return token.isNative() ? ethers.constants.AddressZero : token.address;
   }
 }
