@@ -18,7 +18,7 @@ export class GetTxStatusController {
     );
 
     return res.json({
-      status: status,
+      status: status.toString(),
     });
   }
 }
