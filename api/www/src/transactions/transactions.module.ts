@@ -10,6 +10,7 @@ import { PostTxExecutedController } from './infrastructure/controllers/post-tx-e
 import { GetTxStatusController } from './infrastructure/controllers/get-tx-status-controller';
 import { CheckTxStatusHandler } from './application/query/check-tx-status-handler';
 import { ExecutedTxHandler } from './application/command/executed-tx-handler';
+import consoleLoggerProvider from '../shared/infrastructure/console-logger-provider';
 
 @Module({
   imports: [CqrsModule, ConfigModule],
@@ -25,6 +26,7 @@ import { ExecutedTxHandler } from './application/command/executed-tx-handler';
     ConfigService,
     NestJSConfigService,
     transactionRepositoryProvider(),
+    consoleLoggerProvider(),
   ],
 })
 export class TransactionsModule {}
