@@ -33,6 +33,8 @@ export class TransactionMother {
       _executed,
       _completed,
       _status,
+      '',
+      '',
     );
   }
 
