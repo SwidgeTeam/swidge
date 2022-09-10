@@ -180,7 +180,15 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
       steps.totalExecutionTime(),
     );
 
-    const aggregatorDetails = new AggregatorDetails(AggregatorProviders.LiFi);
+    const bridgeTrackingId = request.fromChain !== request.toChain ? response.tool : '';
+
+    const aggregatorDetails = new AggregatorDetails(
+      AggregatorProviders.LiFi,
+      '',
+      false,
+      false,
+      bridgeTrackingId,
+    );
 
     return new Route(
       aggregatorDetails,
