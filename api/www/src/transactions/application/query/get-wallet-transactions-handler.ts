@@ -13,6 +13,8 @@ export class GetWalletTransactionsHandler implements IQueryHandler<GetWalletTran
   ) {}
 
   async execute(query: GetWalletTransactionsQuery): Promise<Transactions> {
-    return await this.transactionsRepository.findAllBy(query.walletAddress);
+    const txs = await this.transactionsRepository.findAllBy(query.walletAddress);
+
+    return txs.sortNewest();
   }
 }
