@@ -19,11 +19,11 @@ export class AggregatorRequest {
     return this._toToken.chainId;
   }
 
-  get fromToken() {
+  get fromToken(): Token {
     return this._fromToken;
   }
 
-  get toToken() {
+  get toToken(): Token {
     return this._toToken;
   }
 

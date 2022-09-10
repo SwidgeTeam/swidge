@@ -31,7 +31,7 @@ export class GetBothTxsCalldataController {
       params.aggregatorId,
       srcToken,
       dstToken,
-      BigInteger.fromString(params.amount),
+      BigInteger.fromDecimal(params.amount, srcToken.decimals),
       params.slippage,
       params.senderAddress,
       params.receiverAddress,
