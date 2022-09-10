@@ -98,7 +98,7 @@ export class Transaction {
   }
 
   get status(): string {
-    return this.completed ? this.COMPLETED_STATUS : this.ONGOING_STATUS;
+    return this._status.toString();
   }
 
   /** Modifiers */
