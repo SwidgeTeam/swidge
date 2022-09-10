@@ -97,8 +97,8 @@ export class Transaction {
     return this._completed;
   }
 
-  get status(): string {
-    return this._status.toString();
+  get status(): ExternalTransactionStatus {
+    return this._status;
   }
 
   /** Modifiers */

@@ -5,6 +5,7 @@ import { Logger } from '../../../shared/domain/logger';
 import { ConfigService } from '../../../config/config.service';
 import CheckTxStatusQuery from './check-tx-status-query';
 import { TransactionsRepository } from '../../domain/TransactionsRepository';
+import { ExternalTransactionStatus } from '../../../aggregators/domain/status-check';
 
 @QueryHandler(CheckTxStatusQuery)
 export class CheckTxStatusHandler implements IQueryHandler<CheckTxStatusQuery> {
@@ -14,7 +15,7 @@ export class CheckTxStatusHandler implements IQueryHandler<CheckTxStatusQuery> {
     @Inject(Class.Logger) private readonly logger: Logger,
   ) {}
 
-  async execute(query: CheckTxStatusQuery): Promise<string> {
+  async execute(query: CheckTxStatusQuery): Promise<ExternalTransactionStatus> {
     this.logger.log(`Checking status of tx ${query.txHash}`);
     const tx = await this.repository.find(query.txHash);
     return tx.status;
