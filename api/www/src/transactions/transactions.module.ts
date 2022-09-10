@@ -6,14 +6,22 @@ import { ConfigService } from '../config/config.service';
 import { ConfigService as NestJSConfigService } from '@nestjs/config';
 import { GetWalletTransactionsController } from './infrastructure/controllers/get-wallet-transactions-controller';
 import { GetWalletTransactionsHandler } from './application/query/get-wallet-transactions-handler';
+import { PostTxExecutedController } from './infrastructure/controllers/post-tx-executed-controller';
+import { GetTxStatusController } from './infrastructure/controllers/get-tx-status-controller';
+import { CheckTxStatusHandler } from './application/query/check-tx-status-handler';
+import { ExecutedTxHandler } from './application/command/executed-tx-handler';
 
 @Module({
   imports: [CqrsModule, ConfigModule],
   controllers: [
     GetWalletTransactionsController,
+    PostTxExecutedController,
+    GetTxStatusController,
   ],
   providers: [
     GetWalletTransactionsHandler,
+    CheckTxStatusHandler,
+    ExecutedTxHandler,
     ConfigService,
     NestJSConfigService,
     transactionRepositoryProvider(),
