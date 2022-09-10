@@ -212,12 +212,12 @@ export class Rango
     const response = await this.client.swap({
       from: {
         blockchain: this.getBlockchainCode(request.fromChain),
-        address: request.fromToken.address,
+        address: this.toProviderAddress(request.fromToken),
         symbol: request.fromToken.symbol,
       },
       to: {
         blockchain: this.getBlockchainCode(request.toChain),
-        address: request.toToken.address,
+        address: this.toProviderAddress(request.toToken),
         symbol: request.toToken.symbol,
       },
       amount: request.amountIn.toString(),
