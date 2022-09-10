@@ -46,7 +46,7 @@ export class Transaction {
     private readonly _fromChainId: string,
     private readonly _toChainId: string,
     private readonly _srcToken: ContractAddress,
-    private readonly _dstToken: ContractAddress,
+    private _dstToken: ContractAddress,
     private readonly _amountIn: BigInteger,
     private _amountOut: BigInteger,
     private readonly _executed: Date,
@@ -125,6 +125,11 @@ export class Transaction {
 
   public setAmountOut(amount: BigInteger): Transaction {
     this._amountOut = amount;
+    return this;
+  }
+
+  public setDestinationToken(address: string): Transaction {
+    this._dstToken = address;
     return this;
   }
 

@@ -151,6 +151,7 @@ export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
         this.logger.log(`tx ${command.txHash} found`);
 
         tx.markAsCompleted(new Date())
+          .setDestinationToken(status.toToken)
           .setAmountOut(status.amountOut)
           .setDestinationTxHash(status.dstTxHash)
           .setStatus(status.status);
