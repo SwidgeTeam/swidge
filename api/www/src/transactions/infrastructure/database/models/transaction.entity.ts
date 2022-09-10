@@ -33,7 +33,7 @@ export class TransactionEntity {
   amountOut: string;
 
   @Column()
-  aggregatorId: number;
+  aggregatorId: string;
 
   @Column()
   trackingId: string;

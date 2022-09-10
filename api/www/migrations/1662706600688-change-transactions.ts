@@ -10,7 +10,9 @@ export class changeTransactions1662706600688 implements MigrationInterface {
     await queryRunner.query(`ALTER TABLE \`transactions\` DROP COLUMN \`bridgeAmountIn\``);
     await queryRunner.query(`ALTER TABLE \`transactions\` DROP COLUMN \`bridgeAmountOut\``);
     await queryRunner.query(`ALTER TABLE \`transactions\` DROP COLUMN \`bridged\``);
-    await queryRunner.query(`ALTER TABLE \`transactions\` ADD \`aggregatorId\` int NOT NULL`);
+    await queryRunner.query(
+      `ALTER TABLE \`transactions\` ADD \`aggregatorId\` varchar(5) NOT NULL`,
+    );
     await queryRunner.query(
       `ALTER TABLE \`transactions\` ADD \`trackingId\` varchar(255) NOT NULL`,
     );

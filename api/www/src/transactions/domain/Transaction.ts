@@ -3,9 +3,6 @@ import { BigInteger } from '../../shared/domain/big-integer';
 import { ExternalTransactionStatus } from '../../aggregators/domain/status-check';
 
 export class Transaction {
-  private COMPLETED_STATUS = 'completed';
-  private ONGOING_STATUS = 'ongoing';
-
   public static create(
     _txHash: string,
     _walletAddress: string,
@@ -17,6 +14,8 @@ export class Transaction {
     _amountIn: BigInteger,
     _amountOut: BigInteger,
     _status: ExternalTransactionStatus,
+    _aggregatorId: string,
+    _trackingId: string,
   ) {
     const executed = new Date();
     const completed = _fromChainId == _toChainId ? executed : null;
@@ -34,6 +33,8 @@ export class Transaction {
       executed,
       completed,
       _status,
+      _aggregatorId,
+      _trackingId,
     );
   }
 
@@ -51,6 +52,8 @@ export class Transaction {
     private readonly _executed: Date,
     private _completed: Date,
     private _status: ExternalTransactionStatus,
+    private readonly _aggregatorId: string,
+    private readonly _trackingId: string,
   ) {}
 
   get txHash(): string {
@@ -63,6 +66,10 @@ export class Transaction {
 
   get walletAddress(): string {
     return this._walletAddress;
+  }
+
+  get receiver(): string {
+    return this._receiver;
   }
 
   get fromChainId(): string {
@@ -99,6 +106,14 @@ export class Transaction {
 
   get status(): ExternalTransactionStatus {
     return this._status;
+  }
+
+  get aggregatorId(): string {
+    return this._aggregatorId;
+  }
+
+  get trackingId(): string {
+    return this._trackingId;
   }
 
   /** Modifiers */

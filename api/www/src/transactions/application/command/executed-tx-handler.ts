@@ -83,6 +83,8 @@ export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
         status.amountIn,
         status.amountOut,
         ExternalTransactionStatus.Success,
+        command.aggregatorId,
+        command.trackingId,
       );
       await this.repository.create(tx);
     } catch (e) {
@@ -114,6 +116,8 @@ export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
         status.amountIn,
         BigInteger.zero(),
         ExternalTransactionStatus.Pending,
+        command.aggregatorId,
+        command.trackingId,
       );
       await this.repository.create(tx);
     } catch (e) {

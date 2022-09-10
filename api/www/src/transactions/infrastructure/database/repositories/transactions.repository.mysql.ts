@@ -19,6 +19,7 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
       txHash: transaction.txHash,
       destinationTxHash: transaction.destinationTxHash,
       walletAddress: transaction.walletAddress,
+      receiver: transaction.receiver,
       fromChainId: transaction.fromChainId,
       toChainId: transaction.toChainId,
       srcToken: transaction.srcToken,
@@ -28,6 +29,8 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
       executed: transaction.executed,
       completed: transaction.completed,
       status: transaction.status,
+      aggregatorId: transaction.aggregatorId,
+      trackingId: transaction.trackingId,
     });
   }
 
@@ -44,6 +47,7 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
       {
         destinationTxHash: transaction.destinationTxHash,
         walletAddress: transaction.walletAddress,
+        receiver: transaction.receiver,
         fromChainId: transaction.fromChainId,
         toChainId: transaction.toChainId,
         srcToken: transaction.srcToken,
@@ -53,6 +57,8 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
         executed: transaction.executed,
         completed: transaction.completed,
         status: transaction.status,
+        aggregatorId: transaction.aggregatorId,
+        trackingId: transaction.trackingId,
       },
     );
   }
@@ -70,21 +76,7 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
       return null;
     }
 
-    return new Transaction(
-      result.txHash,
-      result.destinationTxHash,
-      result.walletAddress,
-      result.receiver,
-      result.fromChainId,
-      result.toChainId,
-      result.srcToken,
-      result.dstToken,
-      BigInteger.fromString(result.amountIn),
-      BigInteger.fromString(result.amountOut),
-      new Date(result.executed),
-      result.completed ? new Date(result.completed) : null,
-      result.status as ExternalTransactionStatus,
-    );
+    return this.buildTx(result);
   }
 
   /**
@@ -96,24 +88,28 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
       walletAddress: walletAddress,
     });
 
-    const items = result.map((row) => {
-      return new Transaction(
-        row.txHash,
-        row.destinationTxHash,
-        row.walletAddress,
-        row.receiver,
-        row.fromChainId,
-        row.toChainId,
-        row.srcToken,
-        row.dstToken,
-        BigInteger.fromString(row.amountIn),
-        BigInteger.fromString(row.amountOut),
-        new Date(row.executed),
-        row.completed ? new Date(row.completed) : null,
-        row.status as ExternalTransactionStatus,
-      );
-    });
+    const items = result.map(this.buildTx);
 
     return new Transactions(items);
+  }
+
+  private buildTx(row: TransactionEntity): Transaction {
+    return new Transaction(
+      row.txHash,
+      row.destinationTxHash,
+      row.walletAddress,
+      row.receiver,
+      row.fromChainId,
+      row.toChainId,
+      row.srcToken,
+      row.dstToken,
+      BigInteger.fromString(row.amountIn),
+      BigInteger.fromString(row.amountOut),
+      new Date(row.executed),
+      row.completed ? new Date(row.completed) : null,
+      row.status as ExternalTransactionStatus,
+      row.aggregatorId,
+      row.trackingId,
+    );
   }
 }
