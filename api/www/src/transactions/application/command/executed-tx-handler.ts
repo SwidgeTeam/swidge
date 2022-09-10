@@ -26,6 +26,7 @@ export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
     @Inject(Class.TransactionRepository) private readonly repository: TransactionsRepository,
     @Inject(Class.Logger) private readonly logger: Logger,
   ) {
+    this.intervals = new Map<string, ReturnType<typeof setInterval>>();
     this.aggregators = new Map<string, ExternalAggregator>([
       [AggregatorProviders.LiFi, LiFi.create(logger)],
       [AggregatorProviders.Rango, Rango.create(configService.getRangoApiKey(), logger)],
