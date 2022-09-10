@@ -5,7 +5,10 @@ import { ExternalAggregator } from '../../../aggregators/domain/aggregator';
 import { AggregatorProviders } from '../../../aggregators/domain/providers/aggregator-providers';
 import { Rango } from '../../../aggregators/domain/providers/rango';
 import { LiFi } from '../../../aggregators/domain/providers/liFi';
-import { ExternalTransactionStatus, StatusCheckResponse } from '../../../aggregators/domain/status-check';
+import {
+  ExternalTransactionStatus,
+  StatusCheckResponse,
+} from '../../../aggregators/domain/status-check';
 import { Inject } from '@nestjs/common';
 import { Class } from '../../../shared/Class';
 import { TransactionsRepository } from '../../domain/TransactionsRepository';
@@ -140,6 +143,8 @@ export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
 
       if (status.status !== ExternalTransactionStatus.Pending) {
         const tx = await this.repository.find(command.txHash);
+        this.logger.log(`tx ${command.txHash} found`);
+
         tx.markAsCompleted(new Date())
           .setAmountOut(status.amountOut)
           .setDestinationTxHash(status.dstTxHash)
@@ -147,7 +152,9 @@ export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
         await this.repository.update(tx);
 
         this.removeInterval(command.txHash);
-        this.logger.error(`tx ${command.txHash} finished w/ status ${status.status}`);
+        this.logger.log(`tx ${command.txHash} finished w/ status ${status.status}`);
+      } else {
+        this.logger.log(`${command.txHash} still pending`);
       }
     } catch (e) {
       this.logger.error(`Rechecking tx ${command.txHash} failed: ${e}`);
