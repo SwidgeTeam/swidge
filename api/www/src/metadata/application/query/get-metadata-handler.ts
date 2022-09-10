@@ -19,8 +19,8 @@ export class GetMetadataHandler implements IQueryHandler<GetMetadataQuery> {
     @Inject(Class.Logger) private readonly logger: Logger,
   ) {
     this.aggregators = new Map<string, MetadataProviderAggregator>([
-      [AggregatorProviders.LiFi, LiFi.create()],
-      [AggregatorProviders.Rango, Rango.create(configService.getRangoApiKey())],
+      [AggregatorProviders.LiFi, LiFi.create(logger)],
+      [AggregatorProviders.Rango, Rango.create(configService.getRangoApiKey(), logger)],
     ]);
   }
 

@@ -40,6 +40,7 @@ import {
   Polygon,
   xDAI,
 } from '../../../shared/enums/ChainIds';
+import { Logger } from '../../../shared/domain/logger';
 
 export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAggregator {
   private enabledChains = [
@@ -60,14 +61,16 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
   ];
   private client: LIFI;
   private routerCallEncoder: RouterCallEncoder;
+  private logger: Logger;
 
-  public static create() {
-    return new LiFi(new LIFI());
+  public static create(logger: Logger) {
+    return new LiFi(new LIFI(), logger);
   }
 
-  constructor(client: LIFI) {
+  constructor(client: LIFI, logger: Logger) {
     this.client = client;
     this.routerCallEncoder = new RouterCallEncoder();
+    this.logger = logger;
   }
 
   isEnabledOn(fromChainId: string, toChainId: string): boolean {
@@ -102,6 +105,7 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
         };
       });
     } catch (e) {
+      this.logger.error(`LiFi failed to fetch metadata: ${e}`);
       chains = [];
       tokens = [];
     }

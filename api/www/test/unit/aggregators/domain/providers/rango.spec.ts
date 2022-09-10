@@ -1,5 +1,6 @@
 import { AggregatorRequest } from '../../../../../src/aggregators/domain/aggregator-request';
 import { TokenMother } from '../../../shared/domain/token.mother';
+import { Logger } from '../../../../../src/shared/domain/logger';
 import { BigInteger } from '../../../../../src/shared/domain/big-integer';
 import { faker } from '@faker-js/faker';
 import { Rango } from '../../../../../src/aggregators/domain/providers/rango';
@@ -18,7 +19,8 @@ describe('aggregators', () => {
         });
       },
     });
-    const rango = new Rango(client);
+    const logger = createMock<Logger>();
+    const rango = new Rango(client, logger);
     const request = getAggregatorRoute();
 
     // Act
@@ -39,7 +41,8 @@ describe('aggregators', () => {
         });
       },
     });
-    const rango = new Rango(client);
+    const logger = createMock<Logger>();
+    const rango = new Rango(client, logger);
     const request = getAggregatorRoute();
 
     // Act
@@ -60,7 +63,8 @@ describe('aggregators', () => {
         });
       },
     });
-    const rango = new Rango(client);
+    const logger = createMock<Logger>();
+    const rango = new Rango(client, logger);
     const request = getAggregatorRoute();
 
     // Act
@@ -157,7 +161,8 @@ describe('aggregators', () => {
         });
       },
     });
-    const rango = new Rango(client);
+    const logger = createMock<Logger>();
+    const rango = new Rango(client, logger);
     const request = getAggregatorRoute();
 
     // Act

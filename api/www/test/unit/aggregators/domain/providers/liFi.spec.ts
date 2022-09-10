@@ -5,6 +5,7 @@ import { faker } from '@faker-js/faker';
 import { LiFi } from '../../../../../src/aggregators/domain/providers/liFi';
 import { createMock } from 'ts-auto-mock';
 import LIFI from '@lifi/sdk';
+import { Logger } from '../../../../../src/shared/domain/logger';
 
 describe('liFi aggregator', () => {
   it('should throw exception if request fails', async () => {
@@ -12,7 +13,8 @@ describe('liFi aggregator', () => {
     const liFiClient = createMock<LIFI>({
       getQuote: () => Promise.reject(new Error('error')),
     });
-    const liFi = new LiFi(liFiClient);
+    const logger = createMock<Logger>();
+    const liFi = new LiFi(liFiClient, logger);
     const request = getAggregatorRequest();
 
     // Act

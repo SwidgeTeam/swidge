@@ -21,8 +21,8 @@ export class GetPathHandler implements IQueryHandler<GetPathQuery> {
     @Inject(Class.Logger) private readonly logger: Logger,
   ) {
     const aggregators = new Aggregators([
-      [AggregatorProviders.LiFi, LiFi.create()],
-      [AggregatorProviders.Rango, Rango.create(configService.getRangoApiKey())],
+      [AggregatorProviders.LiFi, LiFi.create(logger)],
+      [AggregatorProviders.Rango, Rango.create(configService.getRangoApiKey(), logger)],
     ]);
 
     this.pathComputer = new AggregatorsPathComputer(aggregators, logger);

@@ -48,6 +48,7 @@ import { RouteSteps } from '../../../shared/domain/route/route-steps';
 import { AggregatorMetadata } from '../../../shared/domain/metadata';
 import { NATIVE_TOKEN_ADDRESS } from '../../../shared/enums/Natives';
 import { ethers } from 'ethers';
+import { Logger } from '../../../shared/domain/logger';
 
 interface MetadataResponse {
   blockchains: BlockchainMeta[];
@@ -79,8 +80,7 @@ declare type RangoToken = {
 };
 
 export class Rango
-  implements Aggregator, OneSteppedAggregator, ExternalAggregator, MetadataProviderAggregator
-{
+  implements Aggregator, OneSteppedAggregator, ExternalAggregator, MetadataProviderAggregator {
   private enabledChains = [
     Mainnet,
     Optimism,
@@ -101,13 +101,15 @@ export class Rango
     Fuse,
   ];
   private client: RangoClient;
+  private logger: Logger;
 
-  public static create(apiKey: string): Rango {
-    return new Rango(new RangoClient(apiKey));
+  public static create(apiKey: string, logger: Logger): Rango {
+    return new Rango(new RangoClient(apiKey), logger);
   }
 
-  constructor(client: RangoClient) {
+  constructor(client: RangoClient, logger: Logger) {
     this.client = client;
+    this.logger = logger;
   }
 
   isEnabledOn(fromChainId: string, toChainId: string): boolean {
@@ -115,12 +117,11 @@ export class Rango
   }
 
   public async getMetadata(): Promise<AggregatorMetadata> {
-    const metaResponse = (await this.client.meta()) as unknown as MetadataResponse;
-
-    const acceptedChains = [];
-
-    return {
-      chains: metaResponse.blockchains
+    let chains, tokens;
+    try {
+      const acceptedChains = [];
+      const metaResponse = (await this.client.meta()) as unknown as MetadataResponse;
+      chains = metaResponse.blockchains
         .filter((chain) => chain.type === 'EVM')
         .map((chain) => {
           acceptedChains.push(chain.name);
@@ -133,8 +134,8 @@ export class Rango
             decimals: chain.defaultDecimals,
             rpcUrls: chain.info.rpcUrls,
           };
-        }),
-      tokens: metaResponse.tokens
+        });
+      tokens = metaResponse.tokens
         .filter((token) => acceptedChains.includes(token.blockchain))
         .map((token) => {
           return {
@@ -146,7 +147,16 @@ export class Rango
             logo: token.image,
             price: token.usdPrice ? token.usdPrice.toString() : '0',
           };
-        }),
+        });
+    } catch (e) {
+      this.logger.error(`Rango failed to fetch metadata: ${e}`);
+      chains = [];
+      tokens = [];
+    }
+
+    return {
+      chains: chains,
+      tokens: tokens,
     };
   }
 
