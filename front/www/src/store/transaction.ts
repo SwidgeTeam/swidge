@@ -57,13 +57,22 @@ export const useTransactionStore = defineStore('transaction', {
         async fetchBothTxs(amount: string) {
             const web3Store = useWeb3Store()
             const routesStore = useRoutesStore()
+            const srcToken = routesStore.getOriginToken()
+            const dstToken = routesStore.getDestinationToken()
+            if (!srcToken || !dstToken) {
+                throw new Error('Some token is not selected')
+            }
             const route = routesStore.getSelectedRoute
             const txs = await swidgeApi.getBothTxs({
                 aggregatorId: route.aggregator.id,
                 fromChainId: routesStore.getOriginChainId,
                 toChainId: routesStore.getDestinationChainId,
-                srcToken: routesStore.getOriginTokenAddress,
-                dstToken: routesStore.getDestinationTokenAddress,
+                srcTokenAddress: srcToken.address,
+                srcTokenSymbol: srcToken.symbol,
+                srcTokenDecimals: srcToken.decimals.toString(),
+                dstTokenAddress: dstToken.address,
+                dstTokenSymbol: dstToken.symbol,
+                dstTokenDecimals: dstToken.decimals.toString(),
                 amount: amount,
                 slippage: Number(routesStore.getSlippage),
                 senderAddress: web3Store.account,
