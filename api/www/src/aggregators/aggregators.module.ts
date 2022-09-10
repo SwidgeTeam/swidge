@@ -9,6 +9,8 @@ import { BuildMainTxHandler } from './application/query/build-main-tx-handler';
 import { GetMainTxCalldataController } from './infrastructure/controllers/get-main-tx-calldata-controller';
 import gasPriceFetcherProvider from '../shared/infrastructure/gas-price-fetcher.provider';
 import priceFeedFetcherProvider from '../shared/infrastructure/price-feed-fetcher.provider';
+import { BuildBothTxsHandler } from './application/query/build-both-txs-handler';
+import { GetBothTxsCalldataController } from './infrastructure/controllers/get-both-txs-calldata-controller';
 
 @Module({
   imports: [
@@ -18,10 +20,12 @@ import priceFeedFetcherProvider from '../shared/infrastructure/price-feed-fetche
   controllers: [
     GetApprovalTxCalldataController,
     GetMainTxCalldataController,
+    GetBothTxsCalldataController,
   ],
   providers: [
     BuildTxApprovalHandler,
     BuildMainTxHandler,
+    BuildBothTxsHandler,
     ConfigService,
     gasPriceFetcherProvider(),
     priceFeedFetcherProvider(),
