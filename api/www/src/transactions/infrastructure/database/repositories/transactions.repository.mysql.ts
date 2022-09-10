@@ -15,7 +15,7 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
    * @param transaction
    */
   async create(transaction: Transaction): Promise<void> {
-    await this.manager.create(TransactionEntity, {
+    await this.manager.insert(TransactionEntity, {
       txHash: transaction.txHash,
       destinationTxHash: transaction.destinationTxHash,
       walletAddress: transaction.walletAddress,
