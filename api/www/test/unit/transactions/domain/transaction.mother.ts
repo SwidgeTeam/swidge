@@ -49,7 +49,7 @@ export class TransactionMother {
       BigInteger.fromDecimal('10'),
       new Date(),
       null,
-      ExternalTransactionStatus.Pending,
+      'pending' as ExternalTransactionStatus,
     );
   }
 

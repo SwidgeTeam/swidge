@@ -83,7 +83,7 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
       BigInteger.fromString(result.amountOut),
       new Date(result.executed),
       result.completed ? new Date(result.completed) : null,
-      ExternalTransactionStatus[result.status],
+      result.status as ExternalTransactionStatus,
     );
   }
 
@@ -110,7 +110,7 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
         BigInteger.fromString(row.amountOut),
         new Date(row.executed),
         row.completed ? new Date(row.completed) : null,
-        ExternalTransactionStatus[row.status],
+        row.status as ExternalTransactionStatus,
       );
     });
 
