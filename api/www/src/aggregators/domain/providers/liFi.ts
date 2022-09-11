@@ -89,9 +89,15 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
           id: chain.id.toString(),
           name: chain.name,
           logo: chain.logoURI,
-          coin: chain.coin,
-          decimals: chain.metamask.nativeCurrency.decimals,
-          rpcUrls: chain.metamask.rpcUrls,
+          metamask: {
+            chainName: chain.metamask.chainName,
+            nativeCurrency: {
+              name: chain.metamask.nativeCurrency.name,
+              symbol: chain.metamask.nativeCurrency.symbol,
+              decimals: chain.metamask.nativeCurrency.decimals,
+            },
+            rpcUrls: chain.metamask.rpcUrls,
+          },
         };
       });
       tokens = flatten(Object.values(tokensResponse.tokens)).map((token) => {

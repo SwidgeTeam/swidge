@@ -21,9 +21,15 @@ export class GetMetadataController {
           i: chain.id,
           n: chain.name,
           l: chain.logo,
-          c: chain.coin,
-          d: chain.decimals,
-          r: chain.rpcUrls,
+          m: {
+            c: chain.metamask.chainName,
+            r: chain.metamask.rpcUrls,
+            n: {
+              n: chain.metamask.nativeCurrency.name,
+              s: chain.metamask.nativeCurrency.symbol,
+              d: chain.metamask.nativeCurrency.decimals,
+            },
+          },
         };
       }),
       tokens: meta.tokens.map((token) => {

@@ -8,9 +8,15 @@ export interface ChainListItemJson {
     i: string
     n: string
     l: string
-    c: string
-    d: number
-    r: string[]
+    m: {
+        c: string
+        r: string[]
+        n: {
+            n: string
+            s: string
+            d: number
+        }
+    }
 }
 
 export interface TokenListItemJson {

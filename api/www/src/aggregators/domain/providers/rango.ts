@@ -25,6 +25,7 @@ import {
   Mainnet,
   Moonbeam,
   Moonriver,
+  OKT,
   Optimism,
   Polygon,
   xDAI,
@@ -131,9 +132,18 @@ export class Rango
             type: chain.type,
             name: chain.displayName,
             logo: chain.logo,
-            coin: chain.info.nativeCurrency.symbol,
-            decimals: chain.defaultDecimals,
-            rpcUrls: chain.info.rpcUrls,
+            metamask: {
+              // @ts-ignore
+              chainName: chain.info.chainName,
+              nativeCurrency: {
+                // @ts-ignore
+                name: chain.info.nativeCurrency.name,
+                symbol: chain.info.nativeCurrency.symbol,
+                // @ts-ignore
+                decimals: chain.info.nativeCurrency.decimals,
+              },
+              rpcUrls: chain.info.rpcUrls,
+            },
           };
         });
       tokens = metaResponse.tokens
@@ -436,6 +446,8 @@ export class Rango
         return 'EVMOS';
       case Fuse:
         return 'FUSE';
+      case OKT:
+        return 'OKC';
       default:
         throw new Error('blockchain not supported');
     }
@@ -477,6 +489,8 @@ export class Rango
         return Evmos;
       case 'FUSE':
         return Fuse;
+      case 'OKC':
+        return OKT;
       default:
         throw new Error('blockchain not supported');
     }

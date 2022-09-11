@@ -269,7 +269,7 @@ export const useWeb3Store = defineStore('web3', () => {
         return ethers.getDefaultProvider({
             name: chain.name,
             chainId: Number(chain.id),
-            _defaultProvider: (providers) => new providers.JsonRpcProvider(chain.rpcUrls[0])
+            _defaultProvider: (providers) => new providers.JsonRpcProvider(chain.metamask.rpcUrls[0])
         })
     }
 

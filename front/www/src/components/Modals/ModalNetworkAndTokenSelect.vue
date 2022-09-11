@@ -125,7 +125,7 @@ const loadMatchingTokens = () => {
  * @returns A token or undefined
  */
 const fetchToken = async (network: IChain, address: string): Promise<IToken | undefined> => {
-    const provider = new ethers.providers.JsonRpcProvider(network.rpcUrls[0])
+    const provider = new ethers.providers.JsonRpcProvider(network.metamask.rpcUrls[0])
     const token = new ethers.Contract(
         address,
         IERC20Abi,

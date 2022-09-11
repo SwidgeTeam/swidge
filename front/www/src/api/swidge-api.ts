@@ -30,9 +30,15 @@ class SwidgeAPI extends HttpClient {
                     id: chain.i,
                     name: chain.n,
                     logo: chain.l,
-                    coin: chain.c,
-                    decimals: chain.d,
-                    rpcUrls: chain.r,
+                    metamask: {
+                        chainName: chain.m.c,
+                        rpcUrls: chain.m.r,
+                        nativeCurrency: {
+                            name: chain.m.n.n,
+                            symbol: chain.m.n.s,
+                            decimals: chain.m.n.d,
+                        }
+                    }
                 }
             })
             const tokens = response.data.tokens.map(token => {

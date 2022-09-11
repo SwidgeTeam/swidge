@@ -22,9 +22,15 @@ export interface IChain {
     id: string;
     name: string;
     logo: string;
-    coin: string;
-    decimals: number;
-    rpcUrls: string[];
+    metamask: {
+        chainName: string;
+        rpcUrls: string[];
+        nativeCurrency: {
+            name: string;
+            symbol: string;
+            decimals: number;
+        };
+    };
 }
 
 export interface TokenBalance {

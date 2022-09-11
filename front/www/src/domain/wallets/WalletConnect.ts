@@ -12,7 +12,7 @@ export class WalletConnect implements IWallet {
     constructor(callbacks: WalletEvents) {
         const rpc: IRPCMap = {}
         for (const network of useMetadataStore().getChains) {
-            rpc[Number(network.id)] = network.rpcUrls[0]
+            rpc[Number(network.id)] = network.metamask.rpcUrls[0]
         }
         this.provider = new WalletConnectProvider({
             rpc: rpc
