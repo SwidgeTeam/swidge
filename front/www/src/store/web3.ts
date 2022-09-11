@@ -285,7 +285,6 @@ export const useWeb3Store = defineStore('web3', () => {
         sendApprovalTransaction,
         sendMainTransaction,
         getCurrentNonce,
-        getChainProvider,
     }
 })
 

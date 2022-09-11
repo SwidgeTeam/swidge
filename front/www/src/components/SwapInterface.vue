@@ -18,6 +18,7 @@ import FromToArrow from '@/components/Icons/FromToArrow.vue'
 import { IToken } from '@/domain/metadata/Metadata'
 import RecipientUserCard from '@/components/RecipientUserCard.vue'
 import { storeToRefs } from 'pinia'
+import { ethers } from 'ethers'
 
 const web3Store = useWeb3Store()
 const routesStore = useRoutesStore()
@@ -25,8 +26,6 @@ const transactionStore = useTransactionStore()
 const { isValidReceiverAddress } = storeToRefs(routesStore)
 const { isConnected } = storeToRefs(web3Store)
 const toast = useToast()
-
-const { getBalance } = web3Store
 
 const sourceTokenAmount = ref<string>('')
 const sourceTokenMaxAmount = ref<string>('')
@@ -169,16 +168,8 @@ const updateOriginToken = async (token: IToken) => {
         // Reset amount
         sourceTokenAmount.value = ''
         // Check user's token balance
-        await updateTokenBalance(token)
+        sourceTokenMaxAmount.value = ethers.utils.formatUnits(token.balance, token.decimals)
     }
-}
-
-/**
- * Updates the balance of the selected token
- * @param token
- */
-const updateTokenBalance = async (token: IToken) => {
-    sourceTokenMaxAmount.value = await getBalance(token)
 }
 
 /**
