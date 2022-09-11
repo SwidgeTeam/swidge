@@ -99,7 +99,7 @@ const updateSearchTerm = (term: string) => {
     }
 }
 
-const handlerUpdateSearchTerm = debounce(updateSearchTerm, 100)
+const handlerUpdateSearchTerm = debounce(updateSearchTerm, 300)
 
 /**
  * Tries to fetch the matching tokens of a specific address
