@@ -21,17 +21,19 @@ const onSelect = (id: string) => {
 </script>
 
 <template>
-    <div class="relative gird grid-flow-col-dense gap-2 font-roboto">
+    <div class="relative gird grid-cols-3 gap-2 font-roboto">
         <button
             v-for="network in networks"
             :key="network.id"
-            class="px-1"
+            class="px-1 w-16"
             :class="[selectedNetworkId !== network.id && selectedNetworkId !== '' && 'opacity-40']"
             @click="onSelect(network.id)">
-            <img
-                :src="network.logo"
-                class="rounded-full h-8 sm:h-10"
-                :alt="network.name"/>
+            <span class="h-10 bg-[#2E283A] rounded-lg flex justify-center">
+                <img
+                    :src="network.logo"
+                    class="px-1 py-1 rounded-lg"
+                    :alt="network.name"/>
+            </span>
         </button>
     </div>
 </template>
