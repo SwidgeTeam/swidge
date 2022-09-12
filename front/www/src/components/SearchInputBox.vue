@@ -54,7 +54,7 @@ defineExpose({
             :value="searchTerm"
             name="searchTerm"
             class="text-sm sm:text-base w-full pl-12 h-14 rounded-lg font-roboto border-light-grey-2 bg-cards-background-dark-grey ring-1 ring-indigo-500 border-indigo-500 focus:ring-indigo-500 focus:border-indigo-500 text-light-grey-1"
-            placeholder="Search by token or address"
+            placeholder="Search by symbol or address"
             @input="onInput"/>
     </div>
 </template>

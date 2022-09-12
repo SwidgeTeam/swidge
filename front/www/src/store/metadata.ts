@@ -93,12 +93,17 @@ export const useMetadataStore = defineStore('metadata', {
          */
         async fetchBalances(wallet: string) {
             const tokenBalances = await swidgeApi.fetchBalances(wallet)
-            tokenBalances.forEach(token => {
-                this.tokens[token.chainId] = this.tokens[token.chainId].map(iToken => {
-                    iToken.balance = token.balance
-                    return iToken
+            for (const [chainId, tokens] of Object.entries(this.tokens)) {
+                this.tokens[chainId] = tokens.map(token => {
+                    const tokenBalance = tokenBalances.find(tokenBalance => {
+                        return tokenBalance.chainId === token.chainId && tokenBalance.address === token.address
+                    })
+                    if (tokenBalance) {
+                        token.balance = tokenBalance.balance
+                    }
+                    return token
                 })
-            })
+            }
         },
         /**
          * Imports a token into the list if it doesn't exist already

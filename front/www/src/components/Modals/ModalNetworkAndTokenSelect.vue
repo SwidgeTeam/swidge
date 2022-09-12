@@ -23,6 +23,8 @@ const emits = defineEmits<{
     (event: 'update-token', token: IToken): void
 }>()
 
+const TOKENS_PER_PAGE = 20
+
 const searchTerm = ref('')
 const selectedNetworkId = ref('')
 const searchComponent = ref<any | null>(null)
@@ -30,6 +32,7 @@ const matchingTokens = ref<IToken[]>([])
 const checkingNetworks = ref<number>(0)
 const isImportModalOpen = ref<boolean>(false)
 const selectedTokenToImport = ref<IToken | null>(null)
+const tokenPages = ref<number>(1)
 
 const getNetworks = () => {
     return metadataStore.getChains
@@ -53,6 +56,22 @@ const handleSetToken = (token: IToken) => {
 const handleSelectTokenToImport = (token: IToken) => {
     selectedTokenToImport.value = token
     isImportModalOpen.value = true
+}
+
+/**
+ * handles when a network has been selected
+ * @param id
+ */
+const handleSelectedNetworkId = (id: string) => {
+    selectedNetworkId.value = id
+    tokenPages.value = 1
+}
+
+/**
+ * handles when the list of tokens has bottomed
+ */
+const handleScrollBottomed = () => {
+    tokenPages.value++
 }
 
 /**
@@ -219,24 +238,25 @@ const filteredTokens = () => {
             .filter(token => {
                 return (
                     token.address.toLowerCase().includes(pattern) ||
-                    token.name.toLowerCase().includes(pattern) ||
-                    token.symbol.toLowerCase().includes(pattern) ||
-                    token.chainName.toLowerCase().includes(pattern)
+                    token.symbol.toLowerCase().includes(pattern)
                 )
             })
     }
 
-    return tokens.sort((a: IToken, b: IToken) => {
-        if (a.balance.gt(b.balance)) {
-            return -1
-        } else if (b.balance.gt(a.balance)) {
-            return 1
-        } else {
-            return 0
-        }
-    })
+    return tokens
+        .sort(orderByBalance)
+        .slice(0, TOKENS_PER_PAGE * tokenPages.value)
 }
 
+const orderByBalance = (a: IToken, b: IToken) => {
+    if (a.balance.gt(b.balance)) {
+        return -1
+    } else if (b.balance.gt(a.balance)) {
+        return 1
+    } else {
+        return 0
+    }
+}
 </script>
 
 <template>
@@ -251,9 +271,11 @@ const filteredTokens = () => {
             @update:search-term="handlerUpdateSearchTerm"
             @clear-input="searchTerm = ''"/>
         <NetworkLineSelector
-            v-model:selected-network-id="selectedNetworkId"
+            class="my-3"
+            :selected-network-id="selectedNetworkId"
             :networks="getNetworks()"
-            class="my-3"/>
+            @update:selected-network-id="handleSelectedNetworkId"
+        />
         <SelectTokenList
             :is-origin="isOrigin"
             :tokens="listTokens()"
@@ -263,7 +285,9 @@ const filteredTokens = () => {
             :search-term="searchTerm"
             :selected-network-id="selectedNetworkId"
             @set-token="handleSetToken($event)"
-            @import-token="handleSelectTokenToImport($event)"/>
+            @import-token="handleSelectTokenToImport($event)"
+            @scroll-bottomed="handleScrollBottomed"
+        />
     </Modal>
     <ModalImportToken
         :is-open="isImportModalOpen"

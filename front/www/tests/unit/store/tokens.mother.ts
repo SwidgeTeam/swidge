@@ -30,10 +30,13 @@ export class TokensMother {
     }
 
     public static list() {
-        return [
-            this.fantomWFTM(),
-            this.polygonMATIC(),
-        ]
+        return {
+            '137': [
+                this.polygonMATIC(),
+            ],
+            '250': [
+                this.fantomWFTM(),
+            ]
+        }
     }
-
 }

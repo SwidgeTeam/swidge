@@ -17,6 +17,7 @@ const props = defineProps<{
 const emits = defineEmits<{
     (event: 'set-token', token: IToken): void
     (event: 'import-token', token: IToken): void
+    (event: 'scroll-bottomed'): void
 }>()
 
 const clickOnToken = (token: IToken) => {
@@ -30,6 +31,13 @@ const clickOnToken = (token: IToken) => {
 const getChain = (chainId: string) => {
     return props.chainList.find((chain) => chain.id === chainId)
 }
+
+const onScroll = (e: Event) => {
+    const { scrollTop, offsetHeight, scrollHeight } = e.target as any
+    if ((scrollTop + offsetHeight) >= scrollHeight) {
+        emits('scroll-bottomed')
+    }
+}
 </script>
 
 <template>
@@ -40,7 +48,9 @@ const getChain = (chainId: string) => {
                 v-if="selectedNetworkId !== '' || searchTerm !== ''"
                 class="text-sm font-extralight mt-1 ml-auto">Balance</span>
         </div>
-        <div class="h-80 w-full overflow-y-auto">
+        <div
+            class="h-80 w-full overflow-y-auto"
+            @scroll="onScroll">
             <NetworkAndTokenNothingFound
                 v-if="selectedNetworkId === '' && searchTerm === ''"
             />
