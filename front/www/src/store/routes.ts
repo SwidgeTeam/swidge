@@ -206,6 +206,8 @@ export const useRoutesStore = defineStore('routes', {
                 step.completed = true
             })
             this.getSelectedRoute.completed = true
+            const wallet = useWeb3Store().account
+            useMetadataStore().fetchBalances(wallet)
         },
         /**
          * Sets a specific token as selected on origin
