@@ -146,18 +146,24 @@ export class Rango
             },
           };
         });
-      tokens = metaResponse.tokens
+      tokens = {};
+      metaResponse.tokens
         .filter((token) => acceptedChains.includes(token.blockchain))
-        .map((token) => {
-          return {
-            chainId: this.getChainId(token.blockchain),
+        .forEach((token) => {
+          const chainId = this.getChainId(token.blockchain);
+          if (!tokens[chainId]) {
+            // create the array if it doesnt exist
+            tokens[chainId] = [];
+          }
+          tokens[chainId].push({
+            chainId: chainId,
             address: this.fromProviderAddress(token.address),
             name: token.symbol,
             symbol: token.symbol,
             decimals: token.decimals,
             logo: token.image,
             price: token.usdPrice ? token.usdPrice.toString() : '0',
-          };
+          });
         });
     } catch (e) {
       this.logger.error(`Rango failed to fetch metadata: ${e}`);
