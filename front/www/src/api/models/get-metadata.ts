@@ -1,6 +1,6 @@
 export interface MetadataJson {
     chains: ChainListItemJson[]
-    tokens: TokenListItemJson[]
+    tokens: TokenListJson
 }
 
 export interface ChainListItemJson {
@@ -18,6 +18,10 @@ export interface ChainListItemJson {
         }
     }
 }
+
+export declare type TokenListJson = {
+    [chainId: string]: TokenListItemJson[];
+};
 
 export interface TokenListItemJson {
     c: string

@@ -1,21 +1,22 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import swidgeApi from '@/api/swidge-api'
 import { useWeb3Store } from '@/store/web3'
-import { IChain, IToken } from '@/domain/metadata/Metadata'
+import { IChain, IToken, ITokenList } from '@/domain/metadata/Metadata'
+import { flatten } from 'lodash'
 
 const CUSTOM_TOKENS_STORAGE_KEY = 'custom-tokens'
 
 export const useMetadataStore = defineStore('metadata', {
     state: () => ({
-        tokens: [] as IToken[],
+        tokens: {} as ITokenList,
         chains: [] as IChain[],
     }),
     getters: {
         /**
          * Returns whole list of tokens
          */
-        getTokens(): IToken[] {
-            return this.tokens
+        getAllTokens(): IToken[] {
+            return flatten(Object.values(this.tokens))
         },
         /**
          * Returns whole list of chains
@@ -29,10 +30,7 @@ export const useMetadataStore = defineStore('metadata', {
          */
         getChainTokens(state) {
             return (chainId: string): IToken[] => {
-                return state.tokens
-                    .filter(token => {
-                        return token.chainId === chainId
-                    })
+                return state.tokens[chainId]
             }
         },
         /**
@@ -57,19 +55,18 @@ export const useMetadataStore = defineStore('metadata', {
          */
         getToken(state) {
             return (chainId: string, address: string): IToken | undefined => {
-                return state.tokens
+                return state.tokens[chainId]
                     .find(token => {
-                        return token.chainId === chainId && token.address.toLowerCase() === address.toLowerCase()
+                        return token.address.toLowerCase() === address.toLowerCase()
                     })
             }
         },
         /**
          * Returns a token given chainId and address
-         * @param state
          */
-        getTokensByAddress(state) {
+        getTokensByAddress() {
             return (address: string): IToken[] | undefined => {
-                return state.tokens
+                return this.getAllTokens
                     .filter(token => {
                         return token.address.toLowerCase() === address.toLowerCase()
                     })
@@ -86,7 +83,9 @@ export const useMetadataStore = defineStore('metadata', {
             this.chains = metadata.chains
             const customTokens = getCustomTokens()
             if (customTokens) {
-                this.tokens.push(...customTokens)
+                for (const token of customTokens) {
+                    this.tokens[token.chainId].push(...customTokens)
+                }
             }
         },
         /**
@@ -94,14 +93,11 @@ export const useMetadataStore = defineStore('metadata', {
          */
         async fetchBalances(wallet: string) {
             const tokenBalances = await swidgeApi.fetchBalances(wallet)
-            this.tokens = this.tokens.map(token => {
-                const tokenBalance = tokenBalances.find(tokenBalance => {
-                    return tokenBalance.chainId === token.chainId && tokenBalance.address === token.address
+            tokenBalances.forEach(token => {
+                this.tokens[token.chainId] = this.tokens[token.chainId].map(iToken => {
+                    iToken.balance = token.balance
+                    return iToken
                 })
-                if (tokenBalance) {
-                    token.balance = tokenBalance.balance
-                }
-                return token
             })
         },
         /**
@@ -116,7 +112,7 @@ export const useMetadataStore = defineStore('metadata', {
             if (!exists) {
                 customTokens.push(token)
                 setCustomTokens(customTokens)
-                this.tokens.push(token)
+                this.tokens[token.chainId].push(token)
                 swidgeApi.addImportedToken({
                     chainId: token.chainId,
                     address: token.address,

@@ -14,25 +14,27 @@ export class GetMetadataController {
 
     const meta = await this.queryBus.execute<GetMetadataQuery, Metadata>(query);
 
-    return res.json({
-      chains: meta.chains.map((chain) => {
-        return {
-          t: chain.type,
-          i: chain.id,
-          n: chain.name,
-          l: chain.logo,
-          m: {
-            c: chain.metamask.chainName,
-            r: chain.metamask.rpcUrls,
-            n: {
-              n: chain.metamask.nativeCurrency.name,
-              s: chain.metamask.nativeCurrency.symbol,
-              d: chain.metamask.nativeCurrency.decimals,
-            },
+    const chains = meta.chains.map((chain) => {
+      return {
+        t: chain.type,
+        i: chain.id,
+        n: chain.name,
+        l: chain.logo,
+        m: {
+          c: chain.metamask.chainName,
+          r: chain.metamask.rpcUrls,
+          n: {
+            n: chain.metamask.nativeCurrency.name,
+            s: chain.metamask.nativeCurrency.symbol,
+            d: chain.metamask.nativeCurrency.decimals,
           },
-        };
-      }),
-      tokens: meta.tokens.map((token) => {
+        },
+      };
+    });
+
+    const tokens = {};
+    for (const [chainId, tokensList] of Object.entries(meta.tokens)) {
+      tokens[chainId] = tokensList.map((token) => {
         return {
           c: token.chainId,
           a: token.address,
@@ -42,7 +44,12 @@ export class GetMetadataController {
           l: token.logo,
           p: token.price,
         };
-      }),
+      });
+    }
+
+    return res.json({
+      chains: chains,
+      tokens: tokens,
     });
   }
 }

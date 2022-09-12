@@ -9,6 +9,7 @@ import { LiFi } from '../../../aggregators/domain/providers/liFi';
 import Metadata from '../../domain/Metadata';
 import { Rango } from '../../../aggregators/domain/providers/rango';
 import { ConfigService } from '../../../config/config.service';
+import { AggregatorMetadata } from '../../../shared/domain/metadata';
 
 @QueryHandler(GetMetadataQuery)
 export class GetMetadataHandler implements IQueryHandler<GetMetadataQuery> {
@@ -40,8 +41,7 @@ export class GetMetadataHandler implements IQueryHandler<GetMetadataQuery> {
     for (const aggregator of this.aggregators.values()) {
       const meta = await aggregator.getMetadata();
       metadata.includeAggregatorMetadata(meta);
-      isEligibleForCache =
-        isEligibleForCache && meta.chains.length !== 0 && meta.tokens.length !== 0;
+      isEligibleForCache = isEligibleForCache && this.isEligibleForCache(meta);
     }
 
     if (isEligibleForCache) {
@@ -51,6 +51,10 @@ export class GetMetadataHandler implements IQueryHandler<GetMetadataQuery> {
     }
 
     return metadata;
+  }
+
+  private isEligibleForCache(meta: AggregatorMetadata): boolean {
+    return meta.chains.length !== 0 && Object.keys(meta.tokens).length !== 0;
   }
 
   /**

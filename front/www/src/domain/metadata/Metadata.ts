@@ -1,9 +1,13 @@
 import { BigNumber } from 'ethers'
 
 export interface Metadata {
-    tokens: IToken[]
+    tokens: ITokenList
     chains: IChain[]
 }
+
+export declare type ITokenList = {
+    [chainId: string]: IToken[];
+};
 
 export interface IToken {
     chainId: string

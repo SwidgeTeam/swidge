@@ -20,7 +20,6 @@ import {
   StatusCheckRequest,
   StatusCheckResponse,
 } from '../status-check';
-import { flatten } from '@nestjs/common';
 import { AggregatorMetadata } from '../../../shared/domain/metadata';
 import { ethers } from 'ethers';
 import { NATIVE_TOKEN_ADDRESS } from '../../../shared/enums/Natives';
@@ -100,21 +99,24 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
           },
         };
       });
-      tokens = flatten(Object.values(tokensResponse.tokens)).map((token) => {
-        return {
-          chainId: token.chainId.toString(),
-          address: this.fromProviderAddress(token.address),
-          name: token.name,
-          symbol: token.symbol,
-          decimals: token.decimals,
-          logo: token.logoURI,
-          price: token.priceUSD,
-        };
-      });
+      tokens = {};
+      for (const [chainId, tokensList] of Object.entries(tokensResponse.tokens)) {
+        tokens[chainId.toString()] = tokensList.map((token) => {
+          return {
+            chainId: token.chainId.toString(),
+            address: this.fromProviderAddress(token.address),
+            name: token.name,
+            symbol: token.symbol,
+            decimals: token.decimals,
+            logo: token.logoURI,
+            price: token.priceUSD,
+          };
+        });
+      }
     } catch (e) {
       this.logger.error(`LiFi failed to fetch metadata: ${e}`);
       chains = [];
-      tokens = [];
+      tokens = {};
     }
 
     return {

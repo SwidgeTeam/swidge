@@ -41,19 +41,23 @@ class SwidgeAPI extends HttpClient {
                     }
                 }
             })
-            const tokens = response.data.tokens.map(token => {
-                return {
-                    chainId: token.c,
-                    chainName: chainNames[token.c],
-                    address: token.a,
-                    name: token.n,
-                    symbol: token.s,
-                    decimals: token.d,
-                    logo: token.l,
-                    price: token.p,
-                    balance: BigNumber.from(0)
-                }
-            })
+            const tokens = {}
+            for (const [chainId, tokenList] of Object.entries(response.data.tokens)) {
+                // @ts-ignore
+                tokens[chainId] = tokenList.map(token => {
+                    return {
+                        chainId: token.c,
+                        chainName: chainNames[token.c],
+                        address: token.a,
+                        name: token.n,
+                        symbol: token.s,
+                        decimals: token.d,
+                        logo: token.l,
+                        price: token.p,
+                        balance: BigNumber.from(0)
+                    }
+                })
+            }
             return {
                 tokens: tokens,
                 chains: chains

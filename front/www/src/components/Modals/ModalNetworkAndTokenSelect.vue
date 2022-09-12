@@ -208,7 +208,7 @@ const filteredTokens = () => {
         tokens = metadataStore.getChainTokens(selectedNetworkId.value)
     } else {
         // Otherwise get them all
-        tokens = metadataStore.getTokens
+        tokens = metadataStore.getAllTokens
     }
 
     const pattern = searchTerm.value.toLowerCase().trim()

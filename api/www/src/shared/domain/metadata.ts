@@ -24,7 +24,11 @@ export interface IToken {
   price: string;
 }
 
+export declare type ITokenList = {
+  [chainId: string]: IToken[];
+};
+
 export interface AggregatorMetadata {
   chains: IChain[];
-  tokens: IToken[];
+  tokens: ITokenList;
 }

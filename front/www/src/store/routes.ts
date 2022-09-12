@@ -87,31 +87,33 @@ export const useRoutesStore = defineStore('routes', {
         /**
          * Returns the selected origin token object
          */
-        getOriginToken() {
+        getOriginToken(state) {
             return (): IToken | undefined => {
                 const metadataStore = useMetadataStore()
-                return metadataStore.tokens
-                    .find(token => {
+                const list = metadataStore.tokens[state.originChainId]
+                return list
+                    ? list.find(token => {
                         return (
-                            token.chainId === this.originChainId &&
-                            token.address === this.originTokenAddress
+                            token.address === state.originTokenAddress
                         )
                     })
+                    : undefined
             }
         },
         /**
          * Returns the selected destination token object
          */
-        getDestinationToken() {
+        getDestinationToken(state) {
             return (): IToken | undefined => {
                 const metadataStore = useMetadataStore()
-                return metadataStore.tokens
-                    .find(token => {
+                const list = metadataStore.tokens[state.destinationChainId]
+                return list
+                    ? list.find(token => {
                         return (
-                            token.chainId === this.destinationChainId &&
-                            token.address === this.destinationTokenAddress
+                            token.address === state.destinationTokenAddress
                         )
                     })
+                    : undefined
             }
         },
         /**
