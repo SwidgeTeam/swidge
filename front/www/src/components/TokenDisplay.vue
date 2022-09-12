@@ -8,7 +8,9 @@ const props = defineProps<{
 }>()
 
 const formattedBalance = () => {
-    return Number(ethers.utils.formatUnits(props.token.balance, props.token.decimals)).toFixed(2)
+    const amount = Number(ethers.utils.formatUnits(props.token.balance, props.token.decimals))
+    const decimals = amount > 1 ? 2 : 5
+    return Number(amount.toFixed(decimals))
 }
 </script>
 

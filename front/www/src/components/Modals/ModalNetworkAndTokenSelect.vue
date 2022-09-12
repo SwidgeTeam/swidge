@@ -28,6 +28,7 @@ const TOKENS_PER_PAGE = 20
 const searchTerm = ref('')
 const selectedNetworkId = ref('')
 const searchComponent = ref<any | null>(null)
+const tokenList = ref<any | null>(null)
 const matchingTokens = ref<IToken[]>([])
 const checkingNetworks = ref<number>(0)
 const isImportModalOpen = ref<boolean>(false)
@@ -65,6 +66,7 @@ const handleSelectTokenToImport = (token: IToken) => {
 const handleSelectedNetworkId = (id: string) => {
     selectedNetworkId.value = id
     tokenPages.value = 1
+    tokenList.value?.scrollToTop()
 }
 
 /**
@@ -277,6 +279,7 @@ const orderByBalance = (a: IToken, b: IToken) => {
             @update:selected-network-id="handleSelectedNetworkId"
         />
         <SelectTokenList
+            ref="tokenList"
             :is-origin="isOrigin"
             :tokens="listTokens()"
             :custom-tokens="showCustomTokens()"
