@@ -47,7 +47,7 @@ const getNetworks = () => {
                 >
                     <span class="flex items-center gap-8">
                         <img
-                            class="rounded-[100px] w-10"
+                            class="rounded-lg h-10 w-10"
                             :src="chain.logo"
                             :alt="chain.name + ' icon'"
                         />
