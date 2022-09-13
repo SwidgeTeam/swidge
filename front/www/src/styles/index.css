@@ -61,10 +61,6 @@
 }
 
 @layer utilities {
-    .nav-header {
-        @apply flex items-center h-[var(--header-height)] justify-between w-full px-2 z-[1] bg-transparent
-    }
-
     .header-button {
         @apply flex
         items-center

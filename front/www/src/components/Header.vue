@@ -69,11 +69,11 @@ const chainIcon = computed({
 </script>
 
 <template>
-    <nav class="nav-header">
+    <nav class="flex items-center h-[var(--header-height)] justify-between w-full px-2 bg-transparent">
         <a class="w-25 sm:w-40" href="https://www.swidge.xyz/">
             <SwidgeLogoNoText class="sm:hidden h-10"/>
             <SwidgeLogo class="hidden sm:inline-block"/>
-        </a> 
+        </a>
         <div v-if="isConnected" class="flex gap-2 text-sm sm:text-base sm:gap-4">
             <TransactionsButton
                 @show-transactions="isTransactionsModalOpen = true"/>
