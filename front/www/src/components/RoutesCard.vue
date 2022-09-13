@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useRoutesStore } from '@/store/routes'
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/vue/outline'
 import VerticalLine from './svg/VerticalLine.vue'
 import HorizontalLine from './svg/HorizontalLine.vue'
@@ -11,6 +12,8 @@ import StepIcon from '@/components/Icons/StepIcon.vue'
 import ProviderIcon from '@/components/Icons/ProviderIcon.vue'
 import Route, { RouteStep } from '@/domain/paths/path'
 import AmountFormatter from '@/domain/shared/AmountFormatter'
+
+const routesStore = useRoutesStore()
 
 const props = defineProps<{
     route: Route
@@ -97,7 +100,12 @@ const amountOut = computed({
 
 const dollarValue = computed({
     get: () => {
-        return AmountFormatter.format(props.route.resume.amountOut)
+        const tokenOutPrice = routesStore.getDestinationToken()?.price
+        if(!tokenOutPrice){
+            return '??'
+        }
+        const usdAmount = Number(tokenOutPrice) * Number(props.route.resume.amountOut)
+        return AmountFormatter.format(usdAmount.toString())
     },
     set: () => null
 })
@@ -139,7 +147,7 @@ const nextSteps = computed({
         <div class="route-details ml-2 mt-1">
             <div class="flex flex-col field--amount-out pt-2">
                 <span class="amount-tokens leading-5 text-right text-xl">{{ amountOut }}</span>
-                <span class="amount-dollars leading-3 text-right text-[11px] text-slate-500 hover:text-slate-400">~ $ {{
+                <span class="amount-dollars leading-5 text-right text-[13px] text-slate-500 hover:text-slate-400">~ $ {{
                         dollarValue
                     }}
                     </span>
