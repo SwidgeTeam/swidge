@@ -54,7 +54,7 @@ const hasParentWithClass = (element: HTMLElement, classname: string): boolean =>
  */
 const getExecutionTime = (seconds: number) => {
     if (seconds < 60) {
-        return seconds + 's'
+        return seconds.toFixed(0) + 's'
     } else {
         const minutes = seconds / 60
         return minutes.toFixed(0) + 'm'
