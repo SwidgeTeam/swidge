@@ -3,7 +3,7 @@ import { ethers } from "hardhat";
 import { fakeTokenContract, getAccounts, RandomAddress } from "../shared";
 import { Contract } from "ethers";
 
-const Deployer = require("../../scripts/Deployer");
+const Deployer = require("../../../scripts/Deployer");
 
 describe("RouterFacet - general", function () {
   let router: Contract;

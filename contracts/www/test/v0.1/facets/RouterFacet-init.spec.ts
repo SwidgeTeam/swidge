@@ -11,7 +11,7 @@ import {
 import { Contract } from "ethers";
 import { FakeContract, smock } from "@defi-wonderland/smock";
 
-const Deployer = require("../../scripts/Deployer");
+const Deployer = require("../../../scripts/Deployer");
 
 chai.use(smock.matchers);
 
