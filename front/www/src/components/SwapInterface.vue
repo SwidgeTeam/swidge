@@ -130,7 +130,7 @@ const handleUpdateTokenFromModal = (token: IToken) => {
         if (selectedOriginChainId != token.chainId) {
             // If network and token of source and destination are the same, switch inputs instead of setting new ones.
             if (token.chainId == selectedDestinationChainId && token.address == selectedDestinationTokenAddress) {
-                switchHandlerFunction()
+                switchHandlerFunction(token)
             } else {
                 updateOriginToken(token)
             }
@@ -139,7 +139,7 @@ const handleUpdateTokenFromModal = (token: IToken) => {
         }
     } else {
         if (token.chainId == selectedOriginChainId && token.address == selectedOriginTokenAddress) {
-            switchHandlerFunction()
+            switchHandlerFunction(token)
         } else {
             // Update token details
             routesStore.selectDestinationToken(token.chainId, token.address)
@@ -175,10 +175,11 @@ const updateOriginToken = async (token: IToken) => {
 /**
  * Sets the transition variable switchDestinationChain to Current source Chain info
  */
-const switchHandlerFunction = () => {
+const switchHandlerFunction = async (token: IToken) => {
     routesStore.switchTokens()
     sourceTokenAmount.value = ''
     isExecuteButtonDisabled.value = true
+    sourceTokenMaxAmount.value = ethers.utils.formatUnits(token.balance, token.decimals)
 }
 
 /**
