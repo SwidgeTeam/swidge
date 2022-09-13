@@ -1,12 +1,12 @@
-import { AggregatorMetadata, IChain, IToken } from '../../shared/domain/metadata';
+import { AggregatorMetadata, IChain, ITokenList } from '../../shared/domain/metadata';
 
 export default class Metadata {
   private readonly _chains: IChain[];
-  private readonly _tokens: IToken[];
+  private readonly _tokens: ITokenList;
 
   constructor() {
     this._chains = [];
-    this._tokens = [];
+    this._tokens = {};
   }
 
   public includeAggregatorMetadata(meta: AggregatorMetadata) {
@@ -15,9 +15,18 @@ export default class Metadata {
         this._chains.push(chain);
       }
     }
-    for (const token of meta.tokens) {
-      if (!this.containsToken(token.chainId, token.address)) {
-        this._tokens.push(token);
+    for (const [chainId, tokens] of Object.entries(meta.tokens)) {
+      if (!this._tokens[chainId]) {
+        // chain didnt have tokens, include all
+        this._tokens[chainId] = tokens;
+      } else {
+        // chain already exists
+        for (const token of tokens) {
+          // check every token to include the missing
+          if (!this.containsToken(token.chainId, token.address)) {
+            this._tokens[chainId].push(token);
+          }
+        }
       }
     }
   }
@@ -26,7 +35,7 @@ export default class Metadata {
     return this._chains;
   }
 
-  get tokens(): IToken[] {
+  get tokens(): ITokenList {
     return this._tokens;
   }
 
@@ -36,7 +45,7 @@ export default class Metadata {
   }
 
   private containsToken(chainId: string, address: string): boolean {
-    const chain = this._tokens.find(
+    const chain = this._tokens[chainId].find(
       (token) => token.chainId === chainId && token.address === address,
     );
     return chain !== undefined;

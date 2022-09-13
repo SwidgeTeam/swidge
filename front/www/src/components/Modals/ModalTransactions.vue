@@ -3,22 +3,20 @@ import SwidgeAPI from '@/api/swidge-api'
 import { useWeb3Store } from '@/store/web3'
 import { onUpdated, ref } from 'vue'
 import { Transaction } from '@/api/models/transactions'
-import { Networks } from '@/domain/chains/Networks'
-import IToken from '@/domain/tokens/IToken'
-import { INetwork } from '@/domain/chains/INetwork'
 import { ethers } from 'ethers'
 import TransactionSplash from '../TransactionSplash.vue'
 import TransactionStatus from '../TransactionStatus.vue'
-import { useTokensStore } from '@/store/tokens'
+import { useMetadataStore } from '@/store/metadata'
 import Modal from '@/components/Modals/Modal.vue'
+import { IToken } from '@/domain/metadata/Metadata'
 
 const web3Store = useWeb3Store()
-const tokensStore = useTokensStore()
+const metadataStore = useMetadataStore()
 
 const props = defineProps({
     isOpen: {
         type: Boolean,
-        default: true
+        default: false
     },
 })
 
@@ -74,20 +72,12 @@ const transformDate = (timestamp: string) => {
 }
 
 /**
- * Fetches a chain by ID
- * @param chainId
- */
-const getNetwork = (chainId: string): INetwork => {
-    return Networks.get(chainId)
-}
-
-/**
  * Returns the chain icon
  * @param chainId
  */
 const getChainIcon = (chainId: string): string => {
-    const network = getNetwork(chainId)
-    return network.icon
+    const network = metadataStore.getChain(chainId)
+    return network.logo
 }
 
 /**
@@ -96,7 +86,7 @@ const getChainIcon = (chainId: string): string => {
  * @param address
  */
 const getToken = (chainId: string, address: string): IToken | undefined => {
-    return tokensStore.getToken(chainId, address)
+    return metadataStore.getToken(chainId, address)
 }
 
 /**

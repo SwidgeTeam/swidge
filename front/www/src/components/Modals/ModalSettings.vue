@@ -22,7 +22,7 @@ const isFilled = ref(false)
 defineProps({
     isOpen: {
         type: Boolean,
-        default: true
+        default: false
     },
 })
 
@@ -76,7 +76,7 @@ const customValue = () => {
                 <div class="ml-1">
                     <input
                         ref="ownValue"
-                        class="z-0 -top-12 peer w-16 ml-2 mr-1 px-2 h-12 py-2 text-center border cursor-pointer rounded-lg border-slate-600 focus:border-slate-600 focus:ring-offset-white focus:ring-gray-300 focus:ring-2 bg-inherit caret-inherit"
+                        class="z-0 -top-12 peer w-16 ml-2 mr-1 px-2 h-10 sm:h-12 py-2 text-base sm:text-lg text-center border cursor-pointer rounded-lg border-slate-600 focus:border-slate-600 focus:ring-offset-white focus:ring-gray-300 focus:ring-2 bg-inherit caret-inherit"
                         :class="{ 'border-slate-600 ring-offset-white ring-gray-300 ring-2':isFilled }"
                         type="text"
                         name="slippage"

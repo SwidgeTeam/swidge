@@ -4,33 +4,28 @@ import { storeToRefs } from 'pinia'
 import AddressButton from './Buttons/AddressButton.vue'
 import ChainButton from './Buttons/ChainButton.vue'
 import SwidgeLogo from './svg/SwidgeLogo.vue'
-import ModalNetworks from '@/components/ModalNetworks.vue'
+import ModalNetworks from '@/components/Modals/ModalNetworks.vue'
 import { computed, ref } from 'vue'
 import ConnectButton from '@/components/Buttons/ConnectButton.vue'
-import { Networks } from '@/domain/chains/Networks'
 import TransactionsButton from './Buttons/TransactionsButton.vue'
 import ModalTransactions from './Modals/ModalTransactions.vue'
 import ModalWallets from '@/components/Modals/ModalWallets.vue'
 import { Wallet } from '@/domain/wallets/IWallet'
-import { useTokensStore } from '@/store/tokens'
+import { useMetadataStore } from '@/store/metadata'
+import SwidgeLogoNoText from '@/components/svg/SwidgeLogoNoText.vue'
 
 const web3Store = useWeb3Store()
-const tokensStore = useTokensStore()
+const metadataStore = useMetadataStore()
 const { account, isConnected, isCorrectNetwork, selectedNetworkId } = storeToRefs(web3Store)
 
 const isNetworkModalOpen = ref(false)
 const isTransactionsModalOpen = ref(false)
 const isWalletsModalOpen = ref(false)
 
-const createShortAddress = (address: string): string => {
-    return address.substring(0, 6) + '...' + address.substring(address.length - 4)
-}
-
 const changeNetwork = (chainId: string) => {
     web3Store.switchToNetwork(chainId)
         .then(() => {
             isNetworkModalOpen.value = false
-            tokensStore.resetSelection()
         })
 }
 
@@ -51,7 +46,7 @@ const chainName = computed({
         if (!selectedNetworkId.value) {
             return ''
         }
-        const chain = Networks.get(selectedNetworkId.value)
+        const chain = metadataStore.getChain(selectedNetworkId.value)
         return chain.name
     },
     set: () => null
@@ -62,40 +57,41 @@ const chainIcon = computed({
         if (!selectedNetworkId.value) {
             return ''
         }
-        const chain = Networks.get(selectedNetworkId.value)
-        return chain.icon
+        const chain = metadataStore.getChain(selectedNetworkId.value)
+        return chain.logo
     },
     set: () => null
 })
 </script>
 
 <template>
-    <nav class="flex items-center justify-between w-full px-24 z-[1]">
-        <a class="flex items-center justify-center w-40" href="https://www.swidge.xyz/">
-            <SwidgeLogo/>
+    <nav class="flex items-center h-[var(--header-height)] justify-between w-full px-2 bg-transparent">
+        <a class="w-25 sm:w-40" href="https://www.swidge.xyz/">
+            <SwidgeLogoNoText class="sm:hidden h-10"/>
+            <SwidgeLogo class="hidden sm:inline-block"/>
         </a>
-        <div v-if="isConnected" class="flex gap-4 font-extralight">
+        <div v-if="isConnected" class="flex gap-2 text-sm sm:text-base sm:gap-4">
+            <TransactionsButton
+                @show-transactions="isTransactionsModalOpen = true"/>
+            <AddressButton
+                :address="account"
+                @click="handleClickOnAddress"
+            />
             <ChainButton
                 :chain-name="chainName"
                 :icon-link="chainIcon"
                 :is-correct-network="isCorrectNetwork"
                 @switch-network="isNetworkModalOpen = true"
             />
-            <AddressButton
-                :address="createShortAddress(account)"
-                @click="handleClickOnAddress"
-            />
-            <TransactionsButton
-                @show-transactions="isTransactionsModalOpen = true"/>
         </div>
-        <div v-else class="flex gap-4 font-extralight">
+        <div v-else class="flex gap-1 sm:gap-4">
             <ConnectButton
                 @connect="connect"
             />
         </div>
     </nav>
     <ModalNetworks
-        :is-network-modal-open="isNetworkModalOpen"
+        :is-open="isNetworkModalOpen"
         @close-modal="isNetworkModalOpen = false"
         @set-chain="changeNetwork($event)"
     />

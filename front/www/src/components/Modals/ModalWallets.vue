@@ -46,7 +46,7 @@ const getWallets = () => {
         <button
             v-for="(wallet, index) in getWallets()"
             :key="index"
-            class="flex items-center gap-2 tracking-wide network-button"
+            class="network-button"
             @click="selectWallet(wallet.key)"
         >
             <img :alt="wallet.name + ' icon'" :src="wallet.icon"/>

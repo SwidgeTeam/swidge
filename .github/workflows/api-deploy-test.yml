@@ -1,0 +1,23 @@
+name: Deploy Backend - Test
+
+on:
+  push:
+    branches: [ 'release/**' ]
+    paths:
+      - 'api/www/**'
+      - '.github/workflows/api-deploy.yml'
+      - '.github/workflows/api-deploy-test.yml'
+
+  pull_request:
+    branches: [ 'release/**' ]
+    paths:
+      - 'api/www/**'
+      - '.github/workflows/api-deploy.yml'
+      - '.github/workflows/api-deploy-test.yml'
+
+jobs:
+  workflow-api:
+    uses: ./.github/workflows/api-deploy.yml
+    secrets:
+      EC2_SSH_KEY_API: ${{ secrets.TEST_EC2_SSH_KEY }}
+      EC2_HOST_API: ${{ secrets.TEST_EC2_HOST_API }}

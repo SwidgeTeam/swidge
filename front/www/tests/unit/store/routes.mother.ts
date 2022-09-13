@@ -15,6 +15,8 @@ export default class RouteMother {
 
     public static default(): Route {
         return {
+            'id': '',
+            'tags': [],
             'aggregator': {
                 'id': '0',
                 'routeId': '',
@@ -31,7 +33,7 @@ export default class RouteMother {
                     'address': '0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83',
                     'decimals': 18,
                     'symbol': 'WFTM',
-                    'icon': 'icon-ftm',
+                    'icon': 'https://api.rango.exchange/i/dDI50C',
                 },
                 'tokenOut': {
                     'chainId': '137',
@@ -39,7 +41,7 @@ export default class RouteMother {
                     'address': '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
                     'decimals': 18,
                     'symbol': 'MATIC',
-                    'icon': 'icon-matic',
+                    'icon': 'https://api.rango.exchange/i/dDI50C',
                 },
                 'amountIn': '221.0',
                 'amountOut': '77.144799376959137804',
@@ -57,7 +59,7 @@ export default class RouteMother {
                         'address': '0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83',
                         'decimals': 18,
                         'symbol': 'WFTM',
-                        'icon': 'icon-ftm',
+                        'icon': 'https://api.rango.exchange/i/dDI50C',
                     },
                     'tokenOut': {
                         'chainId': '250',
@@ -65,7 +67,7 @@ export default class RouteMother {
                         'address': '0x04068da6c83afcfa0e13ba15a6696662335d5b75',
                         'decimals': 6,
                         'symbol': 'USDC',
-                        'icon': 'icon-usdc',
+                        'icon': 'https://api.rango.exchange/i/dDI50C',
                     },
                     'amountIn': '221.0',
                     'amountOut': '60.875048',
@@ -83,7 +85,7 @@ export default class RouteMother {
                         'address': '0x04068da6c83afcfa0e13ba15a6696662335d5b75',
                         'decimals': 6,
                         'symbol': 'USDC',
-                        'icon': 'icon-usdc',
+                        'icon': 'https://api.rango.exchange/i/dDI50C',
                     },
                     'tokenOut': {
                         'chainId': '137',
@@ -91,7 +93,7 @@ export default class RouteMother {
                         'address': '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
                         'decimals': 6,
                         'symbol': 'USDC',
-                        'icon': 'icon-usdc',
+                        'icon': 'https://api.rango.exchange/i/dDI50C',
                     },
                     'amountIn': '60.875048',
                     'amountOut': '60.375048',
@@ -109,7 +111,7 @@ export default class RouteMother {
                         'address': '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
                         'decimals': 6,
                         'symbol': 'USDC',
-                        'icon': 'icon-usdc',
+                        'icon': 'https://api.rango.exchange/i/dDI50C',
                     },
                     'tokenOut': {
                         'chainId': '137',
@@ -117,7 +119,7 @@ export default class RouteMother {
                         'address': '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
                         'decimals': 18,
                         'symbol': 'MATIC',
-                        'icon': 'icon-matic',
+                        'icon': 'https://api.rango.exchange/i/dDI50C',
                     },
                     'amountIn': '60.375048',
                     'amountOut': '77.144799376959137804',
@@ -139,5 +141,18 @@ export default class RouteMother {
             },
             'completed': false
         }
+    }
+
+    public static list(): Route[] {
+        const first = this.default()
+        const second = this.default()
+        const third = this.default()
+        const fourth = this.default()
+        first.id = '0'
+        second.id = '1'
+        third.id = '2'
+        fourth.id = '3'
+
+        return [first, second, third]
     }
 }

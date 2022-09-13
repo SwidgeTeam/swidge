@@ -1,154 +1,231 @@
 <script setup lang="ts">
+import { computed, ref } from 'vue'
+import { useRoutesStore } from '@/store/routes'
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/vue/outline'
 import VerticalLine from './svg/VerticalLine.vue'
-import { ClockIcon } from '@heroicons/vue/outline'
-import Route from '@/domain/paths/path'
-import SwidgeLogoNoText from './svg/SwidgeLogoNoText.vue'
 import HorizontalLine from './svg/HorizontalLine.vue'
-import { useTokensStore } from '@/store/tokens'
-import { Networks } from '@/domain/chains/Networks'
-import TokenLogo from './TokenLogo.vue'
-import ChainLogo from './ChainLogo.vue'
+import Check from './svg/Check.vue'
+import DollarSign from './svg/DollarSign.vue'
+import Clock from './svg/Clock.vue'
+import StepConnectorArrow from '@/components/Icons/StepConnectorArrow.vue'
+import StepIcon from '@/components/Icons/StepIcon.vue'
+import ProviderIcon from '@/components/Icons/ProviderIcon.vue'
+import Route, { RouteStep } from '@/domain/paths/path'
 import AmountFormatter from '@/domain/shared/AmountFormatter'
-import { ref } from 'vue'
-import BridgeStepArrow from './svg/BridgeStepArrow.vue'
-import SwapStepArrow from './svg/SwapStepArrow.vue'
 
-const tokensStore = useTokensStore()
-const isBridged = ref<boolean>(false)
-
+const routesStore = useRoutesStore()
 
 const props = defineProps<{
     route: Route
-    unique: number
+    selectedId: string
+}>()
+
+const emits = defineEmits<{
+    (event: 'select-route', index: string): void
 }>()
 
 const detailsOpen = ref<boolean>(false)
 
-const getDestinationChainLogo = () => {
-    const chainId = tokensStore.getDestinationChainId
-    return Networks.get(chainId).icon
+/**
+ * when a click happens on the domain of the route card
+ * @param event
+ */
+const onClick = (event: Event) => {
+    if (!(event.target instanceof HTMLElement)) return
+    const isClickOnSteps = hasParentWithClass(event.target.parentElement as HTMLElement, 'route-steps')
+    if (!isClickOnSteps) {
+        emits('select-route', props.route.id)
+    }
 }
-const getOriginTokenLogo = () => {
-    const token = tokensStore.getOriginToken()
-    return token ? token.logo : ''
+
+/**
+ * recursively checks if an element or its parents contains a class
+ * @param element
+ * @param classname
+ */
+const hasParentWithClass = (element: HTMLElement, classname: string): boolean => {
+    const existsHere = element.className.split(' ').indexOf(classname) >= 0
+    const existsOnParent = element.parentElement
+        ? hasParentWithClass(element.parentElement, classname)
+        : false
+    return existsHere || existsOnParent
 }
-const getDestinationTokenLogo = () => {
-    const token = tokensStore.getDestinationToken()
-    return token ? token.logo : ''
-}
-const getExecutionTime = () => {
-    if (props.route.resume.executionTime < 60) {
-        return props.route.resume.executionTime + 's'
+
+/**
+ * converts the seconds to a readable string
+ * @param seconds
+ */
+const getExecutionTime = (seconds: number) => {
+    if (seconds < 60) {
+        return seconds.toFixed(0) + 's'
     } else {
-        const minutes = props.route.resume.executionTime / 60
+        const minutes = seconds / 60
         return minutes.toFixed(0) + 'm'
     }
 }
-const amountOut = () => {
-    return AmountFormatter.format(props.route.resume.amountOut)
-}
-const dollarValue = () => {
-    return AmountFormatter.format(props.route.resume.amountOut)
-}
+
+const tag = computed({
+    get: () => {
+        if (props.route.tags.length === 0) {
+            return ''
+        } else if (props.route.tags.length > 1) {
+            return 'Best'
+        } else {
+            return props.route.tags[0].toString()
+        }
+    },
+    set: () => null
+})
+
+const isSelected = computed({
+    get: () => {
+        return props.route.id === props.selectedId
+    },
+    set: () => null
+})
+
+const totalExecutionTime = computed({
+    get: () => {
+        return getExecutionTime(props.route.resume.executionTime)
+    },
+    set: () => null
+})
+
+const amountOut = computed({
+    get: () => {
+        return AmountFormatter.format(props.route.resume.amountOut)
+    },
+    set: () => null
+})
+
+const dollarValue = computed({
+    get: () => {
+        const tokenOutPrice = routesStore.getDestinationToken()?.price
+        if(!tokenOutPrice){
+            return '??'
+        }
+        const usdAmount = Number(tokenOutPrice) * Number(props.route.resume.amountOut)
+        return AmountFormatter.format(usdAmount.toString())
+    },
+    set: () => null
+})
+
+const firstStep = computed({
+    get: (): RouteStep => {
+        return props.route.steps[0]
+    },
+    set: () => null
+})
+
+const nextSteps = computed({
+    get: () => {
+        if (props.route.steps.length > 1) {
+            return props.route.steps.slice(1, props.route.steps.length)
+        }
+        return []
+    },
+    set: () => null
+})
 </script>
+
 
 <template>
     <div
-        class="relative flex flex-col gap-6 px-8 py-4 rounded-3xl bg-cards-background-dark-grey gradient-border-selection-main max-w-xl">
-        <div
-            class="absolute -top-4 left-6 rounded-3xl bg-cards-background-dark-grey px-2 gradient-border-selection-main">
-            RouteType
+        class="route-card"
+        :class="{'selected' : isSelected}"
+        @click="onClick"
+    >
+        <div v-if="isSelected" class="absolute -right-1 -top-1 bg-[#633767] rounded-3xl">
+            <Check class="h-4 w-4 m-[2px]"/>
         </div>
-        <div class="relative flex flex-col gap-4 py-2">
-            <div class="flex items-center justify-between px-4 text-2xl h-16">
-                <div class="relative scale-100">
-                    <TokenLogo :logo="getDestinationTokenLogo()" size="24"/>
-                    <ChainLogo :logo="getDestinationChainLogo()" size="14"/>
+        <div
+            v-if="route.tags.length > 0"
+            class="route-tag"
+        >
+            {{ tag }}
+        </div>
+        <div class="route-details ml-2 mt-1">
+            <div class="flex flex-col field--amount-out pt-2">
+                <span class="amount-tokens leading-5 text-right text-xl">{{ amountOut }}</span>
+                <span class="amount-dollars leading-5 text-right text-[13px] text-slate-500 hover:text-slate-400">~ $ {{
+                        dollarValue
+                    }}
+                    </span>
+            </div>
+            <div class="flex text-ellipsis text-md field--global-fee">
+                <DollarSign class="h-6 mr-1"/>
+                {{ Number(route.fees.amountInUsd).toFixed(2) }}
+            </div>
+            <div class="flex text-md field--execution-time">
+                <Clock class="h-6 mr-1"/>
+                {{ totalExecutionTime }}
+            </div>
+        </div>
+        <div class="route-steps">
+            <div
+                class="details-line"
+                @click="detailsOpen = !detailsOpen"
+            >
+                <div class="flex justify-left">
+                    <ChevronUpIcon
+                        v-if="detailsOpen"
+                        class="h-6 pr-4 ml-3"/>
+                    <ChevronDownIcon
+                        v-else
+                        class="h-6 pr-4 ml-3"/>
                 </div>
-                <div class="flex flex-col field--amount-out">
-                    <span class="amount-tokens">{{ amountOut() }}</span>
-                    <span class="amount-dollars text-sm text-slate-500 hover:text-slate-400">≈ $ {{
-                            dollarValue()
-                        }}</span>
+                <div>
+                    <VerticalLine class="w-2"/>
                 </div>
-                <div class="flex field--execution-time">
-                    <ClockIcon class="h-6 pr-1"/>
-                    {{ getExecutionTime() }}
-                </div>
-                <div class="flex text-ellipsis field--global-fee">
-                    $ {{ Number(route.fees.amountInUsd).toFixed(2) }}
+                <div class="flex justify-center items-center gap-3 w-full">
+                    <StepIcon :icon="firstStep.tokenIn.icon"/>
+                    <StepConnectorArrow :step-type="firstStep.type"/>
+                    <StepIcon :icon="firstStep.tokenOut.icon"/>
+                    <template
+                        v-for="(step) in nextSteps"
+                        :key="step.tokenIn.address"
+                    >
+                        <StepConnectorArrow
+                            :step-type="step.type"/>
+                        <StepIcon
+                            :icon="step.tokenOut.icon"
+                        />
+                    </template>
                 </div>
             </div>
-            <div class=" bg-[#222129]/40 rounded-2xl block--steps">
+            <div
+                class="w-full grid items-center px-2 relative max-h-0 overflow-hidden transition transition-all duration-400 ease-in-out"
+                :class="{'max-h-36':detailsOpen}"
+            >
+                <span class="vl"></span>
                 <div
-                    :href="'#steps-details-' + unique"
-                    class="relative flex justify-left items-center cursor-pointer shadow-lg px-2 rounded-2xl hover:bg-[#222129]/100 transition duration-150 ease-out hover:ease-in py-4"
-                    data-bs-toggle="collapse"
-                    @click="detailsOpen = !detailsOpen"
-                >
-                    <div class="flex justify-left">
-                        <ChevronUpIcon
-                            v-if="detailsOpen"
-                            class="h-6 pr-4 ml-3"/>
-                        <ChevronDownIcon
-                            v-else
-                            class="h-6 pr-4 ml-3"/>
-                    </div>
-                    <div>
-                        <VerticalLine/>
-                    </div>
-                    <div class="flex justify-center items-center gap-4 w-full">
-                        <div class="flex justify-center items-center gap-4 w-full">
-                            <img :src="getOriginTokenLogo()" class="h-12 w-12 rounded-full">
-                            <SwidgeLogoNoText class="h-12 w-12 rounded-full"/>
-                            <img :src="getDestinationTokenLogo()" class="h-12 w-12 rounded-full">
+                    v-for="(step, index) in route.steps"
+                    :key="index"
+                    class="flex h-12 items-center relative">
+                    <ProviderIcon
+                        :name="step.name"
+                        :logo="step.logo"
+                    />
+                    <div class="pl-4 w-full">
+                        <div class="flex justify-around items-center">
+                            <div class="flex justify-center items-center">
+                                <StepIcon :icon="step.tokenIn.icon"/>
+                                <StepConnectorArrow :step-type="step.type"/>
+                                <StepIcon :icon="step.tokenOut.icon"/>
+                            </div>
+                            <div class="flex mx-1 xs:mx-2 text-xs xs:text-base">
+                                <DollarSign class="h-4 xs:h-6 mr-1"/>
+                                {{ Number(step.fee).toFixed(2) }}
+                            </div>
+                            <div class="flex mx-1 xs:mx-2 text-xs xs:text-base field--execution-time ">
+                                <Clock class="h-4 xs:h-6 mr-1"/>
+                                {{ getExecutionTime(step.executionTime) }}
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div
-                    :id="'steps-details-' + unique"
-                    class="justify-left w-full grid gap-2 items-center px-2 vl-parent collapse"
-                >
-                    <span class="vl"></span>
-                    <div
-                        v-for="(step, index) in route.steps"
-                        :key="index"
-                        class="flex h-20 items-center relative">
-                        <img
-                            :src="step.logo"
-                            class="relative z-10 w-8 h-8 ml-[10px] border-2 rounded-full border-gray-500 "
-                            alt="provider logo">
-                        <div class="justify-right pl-6 mr-4 w-full">
-                            <div class="flex justify-center items-center ">
-                                <div class="mx-4">
-                                    <div v-if="step.type == 'swap'"  class="flex justify-center items-center">
-                                        <div v-if="isBridged===false">{{tokensStore.getToken(tokensStore.getOriginChainId,step.tokenIn.address)}}</div>
-                                        <div v-if="isBridged===true">{{tokensStore.getDestinationChainId}}{{step.tokenIn.address}}</div>
-                                        <span class="px-2"><SwapStepArrow/></span>
-                                        <div v-if="isBridged===false">{{step.tokenOut.address}}{{tokensStore.getOriginChainId}}</div>
-                                        <div v-if="isBridged===true">{{step.tokenOut.address}}{{tokensStore.getDestinationChainId}}</div>
-                                   </div>
-                                   <div v-if="step.type == 'bridge'" class="flex justify-center items-center">
-                                        {{step.tokenIn.address}}{{tokensStore.getOriginChainId}}
-                                        <div class="invisible">{{isBridged=true}}</div>
-                                        <span class="px-2"><BridgeStepArrow/></span>
-                                        {{step.tokenOut.address}}{{tokensStore.getDestinationChainId}}
-                                   </div>
-                                </div>
-                                <div class="mx-4">
-                                    $ {{Number(step.fee).toFixed(2)}}
-                                </div>
-                                <div class="flex field--execution-time mx-4">
-                                    <ClockIcon class="h-6 pr-1"/>
-                                    {{step.executionTime}}s
-                                </div>
-                            </div>
-                            <div class="absolute bottom-0 ">
-                                <HorizontalLine
-                                    v-if="index !== Object.keys(route.steps).length -1"
-                                    class="w-full mr-4 pr-2"/>
-                            </div>
+                        <div class="absolute bottom-0">
+                            <HorizontalLine
+                                v-if="index !== Object.keys(route.steps).length - 1"
+                                class="w-full mr-4 pr-2 h-1"/>
                         </div>
                     </div>
                 </div>

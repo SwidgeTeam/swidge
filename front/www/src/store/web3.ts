@@ -6,19 +6,21 @@ import { IWallet, TxHash, Wallet, WalletEvents } from '@/domain/wallets/IWallet'
 import { ApprovalTransactionDetails, TransactionDetails } from '@/domain/paths/path'
 import { WalletConnect } from '@/domain/wallets/WalletConnect'
 import { Metamask } from '@/domain/wallets/Metamask'
-import { Networks } from '@/domain/chains/Networks'
 import { useTransactionStore } from '@/store/transaction'
 import { useRoutesStore } from '@/store/routes'
+import { useMetadataStore } from '@/store/metadata'
+import { IChain, IToken } from '@/domain/metadata/Metadata'
 
 export const NATIVE_COIN_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 
 export const useWeb3Store = defineStore('web3', () => {
+    const metadataStore = useMetadataStore()
+    const routesStore = useRoutesStore()
     const account = ref('')
     const isConnected = ref(false)
     const isCorrectNetwork = ref(true)
     const selectedNetworkId = ref('')
     const wallet = ref<IWallet | null>(null)
-    const routesStore = useRoutesStore()
 
     /**
      * entrypoint to connect a wallet
@@ -58,9 +60,12 @@ export const useWeb3Store = defineStore('web3', () => {
                 await wallet.value.requestAccess()
             }
             isConnected = await wallet.value.isConnected()
+            let chainId = '1'
             if (isConnected) {
                 await initialSetup()
+                chainId = selectedNetworkId.value
             }
+            routesStore.selectOriginToken(chainId, NATIVE_COIN_ADDRESS)
         } catch (e) {
             isConnected.value = false
         }
@@ -86,30 +91,30 @@ export const useWeb3Store = defineStore('web3', () => {
     async function checkIfCorrectNetwork() {
         if (!wallet.value) throw new Error('No wallet')
         const chainId = await wallet.value.getCurrentChain()
-        const acceptedChains = Networks.ids()
-        isCorrectNetwork.value = acceptedChains.includes(chainId)
+        const chains = metadataStore.getChains
+        isCorrectNetwork.value = chains.map((chain: IChain) => chain.id).includes(chainId)
     }
 
     /**
      * fetches and returns the balance of an asset
-     * @param address Address of the asset to query
+     * @param token
      */
-    async function getBalance(address: string) {
+    async function getBalance(token: IToken) {
         if (!wallet.value) throw new Error('No wallet')
-        if (address === NATIVE_COIN_ADDRESS) {
-            return getNativeBalance()
+        if (token.address === NATIVE_COIN_ADDRESS) {
+            return getNativeBalance(token.chainId)
         } else {
-            return getTokenBalance(address)
+            return getTokenBalance(token.chainId, token.address)
         }
     }
 
     /**
      * fetches and returns the amount of native coins
      */
-    async function getNativeBalance(): Promise<string> {
+    async function getNativeBalance(chainId: string): Promise<string> {
         if (!account.value) return ''
         try {
-            const provider = getWalletProvider()
+            const provider = getChainProvider(chainId)
             const balance = await provider.getBalance(account.value)
             return ethers.utils.formatEther(balance)
         } catch (error) {
@@ -120,9 +125,9 @@ export const useWeb3Store = defineStore('web3', () => {
     /**
      * fetches and returns the amount of certain token
      */
-    async function getTokenBalance(address: string): Promise<string> {
+    async function getTokenBalance(chainId: string, address: string): Promise<string> {
         try {
-            const provider = getWalletProvider()
+            const provider = getChainProvider(chainId)
             const contract = new ethers.Contract(address, IERC20Abi, provider)
             const balance = await contract.balanceOf(account.value)
             const decimals = await contract.decimals()
@@ -146,7 +151,11 @@ export const useWeb3Store = defineStore('web3', () => {
      */
     async function switchToNetwork(chainId: string) {
         if (!wallet.value) throw new Error('No wallet')
-        const chain = Networks.get(chainId)
+        const currentChainId = await wallet.value.getCurrentChain()
+        if (currentChainId === chainId) {
+            return
+        }
+        const chain = metadataStore.getChain(chainId)
         const changed = await wallet.value.switchNetwork(chain)
         if (changed) {
             selectedNetworkId.value = chainId
@@ -230,6 +239,7 @@ export const useWeb3Store = defineStore('web3', () => {
         account.value = address
         routesStore.setReceiverAddress(address)
         isConnected.value = true
+        metadataStore.fetchBalances(address)
     }
 
     /**
@@ -237,6 +247,7 @@ export const useWeb3Store = defineStore('web3', () => {
      */
     function onDisconnect() {
         account.value = ''
+        routesStore.setReceiverAddress('')
         isConnected.value = false
     }
 
@@ -258,11 +269,11 @@ export const useWeb3Store = defineStore('web3', () => {
      * @param chainId
      */
     function getChainProvider(chainId: string) {
-        const chain = Networks.get(chainId)
+        const chain = metadataStore.getChain(chainId)
         return ethers.getDefaultProvider({
             name: chain.name,
             chainId: Number(chain.id),
-            _defaultProvider: (providers) => new providers.JsonRpcProvider(chain.rpcUrl)
+            _defaultProvider: (providers) => new providers.JsonRpcProvider(chain.metamask.rpcUrls[0])
         })
     }
 
@@ -278,7 +289,6 @@ export const useWeb3Store = defineStore('web3', () => {
         sendApprovalTransaction,
         sendMainTransaction,
         getCurrentNonce,
-        getChainProvider,
     }
 })
 

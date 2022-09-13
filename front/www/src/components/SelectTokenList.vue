@@ -1,12 +1,12 @@
 <script setup lang='ts'>
+import { ref } from 'vue'
 import TokenDisplay from './TokenDisplay.vue'
 import NetworkAndTokenNothingFound from './NetworkAndTokenNothingFound.vue'
-import { INetwork } from '@/domain/chains/INetwork'
-import IToken from '@/domain/tokens/IToken'
 import Spinner from 'vue-spinner/src/ScaleLoader.vue'
+import { IChain, IToken } from '@/domain/metadata/Metadata'
 
 const props = defineProps<{
-    chainList: INetwork[]
+    chainList: IChain[]
     tokens: IToken[]
     selectedNetworkId: string
     searchTerm: string
@@ -14,11 +14,13 @@ const props = defineProps<{
     customTokens: boolean
     loadingCustomTokens: boolean
 }>()
-
 const emits = defineEmits<{
     (event: 'set-token', token: IToken): void
     (event: 'import-token', token: IToken): void
+    (event: 'scroll-bottomed'): void
 }>()
+
+const listDiv = ref<HTMLElement | null>(null)
 
 const clickOnToken = (token: IToken) => {
     if (props.customTokens) {
@@ -28,6 +30,26 @@ const clickOnToken = (token: IToken) => {
     }
 }
 
+const getChain = (chainId: string) => {
+    return props.chainList.find((chain) => chain.id === chainId)
+}
+
+const onScroll = (e: Event) => {
+    const { scrollTop, offsetHeight, scrollHeight } = e.target as any
+    if ((scrollTop + offsetHeight) >= scrollHeight) {
+        emits('scroll-bottomed')
+    }
+}
+
+const scrollToTop = () => {
+    if (listDiv.value) {
+        listDiv.value.scrollTop = 0
+    }
+}
+
+defineExpose({
+    scrollToTop
+})
 </script>
 
 <template>
@@ -36,9 +58,12 @@ const clickOnToken = (token: IToken) => {
             <span>Select Token:</span>
             <span
                 v-if="selectedNetworkId !== '' || searchTerm !== ''"
-                class="text-sm font-extralight mt-1 ml-auto">Network</span>
+                class="text-sm font-extralight mt-1 ml-auto">Balance</span>
         </div>
-        <div class="h-80 w-full overflow-y-auto">
+        <div
+            ref="listDiv"
+            class="h-80 w-full overflow-y-auto"
+            @scroll="onScroll">
             <NetworkAndTokenNothingFound
                 v-if="selectedNetworkId === '' && searchTerm === ''"
             />
@@ -53,6 +78,7 @@ const clickOnToken = (token: IToken) => {
                 >
                     <TokenDisplay
                         :token="token"
+                        :chain="getChain(token.chainId)"
                     />
                 </li>
             </ul>

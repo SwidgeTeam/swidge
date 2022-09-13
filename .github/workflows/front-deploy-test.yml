@@ -20,14 +20,9 @@ jobs:
   workflow-front:
     uses: ./.github/workflows/front-deploy.yml
     with:
-      api-url: https://api.swidge.xyz
+      api-url: https://api.test.swidge.xyz
     secrets:
       AWS_S3_BUCKET: ${{secrets.TEST_AWS_S3_BUCKET}}
       AWS_ACCESS_KEY_ID: ${{secrets.TEST_AWS_ACCESS_KEY_ID}}
       AWS_SECRET_ACCESS_KEY: ${{secrets.TEST_AWS_SECRET_ACCESS_KEY}}
       DISTRIBUTION: ${{secrets.TEST_DISTRIBUTION}}
-      RPC_NODE_MAINNET: ${{ secrets.RPC_NODE_MAINNET }}
-      RPC_NODE_FANTOM: ${{ secrets.RPC_NODE_FANTOM }}
-      RPC_NODE_POLYGON: ${{ secrets.RPC_NODE_POLYGON }}
-      RPC_NODE_BSC: ${{ secrets.RPC_NODE_BSC }}
-      RPC_NODE_OPTIMISM: ${{ secrets.RPC_NODE_OPTIMISM }}

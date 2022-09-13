@@ -1,36 +1,89 @@
 import axios from 'axios'
 import HttpClient from './http-base-client'
-import { GetQuoteRequest, GetQuoteResponse, indexedErrors } from './models/get-quote'
+import { GetQuoteRequest, GetQuoteResponse } from './models/get-quote'
 import { ApiErrorResponse } from '@/api/models/ApiErrorResponse'
 import { TransactionsList } from '@/api/models/transactions'
-import { TokenList } from '@/domain/tokens/TokenList'
-import IToken from '@/domain/tokens/IToken'
-import { Networks } from '@/domain/chains/Networks'
 import Route, { ApprovalTransactionDetails, TransactionDetails } from '@/domain/paths/path'
 import GetApprovalTxResponseJson from '@/api/models/get-approval-tx-response'
 import GetMainTxResponse from '@/api/models/get-main-tx-response'
 import GetBothTxsResponse from '@/api/models/get-both-txs-response'
 import GetBothTxsRequest from '@/api/models/get-both-txs-request'
 import { StatusCheckRequest, StatusCheckResponse } from '@/api/models/get-status-check'
+import { MetadataJson } from '@/api/models/get-metadata'
+import { Metadata, TokenBalance } from '@/domain/metadata/Metadata'
+import { WalletBalancesJson } from '@/api/models/get-balances'
+import { BigNumber } from 'ethers'
 
 class SwidgeAPI extends HttpClient {
     public constructor() {
         super(import.meta.env.VITE_APP_API_HOST)
     }
 
-    public async fetchTokens(): Promise<IToken[]> {
+    public async fetchMetadata(): Promise<Metadata> {
         try {
-            const response = await this.instance.get<TokenList>('/token-list')
-            return response.data.list.map(token => {
-                const networkName = Networks.get(token.c).name
+            const response = await this.instance.get<MetadataJson>('/meta')
+            const chainNames: Record<string, string> = {} // temp store to use on tokens
+            const chains = response.data.chains.map(chain => {
+                chainNames[chain.i] = chain.n
                 return {
-                    chainId: token.c,
-                    chainName: networkName,
-                    address: token.a,
-                    name: token.n,
-                    symbol: token.s,
-                    decimals: token.d,
-                    logo: token.l,
+                    type: chain.t,
+                    id: chain.i,
+                    name: chain.n,
+                    logo: chain.l,
+                    metamask: {
+                        chainName: chain.m.c,
+                        rpcUrls: chain.m.r,
+                        nativeCurrency: {
+                            name: chain.m.n.n,
+                            symbol: chain.m.n.s,
+                            decimals: chain.m.n.d,
+                        }
+                    }
+                }
+            })
+            const tokens = {}
+            for (const [chainId, tokenList] of Object.entries(response.data.tokens)) {
+                // @ts-ignore
+                tokens[chainId] = tokenList.map(token => {
+                    return {
+                        chainId: token.c,
+                        chainName: chainNames[token.c],
+                        address: token.a,
+                        name: token.n,
+                        symbol: token.s,
+                        decimals: token.d,
+                        logo: token.l,
+                        price: token.p,
+                        balance: BigNumber.from(0)
+                    }
+                })
+            }
+            return {
+                tokens: tokens,
+                chains: chains
+            }
+        } catch (e: unknown) {
+            if (axios.isAxiosError(e)) {
+                const apiErrorResponse = e.response?.data as ApiErrorResponse
+                const errorMessage = apiErrorResponse.message ?? 'Unhandled error!'
+                throw new Error(errorMessage)
+            }
+            throw new Error('UnknownError no axios error')
+        }
+    }
+
+    public async fetchBalances(wallet: string): Promise<TokenBalance[]> {
+        try {
+            const response = await this.instance.get<WalletBalancesJson>('/token-balances', {
+                params: {
+                    wallet: wallet
+                }
+            })
+            return response.data.tokens.map(token => {
+                return {
+                    chainId: token.chainId,
+                    address: token.address,
+                    balance: BigNumber.from(token.amount)
                 }
             })
         } catch (e: unknown) {
@@ -47,8 +100,10 @@ class SwidgeAPI extends HttpClient {
         try {
             const response = await this.instance.get<GetQuoteResponse>('/path', { params: getQuotePayload })
             const r = response.data
-            return r.routes.map((r) => {
+            return r.routes.map(r => {
                 const route: Route = {
+                    id: r.id,
+                    tags: r.tags,
                     aggregator: {
                         id: r.aggregator.id,
                         routeId: r.aggregator.routeId,
@@ -105,8 +160,7 @@ class SwidgeAPI extends HttpClient {
         } catch (e: unknown) {
             if (axios.isAxiosError(e)) {
                 const getQuoteErrorResponse = e.response?.data as ApiErrorResponse
-                const errorMessage = indexedErrors[getQuoteErrorResponse.message] ?? 'Unhandled error!'
-                throw new Error(errorMessage)
+                throw new Error(getQuoteErrorResponse.message)
             }
             throw new Error('UnknownError no axios error')
         }
@@ -205,6 +259,8 @@ class SwidgeAPI extends HttpClient {
 
     async informExecutedTx(params: {
         aggregatorId: string,
+        fromChainId: string,
+        toChainId: string,
         fromAddress: string,
         toAddress: string,
         txHash: string,

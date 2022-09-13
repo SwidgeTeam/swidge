@@ -1,15 +1,27 @@
 <script setup lang="ts">
+import { tryOnBeforeMount } from '@vueuse/core'
+import { useMetadataStore } from '@/store/metadata'
+import { useWeb3Store } from '@/store/web3'
 import Header from '@/components/Header.vue'
+
+const { fetchMetadata } = useMetadataStore()
+const web3Store = useWeb3Store()
+
+tryOnBeforeMount(async () => {
+    fetchMetadata()
+        .then(() => {
+            web3Store.init()
+        })
+})
 </script>
 
 <template>
-    <div class="flex flex-col flex-grow bg-background-main-dark">
+    <div class="flex flex-col flex-grow">
         <Header
-            class="py-2 z-[1]"
+            class="py-2"
         />
-        <div class="main-container-background"></div>
-        <main class="flex items-center justify-center mt-20 z-[1]">
-            <router-view/>
+        <main class="flex justify-center">
+            <router-view />
         </main>
     </div>
 </template>

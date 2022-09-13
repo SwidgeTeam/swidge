@@ -1,7 +1,6 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { Class } from '../../../shared/Class';
-import { HttpClient } from '../../../shared/infrastructure/http/httpClient';
 import { Logger } from '../../../shared/domain/logger';
 import { AggregatorProviders } from '../../domain/providers/aggregator-providers';
 import { ViaExchange } from '../../domain/providers/via-exchange';
@@ -18,7 +17,6 @@ export class BuildMainTxHandler implements IQueryHandler<BuildMainTxQuery> {
 
   constructor(
     private readonly configService: ConfigService,
-    @Inject(Class.HttpClient) private readonly httpClient: HttpClient,
     @Inject(Class.GasPriceFetcher) private readonly gasPriceFetcher: CachedGasPriceFetcher,
     @Inject(Class.PriceFeedFetcher) private readonly priceFeedFetcher: CachedPriceFeedFetcher,
     @Inject(Class.Logger) private readonly logger: Logger,

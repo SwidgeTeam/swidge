@@ -33,7 +33,7 @@ const subtitle = computed({
     <div class="grid grid-cols-12 gap-2 mb-5 mt-5">
         <div
             :class="{'step-gradient' : props.step.completed}"
-            class="flex flex-col px-6 py-4 col-span-10 gradient-border-selection-main text-xl items-center">
+            class="flex flex-col px-4 sm:px-6 py-4 items-center col-span-10 rounded-2xl tx-step-box-colors text-xs xs:text-sm sm:text-lg">
             <div class="justify-center">
                 {{ title }}
             </div>

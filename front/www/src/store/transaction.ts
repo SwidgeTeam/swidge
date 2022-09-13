@@ -1,6 +1,5 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { ApprovalTransactionDetails, TransactionDetails } from '@/domain/paths/path'
-import { useTokensStore } from '@/store/tokens'
 import { useWeb3Store } from '@/store/web3'
 import swidgeApi from '@/api/swidge-api'
 import { useRoutesStore } from '@/store/routes'
@@ -56,16 +55,24 @@ export const useTransactionStore = defineStore('transaction', {
          * @param amount
          */
         async fetchBothTxs(amount: string) {
-            const tokensStore = useTokensStore()
             const web3Store = useWeb3Store()
             const routesStore = useRoutesStore()
+            const srcToken = routesStore.getOriginToken()
+            const dstToken = routesStore.getDestinationToken()
+            if (!srcToken || !dstToken) {
+                throw new Error('Some token is not selected')
+            }
             const route = routesStore.getSelectedRoute
             const txs = await swidgeApi.getBothTxs({
                 aggregatorId: route.aggregator.id,
-                fromChainId: tokensStore.getOriginChainId,
-                toChainId: tokensStore.getDestinationChainId,
-                srcToken: tokensStore.getOriginTokenAddress,
-                dstToken: tokensStore.getDestinationTokenAddress,
+                fromChainId: routesStore.getOriginChainId,
+                toChainId: routesStore.getDestinationChainId,
+                srcTokenAddress: srcToken.address,
+                srcTokenSymbol: srcToken.symbol,
+                srcTokenDecimals: srcToken.decimals.toString(),
+                dstTokenAddress: dstToken.address,
+                dstTokenSymbol: dstToken.symbol,
+                dstTokenDecimals: dstToken.decimals.toString(),
                 amount: amount,
                 slippage: Number(routesStore.getSlippage),
                 senderAddress: web3Store.account,
@@ -85,6 +92,8 @@ export const useTransactionStore = defineStore('transaction', {
             const route = routesStore.getSelectedRoute
             swidgeApi.informExecutedTx({
                 aggregatorId: route.aggregator.id,
+                fromChainId: routesStore.getOriginChainId,
+                toChainId: routesStore.getDestinationChainId,
                 fromAddress: web3Store.account,
                 toAddress: routesStore.receiverAddress,
                 txHash: this.txHash,
@@ -96,22 +105,16 @@ export const useTransactionStore = defineStore('transaction', {
          */
         startCheckingStatus: function () {
             this.statusCheckInterval = window.setInterval(() => {
-                const routesStore = useRoutesStore()
-                const tokensStore = useTokensStore()
-                const route = routesStore.getSelectedRoute
                 swidgeApi.checkTxStatus({
-                    aggregatorId: route.aggregator.id,
-                    fromChainId: tokensStore.getOriginChainId,
-                    toChainId: tokensStore.getDestinationChainId,
                     txHash: this.txHash,
-                    trackingId: this.trackingId,
                 }).then(response => {
+                    const routesStore = useRoutesStore()
                     if (response.status === TransactionStatus.Success) {
-                        const routesStore = useRoutesStore()
                         routesStore.completeRoute()
                         clearInterval(this.statusCheckInterval)
                     } else if (response.status === TransactionStatus.Failed) {
                         // TODO do something
+                        clearInterval(this.statusCheckInterval)
                     }
                 })
             }, 5000)

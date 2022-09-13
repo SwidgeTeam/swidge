@@ -9,7 +9,7 @@ describe('Transaction', () => {
     const status = tx.status;
 
     // Assert
-    expect(status).toEqual('ongoing');
+    expect(status).toEqual('pending');
   });
 
   it('Should return completed status when completed', () => {
@@ -20,6 +20,6 @@ describe('Transaction', () => {
     const status = tx.status;
 
     // Assert
-    expect(status).toEqual('completed');
+    expect(status).toEqual('success');
   });
 });

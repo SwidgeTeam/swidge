@@ -1,22 +1,21 @@
 import { ContractAddress } from '../../shared/types';
 import { BigInteger } from '../../shared/domain/big-integer';
+import { ExternalTransactionStatus } from '../../aggregators/domain/status-check';
 
 export class Transaction {
-  private COMPLETED_STATUS = 'completed';
-  private ONGOING_STATUS = 'ongoing';
-
   public static create(
     _txHash: string,
     _walletAddress: string,
     _receiver: string,
-    _routerAddress: ContractAddress,
     _fromChainId: string,
     _toChainId: string,
     _srcToken: ContractAddress,
-    _bridgeTokenIn: ContractAddress,
-    _bridgeTokenOut: ContractAddress,
     _dstToken: ContractAddress,
-    _amount: string,
+    _amountIn: BigInteger,
+    _amountOut: BigInteger,
+    _status: ExternalTransactionStatus,
+    _aggregatorId: string,
+    _trackingId: string,
   ) {
     const executed = new Date();
     const completed = _fromChainId == _toChainId ? executed : null;
@@ -25,20 +24,17 @@ export class Transaction {
       '',
       _walletAddress,
       _receiver,
-      _routerAddress,
       _fromChainId,
       _toChainId,
       _srcToken,
-      _bridgeTokenIn,
-      _bridgeTokenOut,
       _dstToken,
-      BigInteger.fromString(_amount),
-      BigInteger.zero(),
-      BigInteger.zero(),
-      BigInteger.zero(),
+      _amountIn,
+      _amountOut,
       executed,
-      null,
       completed,
+      _status,
+      _aggregatorId,
+      _trackingId,
     );
   }
 
@@ -47,20 +43,17 @@ export class Transaction {
     private _destinationTxHash: string,
     private readonly _walletAddress: string,
     private readonly _receiver: string,
-    private readonly _routerAddress: string,
     private readonly _fromChainId: string,
     private readonly _toChainId: string,
     private readonly _srcToken: ContractAddress,
-    private readonly _bridgeTokenIn: ContractAddress,
-    private readonly _bridgeTokenOut: ContractAddress,
-    private readonly _dstToken: ContractAddress,
+    private _dstToken: ContractAddress,
     private readonly _amountIn: BigInteger,
-    private _bridgeAmountIn: BigInteger,
-    private _bridgeAmountOut: BigInteger,
     private _amountOut: BigInteger,
     private readonly _executed: Date,
-    private _bridged: Date,
     private _completed: Date,
+    private _status: ExternalTransactionStatus,
+    private readonly _aggregatorId: string,
+    private readonly _trackingId: string,
   ) {}
 
   get txHash(): string {
@@ -79,10 +72,6 @@ export class Transaction {
     return this._receiver;
   }
 
-  get routerAddress(): string {
-    return this._routerAddress;
-  }
-
   get fromChainId(): string {
     return this._fromChainId;
   }
@@ -93,14 +82,6 @@ export class Transaction {
 
   get srcToken(): ContractAddress {
     return this._srcToken;
-  }
-
-  get bridgeTokenIn(): ContractAddress {
-    return this._bridgeTokenIn;
-  }
-
-  get bridgeTokenOut(): ContractAddress {
-    return this._bridgeTokenOut;
   }
 
   get dstToken(): ContractAddress {
@@ -115,49 +96,30 @@ export class Transaction {
     return this._amountOut ? this._amountOut.toString() : '';
   }
 
-  get bridgeAmountIn(): string {
-    return this._bridgeAmountIn ? this._bridgeAmountIn.toString() : '';
-  }
-
-  get bridgeAmountOut(): string {
-    return this._bridgeAmountOut ? this._bridgeAmountOut.toString() : '';
-  }
-
   get executed(): Date {
     return this._executed;
-  }
-
-  get bridged(): Date {
-    return this._bridged;
   }
 
   get completed(): Date {
     return this._completed;
   }
 
-  get status(): string {
-    return this.completed ? this.COMPLETED_STATUS : this.ONGOING_STATUS;
+  get status(): ExternalTransactionStatus {
+    return this._status;
+  }
+
+  get aggregatorId(): string {
+    return this._aggregatorId;
+  }
+
+  get trackingId(): string {
+    return this._trackingId;
   }
 
   /** Modifiers */
 
-  public markAsBridged(now: Date): Transaction {
-    this._bridged = now;
-    return this;
-  }
-
   public markAsCompleted(now: Date): Transaction {
     this._completed = now;
-    return this;
-  }
-
-  public setBridgeAmountIn(amount: BigInteger): Transaction {
-    this._bridgeAmountIn = amount;
-    return this;
-  }
-
-  public setBridgeAmountOut(amount: BigInteger): Transaction {
-    this._bridgeAmountOut = amount;
     return this;
   }
 
@@ -166,8 +128,18 @@ export class Transaction {
     return this;
   }
 
+  public setDestinationToken(address: string): Transaction {
+    this._dstToken = address;
+    return this;
+  }
+
   public setDestinationTxHash(destinationTxHash: string): Transaction {
     this._destinationTxHash = destinationTxHash;
+    return this;
+  }
+
+  public setStatus(status: ExternalTransactionStatus): Transaction {
+    this._status = status;
     return this;
   }
 }

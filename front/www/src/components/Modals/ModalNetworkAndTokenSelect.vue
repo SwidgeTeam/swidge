@@ -3,17 +3,15 @@ import { ref } from 'vue'
 import SearchInputBox from '../SearchInputBox.vue'
 import NetworkLineSelector from '../NetworkLineSelector.vue'
 import SelectTokenList from '../SelectTokenList.vue'
-import IToken from '@/domain/tokens/IToken'
-import { Networks } from '@/domain/chains/Networks'
 import Modal from '@/components/Modals/Modal.vue'
 import { ethers } from 'ethers'
-import { useTokensStore } from '@/store/tokens'
+import { useMetadataStore } from '@/store/metadata'
 import IERC20Abi from '@/contracts/IERC20.json'
-import { INetwork } from '@/domain/chains/INetwork'
 import ModalImportToken from '@/components/Modals/ModalImportToken.vue'
 import { debounce } from 'lodash'
+import { IChain, IToken } from '@/domain/metadata/Metadata'
 
-const tokensStore = useTokensStore()
+const metadataStore = useMetadataStore()
 
 defineProps<{
     isModalOpen: boolean
@@ -25,16 +23,20 @@ const emits = defineEmits<{
     (event: 'update-token', token: IToken): void
 }>()
 
+const TOKENS_PER_PAGE = 20
+
 const searchTerm = ref('')
 const selectedNetworkId = ref('')
 const searchComponent = ref<any | null>(null)
+const tokenList = ref<any | null>(null)
 const matchingTokens = ref<IToken[]>([])
 const checkingNetworks = ref<number>(0)
 const isImportModalOpen = ref<boolean>(false)
 const selectedTokenToImport = ref<IToken | null>(null)
+const tokenPages = ref<number>(1)
 
 const getNetworks = () => {
-    return Networks.live()
+    return metadataStore.getChains
 }
 
 /**
@@ -58,12 +60,29 @@ const handleSelectTokenToImport = (token: IToken) => {
 }
 
 /**
+ * handles when a network has been selected
+ * @param id
+ */
+const handleSelectedNetworkId = (id: string) => {
+    selectedNetworkId.value = id
+    tokenPages.value = 1
+    tokenList.value?.scrollToTop()
+}
+
+/**
+ * handles when the list of tokens has bottomed
+ */
+const handleScrollBottomed = () => {
+    tokenPages.value++
+}
+
+/**
  * Handles the event of a token being imported
  */
 const handleImportToken = () => {
     if (selectedTokenToImport.value) {
         const token = selectedTokenToImport.value
-        tokensStore.importToken(token)
+        metadataStore.importToken(token)
         handleSetToken(token)
         selectedTokenToImport.value = null
     }
@@ -93,8 +112,6 @@ const handleModalClick = () => {
  * @param term
  */
 const updateSearchTerm = (term: string) => {
-    if(term.length < 3) return
-
     searchTerm.value = term
     matchingTokens.value = []
 
@@ -103,14 +120,14 @@ const updateSearchTerm = (term: string) => {
     }
 }
 
-const handlerUpdateSearchTerm = debounce(updateSearchTerm, 100)
+const handlerUpdateSearchTerm = debounce(updateSearchTerm, 300)
 
 /**
  * Tries to fetch the matching tokens of a specific address
  */
 const loadMatchingTokens = () => {
     const address = searchTerm.value.toLowerCase().trim()
-    const liveNetworks = Networks.live()
+    const liveNetworks = getNetworks()
     checkingNetworks.value = liveNetworks.length
     liveNetworks.forEach(network => {
         fetchToken(network, address).then(token => {
@@ -128,8 +145,8 @@ const loadMatchingTokens = () => {
  * @param address Address to check
  * @returns A token or undefined
  */
-const fetchToken = async (network: INetwork, address: string): Promise<IToken | undefined> => {
-    const provider = new ethers.providers.JsonRpcProvider(network.rpcUrl)
+const fetchToken = async (network: IChain, address: string): Promise<IToken | undefined> => {
+    const provider = new ethers.providers.JsonRpcProvider(network.metamask.rpcUrls[0])
     const token = new ethers.Contract(
         address,
         IERC20Abi,
@@ -140,6 +157,7 @@ const fetchToken = async (network: INetwork, address: string): Promise<IToken | 
         const decimals = await token.functions.decimals()
         const name = await token.functions.name()
         const symbol = await token.functions.symbol()
+        const balance = await token.functions.balanceOf(address)
 
         return {
             chainId: network.id,
@@ -149,6 +167,8 @@ const fetchToken = async (network: INetwork, address: string): Promise<IToken | 
             symbol: symbol[0],
             decimals: decimals[0],
             logo: '',
+            price: '0',
+            balance: balance,
         }
     } catch (e) {
         // nothing to return
@@ -190,7 +210,7 @@ const showCustomTokens = () => {
  * Checks if an address exists on the list
  */
 const existsAddressOnList = (): boolean => {
-    const tokens = tokensStore.getTokensByAddress(searchTerm.value)
+    const tokens = metadataStore.getTokensByAddress(searchTerm.value)
     return tokens ? tokens.length > 0 : false
 }
 
@@ -198,14 +218,18 @@ const existsAddressOnList = (): boolean => {
  * Returns the filtered token list
  */
 const filteredTokens = () => {
+    // for performance issues,
+    // we only search the whole set of tokens if at least 3 characters
+    if (!selectedNetworkId.value && searchTerm.value.length < 3) return []
+
     let tokens: IToken[]
 
     if (selectedNetworkId.value) {
         // If there's a selected network, get only the chain's tokens
-        tokens = tokensStore.getChainTokens(selectedNetworkId.value)
+        tokens = metadataStore.getChainTokens(selectedNetworkId.value)
     } else {
         // Otherwise get them all
-        tokens = tokensStore.getTokens
+        tokens = metadataStore.getAllTokens
     }
 
     const pattern = searchTerm.value.toLowerCase().trim()
@@ -216,16 +240,28 @@ const filteredTokens = () => {
             .filter(token => {
                 return (
                     token.address.toLowerCase().includes(pattern) ||
-                    token.name.toLowerCase().includes(pattern) ||
-                    token.symbol.toLowerCase().includes(pattern) ||
-                    token.chainName.toLowerCase().includes(pattern)
+                    token.symbol.toLowerCase().includes(pattern)
                 )
             })
     }
 
     return tokens
+        .sort(orderByBalance)
+        .slice(0, TOKENS_PER_PAGE * tokenPages.value)
 }
 
+const orderByBalance = (a: IToken, b: IToken) => {
+    if (!a.balance || !b.balance) {
+        // if no balance send last
+        return 1
+    } else if (a.balance.gt(b.balance)) {
+        return -1
+    } else if (b.balance.gt(a.balance)) {
+        return 1
+    } else {
+        return 0
+    }
+}
 </script>
 
 <template>
@@ -237,14 +273,16 @@ const filteredTokens = () => {
         <SearchInputBox
             ref="searchComponent"
             :search-term="searchTerm"
-            placeholder="Search by token, network or address"
             @update:search-term="handlerUpdateSearchTerm"
             @clear-input="searchTerm = ''"/>
         <NetworkLineSelector
-            v-model:selected-network-id="selectedNetworkId"
+            class="my-3"
+            :selected-network-id="selectedNetworkId"
             :networks="getNetworks()"
-            class="my-6"/>
+            @update:selected-network-id="handleSelectedNetworkId"
+        />
         <SelectTokenList
+            ref="tokenList"
             :is-origin="isOrigin"
             :tokens="listTokens()"
             :custom-tokens="showCustomTokens()"
@@ -253,7 +291,9 @@ const filteredTokens = () => {
             :search-term="searchTerm"
             :selected-network-id="selectedNetworkId"
             @set-token="handleSetToken($event)"
-            @import-token="handleSelectTokenToImport($event)"/>
+            @import-token="handleSelectTokenToImport($event)"
+            @scroll-bottomed="handleScrollBottomed"
+        />
     </Modal>
     <ModalImportToken
         :is-open="isImportModalOpen"

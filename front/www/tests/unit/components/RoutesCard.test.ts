@@ -2,10 +2,11 @@ import { mount } from '@vue/test-utils'
 import RouteCard from '@/components/RoutesCard.vue'
 import RouteMother from '../store/routes.mother'
 import { createTestingPinia, TestingPinia } from '@pinia/testing'
-import { useTokensStore } from '@/store/tokens'
+import { useMetadataStore } from '@/store/metadata'
 import { TokensMother } from '../store/tokens.mother'
 import Route from '@/domain/paths/path'
 import { setActivePinia, getActivePinia } from 'pinia'
+import { useRoutesStore } from '@/store/routes'
 
 describe('route card', function () {
     beforeEach(() => {
@@ -18,9 +19,9 @@ describe('route card', function () {
         const wrapper = mountRouteWith(RouteMother.default())
 
         // Assert
-        expect(wrapper.find('.field--global-fee').text()).toEqual('$ 0.50')
+        expect(wrapper.find('.field--global-fee').text()).toEqual('0.50')
         expect(wrapper.find('.field--amount-out .amount-tokens').text()).toEqual('77.14')
-        expect(wrapper.find('.field--amount-out .amount-dollars').text()).toEqual('≈ $ 77.14')
+        expect(wrapper.find('.field--amount-out .amount-dollars').text()).toEqual('~ $ 38.57')
     })
 
     test('fast route shows time in seconds', async () => {
@@ -43,20 +44,20 @@ describe('route card', function () {
 })
 
 function prepareTokenStore() {
-    const tokensStore = useTokensStore()
-    tokensStore.tokens = TokensMother.list()
-    tokensStore.originChainId = '250'
-    tokensStore.originTokenAddress = '0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83'
-    tokensStore.destinationChainId = '137'
-    tokensStore.destinationTokenAddress = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
-    return tokensStore
+    const metadataStore = useMetadataStore()
+    const routesStore = useRoutesStore()
+    metadataStore.tokens = TokensMother.list()
+    routesStore.originChainId = '250'
+    routesStore.originTokenAddress = '0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83'
+    routesStore.destinationChainId = '137'
+    routesStore.destinationTokenAddress = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 }
 
 function mountRouteWith(route: Route) {
     return mount(RouteCard, {
         props: {
             route: route,
-            unique: 1
+            selectedId: ''
         },
         global: {
             plugins: [getActivePinia() as TestingPinia],

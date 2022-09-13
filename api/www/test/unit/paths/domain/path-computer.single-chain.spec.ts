@@ -54,7 +54,6 @@ describe('path-computer - single chain', () => {
       const pathComputer = new PathComputer(
         exchanges,
         new Bridges([]),
-        new Aggregators([]),
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
@@ -75,8 +74,8 @@ describe('path-computer - single chain', () => {
   describe('path-computer - with routes', () => {
     it('should compute two different routes', async () => {
       /** Arrange */
-      const srcToken = TokenMother.link();
-      const dstToken = TokenMother.sushi();
+      const srcToken = TokenMother.polygonLink();
+      const dstToken = TokenMother.polygonSushi();
 
       const fetcher = getTokenDetailsFetcher([srcToken, dstToken]);
 
@@ -116,7 +115,6 @@ describe('path-computer - single chain', () => {
       const pathComputer = new PathComputer(
         exchanges,
         new Bridges([]),
-        new Aggregators([]),
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
@@ -137,20 +135,20 @@ describe('path-computer - single chain', () => {
       expect(routes[0].approvalTransaction.to).toEqual(srcToken.address);
       expect(routes[0].transaction.to).toEqual(DeployedAddresses.Router);
       expect(routes[0].resume.amountIn).toEqual(BigInteger.fromDecimal('1000', srcToken.decimals));
-      expect(routes[0].amountOut).toEqual('4.0');
+      expect(routes[0].amountOut).toEqual('2.0');
 
       expect(routes[1].resume.fromToken).toEqual(srcToken);
       expect(routes[1].resume.toToken).toEqual(dstToken);
       expect(routes[1].approvalTransaction.to).toEqual(srcToken.address);
       expect(routes[1].transaction.to).toEqual(DeployedAddresses.Router);
       expect(routes[1].resume.amountIn).toEqual(BigInteger.fromDecimal('1000', srcToken.decimals));
-      expect(routes[1].amountOut).toEqual('2.0');
+      expect(routes[1].amountOut).toEqual('4.0');
     });
 
     it('should compute route without approval if native token in', async () => {
       /** Arrange */
       const srcToken = TokenMother.polygonMatic();
-      const dstToken = TokenMother.sushi();
+      const dstToken = TokenMother.polygonSushi();
 
       const fetcher = getTokenDetailsFetcher([srcToken, dstToken]);
 
@@ -164,9 +162,7 @@ describe('path-computer - single chain', () => {
         isEnabledOn: () => true,
       });
 
-      const exchanges = new Exchanges([
-        [ExchangeProviders.ZeroEx, mockZeroEx],
-      ]);
+      const exchanges = new Exchanges([[ExchangeProviders.ZeroEx, mockZeroEx]]);
 
       // mock GasPriceFetcher
       const gasPriceFetcher = new GasPriceFetcher();
@@ -179,7 +175,6 @@ describe('path-computer - single chain', () => {
       const pathComputer = new PathComputer(
         exchanges,
         new Bridges([]),
-        new Aggregators([]),
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
@@ -187,7 +182,14 @@ describe('path-computer - single chain', () => {
       );
 
       // create pat query
-      const query = getPathQuery();
+      const query = new GetPathQuery(
+        TokenMother.polygonMatic(),
+        TokenMother.polygonSushi(),
+        '1000',
+        2,
+        faker.finance.ethereumAddress(),
+        faker.finance.ethereumAddress(),
+      );
 
       /** Act */
       const routes = await pathComputer.compute(query);
@@ -207,10 +209,8 @@ describe('path-computer - single chain', () => {
 
 function getPathQuery(): GetPathQuery {
   return new GetPathQuery(
-    Polygon,
-    Polygon,
-    '0xLINK',
-    '0xSUSHI',
+    TokenMother.polygonLink(),
+    TokenMother.polygonSushi(),
     '1000',
     2,
     faker.finance.ethereumAddress(),

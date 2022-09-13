@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { LinkIcon } from '@heroicons/vue/outline';
+import BookIcon from '@/components/svg/BookIcon.vue'
 
 const emits = defineEmits<{
     (event: 'show-transactions'): void
@@ -9,10 +9,10 @@ const emits = defineEmits<{
 
 <template>
     <button
-        class="flex items-center gap-2 tracking-wide header-button"
+        class="header-button"
         @click="emits('show-transactions')"
     >
-        <LinkIcon class="h-5"/>
-        <span>Transactions</span>
+        <BookIcon class="h-5"/>
+        <span class="hidden sm:block">Transactions</span>
     </button>
 </template>

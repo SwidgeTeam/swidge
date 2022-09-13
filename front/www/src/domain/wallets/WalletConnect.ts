@@ -1,9 +1,9 @@
 import { IWallet, Tx, WalletEvents } from '@/domain/wallets/IWallet'
 import { ExternalProvider } from '@ethersproject/providers'
 import WalletConnectProvider from '@walletconnect/web3-provider'
-import { Networks } from '@/domain/chains/Networks'
 import { IRPCMap } from '@walletconnect/types'
-import { INetwork } from '@/domain/chains/INetwork'
+import { IChain } from '@/domain/metadata/Metadata'
+import { useMetadataStore } from '@/store/metadata'
 
 export class WalletConnect implements IWallet {
     private readonly callbacks: WalletEvents
@@ -11,8 +11,8 @@ export class WalletConnect implements IWallet {
 
     constructor(callbacks: WalletEvents) {
         const rpc: IRPCMap = {}
-        for (const network of Networks.live()) {
-            rpc[Number(network.id)] = network.rpcUrl
+        for (const network of useMetadataStore().getChains) {
+            rpc[Number(network.id)] = network.metamask.rpcUrls[0]
         }
         this.provider = new WalletConnectProvider({
             rpc: rpc
@@ -57,7 +57,7 @@ export class WalletConnect implements IWallet {
         })
     }
 
-    public async switchNetwork(chain: INetwork): Promise<boolean> {
+    public async switchNetwork(chain: IChain): Promise<boolean> {
         if (this.provider.chainId.toString() === chain.id) return true
         try {
             const hexChainId = '0x' + Number(chain.id).toString(16)

@@ -6,6 +6,28 @@
 @tailwind utilities;
 
 @layer base {
+    :root {
+        --header-height: 3rem;
+        --settings-line-height: 1.75rem;
+        --sending-line-height: 5.5rem;
+        --arrow-line-height: 1.5rem;
+        --receive-selector-height: 4rem;
+        --recipient-address-height: 2.5rem;
+        --main-action-button-height: 5.2rem;
+        --footer-height: 4rem;
+        --routes-box-height: calc(100vh
+        - (var(--header-height)
+        + var(--settings-line-height)
+        + var(--sending-line-height)
+        + var(--arrow-line-height)
+        + var(--receive-selector-height)
+        + var(--recipient-address-height)
+        + var(--main-action-button-height)
+        + var(--footer-height)
+        + 0.2rem
+        ))
+    }
+
     html {
         @apply text-white tracking-wide flex min-h-full
     }
@@ -14,9 +36,60 @@
         @apply flex flex-grow bg-background-main-dark background-gradient
     }
 
+    #app {
+        @apply w-full
+    }
+
+    /* custom scrollbar */
+
+    ::-webkit-scrollbar {
+        width: 5px;
+        margin-left: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #888;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
 }
 
 @layer utilities {
+    .header-button {
+        @apply flex
+        items-center
+        gap-2
+        tracking-wide
+        px-3 py-1
+        font-roboto
+        font-light
+        gradient-border-header-main hover:gradient-border-header-main-hover
+    }
+
+    .network-button {
+        @apply px-4 header-button network-button-styles
+    }
+
+    .network-button-styles {
+        display: inline-block;
+        margin: 2%;
+        width: 46%;
+    }
+
+    .network-button > img {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 10px;
+    }
+
     .swap-bridge-container {
         @apply bg-background-gray-accent rounded-xl w-full p-5
     }
@@ -27,16 +100,6 @@
 
     .to-native-button {
         @apply py-2 px-6 text-sm rounded-full font-medium border border-gray-600 hover:bg-gray-700
-    }
-
-    .main-container-background {
-        position: absolute;
-        top: 70px;
-        bottom: 70px;
-        right: 170px;
-        left:170px;
-        background-color: rgb(43, 34, 47);
-        filter: blur(160px);
     }
 
     .background-gradient {
@@ -54,82 +117,138 @@
         background: linear-gradient(#31313E, #31313E) padding-box,
         linear-gradient(270deg, #3E3085 0%, #7C2F82 27.15%, #B22F7F 51.04%, #543E71 78.86%, #0C4966 100%) border-box;
         border: 1.5px solid transparent;
-        border-radius: 24px;
+    }
+
+    .bg-gradient-border {
+        background: linear-gradient(var(--bg-color-from), var(--bg-color-to)) padding-box,
+        linear-gradient(270deg, #3E3085 0%, #7C2F82 27.15%, #B22F7F 51.04%, #543E71 78.86%, #0C4966 100%) border-box;
+        border: 1.5px solid transparent;
+        border-radius: 12px;
+    }
+
+    .tx-step-box-colors {
+        --bg-color-from: #31313E;
+        --bg-color-to: #31313E;
+        @apply bg-gradient-border
     }
 
     .gradient-border-header-main {
-        background: linear-gradient(#222129, #222129) padding-box,
-        linear-gradient(270deg, #3E3085 0%, #7C2F82 27.15%, #B22F7F 51.04%, #543E71 78.86%, #0C4966 100%) border-box;
-        border: 1.5px solid transparent;
+        background: #2E283A;
+        border: 2px solid #2E283A;
         border-radius: 12px;
-        transition: 0.3s;
     }
 
     .gradient-border-header-main-hover {
-        background: linear-gradient(#222129, #2221296b) padding-box,
-        linear-gradient(270deg, #3E3085 0%, #7C2F82 27.15%, #B22F7F 51.04%, #543E71 78.86%, #0C4966 100%) border-box;
-        border: 1.5px solid transparent;
-        border-radius: 12px;
-        transition: 0.3s;
+        border: 2px solid grey;
+    }
+    .sending-box-colors {
+        --bg-color-from: #2E283A;
+        --bg-color-to: #2E283A;
+        @apply bg-gradient-border
     }
 
-    .header-button {
-        @apply px-4 py-2 gradient-border-header-main font-roboto font-light hover:gradient-border-header-main-hover
+    .receiving-box-colors {
+        --bg-color-from: #403C49;
+        --bg-color-to: #403C49;
+        @apply bg-gradient-border
     }
 
-    .network-button-styles {
-        display: inline-block;
-        margin: 2%;
-        width: 46%;
+    .sending-box {
+        @apply flex flex-col px-2 sending-box-colors h-[var(--sending-line-height)]
     }
 
-    .network-button {
-        @apply px-4 py-2 gradient-border-header-main font-roboto network-button-styles hover:gradient-border-header-main-hover
+    .routes-container {
+        @apply flex flex-col pt-3 pb-3 gap-2 px-1
+        border-t border-[#34313D]
+        overflow-y-auto overflow-x-hidden
+        max-h-[var(--routes-box-height)]
     }
 
-    .select-network-button {
-        @apply py-2 text-center font-roboto font-light
+    .current-balance {
+        @apply text-xs text-slate-400
     }
 
-    .network-button > img {
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        display: inline-block;
-        margin-right: 10px;
+    .input-dollar-value {
+        @apply text-xs text-slate-200
+    }
+
+    .route-card {
+        @apply relative flex flex-col w-full
+        bg-[#2A2934]/30
+        border border-[#545454] rounded-3xl
+        gap-4 pt-3 pb-2 px-2 mt-1
+        cursor-pointer
+    }
+
+    .route-card:not(.selected):hover {
+        @apply
+        border-[#6B6B6B]
+        bg-[#31313E]
+    }
+
+    .route-card.selected {
+        @apply
+        bg-[#272730]
+        border-2 border-[#733975]
+    }
+
+    .route-card > .route-tag {
+        @apply absolute -top-3 left-6 text-xs border rounded-lg border-[#54545F] bg-[#2F283A]/100 px-3 py-[2px] uppercase
+    }
+
+    .route-card.selected > .route-tag {
+        @apply
+        bg-[#272730]
+        border border-[#733975]
+    }
+
+    .route-card > .route-details {
+        @apply flex items-center justify-around px-4 h-8 sm:h-10
+    }
+
+    .route-card > .route-steps {
+        @apply bg-[#222129]/40 rounded-2xl
+    }
+
+    .route-card > .route-steps > .details-line {
+        @apply relative flex items-center cursor-pointer shadow-lg px-2 py-1
+        rounded-2xl hover:bg-[#222129]/100
+        transition duration-150
+        ease-out hover:ease-in
+    }
+
+    .route-steps .vl {
+        border-left: 2px solid #626262;
+        box-shadow: 0 0 5px #626262;
+        height: 90%;
+        position: absolute;
+        left: 33px;
+        top: 0;
+        z-index: 1;
+    }
+
+    .asset-selector-shadow {
+        box-shadow: 0 2px 3px #000000b5;
     }
 
     img.chain-icon {
-        width: 24px;
+        max-width: 24px;
         border-radius: 50%;
     }
 
     .standardArrow {
-        width: 44px;
-        height: 44px;
-        padding: 0;
-        -webkit-transition: -webkit-transform 0.4s ease-in;
-        transition: transform 0.4s ease-in;
-        -o-transition: -o-transform 0.4s ease-in;
-        border-radius: 100%;
-        background: rgba(34, 33, 41, 0.4);
+        --time: 0.2s;
+        --style: linear;
+        -webkit-transition: -webkit-transform var(--time) var(--style);
+        transition: transform var(--time) var(--style);
+        -o-transition: -o-transform var(--time) var(--style);
     }
 
     .standardArrow:hover {
         transform: rotate(-180deg);
-        transition-delay: 0.15s;
-        -webkit-transition: -webkit-transform 0.4s ease-in;
-        transition: transform 0.4s ease-in;
-        -o-transition: -o-transform 0.4s ease-in;
-        background: #222129;
-    }
-
-    .w-120 {
-        width: 120px;
-    }
-
-    #app {
-        @apply flex flex-grow
+        -webkit-transition: -webkit-transform var(--time) var(--style);
+        transition: transform var(--time) var(--style);
+        -o-transition: -o-transform var(--time) var(--style);
     }
 
     .tooltip {
@@ -140,17 +259,4 @@
         @apply visible z-50;
     }
 
-    .vl-parent {
-        position: relative;
-    }
-
-    .vl {
-        border-left: 2px solid #626262;
-        box-shadow: 0 0 5px #626262;
-        height: 96%;
-        position: absolute;
-        left: 33px;
-        top: 0;
-        z-index: 1;
-    }
 }

@@ -7,14 +7,28 @@ export class GetPathDto {
   fromChainId: string;
 
   @IsEthereumAddress()
-  srcToken: string;
+  srcTokenAddress: string;
+
+  @IsString()
+  @IsNotEmpty()
+  srcTokenSymbol: string;
+
+  @IsNumberString()
+  srcTokenDecimals: number;
 
   @IsString()
   @IsNotEmpty()
   toChainId: string;
 
   @IsEthereumAddress()
-  dstToken: string;
+  dstTokenAddress: string;
+
+  @IsString()
+  @IsNotEmpty()
+  dstTokenSymbol: string;
+
+  @IsNumberString()
+  dstTokenDecimals: number;
 
   @IsPositiveFloatString()
   amount: string;

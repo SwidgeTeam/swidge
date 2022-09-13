@@ -1,13 +1,12 @@
 <script setup lang='ts'>
 import { SearchIcon } from '@heroicons/vue/solid'
-import { TrashIcon } from '@heroicons/vue/outline'
+import { XCircleIcon } from '@heroicons/vue/outline'
 import { ref } from 'vue'
 
 const searchBox = ref<HTMLInputElement | null>(null)
 
 defineProps<{
     searchTerm: string
-    placeholder: string
 }>()
 
 const emits = defineEmits<{
@@ -40,12 +39,12 @@ defineExpose({
         <div
             class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
             <SearchIcon
-                class="w-6 h-6 text-light-grey-1"
+                class="w-8 h-8 text-light-grey-1"
                 aria-hidden="true"/>
         </div>
-        <TrashIcon
-            v-if="searchTerm!==''"
-            class="absolute w-4 top-3 right-3 cursor-pointer"
+        <XCircleIcon
+            v-if="searchTerm"
+            class="absolute w-6 top-4 right-3 cursor-pointer"
             @click="resetInput"
         />
         <input
@@ -54,8 +53,8 @@ defineExpose({
             type="text"
             :value="searchTerm"
             name="searchTerm"
-            class="block w-full pl-10 rounded-md font-roboto border-light-grey-2 bg-cards-background-dark-grey ring-1 ring-indigo-500 border-indigo-500 focus:ring-indigo-500 focus:border-indigo-500 text-light-grey-1"
-            :placeholder="placeholder"
+            class="text-sm sm:text-base w-full pl-12 h-14 rounded-lg font-roboto border-light-grey-2 bg-cards-background-dark-grey ring-1 ring-indigo-500 border-indigo-500 focus:ring-indigo-500 focus:border-indigo-500 text-light-grey-1"
+            placeholder="Search by symbol or address"
             @input="onInput"/>
     </div>
 </template>

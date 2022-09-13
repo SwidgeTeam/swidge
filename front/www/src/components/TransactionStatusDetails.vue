@@ -1,6 +1,6 @@
 <script setup lang='ts'>
-import TokenLogo from './TokenLogo.vue'
-import ChainLogo from './ChainLogo.vue'
+import TokenLogo from './Icons/TokenLogo.vue'
+import ChainLogo from './Icons/ChainLogo.vue'
 
 defineProps<{
     amount: string
@@ -26,7 +26,10 @@ const fixedAmount = (amount: number) => {
             class='tooltip rounded-xl shadow-lg p-1 bg-[#31313E] text-white text-sm font-light absolute border border-cyan-700 -bottom-6 -left-20 px-2'>
             {{ tokenName }}
         </span>
-            <TokenLogo :logo="tokenLogo" size="64"/>
+            <TokenLogo
+                :token-logo="tokenLogo"
+                :chain-logo="chainLogo"
+                size="64"/>
             <ChainLogo :logo="chainLogo" size="48"/>
     </div>
     <div

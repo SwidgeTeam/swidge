@@ -76,7 +76,6 @@ describe('path-computer - cross chain', () => {
       const pathComputer = new PathComputer(
         exchanges,
         bridges,
-        new Aggregators([]),
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
@@ -132,7 +131,6 @@ describe('path-computer - cross chain', () => {
       const pathComputer = new PathComputer(
         exchanges,
         bridges,
-        new Aggregators([]),
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
@@ -195,7 +193,6 @@ describe('path-computer - cross chain', () => {
       const pathComputer = new PathComputer(
         exchanges,
         bridges,
-        new Aggregators([]),
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
@@ -216,8 +213,8 @@ describe('path-computer - cross chain', () => {
   describe('path-computer - with routes', () => {
     it('should compute one route', async () => {
       /** Arrange */
-      const srcToken = TokenMother.link();
-      const dstToken = TokenMother.sushi();
+      const srcToken = TokenMother.polygonLink();
+      const dstToken = TokenMother.fantomSushi();
       const bridgeTokenIn = Tokens.USDC[Polygon];
       const bridgeTokenOut = Tokens.USDC[Fantom];
 
@@ -266,7 +263,6 @@ describe('path-computer - cross chain', () => {
       const pathComputer = new PathComputer(
         exchanges,
         bridges,
-        new Aggregators([]),
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
@@ -380,7 +376,6 @@ describe('path-computer - cross chain', () => {
       const pathComputer = new PathComputer(
         exchanges,
         bridges,
-        new Aggregators([]),
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
@@ -463,7 +458,6 @@ describe('path-computer - cross chain', () => {
       const pathComputer = new PathComputer(
         exchanges,
         bridges,
-        new Aggregators([]),
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
@@ -482,8 +476,8 @@ describe('path-computer - cross chain', () => {
 
     it('should compute two routes when missing provider on destination', async () => {
       /** Arrange */
-      const srcToken = TokenMother.link();
-      const dstToken = TokenMother.sushi();
+      const srcToken = TokenMother.polygonLink();
+      const dstToken = TokenMother.fantomUsdc();
       const bridgeTokenOut = TokenMother.random();
 
       const fetcher = getTokenDetailsFetcher([srcToken, dstToken]);
@@ -554,7 +548,6 @@ describe('path-computer - cross chain', () => {
       const pathComputer = new PathComputer(
         exchanges,
         bridges,
-        new Aggregators([]),
         fetcher,
         priceFeedFetcher,
         gasPriceFetcher,
@@ -570,10 +563,10 @@ describe('path-computer - cross chain', () => {
       /** Assert */
       expect(routes.length).toEqual(2);
 
-      expect(routes[0].steps[0].name).toEqual('Sushiswap');
+      expect(routes[0].steps[0].name).toEqual('ZeroEx');
       expect(routes[0].steps[2].name).toEqual('ZeroEx');
 
-      expect(routes[1].steps[0].name).toEqual('ZeroEx');
+      expect(routes[1].steps[0].name).toEqual('Sushiswap');
       expect(routes[1].steps[2].name).toEqual('ZeroEx');
     });
   });
@@ -581,10 +574,8 @@ describe('path-computer - cross chain', () => {
 
 function getPathQuery(): GetPathQuery {
   return new GetPathQuery(
-    Polygon,
-    Fantom,
-    '0xLINK',
-    '0xSUSHI',
+    TokenMother.polygonLink(),
+    TokenMother.fantomSushi(),
     '1000',
     2,
     faker.finance.ethereumAddress(),

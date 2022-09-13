@@ -15,24 +15,61 @@ import { ApprovalTransactionDetails } from '../../../shared/domain/route/approva
 import { RouterCallEncoder } from '../../../shared/domain/router-call-encoder';
 import { RouteFees } from '../../../shared/domain/route/route-fees';
 import { RouteSteps } from '../../../shared/domain/route/route-steps';
-import { ExternalTransactionStatus, StatusCheckRequest, StatusCheckResponse, } from '../status-check';
-import { flatten } from '@nestjs/common';
+import {
+  ExternalTransactionStatus,
+  StatusCheckRequest,
+  StatusCheckResponse,
+} from '../status-check';
 import { AggregatorMetadata } from '../../../shared/domain/metadata';
 import { ethers } from 'ethers';
 import { NATIVE_TOKEN_ADDRESS } from '../../../shared/enums/Natives';
+import {
+  Arbitrum,
+  Avalanche,
+  Boba,
+  BSC,
+  Celo,
+  Cronos,
+  Fantom,
+  Huobi,
+  Mainnet,
+  Moonriver,
+  OKT,
+  Optimism,
+  Polygon,
+  xDAI,
+} from '../../../shared/enums/ChainIds';
+import { Logger } from '../../../shared/domain/logger';
 
 export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAggregator {
-  private enabledChains = [];
+  private enabledChains = [
+    Mainnet,
+    Optimism,
+    Cronos,
+    BSC,
+    OKT,
+    xDAI,
+    Huobi,
+    Polygon,
+    Fantom,
+    Boba,
+    Moonriver,
+    Arbitrum,
+    Avalanche,
+    Celo,
+  ];
   private client: LIFI;
   private routerCallEncoder: RouterCallEncoder;
+  private logger: Logger;
 
-  public static create() {
-    return new LiFi(new LIFI());
+  public static create(logger: Logger) {
+    return new LiFi(new LIFI(), logger);
   }
 
-  constructor(client: LIFI) {
+  constructor(client: LIFI, logger: Logger) {
     this.client = client;
     this.routerCallEncoder = new RouterCallEncoder();
+    this.logger = logger;
   }
 
   isEnabledOn(fromChainId: string, toChainId: string): boolean {
@@ -40,37 +77,52 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
   }
 
   public async getMetadata(): Promise<AggregatorMetadata> {
-    const chains = await this.client.getChains();
-    const tokens = await this.client.getTokens();
-
-    return {
-      chains: chains.map((chain) => {
+    let chains, tokens;
+    try {
+      const results = await Promise.all([this.client.getChains(), this.client.getTokens()]);
+      const chainsResponse = results[0];
+      const tokensResponse = results[1];
+      chains = chainsResponse.map((chain) => {
         return {
           type: chain.chainType,
           id: chain.id.toString(),
           name: chain.name,
           logo: chain.logoURI,
-          coin: chain.coin,
-          decimals: chain.metamask.nativeCurrency.decimals,
-          rpcUrls: chain.metamask.rpcUrls,
+          metamask: {
+            chainName: chain.metamask.chainName,
+            nativeCurrency: {
+              name: chain.metamask.nativeCurrency.name,
+              symbol: chain.metamask.nativeCurrency.symbol,
+              decimals: chain.metamask.nativeCurrency.decimals,
+            },
+            rpcUrls: chain.metamask.rpcUrls,
+          },
         };
-      }),
-      tokens: flatten(Object.values(tokens.tokens)).map((token) => {
-        return {
-          chainId: token.chainId.toString(),
-          address: this.getAddress(token.address),
-          name: token.name,
-          symbol: token.symbol,
-          decimals: token.decimals,
-          logo: token.logoURI,
-          price: token.priceUSD,
-        };
-      }),
-    };
-  }
+      });
+      tokens = {};
+      for (const [chainId, tokensList] of Object.entries(tokensResponse.tokens)) {
+        tokens[chainId.toString()] = tokensList.map((token) => {
+          return {
+            chainId: token.chainId.toString(),
+            address: this.fromProviderAddress(token.address),
+            name: token.name,
+            symbol: token.symbol,
+            decimals: token.decimals,
+            logo: token.logoURI,
+            price: token.priceUSD,
+          };
+        });
+      }
+    } catch (e) {
+      this.logger.error(`LiFi failed to fetch metadata: ${e}`);
+      chains = [];
+      tokens = {};
+    }
 
-  private getAddress(address: string): string {
-    return address === ethers.constants.AddressZero ? NATIVE_TOKEN_ADDRESS : address;
+    return {
+      chains: chains,
+      tokens: tokens,
+    };
   }
 
   /**
@@ -82,9 +134,9 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
     try {
       response = await this.client.getQuote({
         fromChain: request.fromChain,
-        fromToken: request.fromToken.address,
+        fromToken: this.toProviderAddress(request.fromToken),
         toChain: request.toChain,
-        toToken: request.toToken.address,
+        toToken: this.toProviderAddress(request.toToken),
         fromAmount: request.amountIn.toString(),
         fromAddress: request.senderAddress,
         slippage: request.slippage / 100,
@@ -128,7 +180,15 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
       steps.totalExecutionTime(),
     );
 
-    const aggregatorDetails = new AggregatorDetails(AggregatorProviders.LiFi);
+    const bridgeTrackingId = request.fromChain !== request.toChain ? response.tool : '';
+
+    const aggregatorDetails = new AggregatorDetails(
+      AggregatorProviders.LiFi,
+      '',
+      false,
+      false,
+      bridgeTrackingId,
+    );
 
     return new Route(
       aggregatorDetails,
@@ -187,8 +247,17 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
       case 'INVALID':
         break;
     }
+
     return {
       status: status,
+      srcTxHash: response.sending.txHash,
+      dstTxHash: response.receiving?.txHash,
+      amountIn: BigInteger.fromString(response.sending.amount),
+      amountOut: response.receiving
+        ? BigInteger.fromString(response.receiving.amount)
+        : BigInteger.zero(),
+      fromToken: this.fromProviderAddress(response.sending.token.address),
+      toToken: response.receiving ? this.fromProviderAddress(response.receiving.token.address) : '',
     };
   }
 
@@ -304,5 +373,23 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
     } else {
       return 0;
     }
+  }
+
+  /**
+   * converts an address to our internal format
+   * @param address
+   * @private
+   */
+  private fromProviderAddress(address: string): string {
+    return address === ethers.constants.AddressZero ? NATIVE_TOKEN_ADDRESS : address;
+  }
+
+  /**
+   * makes sure an address is in the format the provider uses
+   * @param token
+   * @private
+   */
+  private toProviderAddress(token: Token): string {
+    return token.isNative() ? ethers.constants.AddressZero : token.address;
   }
 }

@@ -3,8 +3,6 @@ import { Token } from '../../shared/domain/token';
 
 export class AggregatorRequest {
   constructor(
-    private readonly _fromChain: string,
-    private readonly _toChain: string,
     private readonly _fromToken: Token,
     private readonly _toToken: Token,
     private readonly _amountIn: BigInteger,
@@ -14,18 +12,18 @@ export class AggregatorRequest {
   ) {}
 
   get fromChain() {
-    return this._fromChain;
+    return this._fromToken.chainId;
   }
 
   get toChain() {
-    return this._toChain;
+    return this._toToken.chainId;
   }
 
-  get fromToken() {
+  get fromToken(): Token {
     return this._fromToken;
   }
 
-  get toToken() {
+  get toToken(): Token {
     return this._toToken;
   }
 

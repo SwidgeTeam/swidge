@@ -1,7 +1,7 @@
 import { ethers, Signer } from 'ethers'
 import { IWallet, Tx, WalletEvents } from '@/domain/wallets/IWallet'
 import { ExternalProvider } from '@ethersproject/providers'
-import { INetwork } from '@/domain/chains/INetwork'
+import { IChain } from '@/domain/metadata/Metadata'
 
 export class Metamask implements IWallet {
     private readonly callbacks: WalletEvents
@@ -54,7 +54,7 @@ export class Metamask implements IWallet {
         })
     }
 
-    public async switchNetwork(chain: INetwork): Promise<boolean> {
+    public async switchNetwork(chain: IChain): Promise<boolean> {
         const hexChainId = '0x' + Number(chain.id).toString(16)
         try {
             await this.connector.request({
@@ -71,8 +71,14 @@ export class Metamask implements IWallet {
                         params: [
                             {
                                 chainId: hexChainId,
-                                chainName: chain.name,
-                                rpcUrls: [`${chain.rpcUrl}`],
+                                chainName: chain.metamask.chainName,
+                                nativeCurrency: {
+                                    name: chain.metamask.nativeCurrency.name,
+                                    symbol: chain.metamask.nativeCurrency.symbol,
+                                    decimals: chain.metamask.nativeCurrency.decimals,
+                                },
+                                rpcUrls: [chain.metamask.rpcUrls[0]],
+                                iconUrls: [chain.logo],
                             },
                         ],
                     })

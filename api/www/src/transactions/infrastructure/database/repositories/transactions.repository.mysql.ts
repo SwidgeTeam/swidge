@@ -4,6 +4,7 @@ import { Transaction } from '../../../domain/Transaction';
 import { TransactionEntity } from '../models/transaction.entity';
 import { BigInteger } from '../../../../shared/domain/big-integer';
 import { Transactions } from '../../../domain/Transactions';
+import { ExternalTransactionStatus } from '../../../../aggregators/domain/status-check';
 
 @EntityRepository(TransactionEntity)
 export class TransactionsRepositoryMysql implements TransactionsRepository {
@@ -13,27 +14,53 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
    * Persists a transaction
    * @param transaction
    */
-  async save(transaction: Transaction): Promise<void> {
-    await this.manager.save(TransactionEntity, {
+  async create(transaction: Transaction): Promise<void> {
+    await this.manager.insert(TransactionEntity, {
       txHash: transaction.txHash,
       destinationTxHash: transaction.destinationTxHash,
       walletAddress: transaction.walletAddress,
       receiver: transaction.receiver,
-      routerAddress: transaction.routerAddress,
       fromChainId: transaction.fromChainId,
       toChainId: transaction.toChainId,
       srcToken: transaction.srcToken,
-      bridgeTokenIn: transaction.bridgeTokenIn,
-      bridgeTokenOut: transaction.bridgeTokenOut,
       dstToken: transaction.dstToken,
       amountIn: transaction.amountIn.toString(),
       amountOut: transaction.amountOut.toString(),
-      bridgeAmountIn: transaction.bridgeAmountIn.toString(),
-      bridgeAmountOut: transaction.bridgeAmountOut.toString(),
       executed: transaction.executed,
-      bridged: transaction.bridged,
       completed: transaction.completed,
+      status: transaction.status,
+      aggregatorId: transaction.aggregatorId,
+      trackingId: transaction.trackingId,
     });
+  }
+
+  /**
+   * Persists a transaction
+   * @param transaction
+   */
+  async update(transaction: Transaction): Promise<void> {
+    await this.manager.update(
+      TransactionEntity,
+      {
+        txHash: transaction.txHash,
+      },
+      {
+        destinationTxHash: transaction.destinationTxHash,
+        walletAddress: transaction.walletAddress,
+        receiver: transaction.receiver,
+        fromChainId: transaction.fromChainId,
+        toChainId: transaction.toChainId,
+        srcToken: transaction.srcToken,
+        dstToken: transaction.dstToken,
+        amountIn: transaction.amountIn.toString(),
+        amountOut: transaction.amountOut.toString(),
+        executed: transaction.executed,
+        completed: transaction.completed,
+        status: transaction.status,
+        aggregatorId: transaction.aggregatorId,
+        trackingId: transaction.trackingId,
+      },
+    );
   }
 
   /**
@@ -49,26 +76,7 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
       return null;
     }
 
-    return new Transaction(
-      result.txHash,
-      result.destinationTxHash,
-      result.walletAddress,
-      result.receiver,
-      result.routerAddress,
-      result.fromChainId,
-      result.toChainId,
-      result.srcToken,
-      result.bridgeTokenIn,
-      result.bridgeTokenOut,
-      result.dstToken,
-      BigInteger.fromString(result.amountIn),
-      BigInteger.fromString(result.bridgeAmountIn),
-      BigInteger.fromString(result.bridgeAmountOut),
-      BigInteger.fromString(result.amountOut),
-      new Date(result.executed),
-      result.bridged ? new Date(result.bridged) : null,
-      result.completed ? new Date(result.completed) : null,
-    );
+    return this.buildTx(result);
   }
 
   /**
@@ -80,29 +88,28 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
       walletAddress: walletAddress,
     });
 
-    const items = result.map((row) => {
-      return new Transaction(
-        row.txHash,
-        row.destinationTxHash,
-        row.walletAddress,
-        row.receiver,
-        row.routerAddress,
-        row.fromChainId,
-        row.toChainId,
-        row.srcToken,
-        row.bridgeTokenIn,
-        row.bridgeTokenOut,
-        row.dstToken,
-        BigInteger.fromString(row.amountIn),
-        BigInteger.fromString(row.bridgeAmountIn),
-        BigInteger.fromString(row.bridgeAmountOut),
-        BigInteger.fromString(row.amountOut),
-        new Date(row.executed),
-        row.bridged ? new Date(row.bridged) : null,
-        row.completed ? new Date(row.completed) : null,
-      );
-    });
+    const items = result.map(this.buildTx);
 
     return new Transactions(items);
+  }
+
+  private buildTx(row: TransactionEntity): Transaction {
+    return new Transaction(
+      row.txHash,
+      row.destinationTxHash,
+      row.walletAddress,
+      row.receiver,
+      row.fromChainId,
+      row.toChainId,
+      row.srcToken,
+      row.dstToken,
+      BigInteger.fromString(row.amountIn),
+      BigInteger.fromString(row.amountOut),
+      new Date(row.executed),
+      row.completed ? new Date(row.completed) : null,
+      row.status as ExternalTransactionStatus,
+      row.aggregatorId,
+      row.trackingId,
+    );
   }
 }

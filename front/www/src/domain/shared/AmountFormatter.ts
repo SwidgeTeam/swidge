@@ -1,5 +1,5 @@
 export default class AmountFormatter {
-    public static format(amount: string) {
+    public static format(amount: string): string {
         const value = Number(amount)
         if (value < 1) {
             return AmountFormatter.commaSeparateNumber(value.toFixed(6))
@@ -10,7 +10,7 @@ export default class AmountFormatter {
         }
     }
 
-    private static commaSeparateNumber(amount: string) {
+    private static commaSeparateNumber(amount: string): string {
         let val = Number(amount)
         // remove sign if negative
         let sign = 1

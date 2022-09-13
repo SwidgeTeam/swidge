@@ -3,9 +3,15 @@ export interface IChain {
   id: string;
   name: string;
   logo: string;
-  coin: string;
-  decimals: number;
-  rpcUrls: string[];
+  metamask: {
+    chainName: string;
+    nativeCurrency: {
+      name: string;
+      symbol: string;
+      decimals: number;
+    };
+    rpcUrls: string[];
+  };
 }
 
 export interface IToken {
@@ -18,7 +24,11 @@ export interface IToken {
   price: string;
 }
 
+export declare type ITokenList = {
+  [chainId: string]: IToken[];
+};
+
 export interface AggregatorMetadata {
   chains: IChain[];
-  tokens: IToken[];
+  tokens: ITokenList;
 }

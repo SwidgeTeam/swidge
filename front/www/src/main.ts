@@ -1,25 +1,35 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import { createRouter, createWebHistory } from 'vue-router'
-import { setupLayouts } from 'virtual:generated-layouts'
 import { createHead } from '@vueuse/head'
-import generatedRoutes from 'virtual:generated-pages'
 import { createPinia } from 'pinia'
 import { createGtm } from '@gtm-support/vue-gtm'
 import Toast, { PluginOptions } from 'vue-toastification'
 import VueLazyload from 'vue-lazyload'
+import Invest from './pages/invest.vue'
+import Swap from './pages/swap.vue'
 
 import '@/styles/index.css'
 // Import the CSS or use your own for toastification
 import 'vue-toastification/dist/index.css'
 
-const routes = setupLayouts(generatedRoutes)
 const head = createHead()
 const pinia = createPinia()
 
 const router = createRouter({
     history: createWebHistory(),
-    routes,
+    routes: [
+        {
+            path: '/',
+            name: 'Swap',
+            component: Swap,
+        },
+        {
+            path: '/invest',
+            name: 'Invest',
+            component: Invest,
+        },
+    ],
 })
 
 const options: PluginOptions = {
