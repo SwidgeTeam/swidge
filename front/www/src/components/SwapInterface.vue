@@ -14,7 +14,7 @@ import ReceivingBox from '@/components/ReceivingBox.vue'
 import AdjustmentsIcon from './svg/AdjustmentIcon.vue'
 import ReloadIcon from '@/components/svg/ReloadIcon.vue'
 import ActionButton from '@/components/Buttons/ActionButton.vue'
-import FromToArrow from '@/components/Icons/FromToArrow.vue'
+import FromToArrow from '@/components/Buttons/FromToArrow.vue'
 import { IToken } from '@/domain/metadata/Metadata'
 import RecipientUserCard from '@/components/RecipientUserCard.vue'
 import { storeToRefs } from 'pinia'
@@ -176,11 +176,20 @@ const updateOriginToken = async (token: IToken) => {
 /**
  * Sets the transition variable switchDestinationChain to Current source Chain info
  */
-const switchHandlerFunction = async (token: IToken) => {
+const switchHandlerFunction = (token: IToken | undefined) => {
     routesStore.switchTokens()
     sourceTokenAmount.value = ''
     isExecuteButtonDisabled.value = true
-    sourceTokenMaxAmount.value = ethers.utils.formatUnits(token.balance, token.decimals)
+    if (token) {
+        sourceTokenMaxAmount.value = ethers.utils.formatUnits(token.balance, token.decimals)
+    } else {
+        sourceTokenMaxAmount.value = '0'
+    }
+}
+
+const onSwitchArrowClick = () => {
+    const destinationToken = routesStore.getDestinationToken()
+    switchHandlerFunction(destinationToken)
 }
 
 /**
@@ -383,7 +392,9 @@ const closeModalStatus = () => {
                 @input-changed="handleSourceInputChanged"
                 @select-token="() => handleOpenTokenList(true)"
             />
-            <FromToArrow/>
+            <FromToArrow
+                @switch-tokens="onSwitchArrowClick"
+            />
             <ReceivingBox
                 @select-token="() => handleOpenTokenList(false)"
             />
