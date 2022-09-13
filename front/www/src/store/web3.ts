@@ -60,9 +60,12 @@ export const useWeb3Store = defineStore('web3', () => {
                 await wallet.value.requestAccess()
             }
             isConnected = await wallet.value.isConnected()
+            let chainId = '1'
             if (isConnected) {
                 await initialSetup()
+                chainId = selectedNetworkId.value
             }
+            routesStore.selectOriginToken(chainId, NATIVE_COIN_ADDRESS)
         } catch (e) {
             isConnected.value = false
         }
