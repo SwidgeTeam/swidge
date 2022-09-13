@@ -1,6 +1,6 @@
 import axios from 'axios'
 import HttpClient from './http-base-client'
-import { GetQuoteRequest, GetQuoteResponse, indexedErrors } from './models/get-quote'
+import { GetQuoteRequest, GetQuoteResponse } from './models/get-quote'
 import { ApiErrorResponse } from '@/api/models/ApiErrorResponse'
 import { TransactionsList } from '@/api/models/transactions'
 import Route, { ApprovalTransactionDetails, TransactionDetails } from '@/domain/paths/path'
@@ -160,8 +160,7 @@ class SwidgeAPI extends HttpClient {
         } catch (e: unknown) {
             if (axios.isAxiosError(e)) {
                 const getQuoteErrorResponse = e.response?.data as ApiErrorResponse
-                const errorMessage = indexedErrors[getQuoteErrorResponse.message] ?? 'Unhandled error!'
-                throw new Error(errorMessage)
+                throw new Error(getQuoteErrorResponse.message)
             }
             throw new Error('UnknownError no axios error')
         }

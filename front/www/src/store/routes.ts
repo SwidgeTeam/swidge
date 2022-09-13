@@ -9,6 +9,8 @@ import { IToken } from '@/domain/metadata/Metadata'
 
 export const useRoutesStore = defineStore('routes', {
     state: () => ({
+        showContainer: false,
+        loadingRoutes: false,
         routes: [] as Route[],
         originChainId: '',
         originTokenAddress: '',
@@ -153,28 +155,36 @@ export const useRoutesStore = defineStore('routes', {
          * @param amount
          */
         async quotePath(amount: string) {
+            this.showContainer = true
             const web3Store = useWeb3Store()
             const srcToken = this.getOriginToken()
             const dstToken = this.getDestinationToken()
             if (!srcToken || !dstToken) {
                 throw new Error('Some token is not selected')
             }
-            this.routes = await SwidgeAPI.getQuote({
-                fromChainId: this.originChainId,
-                srcTokenAddress: srcToken.address,
-                srcTokenSymbol: srcToken.symbol,
-                srcTokenDecimals: srcToken.decimals.toString(),
-                toChainId: this.destinationChainId,
-                dstTokenAddress: dstToken.address,
-                dstTokenSymbol: dstToken.symbol,
-                dstTokenDecimals: dstToken.decimals.toString(),
-                amount: amount,
-                slippage: Number(this.getSlippage),
-                senderAddress: web3Store.account || ethers.constants.AddressZero,
-                receiverAddress: this.receiverAddress || ethers.constants.AddressZero,
-            })
-            const idToSelect = this.routes.find(route => route.tags.includes('cheapest'))?.id as string
-            this.selectRoute(idToSelect)
+            try {
+                this.loadingRoutes = true
+                this.routes = await SwidgeAPI.getQuote({
+                    fromChainId: this.originChainId,
+                    srcTokenAddress: srcToken.address,
+                    srcTokenSymbol: srcToken.symbol,
+                    srcTokenDecimals: srcToken.decimals.toString(),
+                    toChainId: this.destinationChainId,
+                    dstTokenAddress: dstToken.address,
+                    dstTokenSymbol: dstToken.symbol,
+                    dstTokenDecimals: dstToken.decimals.toString(),
+                    amount: amount,
+                    slippage: Number(this.getSlippage),
+                    senderAddress: web3Store.account || ethers.constants.AddressZero,
+                    receiverAddress: this.receiverAddress || ethers.constants.AddressZero,
+                })
+                const idToSelect = this.routes.find(route => route.tags.includes('cheapest'))?.id as string
+                this.selectRoute(idToSelect)
+            } catch (e) {
+                this.routes = []
+            } finally {
+                this.loadingRoutes = false
+            }
         },
         /**
          * Marks the route `index` as selected
@@ -213,6 +223,8 @@ export const useRoutesStore = defineStore('routes', {
         selectOriginToken(chainId: string, address: string) {
             this.originChainId = chainId
             this.originTokenAddress = address
+            this.routes = []
+            this.showContainer = false
         },
         /**
          * Selects a specific token as selected on destination
@@ -222,6 +234,8 @@ export const useRoutesStore = defineStore('routes', {
         selectDestinationToken(chainId: string, address: string) {
             this.destinationChainId = chainId
             this.destinationTokenAddress = address
+            this.routes = []
+            this.showContainer = false
         },
         /**
          * Switches origin and destination tokens one for the other

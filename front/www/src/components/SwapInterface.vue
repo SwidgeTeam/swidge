@@ -19,6 +19,7 @@ import { IToken } from '@/domain/metadata/Metadata'
 import RecipientUserCard from '@/components/RecipientUserCard.vue'
 import { storeToRefs } from 'pinia'
 import { ethers } from 'ethers'
+import { indexedErrors } from '@/api/models/get-quote'
 
 const web3Store = useWeb3Store()
 const routesStore = useRoutesStore()
@@ -32,7 +33,6 @@ const sourceTokenMaxAmount = ref<string>('')
 
 const isModalTokensOpen = ref(false)
 const isSourceChainToken = ref(false)
-const isGettingQuote = ref(false)
 const isExecuteButtonDisabled = ref(true)
 const isModalStatusOpen = ref(false)
 const isSettingsModalOpen = ref(false)
@@ -201,21 +201,21 @@ const onQuote = async () => {
     }
     unsetButtonAlert()
 
-    isGettingQuote.value = true
     isExecuteButtonDisabled.value = true
 
     try {
         await routesStore.quotePath(sourceTokenAmount.value)
 
-        if (Number(sourceTokenAmount.value) > Number(sourceTokenMaxAmount.value)) {
+        const thereAreRoutes = routesStore.getAllRoutes.length > 0
+        if (!thereAreRoutes) {
+            isExecuteButtonDisabled.value = false
+        } else if (Number(sourceTokenAmount.value) > Number(sourceTokenMaxAmount.value)) {
             setButtonAlert('Insufficient Balance')
         } else {
             isExecuteButtonDisabled.value = false
         }
     } catch (e: unknown) {
         onQuotingError(e as Error)
-    } finally {
-        isGettingQuote.value = false
     }
 }
 
@@ -224,7 +224,8 @@ const onQuote = async () => {
  * @param e
  */
 const onQuotingError = (e: Error) => {
-    setButtonAlert(e.message)
+    const errorMessage = indexedErrors[e.message] ?? 'Unhandled error!'
+    setButtonAlert(errorMessage)
     isExecuteButtonDisabled.value = true
 }
 
@@ -404,7 +405,6 @@ const closeModalStatus = () => {
         />
         <ActionButton
             :text="buttonLabel"
-            :is-loading="isGettingQuote"
             :disabled="isExecuteButtonDisabled"
             :on-click="onExecuteTransaction"
         />

@@ -158,7 +158,7 @@
     }
 
     .routes-container {
-        @apply flex flex-col pt-3 pb-1 gap-2 px-1
+        @apply flex flex-col pt-3 pb-3 gap-2 px-1
         border-t border-[#34313D]
         overflow-y-auto overflow-x-hidden
         max-h-[var(--routes-box-height)]
@@ -176,7 +176,7 @@
         @apply relative flex flex-col w-full
         bg-[#2A2934]/30
         border border-[#545454] rounded-3xl
-        gap-4 pt-3 pb-2 px-2
+        gap-4 pt-3 pb-2 px-2 mt-1
         cursor-pointer
     }
 
