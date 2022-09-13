@@ -161,8 +161,9 @@ const handleUpdateTokenFromModal = (token: IToken) => {
  */
 const updateOriginToken = async (token: IToken) => {
     const originTokenAddress = routesStore.getOriginTokenAddress
+    const originTokenChainId = routesStore.getOriginChainId
     // If user selected a different token, update
-    if (originTokenAddress !== token.address) {
+    if (originTokenAddress !== token.address || originTokenChainId !== token.chainId) {
         // Update token details
         routesStore.selectOriginToken(token.chainId, token.address)
         // Reset amount
