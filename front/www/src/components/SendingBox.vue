@@ -30,7 +30,7 @@ const onChange = (event: Event) => {
 
 const setToMaxAmount = () => {
     if (!props.balance) return
-    emits('update:value', props.balance)
+    emits('update:value', AmountFormatter.format(props.balance))
     emits('input-changed')
 }
 
