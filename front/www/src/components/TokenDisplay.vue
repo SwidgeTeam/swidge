@@ -29,7 +29,7 @@ const formattedBalance = () => {
                 <div class="flex items-center gap-2">
                     <img
                         v-lazy="chain?.logo"
-                        class="overflow-hidden block h-3"
+                        class="overflow-hidden rounded-sm block h-3"
                     >
                     <span class="text-xs">{{ chain?.name }}</span>
                 </div>
