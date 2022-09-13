@@ -21,7 +21,6 @@ const formattedBalance = () => {
                 <img
                     :data-src="token.logo"
                     :data-error="chain?.logo"
-                    :alt="token.symbol + ' ' + 'icon'"
                     class="rounded-full overflow-hidden block h-9"
                 />
             </div>
@@ -31,7 +30,7 @@ const formattedBalance = () => {
                     <img
                         v-lazy="chain?.logo"
                         class="overflow-hidden block h-3"
-                        :alt="chain?.name + ' ' + 'icon'">
+                    >
                     <span class="text-xs">{{ chain?.name }}</span>
                 </div>
             </div>
