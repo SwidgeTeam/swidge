@@ -251,7 +251,10 @@ const filteredTokens = () => {
 }
 
 const orderByBalance = (a: IToken, b: IToken) => {
-    if (a.balance.gt(b.balance)) {
+    if (!a.balance || !b.balance) {
+        // if no balance send last
+        return 1
+    } else if (a.balance.gt(b.balance)) {
         return -1
     } else if (b.balance.gt(a.balance)) {
         return 1
