@@ -17,7 +17,7 @@ export const useRoutesStore = defineStore('routes', {
         selectedRoute: '',
         slippageValue: '2',
         gasPriority: 'medium',
-        receiverAddress: ethers.constants.AddressZero
+        receiverAddress: ''
     }),
     getters: {
         /**
@@ -135,12 +135,6 @@ export const useRoutesStore = defineStore('routes', {
             return this.gasPriority
         },
         /**
-         * returns the receiver address
-         */
-        getReceiverAddress(): string {
-            return this.receiverAddress
-        },
-        /**
          * checks if the receiver is a valid address
          */
         isValidReceiverAddress(): boolean {
@@ -177,7 +171,7 @@ export const useRoutesStore = defineStore('routes', {
                 amount: amount,
                 slippage: Number(this.getSlippage),
                 senderAddress: web3Store.account || ethers.constants.AddressZero,
-                receiverAddress: this.getReceiverAddress
+                receiverAddress: this.receiverAddress || ethers.constants.AddressZero,
             })
             const idToSelect = this.routes.find(route => route.tags.includes('cheapest'))?.id as string
             this.selectRoute(idToSelect)

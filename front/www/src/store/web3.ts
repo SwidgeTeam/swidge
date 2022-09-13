@@ -244,6 +244,7 @@ export const useWeb3Store = defineStore('web3', () => {
      */
     function onDisconnect() {
         account.value = ''
+        routesStore.setReceiverAddress('')
         isConnected.value = false
     }
 
