@@ -120,10 +120,7 @@ test-api:
 test-api-e2e:
 	@$(call DOCKER_COMPOSE_RUN,--rm ${DOCKER_API_SERVICE} test:e2e)
 
-test-relayer:
-	@$(call DOCKER_COMPOSE_RUN,--rm ${DOCKER_RELAYER_SERVICE} test)
-
-test: test-front test-api test-relayer test-contracts
+test: test-front test-api test-contracts
 
 ### Database
 
@@ -415,7 +412,6 @@ $(addprefix setup-instances-, test prod): setup-instances-%:
 	@$(call RUN_PLAYBOOK_GLOBAL,$*,docker.yml)
 	@$(call RUN_PLAYBOOK_GLOBAL,$*,profile.yml)
 	@$(call RUN_PLAYBOOK_ON_SERVICE,$*,api,setup_node_files.yml)
-	@$(call RUN_PLAYBOOK_ON_SERVICE,$*,relayer,setup_node_files.yml)
 	@$(call RUN_PLAYBOOK_ON_SERVICE,$*,grafana,setup_node_files.yml)
 
 ### Grafana
