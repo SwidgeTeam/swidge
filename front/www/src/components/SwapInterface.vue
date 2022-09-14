@@ -18,7 +18,6 @@ import FromToArrow from '@/components/Buttons/FromToArrow.vue'
 import { IToken } from '@/domain/metadata/Metadata'
 import RecipientUserCard from '@/components/RecipientUserCard.vue'
 import { storeToRefs } from 'pinia'
-import { ethers } from 'ethers'
 import { indexedErrors } from '@/api/models/get-quote'
 
 const web3Store = useWeb3Store()
@@ -29,7 +28,6 @@ const { isConnected } = storeToRefs(web3Store)
 const toast = useToast()
 
 const sourceTokenAmount = ref<string>('')
-const sourceTokenMaxAmount = ref<string>('')
 
 const isModalTokensOpen = ref(false)
 const isSourceChainToken = ref(false)
@@ -130,7 +128,7 @@ const handleUpdateTokenFromModal = (token: IToken) => {
         if (selectedOriginChainId != token.chainId) {
             // If network and token of source and destination are the same, switch inputs instead of setting new ones.
             if (token.chainId == selectedDestinationChainId && token.address == selectedDestinationTokenAddress) {
-                switchHandlerFunction(token)
+                switchHandlerFunction()
             } else {
                 updateOriginToken(token)
             }
@@ -139,7 +137,7 @@ const handleUpdateTokenFromModal = (token: IToken) => {
         }
     } else {
         if (token.chainId == selectedOriginChainId && token.address == selectedOriginTokenAddress) {
-            switchHandlerFunction(token)
+            switchHandlerFunction()
         } else {
             // Update token details
             routesStore.selectDestinationToken(token.chainId, token.address)
@@ -169,27 +167,16 @@ const updateOriginToken = async (token: IToken) => {
         // Reset amount
         sourceTokenAmount.value = ''
         // Check user's token balance
-        sourceTokenMaxAmount.value = ethers.utils.formatUnits(token.balance, token.decimals)
     }
 }
 
 /**
  * Sets the transition variable switchDestinationChain to Current source Chain info
  */
-const switchHandlerFunction = (token: IToken | undefined) => {
+const switchHandlerFunction = () => {
     routesStore.switchTokens()
     sourceTokenAmount.value = ''
     isExecuteButtonDisabled.value = true
-    if (token) {
-        sourceTokenMaxAmount.value = ethers.utils.formatUnits(token.balance, token.decimals)
-    } else {
-        sourceTokenMaxAmount.value = '0'
-    }
-}
-
-const onSwitchArrowClick = () => {
-    const destinationToken = routesStore.getDestinationToken()
-    switchHandlerFunction(destinationToken)
 }
 
 /**
@@ -209,7 +196,7 @@ const onQuote = async () => {
         const thereAreRoutes = routesStore.getAllRoutes.length > 0
         if (!thereAreRoutes) {
             isExecuteButtonDisabled.value = false
-        } else if (Number(sourceTokenAmount.value) > Number(sourceTokenMaxAmount.value)) {
+        } else if (Number(sourceTokenAmount.value) > Number(routesStore.getSelectedTokenBalance)) {
             setButtonAlert('Insufficient Balance')
         } else {
             isExecuteButtonDisabled.value = false
@@ -389,12 +376,11 @@ const closeModalStatus = () => {
         <div class="flex flex-col">
             <SendingBox
                 v-model:value="sourceTokenAmount"
-                :balance="sourceTokenMaxAmount"
                 @input-changed="handleSourceInputChanged"
                 @select-token="() => handleOpenTokenList(true)"
             />
             <FromToArrow
-                @switch-tokens="onSwitchArrowClick"
+                @switch-tokens="switchHandlerFunction"
             />
             <ReceivingBox
                 @select-token="() => handleOpenTokenList(false)"
