@@ -155,6 +155,9 @@ export const useWeb3Store = defineStore('web3', () => {
             return
         }
         const chain = metadataStore.getChain(chainId)
+        if (!chain) {
+            throw new Error('Unsupported chain')
+        }
         const changed = await wallet.value.switchNetwork(chain)
         if (changed) {
             selectedNetworkId.value = chainId
@@ -269,6 +272,9 @@ export const useWeb3Store = defineStore('web3', () => {
      */
     function getChainProvider(chainId: string) {
         const chain = metadataStore.getChain(chainId)
+        if (!chain) {
+            throw new Error('Unsupported chain')
+        }
         return ethers.getDefaultProvider({
             name: chain.name,
             chainId: Number(chain.id),

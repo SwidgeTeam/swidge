@@ -14,7 +14,7 @@ const props = defineProps<{
 
 const getChainLogo = () => {
     const chain = metadataStore.getChain(props.token.chainId)
-    return chain.logo
+    return chain ? chain.logo : ''
 }
 </script>
 

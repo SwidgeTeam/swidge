@@ -47,7 +47,7 @@ const chainName = computed({
             return ''
         }
         const chain = metadataStore.getChain(selectedNetworkId.value)
-        return chain.name
+        return chain ? chain.name : ''
     },
     set: () => null
 })
@@ -58,7 +58,7 @@ const chainIcon = computed({
             return ''
         }
         const chain = metadataStore.getChain(selectedNetworkId.value)
-        return chain.logo
+        return chain ? chain.logo : ''
     },
     set: () => null
 })

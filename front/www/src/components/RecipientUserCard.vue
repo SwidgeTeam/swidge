@@ -18,7 +18,7 @@ const inputReceiverAddress = ref<any | null>(null)
 const getChainLogo = (): string => {
     const chainId = routesStore.getDestinationChainId
     const chain = metadataStore.getChain(chainId)
-    return chain.logo
+    return chain ? chain.logo : ''
 }
 
 const onAccountChange = (event: Event) => {
