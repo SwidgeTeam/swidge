@@ -16,7 +16,7 @@ export class GetMetadataHandler implements IQueryHandler<GetMetadataQuery> {
   private aggregators: Map<string, MetadataProviderAggregator>;
   private cache: Metadata | undefined;
   private deadline: number | undefined;
-  private readonly CACHE_TIME = 60 * 60 * 1000; // 1 hour
+  private readonly CACHE_TIME = 24 * 60 * 60 * 1000; // 1 day
 
   constructor(
     private readonly configService: ConfigService,
