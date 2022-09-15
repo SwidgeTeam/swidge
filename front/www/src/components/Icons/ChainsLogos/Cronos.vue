@@ -1,5 +1,20 @@
-<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="32" height="32" rx="16" fill="#051221"/>
+<script setup lang="ts">
+
+</script>
+
+<template>
+    <svg
+width="32"
+height="32"
+viewBox="0 0 32 32"
+fill="none"
+xmlns="http://www.w3.org/2000/svg">
+<rect
+width="32"
+height="32"
+rx="16"
+fill="#051221"/>
 <path d="M15.9438 2.66663L4.39388 9.33553V22.6689L15.9438 29.3333L27.4847 22.6689V9.33553L15.9438 2.66663ZM24.0654 20.6932L15.9438 25.382L7.81772 20.6932V11.3067L15.9438 6.61791L24.0654 11.3067V20.6932Z" fill="white"/>
 <path d="M21.3298 19.1153L15.9393 22.2262L10.5442 19.1153V12.8889L15.9393 9.77344L21.3298 12.8889L19.086 14.1851L15.9393 12.3659L12.7925 14.1851V17.8146L15.9393 19.6338L19.086 17.8146L21.3298 19.1153Z" fill="white"/>
 </svg>
+</template>
