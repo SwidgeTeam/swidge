@@ -1,5 +1,6 @@
 <script setup lang='ts'>
 import { IChain } from '@/domain/metadata/Metadata'
+import Ethereum from '@Icons/ChainsLogos/Ethereum.svg'
 
 const props = defineProps<{
     networks: IChain[]
@@ -29,7 +30,7 @@ const onSelect = (id: string) => {
             :class="[selectedNetworkId !== network.id && selectedNetworkId !== '' && 'opacity-40']"
             @click="onSelect(network.id)">
             <span class="h-10 bg-[#2E283A] rounded-lg flex justify-center">
-                <img
+                <Ethereum
                     :src="network.logo"
                     class="px-1 py-1 rounded-lg"
                     :alt="network.name"/>
