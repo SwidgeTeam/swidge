@@ -90,6 +90,10 @@
         margin-right: 10px;
     }
 
+    .network-switch {
+        @apply h-7 w-7 rounded-lg gap-2
+    }
+
     .swap-bridge-container {
         @apply bg-background-gray-accent rounded-xl w-full p-5
     }
