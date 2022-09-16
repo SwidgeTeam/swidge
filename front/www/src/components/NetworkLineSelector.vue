@@ -18,7 +18,6 @@ import Harmony from '@/components/Icons/ChainsLogos/Harmony.vue'
 import FTM from '@/components/Icons/ChainsLogos/FTM.vue'
 import Evmos from '@/components/Icons/ChainsLogos/Evmos.vue'
 
-
 const props = defineProps<{
     networks: IChain[]
     selectedNetworkId: string
@@ -35,6 +34,8 @@ const onSelect = (id: string) => {
         emits('update:selected-network-id', id)
     }
 }
+
+
 
 </script>
 
@@ -53,6 +54,10 @@ const onSelect = (id: string) => {
                 <img 
                 v-else-if="network.id =='66'"
                 src="@/components/Icons/ChainsLogos/OKC.png"
+                class="network-switch">
+                <img 
+                v-else-if="network.id =='128'"
+                src="@/components/Icons/ChainsLogos/HECO.png"
                 class="network-switch">
                 <Aurora
                 v-else-if="network.id == '1313161554'"
