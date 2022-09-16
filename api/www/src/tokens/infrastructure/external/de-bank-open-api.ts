@@ -53,7 +53,7 @@ export class DeBankOpenApi implements WalletBalancesRepository {
       );
     } catch (e) {
       this.logger.error(`DeBank fail: ${e}`);
-      throw e;
+      tokens = [];
     }
 
     return Promise.resolve({
