@@ -1,8 +1,8 @@
 <script setup lang='ts'>
 import Modal from '@/components/Modals/Modal.vue'
 import { useMetadataStore } from '@/store/metadata'
-import ChainButton from '../Buttons/ChainButton.vue';
-import ChainSwitch from '../Icons/ChainSwitch.vue';
+
+
 
 const metadataStore = useMetadataStore()
 
@@ -53,8 +53,7 @@ const getNetworks = () => {
                             :src="chain.logo"
                             :alt="chain.name + 'icon'"
                         />
-                        <ChainSwitch 
-                        class="rounded-lg h-10 w-10"/>
+                        <ChainSwitch class="rounded-lg h-10 w-10"/>
                         <span>{{ chain.name }}</span>
                     </span>
                 </button>
