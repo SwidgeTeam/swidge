@@ -12,7 +12,10 @@ import StepIcon from '@/components/Icons/StepIcon.vue'
 import ProviderIcon from '@/components/Icons/ProviderIcon.vue'
 import Route, { RouteStep } from '@/domain/paths/path'
 import AmountFormatter from '@/domain/shared/AmountFormatter'
+import { BigNumber, ethers } from 'ethers'
+import { useGtm } from '@gtm-support/vue-gtm'
 
+const gtm = useGtm()
 const routesStore = useRoutesStore()
 
 const props = defineProps<{
@@ -69,6 +72,21 @@ const tag = computed({
         if (props.route.tags.length === 0) {
             return ''
         } else if (props.route.tags.length > 1) {
+            const route = routesStore.getSelectedRoute
+            const token = routesStore.getOriginToken()
+            const amount = route.tx?.value
+            const parsedAmount = BigNumber.from(amount)
+            const formatedAmount = ethers.utils.formatUnits(parsedAmount, token?.decimals)
+            const dollarAmount = Number(formatedAmount) * Number(token?.price)
+            const fixedAmount = AmountFormatter.format(dollarAmount.toFixed(2)) 
+            console.log(fixedAmount)
+            gtm?.trackEvent({
+                event: 'interaction',
+                category: "transaction",
+                action: "click",
+                label: "transaction value",
+                value: fixedAmount,
+            });
             return 'Best'
         } else {
             return props.route.tags[0].toString()
