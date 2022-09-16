@@ -19,6 +19,10 @@ export class ConfigService {
     return process.env.VIA_API_KEY;
   }
 
+  public getDeBankApiKey(): string {
+    return process.env.DEBANK_API_KEY;
+  }
+
   private isProduction(): boolean {
     return process.env.NODE_ENV === 'production';
   }

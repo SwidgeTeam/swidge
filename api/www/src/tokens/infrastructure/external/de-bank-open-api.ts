@@ -20,6 +20,8 @@ import {
   Polygon,
   xDAI,
 } from '../../../shared/enums/ChainIds';
+import { ConfigService } from '../../../config/config.service';
+import { Logger } from '../../../shared/domain/logger';
 
 interface TokenData {
   chain: string;
@@ -28,17 +30,31 @@ interface TokenData {
 }
 
 export class DeBankOpenApi implements WalletBalancesRepository {
-  constructor(@Inject(Class.HttpClient) private readonly httpClient: IHttpClient) {}
+  constructor(
+    private readonly configService: ConfigService,
+    @Inject(Class.HttpClient) private readonly httpClient: IHttpClient,
+    @Inject(Class.Logger) private readonly logger: Logger,
+  ) {}
 
   async getTokenList(wallet: string): Promise<WalletBalances> {
-    const tokens = await this.httpClient.get<TokenData[]>(
-      'https://openapi.debank.com/v1/user/token_list',
-      {
-        params: {
-          id: wallet,
+    let tokens;
+    try {
+      tokens = await this.httpClient.get<TokenData[]>(
+        'https://pro-openapi.debank.com/v1/user/all_token_list',
+        {
+          params: {
+            id: wallet,
+          },
+          headers: {
+            Accept: 'application/json',
+            AccessKey: this.configService.getDeBankApiKey(),
+          },
         },
-      },
-    );
+      );
+    } catch (e) {
+      this.logger.error(`DeBank fail: ${e}`);
+      throw e;
+    }
 
     return Promise.resolve({
       tokens: tokens.map((token) => {
