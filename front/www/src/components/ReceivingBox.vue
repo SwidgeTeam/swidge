@@ -61,7 +61,7 @@ const thereAreMoreRoutes = () => {
             </div>
         </div>
         <div v-if="showContainer()" class="routes-container">
-            <div v-if="thereAreRoutes()">
+            <div v-if="thereAreRoutes()" class="flex flex-col gap-3">
                 <RoutesCard
                     v-for="(route, index) in routes()"
                     :key="index"
