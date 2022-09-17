@@ -19,6 +19,9 @@ import { IToken } from '@/domain/metadata/Metadata'
 import RecipientUserCard from '@/components/RecipientUserCard.vue'
 import { storeToRefs } from 'pinia'
 import { indexedErrors } from '@/api/models/get-quote'
+import { BigNumber, ethers } from 'ethers'
+import { useGtm } from '@gtm-support/vue-gtm'
+import AmountFormatter from '@/domain/shared/AmountFormatter'
 
 const web3Store = useWeb3Store()
 const routesStore = useRoutesStore()
@@ -26,6 +29,7 @@ const transactionStore = useTransactionStore()
 const { isValidReceiverAddress } = storeToRefs(routesStore)
 const { isConnected } = storeToRefs(web3Store)
 const toast = useToast()
+const gtm = useGtm()
 
 const sourceTokenAmount = ref<string>('')
 
@@ -61,6 +65,21 @@ const setButtonAlert = (text: string) => {
 const unsetButtonAlert = () => {
     transactionAlertMessage.value = ''
     showTransactionAlert.value = false
+}
+
+const emitEventGTMTransaction = () => {
+    const route = routesStore.getSelectedRoute
+    const token = routesStore.getOriginToken()
+    const amount = route.tx?.value
+    const parsedAmount = BigNumber.from(amount)
+    const formatedAmount = ethers.utils.formatUnits(parsedAmount, token?.decimals)
+    const dollarAmount = Number(formatedAmount) * Number(token?.price)
+    const fixedAmount = AmountFormatter.format(dollarAmount.toFixed(2)) 
+    console.log(fixedAmount)
+    gtm?.trackEvent({
+        event: 'transaction',
+        value: fixedAmount,
+    });
 }
 
 watch(isValidReceiverAddress, (isValid) => {
@@ -251,6 +270,7 @@ const onExecuteTransaction = async () => {
     await promise
         .then((txHash: TxHash) => {
             onInitialTxCompleted(route, txHash)
+            //insert the GA transaction function HERE
         })
         .catch((error) => {
             console.log(error)
@@ -381,6 +401,7 @@ const closeModalStatus = () => {
             />
             <FromToArrow
                 @switch-tokens="switchHandlerFunction"
+                @click = emitEventGTMTransaction()
             />
             <ReceivingBox
                 @select-token="() => handleOpenTokenList(false)"
