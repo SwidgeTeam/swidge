@@ -1,5 +1,4 @@
 import { ethers } from "hardhat";
-import { Signer } from "ethers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { FakeContract, smock } from "@defi-wonderland/smock";
 
@@ -15,34 +14,16 @@ interface TokenContractResponses {
 export async function getAccounts(): Promise<{
   owner: SignerWithAddress;
   anyoneElse: SignerWithAddress;
-  relayer: SignerWithAddress;
+  gelato: SignerWithAddress;
   random: SignerWithAddress;
 }> {
-  const [owner, anyoneElse, relayer, random] = await ethers.getSigners();
+  const [owner, anyoneElse, gelato, random] = await ethers.getSigners();
   return {
     owner,
     anyoneElse,
-    relayer,
+    gelato,
     random,
   };
-}
-
-/**
- * Deploy a specific contract by name
- * @param contractName
- * @param deployer
- * @param args
- * @returns {Promise<*>}
- */
-export async function deployByName(
-  contractName: string,
-  deployer: Signer,
-  args = []
-) {
-  const Factory = await ethers.getContractFactory(contractName);
-  const contract = await Factory.connect(deployer).deploy(...args);
-  await contract.deployed();
-  return contract;
 }
 
 /**

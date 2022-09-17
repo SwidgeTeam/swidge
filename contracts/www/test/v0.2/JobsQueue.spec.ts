@@ -1,11 +1,9 @@
 import chai, { expect } from "chai";
 import { smock } from "@defi-wonderland/smock";
-import { deployByName, fakeTokenContract, getAccounts } from "./shared";
+import { fakeTokenContract, getAccounts } from "./shared";
 import { Contract, Signer } from "ethers";
 import { ethers } from "hardhat";
-import { any } from "hardhat/internal/core/params/argumentTypes";
 import { faker } from "@faker-js/faker";
-import { createFakeContract } from "@defi-wonderland/smock/dist/src/factories/smock-contract";
 
 chai.use(smock.matchers);
 
@@ -13,8 +11,10 @@ describe("Jobs Queue", () => {
   let core: Contract;
 
   beforeEach(async () => {
-    const { owner } = await getAccounts();
-    core = await deployByName("JobsQueue", owner);
+    const { owner, gelato } = await getAccounts();
+    const Factory = await ethers.getContractFactory("JobsQueue");
+    core = await Factory.connect(owner).deploy(gelato.address);
+    await core.deployed();
   });
 
   it("should revert if caller not whitelisted", async () => {
@@ -92,12 +92,12 @@ describe("Jobs Queue", () => {
 
     it("should remain two jobs after executing one", async () => {
       // Arrange
-      const { random } = await getAccounts();
+      const { random, gelato } = await getAccounts();
       const jobsBefore = await core.connect(random).getPendingJobs();
 
       // Act
       await core
-        .connect(random)
+        .connect(gelato)
         .executeJobs([[jobsBefore[1], faker.finance.ethereumAddress(), "0x"]]);
 
       // Assert
@@ -109,11 +109,11 @@ describe("Jobs Queue", () => {
 
     it("should remain one jobs after executing two", async () => {
       // Arrange
-      const { random } = await getAccounts();
+      const { random, gelato } = await getAccounts();
       const jobsBefore = await core.connect(random).getPendingJobs();
 
       // Act
-      await core.connect(random).executeJobs([
+      await core.connect(gelato).executeJobs([
         [jobsBefore[0], faker.finance.ethereumAddress(), "0x"],
         [jobsBefore[1], faker.finance.ethereumAddress(), "0x"],
       ]);
@@ -126,11 +126,11 @@ describe("Jobs Queue", () => {
 
     it("should remain no jobs after executing three", async () => {
       // Arrange
-      const { random } = await getAccounts();
+      const { random, gelato } = await getAccounts();
       const jobsBefore = await core.connect(random).getPendingJobs();
 
       // Act
-      await core.connect(random).executeJobs([
+      await core.connect(gelato).executeJobs([
         [jobsBefore[0], faker.finance.ethereumAddress(), "0x"],
         [jobsBefore[1], faker.finance.ethereumAddress(), "0x"],
         [jobsBefore[2], faker.finance.ethereumAddress(), "0x"],
