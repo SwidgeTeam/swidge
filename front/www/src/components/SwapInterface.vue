@@ -270,7 +270,7 @@ const onExecuteTransaction = async () => {
     await promise
         .then((txHash: TxHash) => {
             onInitialTxCompleted(route, txHash)
-            //insert the GA transaction function HERE
+            emitEventGTMTransaction()
         })
         .catch((error) => {
             console.log(error)
@@ -401,7 +401,6 @@ const closeModalStatus = () => {
             />
             <FromToArrow
                 @switch-tokens="switchHandlerFunction"
-                @click = emitEventGTMTransaction()
             />
             <ReceivingBox
                 @select-token="() => handleOpenTokenList(false)"
