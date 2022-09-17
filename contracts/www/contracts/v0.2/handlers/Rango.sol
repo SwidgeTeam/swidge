@@ -1,4 +1,7 @@
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.17;
+
+import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 
 interface IRangoMessageReceiver {
     enum ProcessStatus {SUCCESS, REFUND_IN_SOURCE, REFUND_IN_DESTINATION}
@@ -11,23 +14,25 @@ interface IRangoMessageReceiver {
     ) external;
 }
 
+interface Core {
+    function createJob(bytes calldata _data) external payable;
+}
+
 contract Rango is IRangoMessageReceiver {
     address payable constant NULL_ADDRESS = payable(0x0000000000000000000000000000000000000000);
-    address payable coreContract;
+    Core core;
 
     struct AppMessage {
-        address srcAsset;
+        address receiver;
+        address inputAsset;
         address dstAsset;
-        uint256 srcChain;
         uint256 dstChain;
         uint256 minAmount;
     }
 
     constructor(address payable _coreContract) {
-        coreContract = _coreContract;
+        core = Core(_coreContract);
     }
-
-    receive() external payable {}
 
     function handleRangoMessage(
         address _token,
@@ -35,13 +40,20 @@ contract Rango is IRangoMessageReceiver {
         ProcessStatus _status,
         bytes memory _message
     ) external {
-        AppMessage memory m = abi.decode((_message), (AppMessage));
+        if (_status == ProcessStatus.SUCCESS) {
+            AppMessage memory m = abi.decode((_message), (AppMessage));
+            uint256 value;
 
-        if (_token == NULL_ADDRESS) {
+            if (_token == NULL_ADDRESS) {
+                value = _amount;
+            } else {
+                value = 0;
+                SafeERC20.safeTransfer(IERC20(_token), address(core), _amount);
+            }
 
-        } else {
+            bytes memory payload = abi.encode(m.receiver, _token, m.dstAsset, m.dstChain, _amount, m.minAmount);
 
+            core.createJob{value : value}(payload);
         }
     }
-
 }
