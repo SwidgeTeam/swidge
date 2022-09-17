@@ -19,7 +19,6 @@ import { IToken } from '@/domain/metadata/Metadata'
 import RecipientUserCard from '@/components/RecipientUserCard.vue'
 import { storeToRefs } from 'pinia'
 import { indexedErrors } from '@/api/models/get-quote'
-import { BigNumber, ethers } from 'ethers'
 import { useGtm } from '@gtm-support/vue-gtm'
 import AmountFormatter from '@/domain/shared/AmountFormatter'
 
@@ -68,12 +67,9 @@ const unsetButtonAlert = () => {
 }
 
 const emitEventGTMTransaction = () => {
-    const route = routesStore.getSelectedRoute
     const token = routesStore.getOriginToken()
-    const amount = route.tx?.value
-    const parsedAmount = BigNumber.from(amount)
-    const formatedAmount = ethers.utils.formatUnits(parsedAmount, token?.decimals)
-    const dollarAmount = Number(formatedAmount) * Number(token?.price)
+    const amount =sourceTokenAmount.value
+    const dollarAmount = Number(amount) * Number(token?.price)
     const fixedAmount = AmountFormatter.format(dollarAmount.toString()) 
     gtm?.trackEvent({
         event: 'transaction',
@@ -390,10 +386,6 @@ const closeModalStatus = () => {
             <AdjustmentsIcon
                 class="w-5 h-5 cursor-pointer"
                 @click="isSettingsModalOpen = true"
-            />
-            <AdjustmentsIcon
-                class="w-5 h-5 cursor-pointer"
-                @click=emitEventGTMTransaction()
             />
         </div>
         <div class="flex flex-col">
