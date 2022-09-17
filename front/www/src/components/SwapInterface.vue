@@ -19,6 +19,8 @@ import { IToken } from '@/domain/metadata/Metadata'
 import RecipientUserCard from '@/components/RecipientUserCard.vue'
 import { storeToRefs } from 'pinia'
 import { indexedErrors } from '@/api/models/get-quote'
+import { useGtm } from '@gtm-support/vue-gtm'
+import AmountFormatter from '@/domain/shared/AmountFormatter'
 
 const web3Store = useWeb3Store()
 const routesStore = useRoutesStore()
@@ -26,6 +28,7 @@ const transactionStore = useTransactionStore()
 const { isValidReceiverAddress } = storeToRefs(routesStore)
 const { isConnected } = storeToRefs(web3Store)
 const toast = useToast()
+const gtm = useGtm()
 
 const sourceTokenAmount = ref<string>('')
 
@@ -61,6 +64,17 @@ const setButtonAlert = (text: string) => {
 const unsetButtonAlert = () => {
     transactionAlertMessage.value = ''
     showTransactionAlert.value = false
+}
+
+const emitEventGTMTransaction = () => {
+    const token = routesStore.getOriginToken()
+    const amount =sourceTokenAmount.value
+    const dollarAmount = Number(amount) * Number(token?.price)
+    const fixedAmount = AmountFormatter.format(dollarAmount.toString()) 
+    gtm?.trackEvent({
+        event: 'transaction',
+        value: fixedAmount,
+    });
 }
 
 watch(isValidReceiverAddress, (isValid) => {
@@ -251,6 +265,7 @@ const onExecuteTransaction = async () => {
     await promise
         .then((txHash: TxHash) => {
             onInitialTxCompleted(route, txHash)
+            emitEventGTMTransaction()
         })
         .catch((error) => {
             console.log(error)
