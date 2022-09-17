@@ -74,7 +74,7 @@ const emitEventGTMTransaction = () => {
     const parsedAmount = BigNumber.from(amount)
     const formatedAmount = ethers.utils.formatUnits(parsedAmount, token?.decimals)
     const dollarAmount = Number(formatedAmount) * Number(token?.price)
-    const fixedAmount = AmountFormatter.format(dollarAmount.toFixed(2)) 
+    const fixedAmount = AmountFormatter.format(dollarAmount.toString()) 
     gtm?.trackEvent({
         event: 'transaction',
         value: fixedAmount,
@@ -390,6 +390,10 @@ const closeModalStatus = () => {
             <AdjustmentsIcon
                 class="w-5 h-5 cursor-pointer"
                 @click="isSettingsModalOpen = true"
+            />
+            <AdjustmentsIcon
+                class="w-5 h-5 cursor-pointer"
+                @click=emitEventGTMTransaction()
             />
         </div>
         <div class="flex flex-col">
