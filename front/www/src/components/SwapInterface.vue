@@ -75,7 +75,6 @@ const emitEventGTMTransaction = () => {
     const formatedAmount = ethers.utils.formatUnits(parsedAmount, token?.decimals)
     const dollarAmount = Number(formatedAmount) * Number(token?.price)
     const fixedAmount = AmountFormatter.format(dollarAmount.toFixed(2)) 
-    console.log(fixedAmount)
     gtm?.trackEvent({
         event: 'transaction',
         value: fixedAmount,
