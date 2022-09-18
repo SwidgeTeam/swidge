@@ -10,6 +10,7 @@ contract JobsQueue is Ownable {
     address public immutable gelatoOps;
     address constant NATIVE = address(0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE);
     mapping(address => bool) origins;
+    mapping(bytes32 => bool) remainingJobs;
     Job[] public jobs;
 
     error UnauthorizedOrigin();
@@ -35,7 +36,7 @@ contract JobsQueue is Ownable {
         uint256 amountIn;
         uint256 minAmountOut;
         uint256 position;
-        bool keep;
+        bytes32 hash;
     }
 
     struct ExecuteCall {
@@ -61,29 +62,36 @@ contract JobsQueue is Ownable {
      */
     function executeJobs(ExecuteCall[] calldata calls) external onlyGelato {
         for (uint i = 0; i < calls.length; i++) {
+            // unwrap job
             ExecuteCall memory currentCall = calls[i];
             Job memory job = currentCall.job;
-            address handler = currentCall.handler;
-            bytes memory data = currentCall.data;
+            // check job is still remaining
+            if (remainingJobs[job.hash]) {
+                // unwrap call data
+                address handler = currentCall.handler;
+                bytes memory data = currentCall.data;
 
-            uint value;
-            if (job.inputAsset == NATIVE) {
-                value = job.amountIn;
-            } else {
-                value = 0;
-                SafeERC20.safeApprove(IERC20(job.inputAsset), handler, job.amountIn);
-            }
+                uint value;
+                // decide value and token approval
+                if (job.inputAsset == NATIVE) {
+                    value = job.amountIn;
+                } else {
+                    value = 0;
+                    SafeERC20.safeApprove(IERC20(job.inputAsset), handler, job.amountIn);
+                }
 
-            (bool success, bytes memory response) = handler.call{value : value}(data);
+                // execute
+                (bool success, bytes memory response) = handler.call{value : value}(data);
 
-            if (success) {
-                delete jobs[job.position];
-            }
-            else {
-                emit FailedJob(LibBytes.getRevertMsg(response));
+                if (success) {
+                    delete jobs[job.position];
+                    delete remainingJobs[job.hash];
+                }
+                else {
+                    emit FailedJob(LibBytes.getRevertMsg(response));
+                }
             }
         }
-        pruneJobs();
     }
 
     /**
@@ -97,6 +105,20 @@ contract JobsQueue is Ownable {
 
         if (handlerMsg.amountIn == 0) revert JobWithZeroAmount();
 
+        uint256 currentLength = jobs.length;
+
+        bytes32 hash = keccak256(
+            abi.encode(
+                handlerMsg.receiver,
+                handlerMsg.inputAsset,
+                handlerMsg.dstAsset,
+                handlerMsg.dstChain,
+                handlerMsg.amountIn,
+                handlerMsg.minAmountOut,
+                currentLength
+            )
+        );
+
         Job memory job = Job(
             handlerMsg.receiver,
             handlerMsg.inputAsset,
@@ -104,11 +126,12 @@ contract JobsQueue is Ownable {
             handlerMsg.dstChain,
             handlerMsg.amountIn,
             handlerMsg.minAmountOut,
-            jobs.length,
-            true
+            currentLength,
+            hash
         );
 
         jobs.push(job);
+        remainingJobs[hash] = true;
     }
 
     /**
@@ -122,35 +145,28 @@ contract JobsQueue is Ownable {
 
     /**
      * returns a list of pending jobs
+     * @dev this function is only called from off-chain actor
+     * @dev so we can afford to be a bit inefficient to get the list
      */
     function getPendingJobs() external view returns (Job[] memory) {
-        return jobs;
-    }
-
-    /**
-     * cleans the jobs that are already executed.
-     * are marked by the attribute `keep` to know which ones
-     * are to be removed
-     */
-    function pruneJobs() internal {
-        uint256 removed = 0;
+        // compute array size
+        uint total = 0;
         for (uint i = 0; i < jobs.length; i++) {
             Job storage job = jobs[i];
-            if (job.keep) {
-                if (removed > 0) {// no need to replace by itself
-                    uint256 newPosition = i - removed;
-                    job.position = newPosition;
-                    jobs[newPosition] = job;
-                }
-            } else {
-            unchecked {
-                // saves gas, will NEVER have 2^256 jobs on list
-                ++removed;
-            }
+            if (remainingJobs[job.hash]) {
+                ++total;
             }
         }
-        for (uint i = 0; i < removed; i++) {
-            jobs.pop();
+        Job[] memory returnJobs = new Job[](total);
+        // fill array
+        total = 0;
+        for (uint i = 0; i < jobs.length; i++) {
+            Job storage job = jobs[i];
+            if (remainingJobs[job.hash]) {
+                returnJobs[total] = job;
+                ++total;
+            }
         }
+        return returnJobs;
     }
 }

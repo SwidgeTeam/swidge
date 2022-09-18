@@ -56,7 +56,6 @@ describe("Jobs Queue", () => {
     expect(jobs[0].dstChain).to.be.equal("1");
     expect(jobs[0].amountIn).to.be.equal("1");
     expect(jobs[0].minAmountOut).to.be.equal("1");
-    expect(jobs[0].keep).to.be.equal(true);
   });
 
   describe("jobs array pruning", () => {
@@ -94,6 +93,8 @@ describe("Jobs Queue", () => {
       // Arrange
       const { random, gelato } = await getAccounts();
       const jobsBefore = await core.connect(random).getPendingJobs();
+      const hash0 = jobsBefore[0].hash;
+      const hash2 = jobsBefore[2].hash;
 
       // Act
       await core
@@ -103,14 +104,15 @@ describe("Jobs Queue", () => {
       // Assert
       const jobsAfter = await core.connect(random).getPendingJobs();
       expect(jobsAfter.length).to.be.equal(2);
-      expect(jobsAfter[0].position).to.be.equal(0);
-      expect(jobsAfter[1].position).to.be.equal(1);
+      expect(jobsAfter[0].hash).to.be.equal(hash0);
+      expect(jobsAfter[1].hash).to.be.equal(hash2);
     });
 
     it("should remain one jobs after executing two", async () => {
       // Arrange
       const { random, gelato } = await getAccounts();
       const jobsBefore = await core.connect(random).getPendingJobs();
+      const hash2 = jobsBefore[2].hash;
 
       // Act
       await core.connect(gelato).executeJobs([
@@ -121,7 +123,7 @@ describe("Jobs Queue", () => {
       // Assert
       const jobsAfter = await core.connect(random).getPendingJobs();
       expect(jobsAfter.length).to.be.equal(1);
-      expect(jobsAfter[0].position).to.be.equal(0);
+      expect(jobsAfter[0].hash).to.be.equal(hash2);
     });
 
     it("should remain no jobs after executing three", async () => {
