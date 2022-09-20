@@ -70,11 +70,11 @@ const emitEventGTMTransaction = () => {
     const token = routesStore.getOriginToken()
     const amount =sourceTokenAmount.value
     const dollarAmount = Number(amount) * Number(token?.price)
-    const fixedAmount = AmountFormatter.format(dollarAmount.toString()) 
+    const fixedAmount = AmountFormatter.format(dollarAmount.toString())
     gtm?.trackEvent({
         event: 'transaction',
         value: fixedAmount,
-    });
+    })
 }
 
 watch(isValidReceiverAddress, (isValid) => {
@@ -87,11 +87,15 @@ watch(isValidReceiverAddress, (isValid) => {
 
 watch(isConnected, (connected) => {
     if (connected) {
-        if (shouldQuote()) {
-            onQuote()
-        }
+        tryToQuote()
     }
 })
+
+const tryToQuote = () => {
+    if (shouldQuote()) {
+        onQuote()
+    }
+}
 
 const destinationChainSelected = computed({
     get: () => {
@@ -113,9 +117,7 @@ const shouldQuote = () => {
  * Handles the update of the amount on the origin amount
  */
 const handleSourceInputChanged = () => {
-    if (shouldQuote()) {
-        onQuote()
-    }
+    tryToQuote()
 }
 
 /**
@@ -159,9 +161,7 @@ const handleUpdateTokenFromModal = (token: IToken) => {
     }
 
     // Check if we can quote
-    if (shouldQuote()) {
-        onQuote()
-    }
+    tryToQuote()
 
     // Close modal
     isModalTokensOpen.value = false
@@ -374,6 +374,11 @@ const openTransactionStatusModal = () => {
 const closeModalStatus = () => {
     isModalStatusOpen.value = false
 }
+
+const handleChangedReceiver = (address: string) => {
+    routesStore.setReceiverAddress(address)
+    tryToQuote()
+}
 </script>
 
 <template>
@@ -403,6 +408,7 @@ const closeModalStatus = () => {
         </div>
         <RecipientUserCard
             v-if="destinationChainSelected"
+            @changed-receiver="handleChangedReceiver"
         />
         <ActionButton
             :text="buttonLabel"
