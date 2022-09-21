@@ -228,18 +228,20 @@ class SwidgeAPI extends HttpClient {
 
     async getBothTxs(query: GetBothTxsRequest): Promise<{
         trackingId: string,
-        approvalTx: ApprovalTransactionDetails,
+        approvalTx: ApprovalTransactionDetails | undefined,
         mainTx: TransactionDetails,
     }> {
         try {
             const response = await this.instance.get<GetBothTxsResponse>('/build-both-txs', { params: query })
             return {
                 trackingId: response.data.trackingId,
-                approvalTx: {
-                    to: response.data.approvalTx.to,
-                    callData: response.data.approvalTx.callData,
-                    gasLimit: response.data.approvalTx.gasLimit,
-                },
+                approvalTx: response.data.approvalTx
+                    ? {
+                        to: response.data.approvalTx.to,
+                        callData: response.data.approvalTx.callData,
+                        gasLimit: response.data.approvalTx.gasLimit,
+                    }
+                    : undefined,
                 mainTx: {
                     to: response.data.mainTx.to,
                     value: response.data.mainTx.value,

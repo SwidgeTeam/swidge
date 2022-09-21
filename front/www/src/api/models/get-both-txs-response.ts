@@ -4,7 +4,7 @@ export default interface GetBothTxsResponse {
         to: string;
         callData: string;
         gasLimit: string;
-    },
+    } | undefined,
     mainTx: {
         to: string;
         value: string;
