@@ -100,11 +100,11 @@ const amountOut = computed({
 
 const inputDollarValue = computed({
     get: () => {
-        const token = routesStore.getOriginToken()
-        if (!token) {
+        const tokenInPrice = routesStore.getOriginToken()
+        if (!tokenInPrice) {
             return '0.0'
         }
-        const amount = Number(props.route.resume.amountIn) * Number(token.price)
+        const amount = Number(props.route.resume.amountIn) * Number(tokenInPrice.price)
         return AmountFormatter.format(amount.toFixed(2))
     },
     set: () => null,
@@ -114,9 +114,9 @@ const outputDollarValue = computed({
     get: () => {
         const tokenOutPrice = routesStore.getDestinationToken()?.price
         if(!tokenOutPrice){
-            return '??'
+            return '0.0'
         }
-        const usdAmount = Number(tokenOutPrice) * Number(props.route.resume.amountOut)
+        const usdAmount = Number(props.route.resume.amountOut) * Number(tokenOutPrice)
         return AmountFormatter.format(usdAmount.toFixed(2))
     },
     set: () => null
