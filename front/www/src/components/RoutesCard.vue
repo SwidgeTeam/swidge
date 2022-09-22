@@ -98,7 +98,21 @@ const amountOut = computed({
     set: () => null
 })
 
-const dollarValue = computed({
+const inputDollarValue = computed({
+    get: () => {
+        const token = routesStore.getOriginToken()
+        const inputAmount = routesStore.getSelectedRoute.tx?.value
+        console.log(inputAmount)
+        if (!token) {
+            return '0.0'
+        }
+        const amount = Number(props.route.resume.amountIn) * Number(token.price)
+        return AmountFormatter.format(amount.toFixed(2))
+    },
+    set: () => null,
+})
+
+const outputDollarValue = computed({
     get: () => {
         const tokenOutPrice = routesStore.getDestinationToken()?.price
         if(!tokenOutPrice){
@@ -126,6 +140,13 @@ const nextSteps = computed({
     },
     set: () => null
 })
+
+const priceChangePercerntage = () => {
+    const pricePercentage = 100-((Number(inputDollarValue.value))/Number(outputDollarValue.value)*100)
+    const fixedPricePercentage = pricePercentage.toFixed(2)
+    console.log(fixedPricePercentage)
+    return fixedPricePercentage
+}
 </script>
 
 
@@ -148,9 +169,11 @@ const nextSteps = computed({
             <div class="flex flex-col field--amount-out pt-2">
                 <span class="amount-tokens leading-5 text-right text-xl">{{ amountOut }}</span>
                 <span class="amount-dollars leading-5 text-right text-[13px] text-slate-500 hover:text-slate-400">~ $ {{
-                        dollarValue
+                        outputDollarValue 
                     }}
-                    </span>
+                    (<span v-if="Number(priceChangePercerntage()) >= 0" class="text-green-700">{{priceChangePercerntage()}}%</span>
+                    <span v-if="Number(priceChangePercerntage()) < 0" class="text-red-700">{{priceChangePercerntage()}}%</span>)
+                </span>
             </div>
             <div class="flex text-ellipsis text-md field--global-fee">
                 <DollarSign class="h-6 mr-1"/>
