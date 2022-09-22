@@ -192,6 +192,7 @@ const switchHandlerFunction = () => {
     sourceTokenAmount.value = ''
     isExecuteButtonDisabled.value = true
     routesStore.routes.length = 0
+    routesStore.showContainer = false
 }
 
 /**
