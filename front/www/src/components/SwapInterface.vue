@@ -184,6 +184,11 @@ const updateOriginToken = async (token: IToken) => {
     }
 }
 
+const  resetRoutesCard = () => {
+    routesStore.routes = []
+    routesStore.showContainer = false
+}
+
 /**
  * Sets the transition variable switchDestinationChain to Current source Chain info
  */
@@ -191,8 +196,7 @@ const switchHandlerFunction = () => {
     routesStore.switchTokens()
     sourceTokenAmount.value = ''
     isExecuteButtonDisabled.value = true
-    routesStore.routes.length = 0
-    routesStore.showContainer = false
+    resetRoutesCard()
 }
 
 /**
@@ -403,7 +407,6 @@ const handleChangedReceiver = (address: string) => {
             />
             <FromToArrow
                 @switch-tokens="switchHandlerFunction"
-                @click=""
             />
             <ReceivingBox
                 @select-token="() => handleOpenTokenList(false)"
