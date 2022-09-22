@@ -101,8 +101,6 @@ const amountOut = computed({
 const inputDollarValue = computed({
     get: () => {
         const token = routesStore.getOriginToken()
-        const inputAmount = routesStore.getSelectedRoute.tx?.value
-        console.log(inputAmount)
         if (!token) {
             return '0.0'
         }
@@ -144,7 +142,6 @@ const nextSteps = computed({
 const priceChangePercerntage = () => {
     const pricePercentage = 100-((Number(inputDollarValue.value))/Number(outputDollarValue.value)*100)
     const fixedPricePercentage = pricePercentage.toFixed(2)
-    console.log(fixedPricePercentage)
     return fixedPricePercentage
 }
 </script>
