@@ -191,6 +191,7 @@ const switchHandlerFunction = () => {
     routesStore.switchTokens()
     sourceTokenAmount.value = ''
     isExecuteButtonDisabled.value = true
+    routesStore.routes.length = 0
 }
 
 /**
@@ -401,6 +402,7 @@ const handleChangedReceiver = (address: string) => {
             />
             <FromToArrow
                 @switch-tokens="switchHandlerFunction"
+                @click=""
             />
             <ReceivingBox
                 @select-token="() => handleOpenTokenList(false)"
