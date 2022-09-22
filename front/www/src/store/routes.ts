@@ -256,6 +256,9 @@ export const useRoutesStore = defineStore('routes', {
 
             this.destinationChainId = auxChainId
             this.destinationTokenAddress = auxAddress
+
+            this.routes = []
+            this.showContainer = false
         },
         /**
          * Reset token selection

@@ -184,11 +184,6 @@ const updateOriginToken = async (token: IToken) => {
     }
 }
 
-const  resetRoutesCard = () => {
-    routesStore.routes = []
-    routesStore.showContainer = false
-}
-
 /**
  * Sets the transition variable switchDestinationChain to Current source Chain info
  */
@@ -196,7 +191,6 @@ const switchHandlerFunction = () => {
     routesStore.switchTokens()
     sourceTokenAmount.value = ''
     isExecuteButtonDisabled.value = true
-    resetRoutesCard()
 }
 
 /**
