@@ -28,10 +28,10 @@ export class GetMetadataHandler implements IQueryHandler<GetMetadataQuery> {
     ]);
   }
 
-  async execute(): Promise<Metadata> {
+  async execute(query: GetMetadataQuery): Promise<Metadata> {
     this.logger.log('Fetching metadata...');
 
-    if (this.isCached()) {
+    if (this.isCached() && !query.reload) {
       this.logger.log('Cached meta');
       return this.cache;
     }
