@@ -24,6 +24,5 @@ export class PostTxExecutedDto {
   txHash: string;
 
   @IsString()
-  @IsNotEmpty()
   trackingId: string;
 }
