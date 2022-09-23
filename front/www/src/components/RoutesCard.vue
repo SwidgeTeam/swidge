@@ -142,7 +142,7 @@ const nextSteps = computed({
 const priceChangePercerntage = () => {
     const fixedInputDollarValue = parseFloat(inputDollarValue.value.replace(/,/g, ''));
     const fixedOutputDollarValue = parseFloat(outputDollarValue.value.replace(/,/g, ''));
-    const pricePercentage = 100-((fixedInputDollarValue)/(fixedOutputDollarValue)*100)
+    const pricePercentage = ((fixedOutputDollarValue)/(fixedInputDollarValue)*100)-100
     const fixedPricePercentage = pricePercentage.toFixed(2)
     return fixedPricePercentage
 }
