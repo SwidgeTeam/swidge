@@ -82,6 +82,7 @@ declare type RangoToken = {
 
 export class Rango
   implements Aggregator, OneSteppedAggregator, ExternalAggregator, MetadataProviderAggregator {
+  private enabled = false;
   private enabledChains = [
     Mainnet,
     Optimism,
@@ -114,10 +115,21 @@ export class Rango
   }
 
   isEnabledOn(fromChainId: string, toChainId: string): boolean {
-    return this.enabledChains.includes(fromChainId) && this.enabledChains.includes(toChainId);
+    return (
+      this.enabled &&
+      this.enabledChains.includes(fromChainId) &&
+      this.enabledChains.includes(toChainId)
+    );
   }
 
   public async getMetadata(): Promise<AggregatorMetadata> {
+    if (!this.enabled) {
+      return {
+        chains: [],
+        tokens: {},
+      };
+    }
+
     let chains, tokens;
     try {
       const acceptedChains = [];
@@ -167,7 +179,7 @@ export class Rango
     } catch (e) {
       this.logger.error(`Rango failed to fetch metadata: ${e}`);
       chains = [];
-      tokens = [];
+      tokens = {};
     }
 
     return {
