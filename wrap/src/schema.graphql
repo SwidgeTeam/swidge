@@ -1,7 +1,25 @@
+#import { Module, Connection } into Ethereum from "wrap://ens/ethereum.polywrap.eth"
+#import { Module, Request, Response } into HTTP from "wrap://ens/http.polywrap.eth"
+#import { Module } into Logger from "wrap://ens/js-logger.polywrap.eth"
+
 type Module {
-    sampleMethod(arg: String!): SampleResult!
+    checker(
+        connection: Ethereum_Connection
+        userArgsBuffer: Bytes!
+        gelatoArgsBuffer: Bytes!
+    ): CheckerResult!
 }
 
-type SampleResult {
-    value: String!
+type CheckerResult {
+    canExec: Boolean!
+    execData: String!
+}
+
+type UserArgs {
+    queueAddress: String!
+}
+
+type GelatoArgs {
+    gasPrice: BigInt!
+    timeStamp: BigInt!
 }
