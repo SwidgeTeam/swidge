@@ -259,7 +259,7 @@ export class Rango
       tx.txTo,
       tx.txData,
       tx.value ? BigInteger.fromString(tx.value) : BigInteger.zero(),
-      tx.gasLimit ? BigInteger.fromString(tx.gasLimit) : BigInteger.zero(),
+      tx.gasLimit ? BigInteger.fromString(tx.gasLimit) : BigInteger.fromString('600000'),
     );
 
     return new BothTxs(response.requestId, approvalTx, mainTx);
