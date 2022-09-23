@@ -82,7 +82,7 @@ declare type RangoToken = {
 
 export class Rango
   implements Aggregator, OneSteppedAggregator, ExternalAggregator, MetadataProviderAggregator {
-  private enabled = false;
+  private enabled = true;
   private enabledChains = [
     Mainnet,
     Optimism,
@@ -259,6 +259,8 @@ export class Rango
     if (response.resultType !== 'OK' || !response.tx) {
       throw new InsufficientLiquidity();
     }
+
+    console.log(response);
 
     const tx = response.tx as EvmTransaction;
 
