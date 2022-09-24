@@ -4,7 +4,7 @@ import { ensResolverPlugin } from "@polywrap/ens-resolver-plugin-js";
 import { Connection, Connections, ethereumPlugin } from "@polywrap/ethereum-plugin-js";
 import { ipfsPlugin } from "@polywrap/ipfs-plugin-js";
 import { ContractFactory, Contract, Signer, ethers } from 'ethers';
-import { abi, bytecode } from './contracts/GelatoTest';
+import { abi, bytecode } from './contracts/JobsQueue';
 
 export function getConfig(): Partial<ClientConfig> {
   return {
@@ -46,7 +46,7 @@ export async function createJob(queue: string, args: any[]): Promise<void> {
   const signer = getSigner();
   const contract = new Contract(queue, abi);
   const calldata = ethers.utils.defaultAbiCoder.encode(
-    ["address", "address", "address", "uint256", "uint256", "uint256"],
+    ["bytes16", "address", "address", "address", "uint256", "uint256", "uint256"],
     args
   );
   await contract.connect(signer).createJob(calldata);
