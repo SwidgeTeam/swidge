@@ -10,7 +10,7 @@ contract JobsQueue is Ownable {
     address public immutable gelatoOps;
     address constant NATIVE = address(0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE);
     mapping(address => bool) origins;
-    mapping(bytes32 => bool) remainingJobs;
+    mapping(bytes32 => uint256) remainingJobs; // jobId -> jobs array position
     Job[] public jobs;
 
     error UnauthorizedOrigin();
@@ -20,6 +20,7 @@ contract JobsQueue is Ownable {
     event FailedJob(string msg);
 
     struct HandlerMessage {
+        bytes16 id;
         address receiver;
         address inputAsset;
         address dstAsset;
@@ -29,6 +30,7 @@ contract JobsQueue is Ownable {
     }
 
     struct Job {
+        bytes16 id;
         address receiver;
         address inputAsset;
         address dstAsset;
@@ -36,11 +38,10 @@ contract JobsQueue is Ownable {
         uint256 amountIn;
         uint256 minAmountOut;
         uint256 position;
-        bytes32 hash;
     }
 
     struct ExecuteCall {
-        Job job;
+        bytes16 jobId;
         address handler;
         bytes data;
     }
@@ -64,28 +65,25 @@ contract JobsQueue is Ownable {
         for (uint i = 0; i < calls.length; i++) {
             // unwrap job
             ExecuteCall memory currentCall = calls[i];
-            Job memory job = currentCall.job;
-            // check job is still remaining
-            if (remainingJobs[job.hash]) {
-                // unwrap call data
-                address handler = currentCall.handler;
-                bytes memory data = currentCall.data;
+            Job storage job = jobs[remainingJobs[currentCall.jobId]];
 
+            // check job is still remaining
+            if (job.id != bytes16(0)) {
                 uint value;
                 // decide value and token approval
                 if (job.inputAsset == NATIVE) {
                     value = job.amountIn;
                 } else {
                     value = 0;
-                    SafeERC20.safeApprove(IERC20(job.inputAsset), handler, job.amountIn);
+                    SafeERC20.safeApprove(IERC20(job.inputAsset), currentCall.handler, job.amountIn);
                 }
 
                 // execute
-                (bool success, bytes memory response) = handler.call{value : value}(data);
+                (bool success, bytes memory response) = currentCall.handler.call{value : value}(currentCall.data);
 
                 if (success) {
                     delete jobs[job.position];
-                    delete remainingJobs[job.hash];
+                    delete remainingJobs[job.id];
                 }
                 else {
                     emit FailedJob(LibBytes.getRevertMsg(response));
@@ -106,32 +104,39 @@ contract JobsQueue is Ownable {
         if (handlerMsg.amountIn == 0) revert JobWithZeroAmount();
 
         uint256 currentLength = jobs.length;
-
-        bytes32 hash = keccak256(
-            abi.encode(
-                handlerMsg.receiver,
-                handlerMsg.inputAsset,
-                handlerMsg.dstAsset,
-                handlerMsg.dstChain,
-                handlerMsg.amountIn,
-                handlerMsg.minAmountOut,
-                currentLength
-            )
-        );
+        uint256 emptySlot = getEmptySlot(currentLength);
 
         Job memory job = Job(
+            handlerMsg.id,
             handlerMsg.receiver,
             handlerMsg.inputAsset,
             handlerMsg.dstAsset,
             handlerMsg.dstChain,
             handlerMsg.amountIn,
             handlerMsg.minAmountOut,
-            currentLength,
-            hash
+            emptySlot
         );
 
-        jobs.push(job);
-        remainingJobs[hash] = true;
+        if (emptySlot == currentLength) {
+            jobs.push(job);
+        }
+        else {
+            jobs[emptySlot] = job;
+        }
+        remainingJobs[job.id] = emptySlot;
+    }
+
+    /**
+     * returns the next usable slot on the jobs array
+     */
+    function getEmptyPosition(uint256 currentLength) internal returns (uint256) {
+        for (uint i = 0; i < currentLength; i++) {
+            Job storage job = jobs[i];
+            if (job.id == bytes16(0)) {
+                return i;
+            }
+        }
+        return currentLength;
     }
 
     /**
@@ -153,7 +158,7 @@ contract JobsQueue is Ownable {
         uint total = 0;
         for (uint i = 0; i < jobs.length; i++) {
             Job storage job = jobs[i];
-            if (remainingJobs[job.hash]) {
+            if (job.id != bytes16(0)) {
                 ++total;
             }
         }
@@ -162,7 +167,7 @@ contract JobsQueue is Ownable {
         total = 0;
         for (uint i = 0; i < jobs.length; i++) {
             Job storage job = jobs[i];
-            if (remainingJobs[job.hash]) {
+            if (job.id != bytes16(0)) {
                 returnJobs[total] = job;
                 ++total;
             }

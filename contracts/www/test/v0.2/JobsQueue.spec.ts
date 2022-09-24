@@ -33,8 +33,17 @@ describe("Jobs Queue", () => {
     const { owner, anyoneElse, random } = await getAccounts();
     await core.connect(owner).updateOrigins([anyoneElse.address]);
     const calldata = ethers.utils.defaultAbiCoder.encode(
-      ["address", "address", "address", "uint256", "uint256", "uint256"],
       [
+        "bytes16",
+        "address",
+        "address",
+        "address",
+        "uint256",
+        "uint256",
+        "uint256",
+      ],
+      [
+        "0xfc3838689ce844438ff358bd41f403f9",
         ethers.constants.AddressZero,
         ethers.constants.AddressZero,
         ethers.constants.AddressZero,
@@ -64,6 +73,7 @@ describe("Jobs Queue", () => {
       await core.connect(owner).updateOrigins([anyoneElse.address]);
       const inputAsset = await fakeTokenContract();
       await createJob(core, anyoneElse, [
+        "0xfc3838689ce844438ff358bd41f403f7",
         faker.finance.ethereumAddress(),
         inputAsset.address,
         faker.finance.ethereumAddress(),
@@ -72,6 +82,7 @@ describe("Jobs Queue", () => {
         90,
       ]);
       await createJob(core, anyoneElse, [
+        "0xfc3838689ce844438ff358bd41f403f8",
         faker.finance.ethereumAddress(),
         inputAsset.address,
         faker.finance.ethereumAddress(),
@@ -80,6 +91,7 @@ describe("Jobs Queue", () => {
         90,
       ]);
       await createJob(core, anyoneElse, [
+        "0xfc3838689ce844438ff358bd41f403f9",
         faker.finance.ethereumAddress(),
         inputAsset.address,
         faker.finance.ethereumAddress(),
@@ -93,37 +105,39 @@ describe("Jobs Queue", () => {
       // Arrange
       const { random, gelato } = await getAccounts();
       const jobsBefore = await core.connect(random).getPendingJobs();
-      const hash0 = jobsBefore[0].hash;
-      const hash2 = jobsBefore[2].hash;
+      const id0 = jobsBefore[0].id;
+      const id2 = jobsBefore[2].id;
 
       // Act
       await core
         .connect(gelato)
-        .executeJobs([[jobsBefore[1], faker.finance.ethereumAddress(), "0x"]]);
+        .executeJobs([
+          [jobsBefore[1].id, faker.finance.ethereumAddress(), "0x"],
+        ]);
 
       // Assert
       const jobsAfter = await core.connect(random).getPendingJobs();
       expect(jobsAfter.length).to.be.equal(2);
-      expect(jobsAfter[0].hash).to.be.equal(hash0);
-      expect(jobsAfter[1].hash).to.be.equal(hash2);
+      expect(jobsAfter[0].id).to.be.equal(id0);
+      expect(jobsAfter[1].id).to.be.equal(id2);
     });
 
     it("should remain one jobs after executing two", async () => {
       // Arrange
       const { random, gelato } = await getAccounts();
       const jobsBefore = await core.connect(random).getPendingJobs();
-      const hash2 = jobsBefore[2].hash;
+      const id2 = jobsBefore[2].id;
 
       // Act
       await core.connect(gelato).executeJobs([
-        [jobsBefore[0], faker.finance.ethereumAddress(), "0x"],
-        [jobsBefore[1], faker.finance.ethereumAddress(), "0x"],
+        [jobsBefore[0].id, faker.finance.ethereumAddress(), "0x"],
+        [jobsBefore[1].id, faker.finance.ethereumAddress(), "0x"],
       ]);
 
       // Assert
       const jobsAfter = await core.connect(random).getPendingJobs();
       expect(jobsAfter.length).to.be.equal(1);
-      expect(jobsAfter[0].hash).to.be.equal(hash2);
+      expect(jobsAfter[0].id).to.be.equal(id2);
     });
 
     it("should remain no jobs after executing three", async () => {
@@ -133,9 +147,9 @@ describe("Jobs Queue", () => {
 
       // Act
       await core.connect(gelato).executeJobs([
-        [jobsBefore[0], faker.finance.ethereumAddress(), "0x"],
-        [jobsBefore[1], faker.finance.ethereumAddress(), "0x"],
-        [jobsBefore[2], faker.finance.ethereumAddress(), "0x"],
+        [jobsBefore[0].id, faker.finance.ethereumAddress(), "0x"],
+        [jobsBefore[1].id, faker.finance.ethereumAddress(), "0x"],
+        [jobsBefore[2].id, faker.finance.ethereumAddress(), "0x"],
       ]);
 
       // Assert
@@ -147,7 +161,15 @@ describe("Jobs Queue", () => {
 
 async function createJob(core: Contract, origin: Signer, args: any) {
   const calldata = ethers.utils.defaultAbiCoder.encode(
-    ["address", "address", "address", "uint256", "uint256", "uint256"],
+    [
+      "bytes16",
+      "address",
+      "address",
+      "address",
+      "uint256",
+      "uint256",
+      "uint256",
+    ],
     args
   );
   await core.connect(origin).createJob(calldata);
