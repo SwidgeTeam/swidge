@@ -23,3 +23,8 @@ type GelatoArgs {
     gasPrice: BigInt!
     timeStamp: BigInt!
 }
+
+type JobResponse {
+    handler: String!
+    data: String!
+}
