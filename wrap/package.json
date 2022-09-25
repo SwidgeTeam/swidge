@@ -17,6 +17,7 @@
   "devDependencies": {
     "@types/jest": "27.0.3",
     "assemblyscript": "0.19.1",
+    "ethers": "^5.7.1",
     "jest": "26.6.3",
     "polywrap": "0.7.0",
     "ts-jest": "26.5.4",
