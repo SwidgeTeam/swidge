@@ -321,25 +321,6 @@ relayer-events-consumer:
 relayer-txs-consumer:
 	@$(call RELAYER,run:dev:txs-consumer)
 
-### SQSMover
-
-SQS_MOVER = \
-	@$(call DOCKER_COMPOSE_RUN,\
-		--rm \
-		-e "AWS_REGION=${AWS_REGION}" \
-		-e "AWS_ACCESS_KEY_ID=${CREATOR_AWS_ACCESS_KEY}" \
-		-e "AWS_SECRET_ACCESS_KEY=${CREATOR_AWS_SECRET_KEY}" \
-		${DOCKER_SQSMOVER_SERVICE} \
-		--source=$(1) \
-		--destination=$(2) \
-	)
-
-move-dlq-events:
-	$(call SQS_MOVER,${AWS_SQS_DEAD_EVENTS_QUEUE_NAME},${AWS_SQS_EVENTS_QUEUE_NAME})
-
-move-dlq-transactions:
-	$(call SQS_MOVER,${AWS_SQS_DEAD_TRANSACTIONS_QUEUE_NAME},${AWS_SQS_TRANSACTIONS_QUEUE_NAME})
-
 ### Terraform
 
 TERRAFORM = $(call DOCKER_COMPOSE_RUN,--rm ${DOCKER_TERRAFORM_SERVICE} $(1))
