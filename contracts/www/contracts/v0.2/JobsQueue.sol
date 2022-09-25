@@ -10,8 +10,8 @@ contract JobsQueue is Ownable {
     address public immutable gelatoOps;
     address constant NATIVE = address(0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE);
     mapping(address => bool) origins;
-    mapping(bytes32 => uint256) remainingJobs; // jobId -> jobs array position
-    Job[] public jobs;
+    mapping(bytes32 => uint256) remainingJobs; // jobId -> job array position
+    Job[] private jobs;
 
     error UnauthorizedOrigin();
     error UnauthorizedExecutor();
@@ -62,24 +62,28 @@ contract JobsQueue is Ownable {
      * @dev this is executed by Gelato Network
      */
     function executeJobs(ExecuteCall[] calldata calls) external onlyGelato {
-        for (uint i = 0; i < calls.length; i++) {
+        ExecuteCall memory currentCall;
+        Job storage job;
+        uint256 valueToSend;
+        uint256 callsLength = calls.length;
+
+        for (uint i = 0; i < callsLength; i++) {
             // unwrap job
-            ExecuteCall memory currentCall = calls[i];
-            Job storage job = jobs[remainingJobs[currentCall.jobId]];
+            currentCall = calls[i];
+            job = jobs[remainingJobs[currentCall.jobId]];
 
             // check job is still remaining
             if (job.id != bytes16(0)) {
-                uint value;
                 // decide value and token approval
                 if (job.inputAsset == NATIVE) {
-                    value = job.amountIn;
+                    valueToSend = job.amountIn;
                 } else {
-                    value = 0;
+                    valueToSend = 0;
                     SafeERC20.safeApprove(IERC20(job.inputAsset), currentCall.handler, job.amountIn);
                 }
 
                 // execute
-                (bool success, bytes memory response) = currentCall.handler.call{value : value}(currentCall.data);
+                (bool success, bytes memory response) = currentCall.handler.call{value : valueToSend}(currentCall.data);
 
                 if (success) {
                     delete jobs[job.position];
@@ -129,9 +133,10 @@ contract JobsQueue is Ownable {
     /**
      * returns the next usable slot on the jobs array
      */
-    function getEmptyPosition(uint256 currentLength) internal returns (uint256) {
+    function getEmptySlot(uint256 currentLength) internal view returns (uint256) {
+        Job storage job;
         for (uint i = 0; i < currentLength; i++) {
-            Job storage job = jobs[i];
+            job = jobs[i];
             if (job.id == bytes16(0)) {
                 return i;
             }
