@@ -18,7 +18,7 @@ export function checker(args: Args_checker): CheckerResult {
 
   const response = Ethereum_Module.callContractView({
     address: userArgs.queueAddress,
-    method: '{"inputs":[],"name":"getPendingJobs","outputs":[{"components":[{"internalType":"bytes16","name":"id","type":"bytes16"},{"internalType":"address","name":"receiver","type":"address"},{"internalType":"address","name":"inputAsset","type":"address"},{"internalType":"address","name":"dstAsset","type":"address"},{"internalType":"uint256","name":"dstChain","type":"uint256"},{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"minAmountOut","type":"uint256"},{"internalType":"uint256","name":"position","type":"uint256"}],"internalType":"struct JobsQueue.Job[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"}',
+    method: '{"inputs":[],"name":"getPendingJobs","outputs":[{"components":[{"internalType":"bytes16","name":"id","type":"bytes16"},{"internalType":"address","name":"sender","type":"address"},{"internalType":"address","name":"receiver","type":"address"},{"internalType":"address","name":"inputAsset","type":"address"},{"internalType":"address","name":"dstAsset","type":"address"},{"internalType":"uint256","name":"srcChain","type":"uint256"},{"internalType":"uint256","name":"dstChain","type":"uint256"},{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"minAmountOut","type":"uint256"}],"internalType":"struct JobsQueue.ExecuteJob[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"}',
     args: null,
     connection: args.connection,
   }).unwrap();
