@@ -159,43 +159,6 @@ db-ormconfig:
 db-add-tokens:
 	@$(call DOCKER_COMPOSE_RUN, --rm ${DOCKER_API_SERVICE} add-tokens)
 
-### Localstack
-
-AWS_CLI = \
-	@$(call DOCKER, run \
-		--network ${DOCKER_NETWORK_NAME} \
-		--rm -it \
-		-e "AWS_DEFAULT_REGION=${AWS_SQS_REGION}" \
-		-e "AWS_ACCESS_KEY_ID=${AWS_SQS_ACCESS_KEY}" \
-		-e "AWS_SECRET_ACCESS_KEY=${AWS_SQS_SECRET}" \
-		$(2) \
-		amazon/aws-cli \
-		--endpoint-url=http://${DOCKER_LOCALSTACK_SERVICE}:${LOCALSTACK_PORT} \
-		$(1) \
-	)
-
-AWS_CLI_MESSAGE = \
-	@$(call AWS_CLI,\
-		$(1),\
-		-v $(PWD)/relayer/message.json:/message.json\
-	)
-
-create-queues:
-	@$(call AWS_CLI, sqs create-queue --queue-name ${AWS_SQS_EVENTS_QUEUE_NAME} --attributes '{"FifoQueue": "True"}')
-	@$(call AWS_CLI, sqs create-queue --queue-name ${AWS_SQS_TRANSACTIONS_QUEUE_NAME} --attributes '{"FifoQueue": "True"}')
-
-list-queues:
-	@$(call AWS_CLI, sqs list-queues)
-
-send-message:
-	@$(call AWS_CLI_MESSAGE, sqs send-message \
- 		--queue-url ${AWS_SQS_QUEUE_URL} \
- 		--message-body '' \
- 		--message-deduplication-id '' \
- 		--message-group-id '' \
- 		--message-attributes file:///message.json \
- 	)
-
 ### Contracts
 
 CONTRACTS = $(call DOCKER_COMPOSE_RUN,--rm ${DOCKER_CONTRACTS_SERVICE} $(1))
@@ -346,7 +309,7 @@ $(addprefix udf-, ${ENABLED_NETWORKS}): udf-%:
 
 RELAYER = $(call DOCKER_COMPOSE_RUN,--rm ${DOCKER_RELAYER_SERVICE} $(1))
 
-relayer-router-listener: create-queues
+relayer-router-listener:
 	@$(call RELAYER,run:dev:router-listener)
 
 relayer-multichain-listener:
