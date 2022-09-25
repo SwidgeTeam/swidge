@@ -4,15 +4,14 @@ pragma solidity ^0.8.17;
 import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 import './libraries/LibBytes.sol';
-import 'hardhat/console.sol';
 
 
 contract JobsQueue is Ownable {
     address public immutable gelatoOps;
     address constant NATIVE = address(0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE);
     mapping(address => bool) origins;
-    mapping(bytes32 => uint256) remainingJobs; // jobId -> jobs array position
-    Job[] public jobs;
+    mapping(bytes32 => uint256) remainingJobs; // jobId -> job array position
+    Job[] private jobs;
 
     error UnauthorizedOrigin();
     error UnauthorizedExecutor();
@@ -41,6 +40,18 @@ contract JobsQueue is Ownable {
         uint256 position;
     }
 
+    struct ExecuteJob {
+        bytes16 id;
+        address sender;
+        address receiver;
+        address inputAsset;
+        address dstAsset;
+        uint256 srcChain;
+        uint256 dstChain;
+        uint256 amountIn;
+        uint256 minAmountOut;
+    }
+
     struct ExecuteCall {
         bytes16 jobId;
         address handler;
@@ -63,24 +74,28 @@ contract JobsQueue is Ownable {
      * @dev this is executed by Gelato Network
      */
     function executeJobs(ExecuteCall[] calldata calls) external onlyGelato {
-        for (uint i = 0; i < calls.length; i++) {
+        ExecuteCall memory currentCall;
+        Job storage job;
+        uint256 valueToSend;
+        uint256 callsLength = calls.length;
+
+        for (uint i = 0; i < callsLength; i++) {
             // unwrap job
-            ExecuteCall memory currentCall = calls[i];
-            Job storage job = jobs[remainingJobs[currentCall.jobId]];
+            currentCall = calls[i];
+            job = jobs[remainingJobs[currentCall.jobId]];
 
             // check job is still remaining
             if (job.id != bytes16(0)) {
-                uint value;
                 // decide value and token approval
                 if (job.inputAsset == NATIVE) {
-                    value = job.amountIn;
+                    valueToSend = job.amountIn;
                 } else {
-                    value = 0;
+                    valueToSend = 0;
                     SafeERC20.safeApprove(IERC20(job.inputAsset), currentCall.handler, job.amountIn);
                 }
 
                 // execute
-                (bool success, bytes memory response) = currentCall.handler.call{value : value}(currentCall.data);
+                (bool success, bytes memory response) = currentCall.handler.call{value : valueToSend}(currentCall.data);
 
                 if (success) {
                     delete jobs[job.position];
@@ -104,6 +119,9 @@ contract JobsQueue is Ownable {
 
         if (handlerMsg.amountIn == 0) revert JobWithZeroAmount();
 
+        uint256 currentLength = jobs.length;
+        uint256 emptySlot = getEmptySlot(currentLength);
+
         Job memory job = Job(
             handlerMsg.id,
             handlerMsg.receiver,
@@ -112,11 +130,10 @@ contract JobsQueue is Ownable {
             handlerMsg.dstChain,
             handlerMsg.amountIn,
             handlerMsg.minAmountOut,
-            jobs.length
+            emptySlot
         );
 
-        uint256 emptySlot = getNextEmptySlot();
-        if (emptySlot == jobs.length) {
+        if (emptySlot == currentLength) {
             jobs.push(job);
         }
         else {
@@ -128,14 +145,15 @@ contract JobsQueue is Ownable {
     /**
      * returns the next usable slot on the jobs array
      */
-    function getNextEmptySlot() internal returns (uint256) {
-        for (uint i = 0; i < jobs.length; i++) {
-            Job storage job = jobs[i];
+    function getEmptySlot(uint256 currentLength) internal view returns (uint256) {
+        Job storage job;
+        for (uint i = 0; i < currentLength; i++) {
+            job = jobs[i];
             if (job.id == bytes16(0)) {
                 return i;
             }
         }
-        return jobs.length;
+        return currentLength;
     }
 
     /**
@@ -152,7 +170,7 @@ contract JobsQueue is Ownable {
      * @dev this function is only called from off-chain actor
      * @dev so we can afford to be a bit inefficient to get the list
      */
-    function getPendingJobs() external view returns (Job[] memory) {
+    function getPendingJobs() external view returns (ExecuteJob[] memory) {
         // compute array size
         uint total = 0;
         for (uint i = 0; i < jobs.length; i++) {
@@ -161,13 +179,23 @@ contract JobsQueue is Ownable {
                 ++total;
             }
         }
-        Job[] memory returnJobs = new Job[](total);
+        ExecuteJob[] memory returnJobs = new ExecuteJob[](total);
         // fill array
         total = 0;
         for (uint i = 0; i < jobs.length; i++) {
             Job storage job = jobs[i];
             if (job.id != bytes16(0)) {
-                returnJobs[total] = job;
+                returnJobs[total] = ExecuteJob(
+                    job.id,
+                    address(this),
+                    job.receiver,
+                    job.inputAsset,
+                    job.dstAsset,
+                    block.chainid,
+                    job.dstChain,
+                    job.amountIn,
+                    job.minAmountOut
+                );
                 ++total;
             }
         }

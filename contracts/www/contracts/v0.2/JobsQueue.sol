@@ -40,6 +40,18 @@ contract JobsQueue is Ownable {
         uint256 position;
     }
 
+    struct ExecuteJob {
+        bytes16 id;
+        address sender;
+        address receiver;
+        address inputAsset;
+        address dstAsset;
+        uint256 srcChain;
+        uint256 dstChain;
+        uint256 amountIn;
+        uint256 minAmountOut;
+    }
+
     struct ExecuteCall {
         bytes16 jobId;
         address handler;
@@ -158,7 +170,7 @@ contract JobsQueue is Ownable {
      * @dev this function is only called from off-chain actor
      * @dev so we can afford to be a bit inefficient to get the list
      */
-    function getPendingJobs() external view returns (Job[] memory) {
+    function getPendingJobs() external view returns (ExecuteJob[] memory) {
         // compute array size
         uint total = 0;
         for (uint i = 0; i < jobs.length; i++) {
@@ -167,13 +179,23 @@ contract JobsQueue is Ownable {
                 ++total;
             }
         }
-        Job[] memory returnJobs = new Job[](total);
+        ExecuteJob[] memory returnJobs = new ExecuteJob[](total);
         // fill array
         total = 0;
         for (uint i = 0; i < jobs.length; i++) {
             Job storage job = jobs[i];
             if (job.id != bytes16(0)) {
-                returnJobs[total] = job;
+                returnJobs[total] = ExecuteJob(
+                    job.id,
+                    address(this),
+                    job.receiver,
+                    job.inputAsset,
+                    job.dstAsset,
+                    block.chainid,
+                    job.dstChain,
+                    job.amountIn,
+                    job.minAmountOut
+                );
                 ++total;
             }
         }
