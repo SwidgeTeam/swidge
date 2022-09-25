@@ -3,7 +3,9 @@ import {
   Args_checker,
   CheckerResult,
   Ethereum_Module,
-  GelatoArgs, JobResponse,
+  Http_Module,
+  GelatoArgs,
+  JobResponse,
   Logger_Logger_LogLevel,
   Logger_Module,
   UserArgs
@@ -57,6 +59,19 @@ export function checker(args: Args_checker): CheckerResult {
 }
 
 function getCallData(job: JSON.Obj): JobResponse {
+  job.get('sender');
+  job.get('receiver');
+  job.get('inputAsset');
+  job.get('dstAsset');
+  job.get('srcAsset');
+  job.get('dstChain');
+  job.get('amountIn');
+  job.get('minAmountOut');
+  let jobResponse = Http_Module.get({
+    request: null,
+    url: 'https://api.swidge.xyz/',
+  }).unwrap();
+
   return {
     handler: '0x2323412312312312312312312312312312312312',
     data: '0x',
