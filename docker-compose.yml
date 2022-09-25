@@ -19,12 +19,6 @@ services:
     build:
       context: front/
     environment:
-      VITE_APP_RPC_NODE_MAINNET: ${mainnet_RPC_NODE}
-      VITE_APP_RPC_NODE_POLYGON: ${polygon_RPC_NODE}
-      VITE_APP_RPC_NODE_FANTOM: ${fantom_RPC_NODE}
-      VITE_APP_RPC_NODE_BSC: ${bsc_RPC_NODE}
-      VITE_APP_RPC_NODE_AVALANCHE: ${avalanche_RPC_NODE}
-      VITE_APP_RPC_NODE_OPTIMISM: ${optimism_RPC_NODE}
       VITE_APP_API_HOST: ${API_URL}
     ports:
       - ${FRONT_APP_PORT}:3000
