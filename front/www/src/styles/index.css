@@ -162,7 +162,7 @@
     }
 
     .routes-container {
-        @apply flex flex-col pt-3 pb-3 gap-2 px-1
+        @apply flex flex-col pt-3 pb-3 px-1
         border-t border-[#34313D]
         overflow-y-auto overflow-x-hidden
         max-h-[var(--routes-box-height)]

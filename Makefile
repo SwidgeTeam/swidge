@@ -120,10 +120,7 @@ test-api:
 test-api-e2e:
 	@$(call DOCKER_COMPOSE_RUN,--rm ${DOCKER_API_SERVICE} test:e2e)
 
-test-relayer:
-	@$(call DOCKER_COMPOSE_RUN,--rm ${DOCKER_RELAYER_SERVICE} test)
-
-test: test-front test-api test-relayer test-contracts
+test: test-front test-api test-contracts
 
 ### Database
 
@@ -161,43 +158,6 @@ db-ormconfig:
 
 db-add-tokens:
 	@$(call DOCKER_COMPOSE_RUN, --rm ${DOCKER_API_SERVICE} add-tokens)
-
-### Localstack
-
-AWS_CLI = \
-	@$(call DOCKER, run \
-		--network ${DOCKER_NETWORK_NAME} \
-		--rm -it \
-		-e "AWS_DEFAULT_REGION=${AWS_SQS_REGION}" \
-		-e "AWS_ACCESS_KEY_ID=${AWS_SQS_ACCESS_KEY}" \
-		-e "AWS_SECRET_ACCESS_KEY=${AWS_SQS_SECRET}" \
-		$(2) \
-		amazon/aws-cli \
-		--endpoint-url=http://${DOCKER_LOCALSTACK_SERVICE}:${LOCALSTACK_PORT} \
-		$(1) \
-	)
-
-AWS_CLI_MESSAGE = \
-	@$(call AWS_CLI,\
-		$(1),\
-		-v $(PWD)/relayer/message.json:/message.json\
-	)
-
-create-queues:
-	@$(call AWS_CLI, sqs create-queue --queue-name ${AWS_SQS_EVENTS_QUEUE_NAME} --attributes '{"FifoQueue": "True"}')
-	@$(call AWS_CLI, sqs create-queue --queue-name ${AWS_SQS_TRANSACTIONS_QUEUE_NAME} --attributes '{"FifoQueue": "True"}')
-
-list-queues:
-	@$(call AWS_CLI, sqs list-queues)
-
-send-message:
-	@$(call AWS_CLI_MESSAGE, sqs send-message \
- 		--queue-url ${AWS_SQS_QUEUE_URL} \
- 		--message-body '' \
- 		--message-deduplication-id '' \
- 		--message-group-id '' \
- 		--message-attributes file:///message.json \
- 	)
 
 ### Contracts
 
@@ -349,7 +309,7 @@ $(addprefix udf-, ${ENABLED_NETWORKS}): udf-%:
 
 RELAYER = $(call DOCKER_COMPOSE_RUN,--rm ${DOCKER_RELAYER_SERVICE} $(1))
 
-relayer-router-listener: create-queues
+relayer-router-listener:
 	@$(call RELAYER,run:dev:router-listener)
 
 relayer-multichain-listener:
@@ -360,25 +320,6 @@ relayer-events-consumer:
 
 relayer-txs-consumer:
 	@$(call RELAYER,run:dev:txs-consumer)
-
-### SQSMover
-
-SQS_MOVER = \
-	@$(call DOCKER_COMPOSE_RUN,\
-		--rm \
-		-e "AWS_REGION=${AWS_REGION}" \
-		-e "AWS_ACCESS_KEY_ID=${CREATOR_AWS_ACCESS_KEY}" \
-		-e "AWS_SECRET_ACCESS_KEY=${CREATOR_AWS_SECRET_KEY}" \
-		${DOCKER_SQSMOVER_SERVICE} \
-		--source=$(1) \
-		--destination=$(2) \
-	)
-
-move-dlq-events:
-	$(call SQS_MOVER,${AWS_SQS_DEAD_EVENTS_QUEUE_NAME},${AWS_SQS_EVENTS_QUEUE_NAME})
-
-move-dlq-transactions:
-	$(call SQS_MOVER,${AWS_SQS_DEAD_TRANSACTIONS_QUEUE_NAME},${AWS_SQS_TRANSACTIONS_QUEUE_NAME})
 
 ### Terraform
 
@@ -415,7 +356,6 @@ $(addprefix setup-instances-, test prod): setup-instances-%:
 	@$(call RUN_PLAYBOOK_GLOBAL,$*,docker.yml)
 	@$(call RUN_PLAYBOOK_GLOBAL,$*,profile.yml)
 	@$(call RUN_PLAYBOOK_ON_SERVICE,$*,api,setup_node_files.yml)
-	@$(call RUN_PLAYBOOK_ON_SERVICE,$*,relayer,setup_node_files.yml)
 	@$(call RUN_PLAYBOOK_ON_SERVICE,$*,grafana,setup_node_files.yml)
 
 ### Grafana

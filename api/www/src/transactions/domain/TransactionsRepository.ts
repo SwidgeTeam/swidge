@@ -8,5 +8,7 @@ export interface TransactionsRepository {
 
   find(txHash: string): Promise<Transaction | null>;
 
+  getPending(): Promise<Transactions>;
+
   findAllBy(walletAddress: string): Promise<Transactions>;
 }

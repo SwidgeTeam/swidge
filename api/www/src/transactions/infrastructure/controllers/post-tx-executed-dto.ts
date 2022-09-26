@@ -20,10 +20,16 @@ export class PostTxExecutedDto {
   @IsEthereumAddress()
   toAddress: string;
 
+  @IsEthereumAddress()
+  fromToken: string;
+
+  @IsString()
+  @IsNotEmpty()
+  amountIn: string;
+
   @IsTxHash()
   txHash: string;
 
   @IsString()
-  @IsNotEmpty()
   trackingId: string;
 }

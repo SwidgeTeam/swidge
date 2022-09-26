@@ -9,7 +9,7 @@ import { RouteStep } from '../../../shared/domain/route/route-step';
 import { Token } from '../../../shared/domain/token';
 import { ProviderDetails } from '../../../shared/domain/provider-details';
 import { InsufficientLiquidity } from '../../../swaps/domain/insufficient-liquidity';
-import { QuotePath } from 'rango-sdk-basic/lib/types/api/common';
+import { QuotePath, QuoteSimulationResult } from 'rango-sdk-basic/lib/types/api/common';
 import {
   Arbitrum,
   Aurora,
@@ -81,8 +81,8 @@ declare type RangoToken = {
 };
 
 export class Rango
-  implements Aggregator, OneSteppedAggregator, ExternalAggregator, MetadataProviderAggregator
-{
+  implements Aggregator, OneSteppedAggregator, ExternalAggregator, MetadataProviderAggregator {
+  private enabled = true;
   private enabledChains = [
     Mainnet,
     Optimism,
@@ -115,10 +115,21 @@ export class Rango
   }
 
   isEnabledOn(fromChainId: string, toChainId: string): boolean {
-    return this.enabledChains.includes(fromChainId) && this.enabledChains.includes(toChainId);
+    return (
+      this.enabled &&
+      this.enabledChains.includes(fromChainId) &&
+      this.enabledChains.includes(toChainId)
+    );
   }
 
   public async getMetadata(): Promise<AggregatorMetadata> {
+    if (!this.enabled) {
+      return {
+        chains: [],
+        tokens: {},
+      };
+    }
+
     let chains, tokens;
     try {
       const acceptedChains = [];
@@ -168,7 +179,7 @@ export class Rango
     } catch (e) {
       this.logger.error(`Rango failed to fetch metadata: ${e}`);
       chains = [];
-      tokens = [];
+      tokens = {};
     }
 
     return {
@@ -202,7 +213,7 @@ export class Rango
 
     const aggregatorDetails = new AggregatorDetails(AggregatorProviders.Rango, '', true, true);
 
-    const steps = this.buildSteps(request.amountIn, response.route.path);
+    const steps = this.buildSteps(request.amountIn, response.route);
     const fees = this.buildFees(response.route.fee);
 
     const amountOut = BigInteger.fromString(response.route.outputAmount);
@@ -248,6 +259,8 @@ export class Rango
     if (response.resultType !== 'OK' || !response.tx) {
       throw new InsufficientLiquidity();
     }
+
+    console.log(response);
 
     const tx = response.tx as EvmTransaction;
 
@@ -345,13 +358,73 @@ export class Rango
     return new RouteFees(amountWei, feesInUsd.toString());
   }
 
+  private buildSteps(generalAmountIn: BigInteger, route: QuoteSimulationResult): RouteSteps {
+    if (route.path) {
+      return this.buildMultiSteps(generalAmountIn, route.path);
+    } else {
+      return this.buildSingleSteps(generalAmountIn, route);
+    }
+  }
+
+  /**
+   * Builds the whole set of steps
+   * @param generalAmountIn
+   * @param route
+   * @private
+   */
+  private buildSingleSteps(generalAmountIn: BigInteger, route: QuoteSimulationResult): RouteSteps {
+    const fromToken = new Token(
+      // @ts-ignore
+      this.getChainId(route.from.blockchain),
+      // @ts-ignore
+      route.from.symbol,
+      // @ts-ignore
+      this.fromProviderAddress(route.from.address),
+      // @ts-ignore
+      route.from.decimals,
+      // @ts-ignore
+      route.from.symbol,
+      // @ts-ignore
+      route.from.image,
+    );
+    const toToken = new Token(
+      // @ts-ignore
+      this.getChainId(route.to.blockchain),
+      // @ts-ignore
+      route.to.symbol,
+      // @ts-ignore
+      this.fromProviderAddress(route.to.address),
+      // @ts-ignore
+      route.to.decimals,
+      // @ts-ignore
+      route.to.symbol,
+      // @ts-ignore
+      route.to.image,
+    );
+    const details = new ProviderDetails(route.swapper.title, route.swapper.logo);
+    const amountOut = BigInteger.fromString(route.outputAmount);
+    //const feeInUSD = step.gasFees.feesInUsd.toString();
+
+    const step = new RouteStep(
+      RouteStep.TYPE_SWAP,
+      details,
+      fromToken,
+      toToken,
+      generalAmountIn,
+      amountOut,
+      '',
+      route.estimatedTimeInSeconds,
+    );
+    return new RouteSteps([step]);
+  }
+
   /**
    * Builds the whole set of steps
    * @param generalAmountIn
    * @param steps
    * @private
    */
-  private buildSteps(generalAmountIn: BigInteger, steps: QuotePath[]): RouteSteps {
+  private buildMultiSteps(generalAmountIn: BigInteger, steps: QuotePath[]): RouteSteps {
     const items: RouteStep[] = [];
     for (const step of steps) {
       const amountIn = items.length > 0 ? items[items.length - 1].amountOut : generalAmountIn;

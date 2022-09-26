@@ -35,9 +35,6 @@ locals {
     cidrsubnet(var.vpc_cidr, 4, 1),
     cidrsubnet(var.vpc_cidr, 4, 2),
   ]
-  relayer_public_subnets_cidr = [
-    cidrsubnet(var.vpc_cidr, 4, 3),
-  ]
   db_private_subnets_cidr = [
     cidrsubnet(var.vpc_cidr, 4, 4),
     cidrsubnet(var.vpc_cidr, 4, 5),
@@ -117,26 +114,6 @@ module "api" {
   scrapper_ips        = module.grafana.public_ip
 }
 
-module "relayer" {
-  source = "./blocks/relayer"
-
-  ami_id                  = var.ami_id
-  region                  = var.region
-  environment             = var.environment
-  vpc_id                  = module.my_vpc.vpc_id
-  public_subnets_cidr     = local.relayer_public_subnets_cidr
-  availability_zones      = local.availability_zones
-  internet_gateway_id     = aws_internet_gateway.igw.id
-  instance_type           = var.relayer_instance_type
-  transactions_queue      = var.transactions_queue
-  transactions_dead_queue = var.transactions_dead_queue
-  events_queue            = var.events_queue
-  events_dead_queue       = var.events_dead_queue
-  relayer_account_arn     = aws_iam_user.relayer.arn
-  key_name                = local.instances_key_name
-  scrapper_ips            = module.grafana.public_ip
-}
-
 module "grafana" {
   source = "./blocks/grafana"
 
@@ -152,7 +129,6 @@ module "grafana" {
   key_name            = local.instances_key_name
   allowed_ips         = concat(
     module.api.public_ip,
-    module.relayer.public_ip
   )
 }
 
@@ -183,10 +159,6 @@ module "database" {
 
 resource "aws_iam_user" "deployer" {
   name = "github-deployer-${var.environment}"
-}
-
-resource "aws_iam_user" "relayer" {
-  name = "relayer-queuer-${var.environment}"
 }
 
 resource "aws_iam_user_policy" "create_invalidations" {
@@ -271,26 +243,6 @@ output "api_public_ip" {
   value = module.api.public_ip
 }
 
-output "relayer_public_ip" {
-  value = module.relayer.public_ip
-}
-
 output "grafana_public_ip" {
   value = module.grafana.public_ip
-}
-
-output "transactions_queue" {
-  value = module.relayer.transactions_queue
-}
-
-output "events_queue" {
-  value = module.relayer.events_queue
-}
-
-output "dead_transactions_queue" {
-  value = module.relayer.dead_transactions_queue
-}
-
-output "dead_events_queue" {
-  value = module.relayer.dead_events_queue
 }

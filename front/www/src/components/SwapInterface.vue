@@ -18,8 +18,9 @@ import FromToArrow from '@/components/Buttons/FromToArrow.vue'
 import { IToken } from '@/domain/metadata/Metadata'
 import RecipientUserCard from '@/components/RecipientUserCard.vue'
 import { storeToRefs } from 'pinia'
-import { ethers } from 'ethers'
 import { indexedErrors } from '@/api/models/get-quote'
+import { useGtm } from '@gtm-support/vue-gtm'
+import AmountFormatter from '@/domain/shared/AmountFormatter'
 
 const web3Store = useWeb3Store()
 const routesStore = useRoutesStore()
@@ -27,9 +28,9 @@ const transactionStore = useTransactionStore()
 const { isValidReceiverAddress } = storeToRefs(routesStore)
 const { isConnected } = storeToRefs(web3Store)
 const toast = useToast()
+const gtm = useGtm()
 
 const sourceTokenAmount = ref<string>('')
-const sourceTokenMaxAmount = ref<string>('')
 
 const isModalTokensOpen = ref(false)
 const isSourceChainToken = ref(false)
@@ -65,6 +66,17 @@ const unsetButtonAlert = () => {
     showTransactionAlert.value = false
 }
 
+const emitEventGTMTransaction = () => {
+    const token = routesStore.getOriginToken()
+    const amount =sourceTokenAmount.value
+    const dollarAmount = Number(amount) * Number(token?.price)
+    const fixedAmount = AmountFormatter.format(dollarAmount.toString())
+    gtm?.trackEvent({
+        event: 'transaction',
+        value: fixedAmount,
+    })
+}
+
 watch(isValidReceiverAddress, (isValid) => {
     if (!isValid) {
         setButtonAlert('Invalid receiver')
@@ -75,11 +87,15 @@ watch(isValidReceiverAddress, (isValid) => {
 
 watch(isConnected, (connected) => {
     if (connected) {
-        if (shouldQuote()) {
-            onQuote()
-        }
+        tryToQuote()
     }
 })
+
+const tryToQuote = () => {
+    if (shouldQuote()) {
+        onQuote()
+    }
+}
 
 const destinationChainSelected = computed({
     get: () => {
@@ -101,9 +117,7 @@ const shouldQuote = () => {
  * Handles the update of the amount on the origin amount
  */
 const handleSourceInputChanged = () => {
-    if (shouldQuote()) {
-        onQuote()
-    }
+    tryToQuote()
 }
 
 /**
@@ -130,7 +144,7 @@ const handleUpdateTokenFromModal = (token: IToken) => {
         if (selectedOriginChainId != token.chainId) {
             // If network and token of source and destination are the same, switch inputs instead of setting new ones.
             if (token.chainId == selectedDestinationChainId && token.address == selectedDestinationTokenAddress) {
-                switchHandlerFunction(token)
+                switchHandlerFunction()
             } else {
                 updateOriginToken(token)
             }
@@ -139,7 +153,7 @@ const handleUpdateTokenFromModal = (token: IToken) => {
         }
     } else {
         if (token.chainId == selectedOriginChainId && token.address == selectedOriginTokenAddress) {
-            switchHandlerFunction(token)
+            switchHandlerFunction()
         } else {
             // Update token details
             routesStore.selectDestinationToken(token.chainId, token.address)
@@ -147,9 +161,7 @@ const handleUpdateTokenFromModal = (token: IToken) => {
     }
 
     // Check if we can quote
-    if (shouldQuote()) {
-        onQuote()
-    }
+    tryToQuote()
 
     // Close modal
     isModalTokensOpen.value = false
@@ -169,27 +181,16 @@ const updateOriginToken = async (token: IToken) => {
         // Reset amount
         sourceTokenAmount.value = ''
         // Check user's token balance
-        sourceTokenMaxAmount.value = ethers.utils.formatUnits(token.balance, token.decimals)
     }
 }
 
 /**
  * Sets the transition variable switchDestinationChain to Current source Chain info
  */
-const switchHandlerFunction = (token: IToken | undefined) => {
+const switchHandlerFunction = () => {
     routesStore.switchTokens()
     sourceTokenAmount.value = ''
     isExecuteButtonDisabled.value = true
-    if (token) {
-        sourceTokenMaxAmount.value = ethers.utils.formatUnits(token.balance, token.decimals)
-    } else {
-        sourceTokenMaxAmount.value = '0'
-    }
-}
-
-const onSwitchArrowClick = () => {
-    const destinationToken = routesStore.getDestinationToken()
-    switchHandlerFunction(destinationToken)
 }
 
 /**
@@ -209,7 +210,7 @@ const onQuote = async () => {
         const thereAreRoutes = routesStore.getAllRoutes.length > 0
         if (!thereAreRoutes) {
             isExecuteButtonDisabled.value = false
-        } else if (Number(sourceTokenAmount.value) > Number(sourceTokenMaxAmount.value)) {
+        } else if (Number(sourceTokenAmount.value) > Number(routesStore.getSelectedTokenBalance)) {
             setButtonAlert('Insufficient Balance')
         } else {
             isExecuteButtonDisabled.value = false
@@ -264,6 +265,7 @@ const onExecuteTransaction = async () => {
     await promise
         .then((txHash: TxHash) => {
             onInitialTxCompleted(route, txHash)
+            emitEventGTMTransaction()
         })
         .catch((error) => {
             console.log(error)
@@ -372,6 +374,11 @@ const openTransactionStatusModal = () => {
 const closeModalStatus = () => {
     isModalStatusOpen.value = false
 }
+
+const handleChangedReceiver = (address: string) => {
+    routesStore.setReceiverAddress(address)
+    tryToQuote()
+}
 </script>
 
 <template>
@@ -389,12 +396,11 @@ const closeModalStatus = () => {
         <div class="flex flex-col">
             <SendingBox
                 v-model:value="sourceTokenAmount"
-                :balance="sourceTokenMaxAmount"
                 @input-changed="handleSourceInputChanged"
                 @select-token="() => handleOpenTokenList(true)"
             />
             <FromToArrow
-                @switch-tokens="onSwitchArrowClick"
+                @switch-tokens="switchHandlerFunction"
             />
             <ReceivingBox
                 @select-token="() => handleOpenTokenList(false)"
@@ -402,6 +408,7 @@ const closeModalStatus = () => {
         </div>
         <RecipientUserCard
             v-if="destinationChainSelected"
+            @changed-receiver="handleChangedReceiver"
         />
         <ActionButton
             :text="buttonLabel"

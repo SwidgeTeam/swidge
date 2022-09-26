@@ -34,11 +34,6 @@ variable "api_instance_type" {
   description = "API instance type"
 }
 
-variable "relayer_instance_type" {
-  type        = string
-  description = "Relayer instance type"
-}
-
 variable "grafana_instance_type" {
   type        = string
   description = "Grafana instance type"
@@ -57,26 +52,6 @@ variable "database_username" {
 variable "database_password" {
   type        = string
   description = "The database password"
-}
-
-variable "transactions_queue" {
-  type        = string
-  description = "Name of the queue for the processed transactions"
-}
-
-variable "events_queue" {
-  type        = string
-  description = "Name of the queue for the incoming events"
-}
-
-variable "transactions_dead_queue" {
-  type        = string
-  description = "Name of the transactions DLQ"
-}
-
-variable "events_dead_queue" {
-  type        = string
-  description = "Name of the events DLQ"
 }
 
 variable "instances_key" {

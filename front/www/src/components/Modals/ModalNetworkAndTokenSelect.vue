@@ -168,7 +168,7 @@ const fetchToken = async (network: IChain, address: string): Promise<IToken | un
             decimals: decimals[0],
             logo: '',
             price: '0',
-            balance: balance,
+            balance: balance[0],
         }
     } catch (e) {
         // nothing to return

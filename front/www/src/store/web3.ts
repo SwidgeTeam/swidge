@@ -75,9 +75,8 @@ export const useWeb3Store = defineStore('web3', () => {
         if (!wallet.value) throw new Error('No wallet')
         wallet.value.setListeners()
         const accounts = await wallet.value.getConnectedAccounts()
-        onConnect(accounts[0])
+        await onConnect(accounts[0])
         selectedNetworkId.value = await wallet.value.getCurrentChain()
-
     }
 
     async function disconnect() {
@@ -156,6 +155,9 @@ export const useWeb3Store = defineStore('web3', () => {
             return
         }
         const chain = metadataStore.getChain(chainId)
+        if (!chain) {
+            throw new Error('Unsupported chain')
+        }
         const changed = await wallet.value.switchNetwork(chain)
         if (changed) {
             selectedNetworkId.value = chainId
@@ -235,11 +237,11 @@ export const useWeb3Store = defineStore('web3', () => {
      * triggered when the wallet connects an account
      * @param address
      */
-    function onConnect(address: string) {
+    async function onConnect(address: string) {
         account.value = address
         routesStore.setReceiverAddress(address)
         isConnected.value = true
-        metadataStore.fetchBalances(address)
+        await metadataStore.fetchBalances(address)
     }
 
     /**
@@ -258,7 +260,7 @@ export const useWeb3Store = defineStore('web3', () => {
         if (!wallet.value) throw new Error('No wallet')
         isConnected.value = true
         const accounts = await wallet.value.getConnectedAccounts()
-        onConnect(accounts[0])
+        await onConnect(accounts[0])
         selectedNetworkId.value = chainId
         await checkIfCorrectNetwork()
     }
@@ -270,6 +272,9 @@ export const useWeb3Store = defineStore('web3', () => {
      */
     function getChainProvider(chainId: string) {
         const chain = metadataStore.getChain(chainId)
+        if (!chain) {
+            throw new Error('Unsupported chain')
+        }
         return ethers.getDefaultProvider({
             name: chain.name,
             chainId: Number(chain.id),

@@ -19,14 +19,12 @@ import { BigInteger } from '../../../shared/domain/big-integer';
 @CommandHandler(ExecutedTxCommand)
 export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
   private aggregators: Map<string, ExternalAggregator>;
-  private intervals: Map<string, ReturnType<typeof setInterval>>;
 
   constructor(
     private readonly configService: ConfigService,
     @Inject(Class.TransactionRepository) private readonly repository: TransactionsRepository,
     @Inject(Class.Logger) private readonly logger: Logger,
   ) {
-    this.intervals = new Map<string, ReturnType<typeof setInterval>>();
     this.aggregators = new Map<string, ExternalAggregator>([
       [AggregatorProviders.LiFi, LiFi.create(logger)],
       [AggregatorProviders.Rango, Rango.create(configService.getRangoApiKey(), logger)],
@@ -103,17 +101,15 @@ export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
     try {
       this.logger.log(`Processing cross chain tx ${command.txHash}...`);
 
-      const status = await this.checkTxStatus(command);
-
       const tx = Transaction.create(
         command.txHash,
         command.fromAddress,
         command.toAddress,
         command.fromChain,
         command.toChain,
-        status.fromToken,
+        command.fromToken,
         '',
-        status.amountIn,
+        BigInteger.fromString(command.amountIn),
         BigInteger.zero(),
         ExternalTransactionStatus.Pending,
         command.aggregatorId,
@@ -124,63 +120,13 @@ export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
       this.logger.error(`cross chain tx ${command.txHash} processing failed: ${e}`);
       // this needs to succeed
       await this.processCrossChainTx(command);
-      return;
     }
-
-    // sets interval to keep checking until resolved
-    const interval = setInterval(() => {
-      this.recheckTx(command);
-    }, 5000);
-
-    this.intervals.set(command.txHash, interval);
-  }
-
-  /**
-   * This method will be called until the transaction reaches a state of resolution
-   * @param command
-   * @private
-   */
-  private async recheckTx(command: ExecutedTxCommand) {
-    try {
-      this.logger.log(`Rechecking tx ${command.txHash}...`);
-
-      const status = await this.checkTxStatus(command);
-
-      if (status.status !== ExternalTransactionStatus.Pending) {
-        const tx = await this.repository.find(command.txHash);
-        this.logger.log(`tx ${command.txHash} found`);
-
-        tx.markAsCompleted(new Date())
-          .setDestinationToken(status.toToken)
-          .setAmountOut(status.amountOut)
-          .setDestinationTxHash(status.dstTxHash)
-          .setStatus(status.status);
-        await this.repository.update(tx);
-
-        this.removeInterval(command.txHash);
-        this.logger.log(`tx ${command.txHash} finished w/ status ${status.status}`);
-      } else {
-        this.logger.log(`${command.txHash} still pending`);
-      }
-    } catch (e) {
-      this.logger.error(`Rechecking tx ${command.txHash} failed: ${e}`);
-    }
-  }
-
-  /**
-   * removes the set interval
-   * @param txHash
-   * @private
-   */
-  private removeInterval(txHash: string): void {
-    clearInterval(this.intervals.get(txHash));
-    this.intervals.delete(txHash);
   }
 
   /**
    * fetches te status of a tx from the provider
-   * @param command
    * @private
+   * @param command
    */
   private async checkTxStatus(command: ExecutedTxCommand): Promise<StatusCheckResponse> {
     return this.aggregators.get(command.aggregatorId).checkStatus({

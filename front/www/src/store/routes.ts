@@ -19,7 +19,7 @@ export const useRoutesStore = defineStore('routes', {
         selectedRoute: '',
         slippageValue: '2',
         gasPriority: 'medium',
-        receiverAddress: ''
+        receiverAddress: '',
     }),
     getters: {
         /**
@@ -147,6 +147,13 @@ export const useRoutesStore = defineStore('routes', {
                 // not an address, just a term
                 return false
             }
+        },
+        getSelectedTokenBalance(): string {
+            const token = this.getOriginToken()
+            if (!token) {
+                return '0'
+            }
+            return ethers.utils.formatUnits(token.balance, token.decimals)
         }
     },
     actions: {
@@ -249,6 +256,9 @@ export const useRoutesStore = defineStore('routes', {
 
             this.destinationChainId = auxChainId
             this.destinationTokenAddress = auxAddress
+
+            this.routes = []
+            this.showContainer = false
         },
         /**
          * Reset token selection

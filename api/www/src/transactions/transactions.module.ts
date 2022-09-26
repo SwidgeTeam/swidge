@@ -11,6 +11,8 @@ import { GetTxStatusController } from './infrastructure/controllers/get-tx-statu
 import { CheckTxStatusHandler } from './application/query/check-tx-status-handler';
 import { ExecutedTxHandler } from './application/command/executed-tx-handler';
 import consoleLoggerProvider from '../shared/infrastructure/console-logger-provider';
+import { CheckPendingTxsController } from './infrastructure/controllers/check-pending-txs-controller';
+import { CheckPendingTxsHandler } from './application/command/check-pending-txs-handler';
 
 @Module({
   imports: [CqrsModule, ConfigModule],
@@ -18,9 +20,11 @@ import consoleLoggerProvider from '../shared/infrastructure/console-logger-provi
     GetWalletTransactionsController,
     PostTxExecutedController,
     GetTxStatusController,
+    CheckPendingTxsController,
   ],
   providers: [
     GetWalletTransactionsHandler,
+    CheckPendingTxsHandler,
     CheckTxStatusHandler,
     ExecutedTxHandler,
     ConfigService,

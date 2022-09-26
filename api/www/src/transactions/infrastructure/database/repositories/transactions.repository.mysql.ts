@@ -80,6 +80,19 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
   }
 
   /**
+   * Returns a specific transaction, if exists, given its tx hash
+   */
+  async getPending(): Promise<Transactions> {
+    const result = await this.manager.find(TransactionEntity, {
+      status: ExternalTransactionStatus.Pending,
+    });
+
+    const items = result.map(this.buildTx);
+
+    return new Transactions(items);
+  }
+
+  /**
    * Returns all the transactions of a specific wallet address
    * @param walletAddress
    */

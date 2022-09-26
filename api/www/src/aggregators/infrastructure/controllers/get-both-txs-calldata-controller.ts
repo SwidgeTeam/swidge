@@ -41,11 +41,13 @@ export class GetBothTxsCalldataController {
 
     return res.json({
       trackingId: bothTxs.trackingId,
-      approvalTx: {
-        to: bothTxs.approvalTx.to,
-        callData: bothTxs.approvalTx.callData,
-        gasLimit: bothTxs.approvalTx.gasLimit.toString(),
-      },
+      approvalTx: bothTxs.approvalTx
+        ? {
+            to: bothTxs.approvalTx.to,
+            callData: bothTxs.approvalTx.callData,
+            gasLimit: bothTxs.approvalTx.gasLimit.toString(),
+          }
+        : null,
       mainTx: {
         to: bothTxs.mainTx.to,
         callData: bothTxs.mainTx.callData,

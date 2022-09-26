@@ -76,8 +76,8 @@ const transformDate = (timestamp: string) => {
  * @param chainId
  */
 const getChainIcon = (chainId: string): string => {
-    const network = metadataStore.getChain(chainId)
-    return network.logo
+    const chain = metadataStore.getChain(chainId)
+    return chain ? chain.logo : ''
 }
 
 /**

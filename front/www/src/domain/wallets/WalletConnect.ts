@@ -76,14 +76,32 @@ export class WalletConnect implements IWallet {
     }
 
     public async sendTransaction(tx: Tx): Promise<string> {
-        const receipt = await this.provider.connector.sendTransaction({
+        let txRequest = {
             from: tx.from,
             to: tx.to,
             data: tx.data,
             value: tx.value,
-            gasLimit: tx.gas,
-            gasPrice: tx.gasPrice,
-        })
+            nonce: tx.nonce,
+        }
+
+        if (Number(tx.gas) > 0) {
+            txRequest = Object.assign(
+                txRequest,
+                {
+                    gasLimit: tx.gas
+                }
+            )
+        }
+        if (Number(tx.gasPrice) > 0) {
+            txRequest = Object.assign(
+                txRequest,
+                {
+                    gasPrice: tx.gasPrice
+                }
+            )
+        }
+
+        const receipt = await this.provider.connector.sendTransaction(txRequest)
 
         return receipt.transactionHash
     }

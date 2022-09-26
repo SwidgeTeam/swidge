@@ -4,6 +4,7 @@ import { useWeb3Store } from '@/store/web3'
 import swidgeApi from '@/api/swidge-api'
 import { useRoutesStore } from '@/store/routes'
 import { TransactionStatus } from '@/api/models/get-status-check'
+import { TxExecutedRequest } from '@/api/models/post-tx-executed'
 
 export const useTransactionStore = defineStore('transaction', {
     state: () => ({
@@ -85,19 +86,44 @@ export const useTransactionStore = defineStore('transaction', {
         /**
          * Informs the provider the tx has been executed
          */
-        informExecutedTx(txHash: string) {
+        async informExecutedTx(txHash: string) {
             this.txHash = txHash
             const web3Store = useWeb3Store()
             const routesStore = useRoutesStore()
             const route = routesStore.getSelectedRoute
-            swidgeApi.informExecutedTx({
+            if (!this.mainTx) {
+                throw new Error('something very wrong, what did we execute then?')
+            }
+            const request = {
                 aggregatorId: route.aggregator.id,
                 fromChainId: routesStore.getOriginChainId,
                 toChainId: routesStore.getDestinationChainId,
                 fromAddress: web3Store.account,
                 toAddress: routesStore.receiverAddress,
+                fromToken: routesStore.getOriginTokenAddress,
+                amountIn: this.mainTx.value,
                 txHash: this.txHash,
                 trackingId: this.trackingId,
+            }
+            swidgeApi.informExecutedTx(request)
+                .catch(() => {
+                    storePendingTx(request)
+                    this.startRetryingSendingPendingTxs()
+                })
+        },
+        startRetryingSendingPendingTxs() {
+            const pendingTxs = getStoredPendingTxs()
+            if (pendingTxs.length > 0) {
+                setInterval(this.retrySendingPendingTxs, 5000)
+            }
+        },
+        retrySendingPendingTxs() {
+            const pendingTxs = getStoredPendingTxs()
+            pendingTxs.forEach((params) => {
+                swidgeApi.informExecutedTx(params)
+                    .then(() => {
+                        removePendingTx(params)
+                    })
             })
         },
         /**
@@ -134,6 +160,43 @@ export const useTransactionStore = defineStore('transaction', {
         },
     }
 })
+
+const PENDING_TXS_STORAGE_KEY = 'swidge_pending_txs'
+
+function storePendingTx(params: TxExecutedRequest) {
+    const pendingRequests = getStoredPendingTxs()
+    pendingRequests.push(params)
+    storePendingTxs(pendingRequests)
+}
+
+function getStoredPendingTxs(): TxExecutedRequest[] {
+    const rawPendingTxs = localStorage.getItem(PENDING_TXS_STORAGE_KEY)
+    return rawPendingTxs
+        ? JSON.parse(rawPendingTxs)
+        : []
+}
+
+function storePendingTxs(txs: TxExecutedRequest[]) {
+    localStorage.setItem(PENDING_TXS_STORAGE_KEY, JSON.stringify(txs))
+}
+
+function removePendingTx(tx: TxExecutedRequest) {
+    const pendingRequests = getStoredPendingTxs()
+    const filtered = pendingRequests.filter((current) => {
+        return (
+            current.aggregatorId !== tx.aggregatorId &&
+            current.fromChainId !== tx.fromChainId &&
+            current.toChainId !== tx.toChainId &&
+            current.fromAddress !== tx.fromAddress &&
+            current.toAddress !== tx.toAddress &&
+            current.fromToken !== tx.fromToken &&
+            current.amountIn !== tx.amountIn &&
+            current.txHash !== tx.txHash &&
+            current.trackingId !== tx.trackingId
+        )
+    })
+    storePendingTxs(filtered)
+}
 
 if (import.meta.hot)
     import.meta.hot.accept(acceptHMRUpdate(useTransactionStore, import.meta.hot))

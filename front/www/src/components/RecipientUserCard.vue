@@ -15,16 +15,20 @@ const { receiverAddress } = storeToRefs(routesStore)
 const isFocused = ref<boolean>(false)
 const inputReceiverAddress = ref<any | null>(null)
 
+const emits = defineEmits<{
+    (event: 'changed-receiver', address: string): void
+}>()
+
 const getChainLogo = (): string => {
     const chainId = routesStore.getDestinationChainId
     const chain = metadataStore.getChain(chainId)
-    return chain.logo
+    return chain ? chain.logo : ''
 }
 
 const onAccountChange = (event: Event) => {
     if (!(event.target instanceof HTMLInputElement)) return
     const value = event.target.value.toLowerCase().trim()
-    routesStore.setReceiverAddress(value)
+    emits('changed-receiver', value)
 }
 
 const onFocusIn = () => {

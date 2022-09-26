@@ -8,7 +8,6 @@ const routesStore = useRoutesStore()
 
 const props = defineProps<{
     value: string
-    balance?: string
 }>()
 
 const emits = defineEmits<{
@@ -29,19 +28,14 @@ const onChange = (event: Event) => {
 }
 
 const setToMaxAmount = () => {
-    if (!props.balance) return
-    emits('update:value', AmountFormatter.format(props.balance))
+    const balance = routesStore.getSelectedTokenBalance
+    emits('update:value', AmountFormatter.format(balance))
     emits('input-changed')
 }
 
 const trimmedBalance = computed({
     get: () => {
-        const number = Number(props.balance)
-        if (number === 0) {
-            return '0'
-        } else {
-            return number.toFixed(6)
-        }
+        return AmountFormatter.format(routesStore.getSelectedTokenBalance)
     },
     set: () => null,
 })

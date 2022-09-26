@@ -139,6 +139,7 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
         toToken: this.toProviderAddress(request.toToken),
         fromAmount: request.amountIn.toString(),
         fromAddress: request.senderAddress,
+        toAddress: request.receiverAddress,
         slippage: request.slippage / 100,
       });
     } catch (e) {

@@ -38,15 +38,11 @@ export const useMetadataStore = defineStore('metadata', {
          * @param state
          */
         getChain(state) {
-            return (chainId: string): IChain => {
-                const chain = state.chains
+            return (chainId: string): IChain | undefined => {
+                return state.chains
                     .find(chain => {
                         return chain.id === chainId
                     })
-                if (!chain) {
-                    throw new Error('Unsupported chain')
-                }
-                return chain
             }
         },
         /**

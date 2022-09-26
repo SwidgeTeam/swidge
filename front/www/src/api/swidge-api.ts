@@ -13,6 +13,7 @@ import { MetadataJson } from '@/api/models/get-metadata'
 import { Metadata, TokenBalance } from '@/domain/metadata/Metadata'
 import { WalletBalancesJson } from '@/api/models/get-balances'
 import { BigNumber } from 'ethers'
+import { TxExecutedRequest } from '@/api/models/post-tx-executed'
 
 class SwidgeAPI extends HttpClient {
     public constructor() {
@@ -228,18 +229,20 @@ class SwidgeAPI extends HttpClient {
 
     async getBothTxs(query: GetBothTxsRequest): Promise<{
         trackingId: string,
-        approvalTx: ApprovalTransactionDetails,
+        approvalTx: ApprovalTransactionDetails | undefined,
         mainTx: TransactionDetails,
     }> {
         try {
             const response = await this.instance.get<GetBothTxsResponse>('/build-both-txs', { params: query })
             return {
                 trackingId: response.data.trackingId,
-                approvalTx: {
-                    to: response.data.approvalTx.to,
-                    callData: response.data.approvalTx.callData,
-                    gasLimit: response.data.approvalTx.gasLimit,
-                },
+                approvalTx: response.data.approvalTx
+                    ? {
+                        to: response.data.approvalTx.to,
+                        callData: response.data.approvalTx.callData,
+                        gasLimit: response.data.approvalTx.gasLimit,
+                    }
+                    : undefined,
                 mainTx: {
                     to: response.data.mainTx.to,
                     value: response.data.mainTx.value,
@@ -257,15 +260,7 @@ class SwidgeAPI extends HttpClient {
         }
     }
 
-    async informExecutedTx(params: {
-        aggregatorId: string,
-        fromChainId: string,
-        toChainId: string,
-        fromAddress: string,
-        toAddress: string,
-        txHash: string,
-        trackingId: string,
-    }): Promise<void> {
+    async informExecutedTx(params: TxExecutedRequest): Promise<void> {
         try {
             await this.instance.post('/tx-executed', params)
         } catch (e: unknown) {

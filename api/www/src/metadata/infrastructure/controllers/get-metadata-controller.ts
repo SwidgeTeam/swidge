@@ -1,4 +1,4 @@
-import { Controller, Get, Res } from '@nestjs/common';
+import { Controller, Get, Param, Res } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
 import { Response } from 'express';
 import GetMetadataQuery from '../../application/query/get-metadata-query';
@@ -8,9 +8,9 @@ import Metadata from '../../domain/Metadata';
 export class GetMetadataController {
   constructor(private readonly queryBus: QueryBus) {}
 
-  @Get('meta')
-  async build(@Res() res: Response) {
-    const query = new GetMetadataQuery();
+  @Get('meta/:reload?')
+  async build(@Param() params: { reload: string }, @Res() res: Response) {
+    const query = new GetMetadataQuery(params.reload === 'true');
 
     const meta = await this.queryBus.execute<GetMetadataQuery, Metadata>(query);
 
