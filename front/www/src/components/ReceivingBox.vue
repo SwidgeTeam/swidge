@@ -47,7 +47,9 @@ const thereAreMoreRoutes = () => {
 </script>
 
 <template>
-    <div class="flex flex-col px-1 receiving-box-colors relative">
+    <div
+        class="flex flex-col px-1 receiving-box-colors relative md:h-[123px] md:p-4 md:justify-center"
+    >
         <div class="px-1">
             <div
                 class="flex items-center justify-between py-3 h-[var(--receive-selector-height)]"
@@ -58,7 +60,7 @@ const thereAreMoreRoutes = () => {
                 />
                 <div
                     v-if="!thereAreRoutes() && !loadingRoutes()"
-                    class="flex items-center text-slate-300"
+                    class="flex items-center text-slate-300 md:text-xl"
                 >
                     0.00
                 </div>

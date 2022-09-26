@@ -395,7 +395,7 @@ const handleChangedReceiver = (address: string) => {
 
 <template>
     <div
-        class="flex flex-col gap-3 px-3 pb-2 md:mt-[15px] w-full max-w-sm rounded-xl"
+        class="flex flex-col gap-3 px-3 pb-2 md:mt-[15px] w-full max-w-sm md:max-w-xl rounded-xl"
     >
         <div
             class="flex justify-end gap-2 py-2 h-[var(--settings-line-height)]"

@@ -73,7 +73,9 @@ const chainIcon = computed({
                 <SwidgeLogoNoText class="sm:hidden h-10" />
                 <SwidgeLogo class="hidden sm:inline-block" />
             </a>
-            <a href="./ComingSoon" class="mx-4">Dashboard</a>
+            <a href="./ComingSoon" class="mx-4 xs:invisible md:visible"
+                >Dashboard</a
+            >
             <a href="" class="mx-4">Swidge</a>
             <a href="" class="mx-4">Invest</a>
         </div>
