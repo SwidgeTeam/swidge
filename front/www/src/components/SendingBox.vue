@@ -92,11 +92,10 @@ const dollarValue = computed({
         </div>
         <div class="pl-2 flex items-center justify-between">
             <div class="current-balance">
-                Balance:
                 <span
                     class="cursor-pointer"
                     @click="setToMaxAmount">
-                        {{ trimmedBalance }}
+                    Balance: {{ trimmedBalance }}
                 </span>
             </div>
             <div class="input-dollar-value">~ $ {{ dollarValue }}</div>
