@@ -1,4 +1,4 @@
-import { Controller, Post, Res } from '@nestjs/common';
+import { Controller, Get, Res } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { Response } from 'express';
 import { CheckPendingTxsCommand } from '../../application/command/check-pending-txs-command';
@@ -7,7 +7,7 @@ import { CheckPendingTxsCommand } from '../../application/command/check-pending-
 export class CheckPendingTxsController {
   constructor(private readonly commandBus: CommandBus) {}
 
-  @Post('check-pending-txs')
+  @Get('check-pending-txs')
   async check(@Res() res: Response) {
     const command = new CheckPendingTxsCommand();
 
