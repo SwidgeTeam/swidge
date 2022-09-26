@@ -32,26 +32,16 @@ describe("Jobs Queue", () => {
     // Arrange
     const { owner, anyoneElse, random } = await getAccounts();
     await core.connect(owner).updateOrigins([anyoneElse.address]);
-    const calldata = ethers.utils.defaultAbiCoder.encode(
-      [
-        "bytes16",
-        "address",
-        "address",
-        "address",
-        "uint256",
-        "uint256",
-        "uint256",
-      ],
-      [
-        "0xfc3838689ce844438ff358bd41f403f9",
-        ethers.constants.AddressZero,
-        ethers.constants.AddressZero,
-        ethers.constants.AddressZero,
-        1,
-        1,
-        1,
-      ]
-    );
+    const receiver = faker.finance.ethereumAddress();
+    const calldata = encodeData([
+      "0xfc3838689ce844438ff358bd41f403f9",
+      receiver,
+      ethers.constants.AddressZero,
+      ethers.constants.AddressZero,
+      1,
+      1,
+      1,
+    ]);
 
     // Act
     await core.connect(anyoneElse).createJob(calldata);
@@ -59,7 +49,7 @@ describe("Jobs Queue", () => {
 
     // Assert
     expect(jobs.length).to.be.equal(1);
-    expect(jobs[0].receiver).to.be.equal(ethers.constants.AddressZero);
+    expect(jobs[0].receiver.toLowerCase()).to.be.equal(receiver.toLowerCase());
     expect(jobs[0].inputAsset).to.be.equal(ethers.constants.AddressZero);
     expect(jobs[0].dstAsset).to.be.equal(ethers.constants.AddressZero);
     expect(jobs[0].dstChain).to.be.equal("1");
@@ -67,19 +57,40 @@ describe("Jobs Queue", () => {
     expect(jobs[0].minAmountOut).to.be.equal("1");
   });
 
-  it("should if creating a job with a used ID", async () => {
+  it("should revert if creating a job with a used ID", async () => {
     // Arrange
     const { owner, anyoneElse } = await getAccounts();
     await core.connect(owner).updateOrigins([anyoneElse.address]);
     await createJob(core, anyoneElse, [
       "0xfc3838689ce844438ff358bd41f403f9",
-      ethers.constants.AddressZero,
+      faker.finance.ethereumAddress(),
       ethers.constants.AddressZero,
       ethers.constants.AddressZero,
       1,
       1,
       1,
     ]);
+    const calldata = encodeData([
+      "0xfc3838689ce844438ff358bd41f403f9",
+      faker.finance.ethereumAddress(),
+      ethers.constants.AddressZero,
+      ethers.constants.AddressZero,
+      1,
+      100,
+      1,
+    ]);
+
+    // Act
+    const call = core.connect(anyoneElse).createJob(calldata);
+
+    // Assert
+    await expect(call).to.be.revertedWith("JobIdInUse");
+  });
+
+  it("should revert if a message comes without receiver", async () => {
+    // Arrange
+    const { owner, anyoneElse } = await getAccounts();
+    await core.connect(owner).updateOrigins([anyoneElse.address]);
     const calldata = encodeData([
       "0xfc3838689ce844438ff358bd41f403f9",
       ethers.constants.AddressZero,
@@ -94,7 +105,7 @@ describe("Jobs Queue", () => {
     const call = core.connect(anyoneElse).createJob(calldata);
 
     // Assert
-    await expect(call).to.be.revertedWith("JobIdInUse");
+    await expect(call).to.be.revertedWith("JobWithNoReceiver");
   });
 
   describe("jobs array pruning", () => {

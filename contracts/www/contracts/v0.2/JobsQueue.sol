@@ -4,8 +4,9 @@ pragma solidity ^0.8.17;
 import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 import './libraries/LibBytes.sol';
+import "./interfaces/IJobsQueue.sol";
 
-contract JobsQueue is Ownable {
+contract JobsQueue is Ownable, IJobsQueue {
     address public immutable gelatoProxy;
     address constant NATIVE = address(0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE);
     mapping(address => bool) origins;
@@ -16,6 +17,7 @@ contract JobsQueue is Ownable {
     error UnauthorizedOrigin();
     error UnauthorizedExecutor();
     error JobWithZeroAmount();
+    error JobWithNoReceiver();
     error JobIdInUse();
 
     event Success(bytes16 indexed id);
@@ -123,6 +125,7 @@ contract JobsQueue is Ownable {
         HandlerMessage memory handlerMsg = abi.decode(_data, (HandlerMessage));
 
         if (usedJobIds[handlerMsg.id]) revert JobIdInUse();
+        if (handlerMsg.receiver == address(0)) revert JobWithNoReceiver();
         if (handlerMsg.amountIn == 0) revert JobWithZeroAmount();
 
         uint256 currentLength = jobs.length;
