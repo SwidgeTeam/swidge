@@ -6,12 +6,7 @@ import AmountFormatter from '@/domain/shared/AmountFormatter'
 
 const routesStore = useRoutesStore()
 
-const props = defineProps<{
-    value: string
-}>()
-
 const emits = defineEmits<{
-    (event: 'update:value', value: string): void
     (event: 'input-changed'): void
     (event: 'select-token'): void
 }>()
@@ -24,14 +19,26 @@ const onChange = (event: Event) => {
         .replace(/(\..*)\./g, '$1')
         .replace(/^0*(\d)/gm, '$1')
 
-    emits('update:value', event.target.value)
+    updateValue(event.target.value)
 }
 
 const setToMaxAmount = () => {
     const balance = routesStore.getSelectedTokenBalance
-    emits('update:value', AmountFormatter.format(balance))
+    updateValue(AmountFormatter.format(balance))
     emits('input-changed')
 }
+
+const updateValue = (amount: string) => {
+    routesStore.setAmountIn(amount)
+}
+
+const inputValue = computed({
+    get: () => {
+        const value = routesStore.getAmountIn
+        return value ? value : ''
+    },
+    set: () => null,
+})
 
 const trimmedBalance = computed({
     get: () => {
@@ -46,7 +53,7 @@ const dollarValue = computed({
         if (!token) {
             return '0.0'
         }
-        const amount = Number(props.value) * Number(token.price)
+        const amount = Number(inputValue.value) * Number(token.price)
         return AmountFormatter.format(amount.toFixed(2))
     },
     set: () => null,
@@ -66,7 +73,7 @@ const dollarValue = computed({
                 <input
                     type="text"
                     :disabled="false"
-                    :value="value"
+                    :value="inputValue"
                     placeholder="Enter amount"
                     class="p-0 text-right text-xl font-medium w-full bg-transparent border-none outline-none appearance-none focus:border-transparent focus:ring-0 truncate"
                     autocomplete="off"

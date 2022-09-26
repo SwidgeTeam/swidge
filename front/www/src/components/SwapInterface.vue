@@ -30,8 +30,6 @@ const { isConnected } = storeToRefs(web3Store)
 const toast = useToast()
 const gtm = useGtm()
 
-const sourceTokenAmount = ref<string>('')
-
 const isModalTokensOpen = ref(false)
 const isSourceChainToken = ref(false)
 const isExecuteButtonDisabled = ref(true)
@@ -68,7 +66,7 @@ const unsetButtonAlert = () => {
 
 const emitEventGTMTransaction = () => {
     const token = routesStore.getOriginToken()
-    const amount =sourceTokenAmount.value
+    const amount = routesStore.getAmountIn
     const dollarAmount = Number(amount) * Number(token?.price)
     const fixedAmount = AmountFormatter.format(dollarAmount.toString())
     gtm?.trackEvent({
@@ -91,27 +89,12 @@ watch(isConnected, (connected) => {
     }
 })
 
-const tryToQuote = () => {
-    if (shouldQuote()) {
-        onQuote()
-    }
-}
-
 const destinationChainSelected = computed({
     get: () => {
         return routesStore.getDestinationChainId
     },
     set: () => null
 })
-/**
- * Decides if should quote for a possible path
- */
-const shouldQuote = () => {
-    return (
-        routesStore.bothTokensSelected &&
-        Number(sourceTokenAmount.value) !== 0
-    )
-}
 
 /**
  * Handles the update of the amount on the origin amount
@@ -179,7 +162,7 @@ const updateOriginToken = async (token: IToken) => {
         // Update token details
         routesStore.selectOriginToken(token.chainId, token.address)
         // Reset amount
-        sourceTokenAmount.value = ''
+        routesStore.setAmountIn('')
         // Check user's token balance
     }
 }
@@ -189,15 +172,15 @@ const updateOriginToken = async (token: IToken) => {
  */
 const switchHandlerFunction = () => {
     routesStore.switchTokens()
-    sourceTokenAmount.value = ''
+    routesStore.setAmountIn('')
     isExecuteButtonDisabled.value = true
 }
 
 /**
  * Quotes the possible path for a given pair and amount
  */
-const onQuote = async () => {
-    if (!routesStore.bothTokensSelected) {
+const tryToQuote = async () => {
+    if (!routesStore.bothTokensSelected || Number(routesStore.getAmountIn) === 0) {
         return
     }
     unsetButtonAlert()
@@ -205,12 +188,12 @@ const onQuote = async () => {
     isExecuteButtonDisabled.value = true
 
     try {
-        await routesStore.quotePath(sourceTokenAmount.value)
+        await routesStore.quotePath()
 
         const thereAreRoutes = routesStore.getAllRoutes.length > 0
         if (!thereAreRoutes) {
             isExecuteButtonDisabled.value = false
-        } else if (Number(sourceTokenAmount.value) > Number(routesStore.getSelectedTokenBalance)) {
+        } else if (Number(routesStore.getAmountIn) > Number(routesStore.getSelectedTokenBalance)) {
             setButtonAlert('Insufficient Balance')
         } else {
             isExecuteButtonDisabled.value = false
@@ -298,7 +281,7 @@ const executeRoute = async (): Promise<TxHash> => {
  * Executes the route when the aggregator requires quoting the callData
  */
 const executeSingleQuoteExecution = async (): Promise<TxHash> => {
-    await transactionStore.fetchBothTxs(sourceTokenAmount.value)
+    await transactionStore.fetchBothTxs()
     const approvalTx = transactionStore.getApprovalTx
     const mainTx = transactionStore.getMainTx
     if (!mainTx) {
@@ -386,7 +369,7 @@ const handleChangedReceiver = (address: string) => {
         <div class="flex justify-end gap-2 py-2 h-[var(--settings-line-height)]">
             <ReloadIcon
                 class="w-5 h-5 cursor-pointer"
-                @click="onQuote"
+                @click="tryToQuote"
             />
             <AdjustmentsIcon
                 class="w-5 h-5 cursor-pointer"
@@ -395,7 +378,6 @@ const handleChangedReceiver = (address: string) => {
         </div>
         <div class="flex flex-col">
             <SendingBox
-                v-model:value="sourceTokenAmount"
                 @input-changed="handleSourceInputChanged"
                 @select-token="() => handleOpenTokenList(true)"
             />

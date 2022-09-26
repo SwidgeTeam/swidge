@@ -12,6 +12,7 @@ export const useRoutesStore = defineStore('routes', {
         showContainer: false,
         loadingRoutes: false,
         routes: [] as Route[],
+        amountIn: '',
         originChainId: '',
         originTokenAddress: '',
         destinationChainId: '',
@@ -125,6 +126,12 @@ export const useRoutesStore = defineStore('routes', {
             return this.originChainId !== this.destinationChainId
         },
         /**
+         * returns selected input amount for the route
+         */
+        getAmountIn(): string {
+            return this.amountIn
+        },
+        /**
          * returns the selected slippage
          */
         getSlippage(): string {
@@ -159,9 +166,8 @@ export const useRoutesStore = defineStore('routes', {
     actions: {
         /**
          * Fetches the routes for a specific path
-         * @param amount
          */
-        async quotePath(amount: string) {
+        async quotePath() {
             this.showContainer = true
             const web3Store = useWeb3Store()
             const srcToken = this.getOriginToken()
@@ -180,7 +186,7 @@ export const useRoutesStore = defineStore('routes', {
                     dstTokenAddress: dstToken.address,
                     dstTokenSymbol: dstToken.symbol,
                     dstTokenDecimals: dstToken.decimals.toString(),
-                    amount: amount,
+                    amount: this.amountIn,
                     slippage: Number(this.getSlippage),
                     senderAddress: web3Store.account || ethers.constants.AddressZero,
                     receiverAddress: this.receiverAddress || ethers.constants.AddressZero,
@@ -261,13 +267,10 @@ export const useRoutesStore = defineStore('routes', {
             this.showContainer = false
         },
         /**
-         * Reset token selection
+         * sets input amount
          */
-        resetSelection() {
-            this.originChainId = ''
-            this.originTokenAddress = ''
-            this.destinationChainId = ''
-            this.destinationTokenAddress = ''
+        setAmountIn(amount: string) {
+            this.amountIn = amount
         },
         /**
          * sets slippage

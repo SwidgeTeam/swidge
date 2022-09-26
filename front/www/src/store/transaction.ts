@@ -53,9 +53,8 @@ export const useTransactionStore = defineStore('transaction', {
         },
         /**
          * Fetches the callData of both required transactions to execute the swidge
-         * @param amount
          */
-        async fetchBothTxs(amount: string) {
+        async fetchBothTxs() {
             const web3Store = useWeb3Store()
             const routesStore = useRoutesStore()
             const srcToken = routesStore.getOriginToken()
@@ -74,7 +73,7 @@ export const useTransactionStore = defineStore('transaction', {
                 dstTokenAddress: dstToken.address,
                 dstTokenSymbol: dstToken.symbol,
                 dstTokenDecimals: dstToken.decimals.toString(),
-                amount: amount,
+                amount: routesStore.getAmountIn,
                 slippage: Number(routesStore.getSlippage),
                 senderAddress: web3Store.account,
                 receiverAddress: routesStore.receiverAddress

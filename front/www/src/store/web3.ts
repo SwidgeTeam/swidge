@@ -258,7 +258,6 @@ export const useWeb3Store = defineStore('web3', () => {
      */
     async function onSwitchNetwork(chainId: string) {
         if (!wallet.value) throw new Error('No wallet')
-        isConnected.value = true
         const accounts = await wallet.value.getConnectedAccounts()
         await onConnect(accounts[0])
         selectedNetworkId.value = chainId
