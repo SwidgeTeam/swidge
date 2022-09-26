@@ -106,6 +106,25 @@ export const useTransactionStore = defineStore('transaction', {
                 trackingId: this.trackingId,
             }
             swidgeApi.informExecutedTx(request)
+                .catch(() => {
+                    storePendingTx(request)
+                    this.startRetryingSendingPendingTxs()
+                })
+        },
+        startRetryingSendingPendingTxs() {
+            const pendingTxs = getStoredPendingTxs()
+            if (pendingTxs.length > 0) {
+                setInterval(this.retrySendingPendingTxs, 5000)
+            }
+        },
+        retrySendingPendingTxs() {
+            const pendingTxs = getStoredPendingTxs()
+            pendingTxs.forEach((params) => {
+                swidgeApi.informExecutedTx(params)
+                    .then(() => {
+                        removePendingTx(params)
+                    })
+            })
         },
         /**
          * Sets an interval to check the status of the TX until it succeeds or fails
@@ -141,6 +160,43 @@ export const useTransactionStore = defineStore('transaction', {
         },
     }
 })
+
+const PENDING_TXS_STORAGE_KEY = 'swidge_pending_txs'
+
+function storePendingTx(params: TxExecutedRequest) {
+    const pendingRequests = getStoredPendingTxs()
+    pendingRequests.push(params)
+    storePendingTxs(pendingRequests)
+}
+
+function getStoredPendingTxs(): TxExecutedRequest[] {
+    const rawPendingTxs = localStorage.getItem(PENDING_TXS_STORAGE_KEY)
+    return rawPendingTxs
+        ? JSON.parse(rawPendingTxs)
+        : []
+}
+
+function storePendingTxs(txs: TxExecutedRequest[]) {
+    localStorage.setItem(PENDING_TXS_STORAGE_KEY, JSON.stringify(txs))
+}
+
+function removePendingTx(tx: TxExecutedRequest) {
+    const pendingRequests = getStoredPendingTxs()
+    const filtered = pendingRequests.filter((current) => {
+        return (
+            current.aggregatorId !== tx.aggregatorId &&
+            current.fromChainId !== tx.fromChainId &&
+            current.toChainId !== tx.toChainId &&
+            current.fromAddress !== tx.fromAddress &&
+            current.toAddress !== tx.toAddress &&
+            current.fromToken !== tx.fromToken &&
+            current.amountIn !== tx.amountIn &&
+            current.txHash !== tx.txHash &&
+            current.trackingId !== tx.trackingId
+        )
+    })
+    storePendingTxs(filtered)
+}
 
 if (import.meta.hot)
     import.meta.hot.accept(acceptHMRUpdate(useTransactionStore, import.meta.hot))
