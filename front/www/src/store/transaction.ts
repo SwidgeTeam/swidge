@@ -4,6 +4,7 @@ import { useWeb3Store } from '@/store/web3'
 import swidgeApi from '@/api/swidge-api'
 import { useRoutesStore } from '@/store/routes'
 import { TransactionStatus } from '@/api/models/get-status-check'
+import { TxExecutedRequest } from '@/api/models/post-tx-executed'
 
 export const useTransactionStore = defineStore('transaction', {
     state: () => ({
@@ -85,20 +86,26 @@ export const useTransactionStore = defineStore('transaction', {
         /**
          * Informs the provider the tx has been executed
          */
-        informExecutedTx(txHash: string) {
+        async informExecutedTx(txHash: string) {
             this.txHash = txHash
             const web3Store = useWeb3Store()
             const routesStore = useRoutesStore()
             const route = routesStore.getSelectedRoute
-            swidgeApi.informExecutedTx({
+            if (!this.mainTx) {
+                throw new Error('something very wrong, what did we execute then?')
+            }
+            const request = {
                 aggregatorId: route.aggregator.id,
                 fromChainId: routesStore.getOriginChainId,
                 toChainId: routesStore.getDestinationChainId,
                 fromAddress: web3Store.account,
                 toAddress: routesStore.receiverAddress,
+                fromToken: routesStore.getOriginTokenAddress,
+                amountIn: this.mainTx.value,
                 txHash: this.txHash,
                 trackingId: this.trackingId,
-            })
+            }
+            swidgeApi.informExecutedTx(request)
         },
         /**
          * Sets an interval to check the status of the TX until it succeeds or fails
