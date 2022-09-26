@@ -5,17 +5,18 @@ import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 import './libraries/LibBytes.sol';
 
-
 contract JobsQueue is Ownable {
-    address public immutable gelatoOps;
+    address public immutable gelatoProxy;
     address constant NATIVE = address(0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE);
     mapping(address => bool) origins;
-    mapping(bytes32 => uint256) remainingJobs; // jobId -> job array position
+    mapping(bytes32 => uint256) jobsPosition; // jobId -> job array position
+    mapping(bytes16 => bool) usedJobIds; // whether a jobId is in use already
     Job[] private jobs;
 
     error UnauthorizedOrigin();
     error UnauthorizedExecutor();
     error JobWithZeroAmount();
+    error JobIdInUse();
 
     event Success(bytes16 indexed id);
     event Fail(bytes16 indexed id, string msg);
@@ -60,11 +61,11 @@ contract JobsQueue is Ownable {
     }
 
     constructor(address _ops) {
-        gelatoOps = _ops;
+        gelatoProxy = _ops;
     }
 
     modifier onlyGelato() {
-        if (msg.sender != gelatoOps) {
+        if (msg.sender != gelatoProxy) {
             revert UnauthorizedExecutor();
         }
         _;
@@ -83,10 +84,10 @@ contract JobsQueue is Ownable {
         for (uint i = 0; i < callsLength; i++) {
             // unwrap job
             currentCall = calls[i];
-            job = jobs[remainingJobs[currentCall.jobId]];
+            job = jobs[jobsPosition[currentCall.jobId]];
 
             // check job is still remaining
-            if (job.id != bytes16(0)) {
+            if (usedJobIds[job.id]) {
                 // decide value and token approval
                 if (job.inputAsset == NATIVE) {
                     valueToSend = job.amountIn;
@@ -98,9 +99,11 @@ contract JobsQueue is Ownable {
                 // execute
                 (bool success, bytes memory response) = currentCall.handler.call{value : valueToSend}(currentCall.data);
 
+                delete jobs[job.position];
+                delete jobsPosition[job.id];
+                delete usedJobIds[job.id];
+
                 if (success) {
-                    delete jobs[job.position];
-                    delete remainingJobs[job.id];
                     emit Success(job.id);
                 }
                 else {
@@ -119,10 +122,11 @@ contract JobsQueue is Ownable {
 
         HandlerMessage memory handlerMsg = abi.decode(_data, (HandlerMessage));
 
+        if (usedJobIds[handlerMsg.id]) revert JobIdInUse();
         if (handlerMsg.amountIn == 0) revert JobWithZeroAmount();
 
         uint256 currentLength = jobs.length;
-        uint256 emptySlot = getEmptySlot(currentLength);
+        uint256 emptySlot = _getEmptySlot(currentLength);
 
         Job memory job = Job(
             handlerMsg.id,
@@ -141,17 +145,18 @@ contract JobsQueue is Ownable {
         else {
             jobs[emptySlot] = job;
         }
-        remainingJobs[job.id] = emptySlot;
+        jobsPosition[job.id] = emptySlot;
+        usedJobIds[job.id] = true;
     }
 
     /**
      * returns the next usable slot on the jobs array
      */
-    function getEmptySlot(uint256 currentLength) internal view returns (uint256) {
+    function _getEmptySlot(uint256 currentLength) internal view returns (uint256) {
         Job storage job;
         for (uint i = 0; i < currentLength; i++) {
             job = jobs[i];
-            if (job.id == bytes16(0)) {
+            if (!usedJobIds[job.id]) {
                 return i;
             }
         }
@@ -177,7 +182,7 @@ contract JobsQueue is Ownable {
         uint total = 0;
         for (uint i = 0; i < jobs.length; i++) {
             Job storage job = jobs[i];
-            if (job.id != bytes16(0)) {
+            if (usedJobIds[job.id]) {
                 ++total;
             }
         }
@@ -186,7 +191,7 @@ contract JobsQueue is Ownable {
         total = 0;
         for (uint i = 0; i < jobs.length; i++) {
             Job storage job = jobs[i];
-            if (job.id != bytes16(0)) {
+            if (usedJobIds[job.id]) {
                 returnJobs[total] = ExecuteJob(
                     job.id,
                     address(this),

@@ -25,7 +25,7 @@ describe("Jobs Queue", () => {
     const call = core.connect(anyoneElse).createJob("0x");
 
     // Assert
-    expect(call).to.be.revertedWith("Unauthorized");
+    await expect(call).to.be.revertedWith("UnauthorizedOrigin");
   });
 
   it("should be able to create job from whitelisted address", async () => {
@@ -65,6 +65,36 @@ describe("Jobs Queue", () => {
     expect(jobs[0].dstChain).to.be.equal("1");
     expect(jobs[0].amountIn).to.be.equal("1");
     expect(jobs[0].minAmountOut).to.be.equal("1");
+  });
+
+  it("should if creating a job with a used ID", async () => {
+    // Arrange
+    const { owner, anyoneElse } = await getAccounts();
+    await core.connect(owner).updateOrigins([anyoneElse.address]);
+    await createJob(core, anyoneElse, [
+      "0xfc3838689ce844438ff358bd41f403f9",
+      ethers.constants.AddressZero,
+      ethers.constants.AddressZero,
+      ethers.constants.AddressZero,
+      1,
+      1,
+      1,
+    ]);
+    const calldata = encodeData([
+      "0xfc3838689ce844438ff358bd41f403f9",
+      ethers.constants.AddressZero,
+      ethers.constants.AddressZero,
+      ethers.constants.AddressZero,
+      1,
+      100,
+      1,
+    ]);
+
+    // Act
+    const call = core.connect(anyoneElse).createJob(calldata);
+
+    // Assert
+    await expect(call).to.be.revertedWith("JobIdInUse");
   });
 
   describe("jobs array pruning", () => {
@@ -160,7 +190,12 @@ describe("Jobs Queue", () => {
 });
 
 async function createJob(core: Contract, origin: Signer, args: any) {
-  const calldata = ethers.utils.defaultAbiCoder.encode(
+  const calldata = encodeData(args);
+  await core.connect(origin).createJob(calldata);
+}
+
+function encodeData(args: any) {
+  return ethers.utils.defaultAbiCoder.encode(
     [
       "bytes16",
       "address",
@@ -172,5 +207,4 @@ async function createJob(core: Contract, origin: Signer, args: any) {
     ],
     args
   );
-  await core.connect(origin).createJob(calldata);
 }
