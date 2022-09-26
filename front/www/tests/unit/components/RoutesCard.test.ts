@@ -21,7 +21,7 @@ describe('route card', function () {
         // Assert
         expect(wrapper.find('.field--global-fee').text()).toEqual('0.50')
         expect(wrapper.find('.field--amount-out .amount-tokens').text()).toEqual('77.14')
-        expect(wrapper.find('.field--amount-out .amount-dollars').text()).toEqual('~ $ 38.57 (-65.10%)')
+        expect(wrapper.find('.field--amount-out .amount-dollars').text()).toEqual('(-65.10%) ~ $ 38.57')
     })
 
     test('fast route shows time in seconds', async () => {

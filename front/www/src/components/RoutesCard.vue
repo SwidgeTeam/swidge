@@ -167,11 +167,13 @@ const priceChangePercerntage = () => {
         <div class="route-details ml-2 mt-1">
             <div class="flex flex-col field--amount-out pt-2">
                 <span class="amount-tokens leading-5 text-right text-xl">{{ amountOut }}</span>
-                <span class="amount-dollars leading-5 text-right text-[13px] text-slate-500 hover:text-slate-400">~ $ {{
+                <span class="amount-dollars leading-5 text-right text-[13px] text-slate-500 hover:text-slate-400">
+                    <span v-if="Number(priceChangePercerntage()) > -5" class="text-green-700">({{priceChangePercerntage()}}%)</span>
+                    <span v-if="Number(priceChangePercerntage()) <= -5 && Number(priceChangePercerntage()) > -9" class="text-yellow-700">({{priceChangePercerntage()}}%)</span>
+                    <span v-if="Number(priceChangePercerntage()) <= -9" class="text-red-700">({{priceChangePercerntage()}}%)</span> ~ $ {{
                         outputDollarValue 
                     }}
-                    (<span v-if="Number(priceChangePercerntage()) >= 0" class="text-green-700">{{priceChangePercerntage()}}%</span>
-                    <span v-if="Number(priceChangePercerntage()) < 0" class="text-red-700">{{priceChangePercerntage()}}%</span>)
+                    
                 </span>
             </div>
             <div class="flex text-ellipsis text-md field--global-fee">
