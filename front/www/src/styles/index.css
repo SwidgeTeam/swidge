@@ -106,6 +106,14 @@
         @apply py-2 px-6 text-sm rounded-full font-medium border border-gray-600 hover:bg-gray-700
     }
 
+    .radial-gradient {
+        background: radial-gradient(
+            farthest-corner at 10% 90%,
+            #7C2F82 0%,
+            #222129 90%
+        );
+    }
+    
     .background-gradient {
         background-image: radial-gradient(100% 100% at 50% 25%, var(--tw-gradient-stops));
         --tw-gradient-to: #222129;

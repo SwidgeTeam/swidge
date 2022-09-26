@@ -51,7 +51,9 @@ const onCloseModal = () => {
                     leave-from="opacity-100 translate-y-0 sm:scale-100"
                     leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
                     <div
-                        class="inline-block w-full max-w-xl px-6 py-8 sm:px-10 sm:py-12 text-left relative align-middle transition-all transform shadow-xl bg-[#222129] rounded-2xl"
+                        class="inline-block w-full max-w-xl px-6 py-8 sm:px-10 sm:py-12 text-left 
+                        relative align-middle transition-all transform shadow-xl 
+                        bg-[#222129] rounded-2xl"
                     >
                         <XIcon
                             class="absolute w-5 top-2 right-2 sm:top-6 sm:right-6 cursor-pointer"
