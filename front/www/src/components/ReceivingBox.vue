@@ -28,7 +28,7 @@ const routes = () => {
 }
 
 const showContainer = () => {
-    return thereAreRoutes() || routesStore.showContainer && !loadingRoutes()
+    return thereAreRoutes() || (routesStore.showContainer && !loadingRoutes())
 }
 
 const loadingRoutes = () => {
@@ -40,22 +40,33 @@ const thereAreRoutes = () => {
 }
 
 const thereAreMoreRoutes = () => {
-    return routesStore.getAllRoutes.length > routesStore.getPromotedRoutes.length
+    return (
+        routesStore.getAllRoutes.length > routesStore.getPromotedRoutes.length
+    )
 }
 </script>
 
 <template>
     <div class="flex flex-col px-1 receiving-box-colors relative">
         <div class="px-1">
-            <div class="flex items-center justify-between py-3 h-[var(--receive-selector-height)]">
+            <div
+                class="flex items-center justify-between py-3 h-[var(--receive-selector-height)]"
+            >
                 <AssetSelector
                     :is-origin="false"
                     @open-token-list="() => emits('select-token')"
                 />
-                <div v-if="loadingRoutes()" class="flex items-center text-slate-300">
-                    <LoadingCircle
-                        class="h-9 w-9"
-                    />
+                <div
+                    v-if="!thereAreRoutes() && !loadingRoutes()"
+                    class="flex items-center text-slate-300"
+                >
+                    0.00
+                </div>
+                <div
+                    v-if="loadingRoutes()"
+                    class="flex items-center text-slate-300"
+                >
+                    <LoadingCircle class="h-9 w-9" />
                     Searching routes...
                 </div>
             </div>

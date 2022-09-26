@@ -16,17 +16,17 @@ import SwidgeLogoNoText from '@/components/svg/SwidgeLogoNoText.vue'
 
 const web3Store = useWeb3Store()
 const metadataStore = useMetadataStore()
-const { account, isConnected, isCorrectNetwork, selectedNetworkId } = storeToRefs(web3Store)
+const { account, isConnected, isCorrectNetwork, selectedNetworkId } =
+    storeToRefs(web3Store)
 
 const isNetworkModalOpen = ref(false)
 const isTransactionsModalOpen = ref(false)
 const isWalletsModalOpen = ref(false)
 
 const changeNetwork = (chainId: string) => {
-    web3Store.switchToNetwork(chainId)
-        .then(() => {
-            isNetworkModalOpen.value = false
-        })
+    web3Store.switchToNetwork(chainId).then(() => {
+        isNetworkModalOpen.value = false
+    })
 }
 
 const connect = () => {
@@ -49,7 +49,7 @@ const chainName = computed({
         const chain = metadataStore.getChain(selectedNetworkId.value)
         return chain ? chain.name : ''
     },
-    set: () => null
+    set: () => null,
 })
 
 const chainIcon = computed({
@@ -60,23 +60,32 @@ const chainIcon = computed({
         const chain = metadataStore.getChain(selectedNetworkId.value)
         return chain ? chain.logo : ''
     },
-    set: () => null
+    set: () => null,
 })
 </script>
 
 <template>
-    <nav class="flex items-center h-[var(--header-height)] justify-between w-full px-2 bg-transparent">
-        <a class="w-25 sm:w-40" href="https://www.swidge.xyz/">
-            <SwidgeLogoNoText class="sm:hidden h-10"/>
-            <SwidgeLogo class="hidden sm:inline-block"/>
-        </a>
-        <div v-if="isConnected" class="flex gap-2 text-sm sm:text-base sm:gap-4">
+    <nav
+        class="flex items-center h-[var(--header-height)] justify-between w-full px-2 bg-transparent md:p-8 md:my-4"
+    >
+        <div class="flex items-center">
+            <a class="w-25 sm:w-40" href="https://www.swidge.xyz/">
+                <SwidgeLogoNoText class="sm:hidden h-10" />
+                <SwidgeLogo class="hidden sm:inline-block" />
+            </a>
+            <a href="./ComingSoon" class="mx-4">Dashboard</a>
+            <a href="" class="mx-4">Swidge</a>
+            <a href="" class="mx-4">Invest</a>
+        </div>
+
+        <div
+            v-if="isConnected"
+            class="flex gap-2 text-sm sm:text-base sm:gap-4"
+        >
             <TransactionsButton
-                @show-transactions="isTransactionsModalOpen = true"/>
-            <AddressButton
-                :address="account"
-                @click="handleClickOnAddress"
+                @show-transactions="isTransactionsModalOpen = true"
             />
+            <AddressButton :address="account" @click="handleClickOnAddress" />
             <ChainButton
                 :chain-name="chainName"
                 :icon-link="chainIcon"
@@ -85,9 +94,7 @@ const chainIcon = computed({
             />
         </div>
         <div v-else class="flex gap-1 sm:gap-4">
-            <ConnectButton
-                @connect="connect"
-            />
+            <ConnectButton @connect="connect" />
         </div>
     </nav>
     <ModalNetworks
@@ -105,4 +112,3 @@ const chainIcon = computed({
         @set-wallet="setWallet"
     />
 </template>
-

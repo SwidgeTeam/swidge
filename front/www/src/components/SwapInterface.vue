@@ -68,7 +68,7 @@ const unsetButtonAlert = () => {
 
 const emitEventGTMTransaction = () => {
     const token = routesStore.getOriginToken()
-    const amount =sourceTokenAmount.value
+    const amount = sourceTokenAmount.value
     const dollarAmount = Number(amount) * Number(token?.price)
     const fixedAmount = AmountFormatter.format(dollarAmount.toString())
     gtm?.trackEvent({
@@ -101,15 +101,14 @@ const destinationChainSelected = computed({
     get: () => {
         return routesStore.getDestinationChainId
     },
-    set: () => null
+    set: () => null,
 })
 /**
  * Decides if should quote for a possible path
  */
 const shouldQuote = () => {
     return (
-        routesStore.bothTokensSelected &&
-        Number(sourceTokenAmount.value) !== 0
+        routesStore.bothTokensSelected && Number(sourceTokenAmount.value) !== 0
     )
 }
 
@@ -137,13 +136,17 @@ const handleUpdateTokenFromModal = (token: IToken) => {
     const selectedOriginChainId = routesStore.getOriginChainId
     const selectedDestinationChainId = routesStore.getDestinationChainId
     const selectedOriginTokenAddress = routesStore.getOriginTokenAddress
-    const selectedDestinationTokenAddress = routesStore.getDestinationTokenAddress
+    const selectedDestinationTokenAddress =
+        routesStore.getDestinationTokenAddress
 
     if (isSourceChainToken.value) {
         // If the origin network is being chosen
         if (selectedOriginChainId != token.chainId) {
             // If network and token of source and destination are the same, switch inputs instead of setting new ones.
-            if (token.chainId == selectedDestinationChainId && token.address == selectedDestinationTokenAddress) {
+            if (
+                token.chainId == selectedDestinationChainId &&
+                token.address == selectedDestinationTokenAddress
+            ) {
                 switchHandlerFunction()
             } else {
                 updateOriginToken(token)
@@ -152,7 +155,10 @@ const handleUpdateTokenFromModal = (token: IToken) => {
             updateOriginToken(token)
         }
     } else {
-        if (token.chainId == selectedOriginChainId && token.address == selectedOriginTokenAddress) {
+        if (
+            token.chainId == selectedOriginChainId &&
+            token.address == selectedOriginTokenAddress
+        ) {
             switchHandlerFunction()
         } else {
             // Update token details
@@ -175,7 +181,10 @@ const updateOriginToken = async (token: IToken) => {
     const originTokenAddress = routesStore.getOriginTokenAddress
     const originTokenChainId = routesStore.getOriginChainId
     // If user selected a different token, update
-    if (originTokenAddress !== token.address || originTokenChainId !== token.chainId) {
+    if (
+        originTokenAddress !== token.address ||
+        originTokenChainId !== token.chainId
+    ) {
         // Update token details
         routesStore.selectOriginToken(token.chainId, token.address)
         // Reset amount
@@ -210,7 +219,10 @@ const onQuote = async () => {
         const thereAreRoutes = routesStore.getAllRoutes.length > 0
         if (!thereAreRoutes) {
             isExecuteButtonDisabled.value = false
-        } else if (Number(sourceTokenAmount.value) > Number(routesStore.getSelectedTokenBalance)) {
+        } else if (
+            Number(sourceTokenAmount.value) >
+            Number(routesStore.getSelectedTokenBalance)
+        ) {
             setButtonAlert('Insufficient Balance')
         } else {
             isExecuteButtonDisabled.value = false
@@ -382,12 +394,13 @@ const handleChangedReceiver = (address: string) => {
 </script>
 
 <template>
-    <div class="flex flex-col gap-3 px-3 pb-2 md:mt-[15px] w-full max-w-sm rounded-xl md:bg-[#5A5564]/30">
-        <div class="flex justify-end gap-2 py-2 h-[var(--settings-line-height)]">
-            <ReloadIcon
-                class="w-5 h-5 cursor-pointer"
-                @click="onQuote"
-            />
+    <div
+        class="flex flex-col gap-3 px-3 pb-2 md:mt-[15px] w-full max-w-sm rounded-xl"
+    >
+        <div
+            class="flex justify-end gap-2 py-2 h-[var(--settings-line-height)]"
+        >
+            <ReloadIcon class="w-5 h-5 cursor-pointer" @click="onQuote" />
             <AdjustmentsIcon
                 class="w-5 h-5 cursor-pointer"
                 @click="isSettingsModalOpen = true"
@@ -399,12 +412,8 @@ const handleChangedReceiver = (address: string) => {
                 @input-changed="handleSourceInputChanged"
                 @select-token="() => handleOpenTokenList(true)"
             />
-            <FromToArrow
-                @switch-tokens="switchHandlerFunction"
-            />
-            <ReceivingBox
-                @select-token="() => handleOpenTokenList(false)"
-            />
+            <FromToArrow @switch-tokens="switchHandlerFunction" />
+            <ReceivingBox @select-token="() => handleOpenTokenList(false)" />
         </div>
         <RecipientUserCard
             v-if="destinationChainSelected"
