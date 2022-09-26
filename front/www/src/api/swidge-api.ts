@@ -13,6 +13,7 @@ import { MetadataJson } from '@/api/models/get-metadata'
 import { Metadata, TokenBalance } from '@/domain/metadata/Metadata'
 import { WalletBalancesJson } from '@/api/models/get-balances'
 import { BigNumber } from 'ethers'
+import { TxExecutedRequest } from '@/api/models/post-tx-executed'
 
 class SwidgeAPI extends HttpClient {
     public constructor() {
@@ -259,15 +260,7 @@ class SwidgeAPI extends HttpClient {
         }
     }
 
-    async informExecutedTx(params: {
-        aggregatorId: string,
-        fromChainId: string,
-        toChainId: string,
-        fromAddress: string,
-        toAddress: string,
-        txHash: string,
-        trackingId: string,
-    }): Promise<void> {
+    async informExecutedTx(params: TxExecutedRequest): Promise<void> {
         try {
             await this.instance.post('/tx-executed', params)
         } catch (e: unknown) {

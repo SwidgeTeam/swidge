@@ -16,6 +16,8 @@ export class PostTxExecutedController {
       params.toChainId,
       params.fromAddress,
       params.toAddress,
+      params.fromToken,
+      params.amountIn,
       params.txHash,
       params.trackingId,
     );
