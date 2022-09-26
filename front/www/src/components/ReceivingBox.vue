@@ -48,7 +48,7 @@ const thereAreMoreRoutes = () => {
 
 <template>
     <div
-        class="flex flex-col px-1 receiving-box-colors relative md:h-[123px] md:p-4 md:justify-center"
+        class="flex flex-col px-1 receiving-box-colors relative md:min-h-[123px] md:p-4 md:justify-center"
     >
         <div class="px-1">
             <div
