@@ -5,6 +5,8 @@ export class ExecutedTxCommand {
     readonly toChain: string,
     readonly fromAddress: string,
     readonly toAddress: string,
+    readonly fromToken: string,
+    readonly amountIn: string,
     readonly txHash: string,
     readonly trackingId: string,
   ) {}
