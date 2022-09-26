@@ -59,7 +59,7 @@ const getWallets = () => {
                     leave="ease-in duration-200"
                     leave-from="opacity-100"
                     leave-to="opacity-0">
-                    <DialogOverlay class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"/>
+                    <DialogOverlay class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-60"/>
                 </TransitionChild>
                 <span
                     class="hidden sm:inline-block sm:align-middle sm:h-screen"
@@ -73,8 +73,8 @@ const getWallets = () => {
                     leave-from="opacity-100 translate-y-0 sm:scale-100"
                     leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"> 
                     <div
-                        class="flex flex-col sm:inline-block sm:align-middle sm:justify-center items-center w-full max-w-md px-6 py-8 sm:px-24
-                     sm:py-12 text-left relative transition-all transform shadow-xl 
+                        class="flex sm:inline-block self-center align-center justify-self-auto justify-center w-full max-w-sm sm:max-w-xl px-2 py-8 sm:px-
+                     sm:py-2 text-left relative transition-all transform shadow-xl 
                      bg-[#222129] radial-gradient rounded-2xl"
                     > 
                     <XIcon
@@ -82,21 +82,21 @@ const getWallets = () => {
                             @click="onCloseModal()"
                         />
                     <h1 class="absolute w-5 top-3 left-6 sm:top-6 sm:right-6 cursor-pointer font-semibold font-roboto text-xl">Connect</h1>
-                    <button
-                        v-for="(wallet, index) in getWallets()"
-                        :key="index"
-                        class="items-center tracking-wide px-10 py-5 align-center
-        font-roboto font-semibold gradient-border-header-main hover:gradient-border-header-main-hover          
-        inline-block m-5"
-                        @click="selectWallet(wallet.key)"
-                    >
-                        <img 
-                            class="w-32 h-32"
-                            :alt="wallet.name + ' icon'"
-                            :src="wallet.icon"/>
-                        <span>{{ wallet.name }}</span>
-                    </button>
-                                          
+                    <div class="flex flex-col sm:flex-row py-10 px-8 justify-center">
+                        <button
+                            v-for="(wallet, index) in getWallets()"
+                            :key="index"
+                            class="inline-block justify-center w-fit px-7 py-5 m-5 font-roboto font-semibold 
+                            gradient-border-header-main hover:gradient-border-header-main-hover"
+                            @click="selectWallet(wallet.key)"
+                        >
+                            <img 
+                                class ="max-w-sm object-contain w-32 h-24"
+                                :alt="wallet.name + ' icon'"
+                                :src="wallet.icon"/>
+                            <span>{{ wallet.name }}</span>
+                        </button>
+                    </div>                     
                     </div>
                 </TransitionChild>
             </div>
