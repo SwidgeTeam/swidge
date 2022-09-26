@@ -107,16 +107,33 @@ export class Metamask implements IWallet {
         const provider = new ethers.providers.Web3Provider(this.connector)
         const signer: Signer = provider.getSigner()
 
+        let txRequest = {
+            from: tx.from,
+            to: tx.to,
+            data: tx.data,
+            value: tx.value,
+            nonce: tx.nonce,
+        }
+
+        if (Number(tx.gas) > 0) {
+            txRequest = Object.assign(
+                txRequest,
+                {
+                    gasLimit: tx.gas
+                }
+            )
+        }
+        if (Number(tx.gasPrice) > 0) {
+            txRequest = Object.assign(
+                txRequest,
+                {
+                    gasPrice: tx.gasPrice
+                }
+            )
+        }
+
         const receipt = await (
-            await signer.sendTransaction({
-                from: tx.from,
-                to: tx.to,
-                data: tx.data,
-                value: tx.value,
-                gasLimit: tx.gas,
-                gasPrice: tx.gasPrice,
-                nonce: tx.nonce,
-            })
+            await signer.sendTransaction(txRequest)
         ).wait()
 
         return receipt.transactionHash
