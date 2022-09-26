@@ -17,7 +17,8 @@ contract JobsQueue is Ownable {
     error UnauthorizedExecutor();
     error JobWithZeroAmount();
 
-    event FailedJob(string msg);
+    event Success(bytes16 indexed id);
+    event Fail(bytes16 indexed id, string msg);
 
     struct HandlerMessage {
         bytes16 id;
@@ -100,9 +101,10 @@ contract JobsQueue is Ownable {
                 if (success) {
                     delete jobs[job.position];
                     delete remainingJobs[job.id];
+                    emit Success(job.id);
                 }
                 else {
-                    emit FailedJob(LibBytes.getRevertMsg(response));
+                    emit Fail(job.id, LibBytes.getRevertMsg(response));
                 }
             }
         }
