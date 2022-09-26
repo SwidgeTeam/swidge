@@ -45,8 +45,11 @@ contract Rango is IRangoMessageReceiver {
             uint256 value;
 
             if (_token == NULL_ADDRESS) {
+                _amount = address(this).balance;
                 value = _amount;
             } else {
+                IERC20 asset = IERC20(_token);
+                _amount = asset.balanceOf(address(this));
                 value = 0;
                 SafeERC20.safeTransfer(IERC20(_token), address(core), _amount);
             }
