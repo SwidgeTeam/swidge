@@ -375,7 +375,7 @@ const closeModalStatus = () => {
 </script>
 
 <template>
-    <div class="flex flex-col gap-3 px-3 pb-2 md:mt-[15px] w-full max-w-sm rounded-xl md:bg-[#5A5564]/30">
+    <div class="flex flex-col gap-3 md:mt-[20px] w-full max-w-md rounded-xl">
         <div class="flex justify-end gap-2 py-2 h-[var(--settings-line-height)]">
             <ReloadIcon
                 class="w-5 h-5 cursor-pointer"
