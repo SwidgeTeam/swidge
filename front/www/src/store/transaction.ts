@@ -136,13 +136,19 @@ export const useTransactionStore = defineStore('transaction', {
                     const routesStore = useRoutesStore()
                     if (response.status === TransactionStatus.Success) {
                         routesStore.completeRoute()
-                        clearInterval(this.statusCheckInterval)
+                        this.stopCheckingStatus()
                     } else if (response.status === TransactionStatus.Failed) {
                         // TODO do something
-                        clearInterval(this.statusCheckInterval)
+                        this.stopCheckingStatus()
                     }
                 })
             }, 5000)
+        },
+        /**
+         * stops the interval
+         */
+        stopCheckingStatus: function () {
+            clearInterval(this.statusCheckInterval)
         },
         /**
          * fetches and stores the current nonce of the wallet to have the correct count
