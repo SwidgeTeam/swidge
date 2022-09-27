@@ -15,6 +15,7 @@ export class GetWalletBalancesController {
     const balances = await this.queryBus.execute<GetWalletTokenListQuery, WalletBalances>(query);
 
     return res.json({
+      empty: balances.tokens.length === 0,
       tokens: balances.tokens.map((token) => {
         return {
           chainId: token.chainId,

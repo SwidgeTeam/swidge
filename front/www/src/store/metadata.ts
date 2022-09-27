@@ -10,6 +10,7 @@ export const useMetadataStore = defineStore('metadata', {
     state: () => ({
         tokens: {} as ITokenList,
         chains: [] as IChain[],
+        emptyPrices: true,
     }),
     getters: {
         /**
@@ -89,9 +90,10 @@ export const useMetadataStore = defineStore('metadata', {
          */
         async fetchBalances(wallet: string) {
             const tokenBalances = await swidgeApi.fetchBalances(wallet)
+            this.emptyPrices = tokenBalances.empty
             for (const [chainId, tokens] of Object.entries(this.tokens)) {
                 this.tokens[chainId] = tokens.map(token => {
-                    const tokenBalance = tokenBalances.find(tokenBalance => {
+                    const tokenBalance = tokenBalances.tokens.find(tokenBalance => {
                         return tokenBalance.chainId === token.chainId && tokenBalance.address === token.address
                     })
                     if (tokenBalance) {

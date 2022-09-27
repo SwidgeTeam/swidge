@@ -1,4 +1,5 @@
 export interface WalletBalancesJson {
+    empty: boolean
     tokens: TokenBalanceJson[]
 }
 
