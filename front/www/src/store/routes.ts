@@ -155,12 +155,16 @@ export const useRoutesStore = defineStore('routes', {
                 return false
             }
         },
-        getSelectedTokenBalance(): string {
+        async getSelectedTokenBalance(): Promise<string> {
             const token = this.getOriginToken()
             if (!token) {
                 return '0'
             }
-            return ethers.utils.formatUnits(token.balance, token.decimals)
+            let balance = token.balance
+            if (useMetadataStore().emptyPrices) {
+                balance = await useWeb3Store().getBalance(token)
+            }
+            return ethers.utils.formatUnits(balance, token.decimals)
         }
     },
     actions: {
