@@ -105,7 +105,8 @@ const inputDollarValue = computed({
             return '0.0'
         }
         const amount = Number(props.route.resume.amountIn) * Number(tokenInPrice.price)
-        return AmountFormatter.format(amount.toFixed(2))
+        const FixedUsdAmount = AmountFormatter.format(amount.toFixed(2))
+        return FixedUsdAmount
     },
     set: () => null,
 })
@@ -116,8 +117,9 @@ const outputDollarValue = computed({
         if(!tokenOutPrice){
             return '0.0'
         }
-        const usdAmount = Number(props.route.resume.amountOut) * Number(tokenOutPrice)
-        return AmountFormatter.format(usdAmount.toFixed(2))
+        const amount = Number(props.route.resume.amountOut) * Number(tokenOutPrice)
+        const FixedUsdAmount = AmountFormatter.format(amount.toFixed(2))
+        return FixedUsdAmount
     },
     set: () => null
 })
@@ -140,8 +142,8 @@ const nextSteps = computed({
 })
 
 const priceChangePercerntage = () => {
-    const fixedInputDollarValue = parseFloat(inputDollarValue.value.replace(/,/g, ''));
-    const fixedOutputDollarValue = parseFloat(outputDollarValue.value.replace(/,/g, ''));
+    const fixedInputDollarValue = Number(inputDollarValue.value)
+    const fixedOutputDollarValue = Number(outputDollarValue.value)
     const pricePercentage = ((fixedOutputDollarValue)/(fixedInputDollarValue)*100)-100
     const fixedPricePercentage = pricePercentage.toFixed(2)
     return fixedPricePercentage
