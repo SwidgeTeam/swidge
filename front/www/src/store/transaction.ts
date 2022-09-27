@@ -85,23 +85,25 @@ export const useTransactionStore = defineStore('transaction', {
         /**
          * Informs the provider the tx has been executed
          */
-        async informExecutedTx(txId: string, txHash: string) {
-            this.txId = txId
+        async informExecutedTx(txHash: string) {
             const web3Store = useWeb3Store()
             const routesStore = useRoutesStore()
             const route = routesStore.getSelectedRoute
+            this.txId = route.id
             if (!this.mainTx) {
                 throw new Error('something very wrong, what did we execute then?')
             }
             const request = {
+                txId: this.txId,
+                txHash: txHash,
                 aggregatorId: route.aggregator.id,
                 fromChainId: routesStore.getOriginChainId,
                 toChainId: routesStore.getDestinationChainId,
                 fromAddress: web3Store.account,
                 toAddress: routesStore.receiverAddress,
                 fromToken: routesStore.getOriginTokenAddress,
+                toToken: routesStore.getDestinationTokenAddress,
                 amountIn: this.mainTx.value,
-                txHash: txHash,
                 trackingId: this.trackingId,
             }
             swidgeApi.informExecutedTx(request)

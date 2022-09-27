@@ -247,7 +247,7 @@ const onExecuteTransaction = async () => {
 
     await promise
         .then((txHash: TxHash) => {
-            onInitialTxCompleted(route, txHash)
+            onInitialTxCompleted(txHash)
             emitEventGTMTransaction()
         })
         .catch((error) => {
@@ -314,11 +314,10 @@ const executeDoubleQuoteExecution = async (): Promise<TxHash> => {
 
 /**
  * Manages the process once the tx has been executed
- * @param route
  * @param txHash
  */
-const onInitialTxCompleted = (route: Route, txHash: TxHash) => {
-    transactionStore.informExecutedTx(route.id, txHash)
+const onInitialTxCompleted = (txHash: TxHash) => {
+    transactionStore.informExecutedTx(txHash)
     if (routesStore.isCrossChainRoute) {
         routesStore.completeFirstStep()
         transactionStore.startCheckingStatus()
