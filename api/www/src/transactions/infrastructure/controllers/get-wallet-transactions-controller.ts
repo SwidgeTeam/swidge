@@ -22,6 +22,7 @@ export class GetWalletTransactionsController {
       transactions: transactions.map((tx: Transaction) => {
         return {
           txHash: tx.txHash,
+          destinationTxHash: tx.destinationTxHash,
           status: tx.status,
           date: tx.executed,
           fromChain: tx.fromChainId,
