@@ -91,6 +91,28 @@ export class Transaction {
     return this._steps;
   }
 
+  get originTxHash(): string {
+    return this._steps[0].originTxHash;
+  }
+
+  get destinationTxHash(): string {
+    if (this.status === ExternalTransactionStatus.Pending) {
+      return '';
+    }
+    return this.lastStep().destinationTxHash;
+  }
+
+  get amountIn(): string {
+    return this._steps[0].amountIn;
+  }
+
+  get amountOut(): string {
+    if (this.status === ExternalTransactionStatus.Pending) {
+      return '';
+    }
+    return this.lastStep().amountOut;
+  }
+
   public addStep(step: TransactionStep): void {
     this._steps.push(step);
   }

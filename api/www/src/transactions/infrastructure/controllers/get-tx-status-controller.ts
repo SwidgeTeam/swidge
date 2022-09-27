@@ -10,7 +10,7 @@ export class GetTxStatusController {
 
   @Get('tx-status')
   async build(@Query() params: GetTxStatusDto, @Res() res: Response) {
-    const query = new CheckTxStatusQuery(params.txHash);
+    const query = new CheckTxStatusQuery(params.txId);
 
     const status = await this.queryBus.execute<CheckTxStatusQuery, string>(query);
 

@@ -1,6 +1,7 @@
-import { IsTxHash } from '../../../shared/infrastructure/validators/txHashValidator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class GetTxStatusDto {
-  @IsTxHash()
-  txHash: string;
+  @IsString()
+  @IsNotEmpty()
+  txId: string;
 }
