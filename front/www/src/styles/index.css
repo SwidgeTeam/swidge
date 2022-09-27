@@ -146,12 +146,12 @@
 
     .gradient-border-header-main {
         background: rgba(191, 188, 193, 0.15);
-        border: 2px solid transparent;
+        border: 1px solid transparent;
         border-radius: 12px;
     }
     
     .gradient-border-header-main-hover {
-        border: 2px solid #BFBCC1;
+        border: 1px solid #CCCCCC;
     }
 
     .gradient-border-header-main-wallet {
