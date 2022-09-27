@@ -12,7 +12,7 @@ export const useTransactionStore = defineStore('transaction', {
         mainTx: undefined as undefined | TransactionDetails,
         trackingId: '',
         statusCheckInterval: 0,
-        txHash: '',
+        txId: '',
         currentNonce: 0,
     }),
     getters: {
@@ -85,8 +85,8 @@ export const useTransactionStore = defineStore('transaction', {
         /**
          * Informs the provider the tx has been executed
          */
-        async informExecutedTx(txHash: string) {
-            this.txHash = txHash
+        async informExecutedTx(txId: string, txHash: string) {
+            this.txId = txId
             const web3Store = useWeb3Store()
             const routesStore = useRoutesStore()
             const route = routesStore.getSelectedRoute
@@ -101,7 +101,7 @@ export const useTransactionStore = defineStore('transaction', {
                 toAddress: routesStore.receiverAddress,
                 fromToken: routesStore.getOriginTokenAddress,
                 amountIn: this.mainTx.value,
-                txHash: this.txHash,
+                txHash: txHash,
                 trackingId: this.trackingId,
             }
             swidgeApi.informExecutedTx(request)
@@ -131,7 +131,7 @@ export const useTransactionStore = defineStore('transaction', {
         startCheckingStatus: function () {
             this.statusCheckInterval = window.setInterval(() => {
                 swidgeApi.checkTxStatus({
-                    txHash: this.txHash,
+                    txId: this.txId,
                 }).then(response => {
                     const routesStore = useRoutesStore()
                     if (response.status === TransactionStatus.Success) {

@@ -318,7 +318,7 @@ const executeDoubleQuoteExecution = async (): Promise<TxHash> => {
  * @param txHash
  */
 const onInitialTxCompleted = (route: Route, txHash: TxHash) => {
-    transactionStore.informExecutedTx(txHash)
+    transactionStore.informExecutedTx(route.id, txHash)
     if (routesStore.isCrossChainRoute) {
         routesStore.completeFirstStep()
         transactionStore.startCheckingStatus()

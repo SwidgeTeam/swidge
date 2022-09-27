@@ -1,10 +1,10 @@
 import { ContractAddress } from '../../shared/types';
 import { ExternalTransactionStatus } from '../../aggregators/domain/status-check';
 import { TransactionStep } from './TransactionStep';
-import { randomUUID } from 'crypto';
 
 export class Transaction {
   public static create(
+    _id: string,
     _walletAddress: string,
     _receiver: string,
     _fromChainId: string,
@@ -13,11 +13,10 @@ export class Transaction {
     _dstToken: ContractAddress,
     _status: ExternalTransactionStatus,
   ) {
-    const id = randomUUID();
     const executed = new Date();
     const completed = _fromChainId == _toChainId ? executed : null;
     return new Transaction(
-      id,
+      _id,
       _walletAddress,
       _receiver,
       _fromChainId,

@@ -72,6 +72,7 @@ export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
       const status = await this.checkTxStatus(command);
 
       const tx = Transaction.create(
+        command.txId,
         command.fromAddress,
         command.toAddress,
         command.fromChain,
@@ -117,12 +118,13 @@ export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
       this.logger.log(`Processing cross chain tx ${command.txHash}...`);
 
       const tx = Transaction.create(
+        command.txId,
         command.fromAddress,
         command.toAddress,
         command.fromChain,
         command.toChain,
         command.fromToken,
-        '', // TODO : add
+        command.toToken,
         ExternalTransactionStatus.Pending,
       );
 
