@@ -30,7 +30,7 @@ export class Transaction {
     );
   }
 
-  private readonly steps: TransactionStep[];
+  private readonly _steps: TransactionStep[];
 
   constructor(
     private _id: string,
@@ -44,7 +44,7 @@ export class Transaction {
     private _completed: Date,
     private _status: ExternalTransactionStatus,
   ) {
-    this.steps = [];
+    this._steps = [];
   }
 
   get id(): string {
@@ -87,20 +87,27 @@ export class Transaction {
     return this._status;
   }
 
+  get steps(): TransactionStep[] {
+    return this._steps;
+  }
+
   public addStep(step: TransactionStep): void {
-    this.steps.push(step);
+    this._steps.push(step);
   }
 
   public lastStep() {
-    return this.steps[this.steps.length - 1];
+    return this._steps[this._steps.length - 1];
   }
 
   /** Modifiers */
 
   public updateLastStep(lastStep: TransactionStep) {
-    this.steps[this.steps.length - 1] = lastStep;
+    this._steps[this._steps.length - 1] = lastStep;
 
-    if (lastStep.toChainId == this.toChainId && lastStep.dstToken == this.dstToken) {
+    if (
+      (lastStep.toChainId == this.toChainId && lastStep.dstToken == this.dstToken) ||
+      lastStep.status == ExternalTransactionStatus.Failed
+    ) {
       this._completed = new Date();
       this._status = lastStep.status;
     }

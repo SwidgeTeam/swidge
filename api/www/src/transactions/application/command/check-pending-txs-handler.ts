@@ -52,9 +52,9 @@ export class CheckPendingTxsHandler implements ICommandHandler<CheckPendingTxsCo
       if (status.status !== ExternalTransactionStatus.Pending) {
         lastStep
           .markAsCompleted(new Date())
+          .setDestinationTxHash(status.dstTxHash)
           .setDestinationToken(status.toToken)
           .setAmountOut(status.amountOut)
-          .setDestinationTxHash(status.dstTxHash)
           .setStatus(status.status);
 
         tx.updateLastStep(lastStep);

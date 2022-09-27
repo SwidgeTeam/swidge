@@ -122,7 +122,7 @@ export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
         command.fromChain,
         command.toChain,
         command.fromToken,
-        '',
+        '', // TODO : add
         ExternalTransactionStatus.Pending,
       );
 
