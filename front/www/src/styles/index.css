@@ -145,22 +145,23 @@
     }
 
     .gradient-border-header-main {
-        background: #2E283A;
-        border: 2px solid #2E283A;
+        background: rgba(191, 188, 193, 0.15);
+        border: 2px solid transparent;
         border-radius: 12px;
     }
+    
+    .gradient-border-header-main-hover {
+        border: 2px solid #BFBCC1;
+    }
+
     .gradient-border-header-main-wallet {
         background: #2E283A;
         border: 2px solid #2E283A;
         border-radius: 12px;
     }
-    .gradient-border-header-main-hover {
-        border: 2px solid grey;
-    }
-
     .gradient-border-header-main-hover-wallet {
         background: rgba(191, 188, 193, 0.15);
-        border: 2px rgba(191, 188, 193, 1);
+        border: 2px #BFBCC1;
         border-radius: 12px;
     }
 
