@@ -3,10 +3,10 @@ import { Column, Entity, Index, PrimaryColumn } from 'typeorm';
 @Entity({ name: 'transaction_steps' })
 @Index(['txId', 'originTxHash'], { unique: true })
 export class TransactionStepEntity {
-  @PrimaryColumn()
+  @PrimaryColumn({ length: 70 })
   txId: string;
 
-  @PrimaryColumn()
+  @PrimaryColumn({ length: 70 })
   originTxHash: string;
 
   @Column({ length: 70 })

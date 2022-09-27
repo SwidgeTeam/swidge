@@ -2,10 +2,10 @@ import { TransactionsRepository } from '../../../domain/TransactionsRepository';
 import { EntityManager, EntityRepository } from 'typeorm';
 import { Transaction } from '../../../domain/Transaction';
 import { TransactionEntity } from '../models/transaction.entity';
+import { TransactionStepEntity } from '../models/transaction-step.entity';
 import { BigInteger } from '../../../../shared/domain/big-integer';
 import { Transactions } from '../../../domain/Transactions';
 import { ExternalTransactionStatus } from '../../../../aggregators/domain/status-check';
-import { TransactionStepEntity } from '../models/transaction-step.entity';
 import { TransactionStep } from '../../../domain/TransactionStep';
 
 @EntityRepository(TransactionEntity)
@@ -108,7 +108,11 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
       status: ExternalTransactionStatus.Pending,
     });
 
-    const items = result.map(await this.buildTx);
+    const items = [];
+
+    for (const row of result) {
+      items.push(await this.buildTx(row));
+    }
 
     return new Transactions(items);
   }
@@ -122,7 +126,11 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
       walletAddress: walletAddress,
     });
 
-    const items = result.map(await this.buildTx);
+    const items = [];
+
+    for (const row of result) {
+      items.push(await this.buildTx(row));
+    }
 
     return new Transactions(items);
   }
