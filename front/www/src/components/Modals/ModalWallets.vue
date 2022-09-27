@@ -59,7 +59,7 @@ const getWallets = () => {
                     leave="ease-in duration-200"
                     leave-from="opacity-100"
                     leave-to="opacity-0">
-                    <DialogOverlay class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-60"/>
+                    <DialogOverlay class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-40"/>
                 </TransitionChild>
                 <span
                     class="hidden sm:inline-block sm:align-middle sm:h-screen"
@@ -84,6 +84,7 @@ const getWallets = () => {
                         />
                     <h1 class="absolute w-5 top-3 left-6 sm:top-6 sm:right-6 cursor-pointer font-semibold font-roboto text-xl">Connect</h1>
                     <div class="flex flex-col sm:flex-row py-4 px-2 justify-center">
+                        
                         <button
                             v-for="(wallet, index) in getWallets()"
                             :key="index"
@@ -97,6 +98,7 @@ const getWallets = () => {
                                 :src="wallet.icon"/>
                             <span>{{ wallet.name }}</span>
                         </button>
+                        
                     </div>                     
                     </div>
                 </TransitionChild>
