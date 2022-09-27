@@ -73,20 +73,26 @@ class SwidgeAPI extends HttpClient {
         }
     }
 
-    public async fetchBalances(wallet: string): Promise<TokenBalance[]> {
+    public async fetchBalances(wallet: string): Promise<{
+        empty: boolean;
+        tokens: TokenBalance[]
+    }> {
         try {
             const response = await this.instance.get<WalletBalancesJson>('/token-balances', {
                 params: {
                     wallet: wallet
                 }
             })
-            return response.data.tokens.map(token => {
-                return {
-                    chainId: token.chainId,
-                    address: token.address,
-                    balance: BigNumber.from(token.amount)
-                }
-            })
+            return {
+                empty: response.data.empty,
+                tokens: response.data.tokens.map(token => {
+                    return {
+                        chainId: token.chainId,
+                        address: token.address,
+                        balance: BigNumber.from(token.amount)
+                    }
+                })
+            }
         } catch (e: unknown) {
             if (axios.isAxiosError(e)) {
                 const apiErrorResponse = e.response?.data as ApiErrorResponse

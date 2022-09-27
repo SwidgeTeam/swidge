@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { asyncComputed } from '@vueuse/core'
 import { useRoutesStore } from '@/store/routes'
 import AssetSelector from '@/components/Buttons/AssetSelector.vue'
 import AmountFormatter from '@/domain/shared/AmountFormatter'
@@ -22,8 +23,8 @@ const onChange = (event: Event) => {
     updateValue(event.target.value)
 }
 
-const setToMaxAmount = () => {
-    const balance = routesStore.getSelectedTokenBalance
+const setToMaxAmount = async () => {
+    const balance = await routesStore.getSelectedTokenBalance
     updateValue(AmountFormatter.format(balance))
     emits('input-changed')
 }
@@ -40,12 +41,12 @@ const inputValue = computed({
     set: () => null,
 })
 
-const trimmedBalance = computed({
-    get: () => {
-        return AmountFormatter.format(routesStore.getSelectedTokenBalance)
+const trimmedBalance = asyncComputed(
+    async () => {
+        return AmountFormatter.format(await routesStore.getSelectedTokenBalance)
     },
-    set: () => null,
-})
+    '0'
+)
 
 const dollarValue = computed({
     get: () => {

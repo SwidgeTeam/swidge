@@ -1,4 +1,4 @@
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import { ref } from 'vue'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import IERC20Abi from '@/contracts/IERC20.json'
@@ -98,7 +98,7 @@ export const useWeb3Store = defineStore('web3', () => {
      * fetches and returns the balance of an asset
      * @param token
      */
-    async function getBalance(token: IToken) {
+    async function getBalance(token: IToken): Promise<BigNumber> {
         if (!wallet.value) throw new Error('No wallet')
         if (token.address === NATIVE_COIN_ADDRESS) {
             return getNativeBalance(token.chainId)
@@ -110,29 +110,26 @@ export const useWeb3Store = defineStore('web3', () => {
     /**
      * fetches and returns the amount of native coins
      */
-    async function getNativeBalance(chainId: string): Promise<string> {
-        if (!account.value) return ''
+    async function getNativeBalance(chainId: string): Promise<BigNumber> {
+        if (!account.value) return BigNumber.from(0)
         try {
             const provider = getChainProvider(chainId)
-            const balance = await provider.getBalance(account.value)
-            return ethers.utils.formatEther(balance)
+            return await provider.getBalance(account.value)
         } catch (error) {
-            return ''
+            return BigNumber.from(0)
         }
     }
 
     /**
      * fetches and returns the amount of certain token
      */
-    async function getTokenBalance(chainId: string, address: string): Promise<string> {
+    async function getTokenBalance(chainId: string, address: string): Promise<BigNumber> {
         try {
             const provider = getChainProvider(chainId)
             const contract = new ethers.Contract(address, IERC20Abi, provider)
-            const balance = await contract.balanceOf(account.value)
-            const decimals = await contract.decimals()
-            return ethers.utils.formatUnits(balance, decimals)
+            return await contract.balanceOf(account.value)
         } catch (error) {
-            return ''
+            return BigNumber.from(0)
         }
     }
 
