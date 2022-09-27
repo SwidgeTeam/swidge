@@ -149,10 +149,21 @@
         border: 2px solid #2E283A;
         border-radius: 12px;
     }
-
+    .gradient-border-header-main-wallet {
+        background: #2E283A;
+        border: 2px solid #2E283A;
+        border-radius: 12px;
+    }
     .gradient-border-header-main-hover {
         border: 2px solid grey;
     }
+
+    .gradient-border-header-main-hover-wallet {
+        background: rgba(191, 188, 193, 0.15);
+        border: 2px rgba(191, 188, 193, 1);
+        border-radius: 12px;
+    }
+
     .sending-box-colors {
         --bg-color-from: #2E283A;
         --bg-color-to: #2E283A;
