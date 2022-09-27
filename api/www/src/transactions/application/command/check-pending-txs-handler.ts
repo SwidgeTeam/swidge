@@ -14,6 +14,7 @@ import { TransactionsRepository } from '../../domain/TransactionsRepository';
 import { Logger } from '../../../shared/domain/logger';
 import { CheckPendingTxsCommand } from './check-pending-txs-command';
 import { Transaction } from '../../domain/Transaction';
+import { TransactionStep } from '../../domain/TransactionStep';
 
 @CommandHandler(CheckPendingTxsCommand)
 export class CheckPendingTxsHandler implements ICommandHandler<CheckPendingTxsCommand> {
@@ -43,38 +44,43 @@ export class CheckPendingTxsHandler implements ICommandHandler<CheckPendingTxsCo
 
   private async checkTx(tx: Transaction) {
     try {
-      this.logger.log(`Rechecking ${tx.txHash}...`);
+      this.logger.log(`Rechecking ${tx.id}...`);
 
-      const status = await this.checkTxStatus(tx);
+      const lastStep = tx.lastStep();
+      const status = await this.checkTxStatus(lastStep);
 
       if (status.status !== ExternalTransactionStatus.Pending) {
-        tx.markAsCompleted(new Date())
+        lastStep
+          .markAsCompleted(new Date())
           .setDestinationToken(status.toToken)
           .setAmountOut(status.amountOut)
           .setDestinationTxHash(status.dstTxHash)
           .setStatus(status.status);
+
+        tx.updateLastStep(lastStep);
+
         await this.repository.update(tx);
 
-        this.logger.log(`${tx.txHash} finished w/ status ${status.status}`);
+        this.logger.log(`${tx.id} finished w/ status ${status.status}`);
       } else {
-        this.logger.log(`${tx.txHash} still pending`);
+        this.logger.log(`${tx.id} still pending`);
       }
     } catch (e) {
-      this.logger.error(`Rechecking ${tx.txHash} failed: ${e}`);
+      this.logger.error(`Rechecking ${tx.id} failed: ${e}`);
     }
   }
 
   /**
    * fetches te status of a tx from the provider
    * @private
-   * @param tx
+   * @param step
    */
-  private async checkTxStatus(tx: Transaction): Promise<StatusCheckResponse> {
-    return this.aggregators.get(tx.aggregatorId).checkStatus({
-      fromChain: tx.fromChainId,
-      toChain: tx.toChainId,
-      txHash: tx.txHash,
-      trackingId: tx.trackingId,
+  private async checkTxStatus(step: TransactionStep): Promise<StatusCheckResponse> {
+    return this.aggregators.get(step.aggregatorId).checkStatus({
+      fromChain: step.fromChainId,
+      toChain: step.toChainId,
+      txHash: step.originTxHash,
+      trackingId: step.trackingId,
     });
   }
 }
