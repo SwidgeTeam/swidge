@@ -1,15 +1,11 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/vue/outline'
-import VerticalLine from './svg/VerticalLine.vue'
-import HorizontalLine from './svg/HorizontalLine.vue'
+import { computed} from 'vue'
+
 import Check from './svg/Check.vue'
 import DollarSign from './svg/DollarSign.vue'
 import Clock from './svg/Clock.vue'
-import StepConnectorArrow from '@/components/Icons/StepConnectorArrow.vue'
-import StepIcon from '@/components/Icons/StepIcon.vue'
 import ProviderIcon from '@/components/Icons/ProviderIcon.vue'
-import Route, { RouteStep } from '@/domain/paths/path'
+import Route from '@/domain/paths/path'
 import RouteCardOutputValue from '@/components/RouteCardOutputValue.vue';
 
 const props = defineProps<{
@@ -21,7 +17,6 @@ const emits = defineEmits<{
     (event: 'select-route', index: string): void
 }>()
 
-const detailsOpen = ref<boolean>(false)
 
 /**
  * when a click happens on the domain of the route card
@@ -88,22 +83,6 @@ const totalExecutionTime = computed({
     set: () => null
 })
 
-const firstStep = computed({
-    get: (): RouteStep => {
-        return props.route.steps[0]
-    },
-    set: () => null
-})
-
-const nextSteps = computed({
-    get: () => {
-        if (props.route.steps.length > 1) {
-            return props.route.steps.slice(1, props.route.steps.length)
-        }
-        return []
-    },
-    set: () => null
-})
 </script>
 
 
@@ -122,89 +101,34 @@ const nextSteps = computed({
         >
             {{ tag }}
         </div>
-        <div class="route-details ml-2 mt-1">
+        <div class="route-details ml-2 my-4 w-full">
             <RouteCardOutputValue
                 :amount-in="route.resume.amountIn"
                 :amount-out="route.resume.amountOut"
             />
-            <div class="flex text-ellipsis text-md field--global-fee">
-                <DollarSign class="h-6 mr-1"/>
-                {{ Number(route.fees.amountInUsd).toFixed(2) }}
-            </div>
-            <div class="flex text-md field--execution-time">
-                <Clock class="h-6 mr-1"/>
-                {{ totalExecutionTime }}
-            </div>
-        </div>
-        <div class="route-steps">
-            <div
-                class="details-line"
-                @click="detailsOpen = !detailsOpen"
-            >
-                <div class="flex justify-left">
-                    <ChevronUpIcon
-                        v-if="detailsOpen"
-                        class="h-6 pr-4 ml-3"/>
-                    <ChevronDownIcon
-                        v-else
-                        class="h-6 pr-4 ml-3"/>
+            <div class="">
+                <div class="flex text-sm field--execution-time  justify-between items-center">
+                    <Clock class="h-8 mr-1"/>
+                    {{ totalExecutionTime }}
                 </div>
-                <div>
-                    <VerticalLine class="w-2"/>
-                </div>
-                <div class="flex justify-center items-center gap-3 w-full">
-                    <StepIcon :icon="firstStep.tokenIn.icon"/>
-                    <StepConnectorArrow :step-type="firstStep.type"/>
-                    <StepIcon :icon="firstStep.tokenOut.icon"/>
-                    <template
-                        v-for="(step) in nextSteps"
-                        :key="step.tokenIn.address"
-                    >
-                        <StepConnectorArrow
-                            :step-type="step.type"/>
-                        <StepIcon
-                            :icon="step.tokenOut.icon"
-                        />
-                    </template>
+                <div class="flex text-ellipsis text-sm field--global-fee justify-between items-center">
+                    <DollarSign class="h-8 mr-1"/>
+                    ${{ Number(route.fees.amountInUsd).toFixed(2) }}
                 </div>
             </div>
-            <div
-                class="w-full grid items-center px-2 relative max-h-0 overflow-hidden transition transition-all duration-400 ease-in-out"
-                :class="{'max-h-36':detailsOpen}"
-            >
-                <span class="vl"></span>
+            <div class="relative w-1/3">
                 <div
                     v-for="(step, index) in route.steps"
-                    :key="index"
-                    class="flex h-12 items-center relative">
-                    <ProviderIcon
-                        :name="step.name"
-                        :logo="step.logo"
-                    />
-                    <div class="pl-4 w-full">
-                        <div class="flex justify-around items-center">
-                            <div class="flex justify-center items-center">
-                                <StepIcon :icon="step.tokenIn.icon"/>
-                                <StepConnectorArrow :step-type="step.type"/>
-                                <StepIcon :icon="step.tokenOut.icon"/>
-                            </div>
-                            <div class="flex mx-1 xs:mx-2 text-xs xs:text-base">
-                                <DollarSign class="h-4 xs:h-6 mr-1"/>
-                                {{ Number(step.fee).toFixed(2) }}
-                            </div>
-                            <div class="flex mx-1 xs:mx-2 text-xs xs:text-base field--execution-time ">
-                                <Clock class="h-4 xs:h-6 mr-1"/>
-                                {{ getExecutionTime(step.executionTime) }}
-                            </div>
-                        </div>
-                        <div class="absolute bottom-0">
-                            <HorizontalLine
-                                v-if="index !== Object.keys(route.steps).length - 1"
-                                class="w-full mr-4 pr-2 h-1"/>
-                        </div>
-                    </div>
+                        :key="index+1"
+                        :class="'z-'+index+' ml-'+(index+3)"
+                        class="absolute flex items-center -top-3 w-full">
+                        <ProviderIcon
+                            :name="step.name"
+                            :logo="step.logo"
+                        />
                 </div>
             </div>
         </div>
+        
     </div>
 </template>
