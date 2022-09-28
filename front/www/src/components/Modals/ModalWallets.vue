@@ -59,7 +59,7 @@ const getWallets = () => {
                     leave="ease-in duration-200"
                     leave-from="opacity-100"
                     leave-to="opacity-0">
-                    <DialogOverlay class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-40"/>
+                    <DialogOverlay class="fixed inset-0 transition-opacity bg-[#222129] bg-opacity-90"/>
                 </TransitionChild>
                 <span
                     class="hidden sm:inline-block sm:align-middle sm:h-screen"
@@ -76,7 +76,7 @@ const getWallets = () => {
                         class="flex sm:inline-block self-center align-center justify-self-auto 
                         justify-center w-fit w-50 sm:max-w-md px-8 py-4 sm:px-2
                      sm:py-4 text-left relative transition-all transform shadow-xl 
-                     bg-[#222129] radial-gradient rounded-2xl"
+                     bg-[#222129] radial-gradient rounded-2xl gradient-border-header-main-hover"
                     > 
                     <XIcon
                             class="absolute w-5 top-3 right-3 sm:top-4 sm:right-6 cursor-pointer"
