@@ -1,4 +1,4 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 import SwidgeAPI from '@/api/swidge-api'
 import { useWeb3Store } from '@/store/web3'
 import { onUpdated, ref } from 'vue'
@@ -16,7 +16,7 @@ const metadataStore = useMetadataStore()
 const props = defineProps({
     isOpen: {
         type: Boolean,
-        default: false
+        default: false,
     },
 })
 
@@ -42,11 +42,13 @@ onUpdated(async () => {
  */
 const loadData = async () => {
     isLoading.value = true
-    return SwidgeAPI.getTransactions(web3Store.account)
-        .then(transactionList => {
+    return SwidgeAPI.getTransactions(web3Store.account).then(
+        (transactionList) => {
             transactions.value = transactionList.transactions
+            console.log('txns', transactions.value)
             isLoading.value = false
-        })
+        }
+    )
 }
 
 /**
@@ -64,7 +66,7 @@ function padTo2Digits(num: number) {
 const transformDate = (timestamp: string) => {
     const date = new Date(timestamp)
     const year = date.getUTCFullYear()
-    const month = padTo2Digits(date.getUTCMonth()+1)
+    const month = padTo2Digits(date.getUTCMonth() + 1)
     const day = padTo2Digits(date.getUTCDate())
     const hours = padTo2Digits(date.getUTCHours())
     const minutes = padTo2Digits(date.getUTCMinutes())
@@ -115,22 +117,22 @@ const getTokenIcon = (chainId: string, address: string): string => {
  * @param address
  * @param amount
  */
-const formattedAmount = (chainId: string, address: string, amount: string): string => {
+const formattedAmount = (
+    chainId: string,
+    address: string,
+    amount: string
+): string => {
     const token = getToken(chainId, address)
     return token && amount
         ? ethers.utils.formatUnits(amount, token.decimals)
         : '0'
 }
-
 </script>
 
 <template>
-    <Modal
-        :is-open="isOpen"
-        @close="onCloseModal"
-    >
+    <Modal :is-open="isOpen" @close="onCloseModal">
         <div v-if="isLoading">
-            <TransactionSplash/>
+            <TransactionSplash />
         </div>
         <div v-if="!isLoading && transactions.length === 0" class="text-center">
             No transactions
@@ -141,14 +143,20 @@ const formattedAmount = (chainId: string, address: string, amount: string): stri
                 :key="index"
                 :date="transformDate(tx.date)"
                 :status="tx.status"
-                :token-logo-in="getTokenIcon(tx.fromChain,tx.srcAsset)"
-                :token-logo-out="getTokenIcon(tx.toChain,tx.dstAsset)"
+                :token-logo-in="getTokenIcon(tx.fromChain, tx.srcAsset)"
+                :token-logo-out="getTokenIcon(tx.toChain, tx.dstAsset)"
                 :chain-logo-in="getChainIcon(tx.fromChain)"
                 :chain-logo-out="getChainIcon(tx.toChain)"
-                :amount-in="formattedAmount(tx.fromChain, tx.srcAsset, tx.amountIn)"
-                :amount-out="formattedAmount(tx.toChain, tx.dstAsset, tx.amountOut)"
-                :token-name-in="getTokenName(tx.fromChain,tx.srcAsset)"
-                :token-name-out="getTokenName(tx.toChain,tx.dstAsset)"
+                :amount-in="
+                    formattedAmount(tx.fromChain, tx.srcAsset, tx.amountIn)
+                "
+                :amount-out="
+                    formattedAmount(tx.toChain, tx.dstAsset, tx.amountOut)
+                "
+                :token-name-in="getTokenName(tx.fromChain, tx.srcAsset)"
+                :token-name-out="getTokenName(tx.toChain, tx.dstAsset)"
+                :txn-hash="tx.txHash"
+                :destination-txn-hash="tx.destinationTxHash"
             />
         </div>
     </Modal>

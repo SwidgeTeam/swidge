@@ -1,12 +1,14 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 import TokenLogo from './Icons/TokenLogo.vue'
 import ChainLogo from './Icons/ChainLogo.vue'
+import CopyIcon from './Icons/CopyIcon.vue'
 
 defineProps<{
     amount: string
     tokenName: string
     tokenLogo: string
     chainLogo: string
+    txnHash: string
 }>()
 
 const fixedAmount = (amount: number) => {
@@ -14,27 +16,58 @@ const fixedAmount = (amount: number) => {
     if (fixedAmount === 0) {
         return '0'
     } else {
-        return fixedAmount.toFixed(6)
+        return fixedAmount.toFixed(2)
     }
 }
 
+const trimmedTxnHash = (txnHash: string) => {
+    return `${txnHash.slice(0, 4)}....${txnHash.slice(-4)}`
+}
+const copyHash = (txnHash: string) => {
+    navigator.clipboard.writeText(txnHash)
+}
 </script>
 
 <template>
-    <div class="relative scale-100 has-tooltip">
-        <span
-            class='tooltip rounded-xl shadow-lg p-1 bg-[#31313E] text-white text-sm font-light absolute border border-cyan-700 -bottom-6 -left-20 px-2'>
-            {{ tokenName }}
-        </span>
+    <div class="flex items-center gap-3">
+        <div class="relative scale-100 has-tooltip">
+            <span
+                class="tooltip rounded-xl shadow-lg p-1 bg-[#31313E] text-white text-sm font-light absolute border border-cyan-700 -bottom-6 -left-20 px-2"
+            >
+                {{ tokenName }}
+            </span>
             <TokenLogo
                 :token-logo="tokenLogo"
                 :chain-logo="chainLogo"
-                size="64"/>
-            <ChainLogo :logo="chainLogo" size="48"/>
+                size="50"
+            />
+
+            <ChainLogo :logo="chainLogo" size="25" />
+        </div>
+        <span class="">{{ tokenName }}</span>
+        <div
+            class="flex relative overflow-visible justify-center text-xl font-bold"
+            :class="amount === '0' ? 'blur' : ''"
+        >
+            {{ fixedAmount(+amount) }}
+        </div>
     </div>
+
     <div
-        class="flex pt-4 relative overflow-visible justify-center"
-        :class="amount === '0' ? 'blur' : ''"
-    >{{ fixedAmount(+amount) }}
+        v-if="txnHash"
+        class="flex items-center gap-2 bg-[#83789B26] w-[max-content] px-2 py-1 rounded-lg"
+    >
+        <a
+            id="txnHash"
+            :href="'https://etherscan.io/tx/:' + txnHash"
+            target="_blank"
+            class="text-[#6C9CE4] underline decoration-1 underline-offset-2 font-light text-sm"
+            >{{ trimmedTxnHash(txnHash) }}</a
+        >
+        <CopyIcon class="h-4 w-4 cursor-pointer" @click="copyHash(txnHash)" />
+        <!-- <ClipboardCopyIcon
+            class="h-4 w-4 cursor-pointer"
+            @click="copyHash(txnHash)"
+        /> -->
     </div>
 </template>

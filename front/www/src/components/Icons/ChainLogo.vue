@@ -3,16 +3,11 @@ const props = defineProps<{
     logo: string
     size: string
 }>()
-
-const getPad = () => {
-    return (Number(props.size) * 0.50).toFixed(0)
-}
-
 </script>
 
 <template>
     <img
-        :style="`width: ${size}px; height: ${size}px; top: -${getPad()}px; right: -${getPad()}px`"
+        :style="`width: ${size}px; height: ${size}px; top: -20%; right: -20%`"
         :src="logo"
         class="rounded-full absolute shadow-lg shadow-black"
         alt="chain logo"

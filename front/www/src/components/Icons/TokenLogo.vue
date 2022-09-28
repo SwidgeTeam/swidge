@@ -13,7 +13,7 @@ const replaceByDefault = (e: Event) => {
 
 <template>
     <img
-        :style="`width: ${size}px; height: ${size}px`"
+        :style="`max-width: ${size}px; max-height: ${size}px`"
         :src="tokenLogo"
         class="rounded-full object-center relative bot-0 top-0 shadow-lg shadow-black"
         alt="token logo"

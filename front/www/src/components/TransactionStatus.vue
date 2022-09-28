@@ -1,9 +1,10 @@
-<script setup lang='ts'>
-import ProcessingLabel from './ProcessingLabel.vue'
-import CompletedLabel from './CompletedLabel.vue'
-import StatusArrow from './svg/StatusArrow.vue'
+<script setup lang="ts">
+// import ProcessingLabel from './ProcessingLabel.vue'
+// import StatusArrow from './svg/StatusArrow.vue'
 import TransactionStatusDetails from './TransactionStatusDetails.vue'
 import { TransactionStatus } from '@/api/models/get-status-check'
+import { CheckIcon } from '@heroicons/vue/outline'
+import BridgeStepArrow from './svg/BridgeStepArrow.vue'
 
 defineProps<{
     date: string
@@ -16,42 +17,53 @@ defineProps<{
     amountOut: string
     tokenNameIn: string
     tokenNameOut: string
+    txnHash: string
+    destinationTxHash: string
 }>()
-
 </script>
 
 <template>
-    <div
-        class="content-center gradient-border-header-main flex flex-wrap justify-between gap-2 mb-4 p-2">
-        <div class="w-full flex justify-between">
-            <div class="grid flex justify-start content-center"> {{ date }}</div>
-            <ProcessingLabel v-if="status === TransactionStatus.Pending"/>
-            <CompletedLabel v-if="status === TransactionStatus.Success"/>
+    <div class="gradient-border-header-main p-2 mb-4">
+        <div class="top flex items-center justify-between">
+            <div class="font-light">{{ date }}</div>
+            <div
+                class="bg-[#1CBA3E] h-5 w-5 rounded-full flex items-center justify-center p-[1px]"
+                v-if="status === TransactionStatus.Success"
+            >
+                <CheckIcon class="h-5 font-extrabold stroke-[4px]" />
+            </div>
         </div>
-        <div
-            class="grid grid-cols-3 gap-2 flex flex-wrap justify-between grid-flow-col auto-cols-max w-full mx-16 pt-4">
-            <div class="place-content-center p-2 px-6">
+
+        <div class="bottom flex">
+            <div
+                class="flex mt-2 p-2 flex-col items-flex-start justify-between gap-3 flex-[0.4]"
+            >
                 <TransactionStatusDetails
                     :amount="amountIn"
                     :token-name="tokenNameIn"
                     :token-logo="tokenLogoIn"
                     :chain-logo="chainLogoIn"
+                    :txnHash="txnHash"
                 />
             </div>
-            <div class="grid place-content-center w-full object-center mb-12">
-                <StatusArrow />
+
+            <div
+                class="flex flex-[0.2] items-center justify-center mb-8 w-full"
+            >
+                <BridgeStepArrow class="h-[4rem] w-[3.5rem]" />
             </div>
-            <div class="place-content-center p-2 px-6">
-                <div class="display-block scale-100 has-tooltip">
+
+            <div
+                class="flex mt-2 p-2 flex-col items-flex-start justify-between gap-3 flex-[0.4]"
+            >
                 <TransactionStatusDetails
                     :amount="amountOut"
                     :token-name="tokenNameOut"
                     :token-logo="tokenLogoOut"
                     :chain-logo="chainLogoOut"
+                    :txnHash="destinationTxHash"
                 />
-                </div>
             </div>
         </div>
     </div>
-
 </template>
