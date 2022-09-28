@@ -46,7 +46,7 @@ const onSelect = (id: string) => {
             class="px-1 w-16 mb-2"
             :class="[selectedNetworkId !== network.id && selectedNetworkId !== '' && 'opacity-40']"
             @click="onSelect(network.id)">
-            <span class="h-11 bg-[#2E283A] rounded-lg flex justify-center items-center">
+            <span class="h-10 bg-[#2E283A] rounded-lg flex justify-center items-center">
                 <Ethereum
                     v-if="network.id === '1'"
                     class="network-switch"></Ethereum>
