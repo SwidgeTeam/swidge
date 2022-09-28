@@ -58,8 +58,8 @@ BEGIN
     DECLARE v_aggregatorId VARCHAR(255);
     DECLARE v_trackingId VARCHAR(255);
     DECLARE v_status VARCHAR(255);
-    DECLARE v_executed date;
-    DECLARE v_completed date;
+    DECLARE v_executed datetime;
+    DECLARE v_completed datetime;
     DECLARE v_uuid VARCHAR(255);
 
     DECLARE finished INTEGER DEFAULT 0;
@@ -67,9 +67,9 @@ BEGIN
     ## declare cursor
     DECLARE tx_cursor CURSOR FOR SELECT txHash,
                                         destinationTxHash,
-                                        fromChainId,
                                         walletAddress,
                                         receiver,
+                                        fromChainId,
                                         toChainId,
                                         srcToken,
                                         dstToken,
