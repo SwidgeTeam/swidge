@@ -37,7 +37,7 @@ const onCloseModal = () => {
                     leave="ease-in duration-200"
                     leave-from="opacity-100"
                     leave-to="opacity-0">
-                    <DialogOverlay class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"/>
+                    <DialogOverlay class="fixed inset-0 transition-opacity bg-[#222129] bg-opacity-90"/>
                 </TransitionChild>
                 <span
                     class="hidden sm:inline-block sm:align-middle sm:h-screen"
