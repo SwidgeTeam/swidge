@@ -1,6 +1,6 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { ApprovalTransactionDetails, TransactionDetails } from '@/domain/paths/path'
-import { useWeb3Store } from '@/store/web3'
+import { NATIVE_COIN_ADDRESS, useWeb3Store } from '@/store/web3'
 import swidgeApi from '@/api/swidge-api'
 import { useRoutesStore } from '@/store/routes'
 import { TransactionStatus } from '@/api/models/get-status-check'
@@ -94,6 +94,10 @@ export const useTransactionStore = defineStore('transaction', {
             if (!this.mainTx) {
                 throw new Error('something very wrong, what did we execute then?')
             }
+            const amountIn = routesStore.getOriginTokenAddress === NATIVE_COIN_ADDRESS
+                ? this.mainTx.value
+                : ethers.utils.parseUnits(routesStore.getAmountIn, routesStore.getOriginToken()?.decimals).toString()
+
             const request = {
                 txId: this.txId,
                 txHash: txHash,
@@ -104,7 +108,7 @@ export const useTransactionStore = defineStore('transaction', {
                 toAddress: routesStore.receiverAddress,
                 fromToken: routesStore.getOriginTokenAddress,
                 toToken: routesStore.getDestinationTokenAddress,
-                amountIn: ethers.utils.parseUnits(routesStore.getAmountIn, routesStore.getOriginToken()?.decimals).toString(),
+                amountIn: amountIn,
                 trackingId: this.trackingId,
             }
             swidgeApi.informExecutedTx(request)
