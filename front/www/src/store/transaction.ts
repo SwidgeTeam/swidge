@@ -5,6 +5,7 @@ import swidgeApi from '@/api/swidge-api'
 import { useRoutesStore } from '@/store/routes'
 import { TransactionStatus } from '@/api/models/get-status-check'
 import { TxExecutedRequest } from '@/api/models/post-tx-executed'
+import { ethers } from 'ethers'
 
 export const useTransactionStore = defineStore('transaction', {
     state: () => ({
@@ -103,7 +104,7 @@ export const useTransactionStore = defineStore('transaction', {
                 toAddress: routesStore.receiverAddress,
                 fromToken: routesStore.getOriginTokenAddress,
                 toToken: routesStore.getDestinationTokenAddress,
-                amountIn: this.mainTx.value,
+                amountIn: ethers.utils.formatUnits(routesStore.getAmountIn, routesStore.getOriginToken()?.decimals),
                 trackingId: this.trackingId,
             }
             swidgeApi.informExecutedTx(request)
