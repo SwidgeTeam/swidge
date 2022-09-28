@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { useRoutesStore } from '@/store/routes'
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/vue/outline'
 import VerticalLine from './svg/VerticalLine.vue'
 import HorizontalLine from './svg/HorizontalLine.vue'
@@ -11,9 +10,7 @@ import StepConnectorArrow from '@/components/Icons/StepConnectorArrow.vue'
 import StepIcon from '@/components/Icons/StepIcon.vue'
 import ProviderIcon from '@/components/Icons/ProviderIcon.vue'
 import Route, { RouteStep } from '@/domain/paths/path'
-import AmountFormatter from '@/domain/shared/AmountFormatter'
-
-const routesStore = useRoutesStore()
+import RouteCardOutputValue from '@/components/RouteCardOutputValue.vue';
 
 const props = defineProps<{
     route: Route
@@ -91,39 +88,6 @@ const totalExecutionTime = computed({
     set: () => null
 })
 
-const amountOut = computed({
-    get: () => {
-        return AmountFormatter.format(props.route.resume.amountOut)
-    },
-    set: () => null
-})
-
-const inputDollarValue = computed({
-    get: () => {
-        const tokenInPrice = routesStore.getOriginToken()
-        if (!tokenInPrice) {
-            return '0.0'
-        }
-        const amount = Number(props.route.resume.amountIn) * Number(tokenInPrice.price)
-        const FixedUsdAmount = AmountFormatter.format(amount.toFixed(2))
-        return FixedUsdAmount
-    },
-    set: () => null,
-})
-
-const outputDollarValue = computed({
-    get: () => {
-        const tokenOutPrice = routesStore.getDestinationToken()?.price
-        if(!tokenOutPrice){
-            return '0.0'
-        }
-        const amount = Number(props.route.resume.amountOut) * Number(tokenOutPrice)
-        const FixedUsdAmount = AmountFormatter.format(amount.toFixed(2))
-        return FixedUsdAmount
-    },
-    set: () => null
-})
-
 const firstStep = computed({
     get: (): RouteStep => {
         return props.route.steps[0]
@@ -140,14 +104,6 @@ const nextSteps = computed({
     },
     set: () => null
 })
-
-const priceChangePercerntage = () => {
-    const fixedInputDollarValue = Number(inputDollarValue.value)
-    const fixedOutputDollarValue = Number(outputDollarValue.value)
-    const pricePercentage = ((fixedOutputDollarValue)/(fixedInputDollarValue)*100)-100
-    const fixedPricePercentage = pricePercentage.toFixed(2)
-    return fixedPricePercentage
-}
 </script>
 
 
@@ -167,17 +123,10 @@ const priceChangePercerntage = () => {
             {{ tag }}
         </div>
         <div class="route-details ml-2 mt-1">
-            <div class="flex flex-col field--amount-out pt-2">
-                <span class="amount-tokens leading-5 text-right text-xl">{{ amountOut }}</span>
-                <span class="amount-dollars leading-5 text-right text-[13px] text-slate-500 hover:text-slate-400">
-                    <span v-if="Number(priceChangePercerntage()) > -5" class="text-green-700">({{priceChangePercerntage()}}%)</span>
-                    <span v-if="Number(priceChangePercerntage()) <= -5 && Number(priceChangePercerntage()) > -9" class="text-yellow-700">({{priceChangePercerntage()}}%)</span>
-                    <span v-if="Number(priceChangePercerntage()) <= -9" class="text-red-700">({{priceChangePercerntage()}}%)</span> ~ $ {{
-                        outputDollarValue 
-                    }}
-                    
-                </span>
-            </div>
+            <RouteCardOutputValue
+                :amount-in="route.resume.amountIn"
+                :amount-out="route.resume.amountOut"
+            />
             <div class="flex text-ellipsis text-md field--global-fee">
                 <DollarSign class="h-6 mr-1"/>
                 {{ Number(route.fees.amountInUsd).toFixed(2) }}
