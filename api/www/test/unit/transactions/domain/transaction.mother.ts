@@ -20,7 +20,6 @@ export class TransactionMother {
     _status: ExternalTransactionStatus,
   ) {
     return new Transaction(
-      _txHash,
       '',
       _walletAddress,
       _receiver,
@@ -28,13 +27,9 @@ export class TransactionMother {
       _toChainId,
       _srcToken,
       _dstToken,
-      _amountIn,
-      _amountOut,
       _executed,
       _completed,
       _status,
-      '',
-      '',
     );
   }
 

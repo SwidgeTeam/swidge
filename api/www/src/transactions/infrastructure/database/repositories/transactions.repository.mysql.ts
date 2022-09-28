@@ -2,9 +2,11 @@ import { TransactionsRepository } from '../../../domain/TransactionsRepository';
 import { EntityManager, EntityRepository } from 'typeorm';
 import { Transaction } from '../../../domain/Transaction';
 import { TransactionEntity } from '../models/transaction.entity';
+import { TransactionStepEntity } from '../models/transaction-step.entity';
 import { BigInteger } from '../../../../shared/domain/big-integer';
 import { Transactions } from '../../../domain/Transactions';
 import { ExternalTransactionStatus } from '../../../../aggregators/domain/status-check';
+import { TransactionStep } from '../../../domain/TransactionStep';
 
 @EntityRepository(TransactionEntity)
 export class TransactionsRepositoryMysql implements TransactionsRepository {
@@ -16,22 +18,36 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
    */
   async create(transaction: Transaction): Promise<void> {
     await this.manager.insert(TransactionEntity, {
-      txHash: transaction.txHash,
-      destinationTxHash: transaction.destinationTxHash,
+      txId: transaction.id,
       walletAddress: transaction.walletAddress,
       receiver: transaction.receiver,
       fromChainId: transaction.fromChainId,
       toChainId: transaction.toChainId,
       srcToken: transaction.srcToken,
       dstToken: transaction.dstToken,
-      amountIn: transaction.amountIn.toString(),
-      amountOut: transaction.amountOut.toString(),
       executed: transaction.executed,
       completed: transaction.completed,
       status: transaction.status,
-      aggregatorId: transaction.aggregatorId,
-      trackingId: transaction.trackingId,
     });
+
+    for (const step of transaction.steps) {
+      await this.manager.insert(TransactionStepEntity, {
+        txId: transaction.id,
+        originTxHash: step.originTxHash,
+        destinationTxHash: step.destinationTxHash,
+        fromChainId: step.fromChainId,
+        toChainId: step.toChainId,
+        srcToken: step.srcToken,
+        dstToken: step.dstToken,
+        amountIn: step.amountIn,
+        amountOut: step.amountOut,
+        aggregatorId: step.aggregatorId,
+        trackingId: step.trackingId,
+        status: step.status,
+        executed: step.executed,
+        completed: step.completed,
+      });
+    }
   }
 
   /**
@@ -42,34 +58,39 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
     await this.manager.update(
       TransactionEntity,
       {
-        txHash: transaction.txHash,
+        txId: transaction.id,
       },
       {
-        destinationTxHash: transaction.destinationTxHash,
-        walletAddress: transaction.walletAddress,
-        receiver: transaction.receiver,
-        fromChainId: transaction.fromChainId,
-        toChainId: transaction.toChainId,
-        srcToken: transaction.srcToken,
-        dstToken: transaction.dstToken,
-        amountIn: transaction.amountIn.toString(),
-        amountOut: transaction.amountOut.toString(),
-        executed: transaction.executed,
         completed: transaction.completed,
         status: transaction.status,
-        aggregatorId: transaction.aggregatorId,
-        trackingId: transaction.trackingId,
+      },
+    );
+
+    const step = transaction.lastStep();
+
+    await this.manager.update(
+      TransactionStepEntity,
+      {
+        txId: transaction.id,
+        originTxHash: step.originTxHash,
+      },
+      {
+        destinationTxHash: step.destinationTxHash,
+        dstToken: step.dstToken,
+        amountOut: step.amountOut,
+        status: step.status,
+        completed: step.completed,
       },
     );
   }
 
   /**
    * Returns a specific transaction, if exists, given its tx hash
-   * @param txHash
+   * @param txId
    */
-  async find(txHash: string): Promise<Transaction | null> {
+  async find(txId: string): Promise<Transaction | null> {
     const result = await this.manager.findOne(TransactionEntity, {
-      txHash: txHash,
+      txId: txId,
     });
 
     if (!result) {
@@ -87,7 +108,11 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
       status: ExternalTransactionStatus.Pending,
     });
 
-    const items = result.map(this.buildTx);
+    const items = [];
+
+    for (const row of result) {
+      items.push(await this.buildTx(row));
+    }
 
     return new Transactions(items);
   }
@@ -101,28 +126,53 @@ export class TransactionsRepositoryMysql implements TransactionsRepository {
       walletAddress: walletAddress,
     });
 
-    const items = result.map(this.buildTx);
+    const items = [];
+
+    for (const row of result) {
+      items.push(await this.buildTx(row));
+    }
 
     return new Transactions(items);
   }
 
-  private buildTx(row: TransactionEntity): Transaction {
-    return new Transaction(
-      row.txHash,
-      row.destinationTxHash,
+  private async buildTx(row: TransactionEntity): Promise<Transaction> {
+    const tx = new Transaction(
+      row.txId,
       row.walletAddress,
       row.receiver,
       row.fromChainId,
       row.toChainId,
       row.srcToken,
       row.dstToken,
-      BigInteger.fromString(row.amountIn),
-      BigInteger.fromString(row.amountOut),
       new Date(row.executed),
       row.completed ? new Date(row.completed) : null,
       row.status as ExternalTransactionStatus,
-      row.aggregatorId,
-      row.trackingId,
     );
+
+    const steps = await this.manager.find(TransactionStepEntity, {
+      txId: row.txId,
+    });
+
+    for (const step of steps) {
+      tx.addStep(
+        new TransactionStep(
+          step.originTxHash,
+          step.destinationTxHash,
+          step.fromChainId,
+          step.toChainId,
+          step.srcToken,
+          step.dstToken,
+          BigInteger.fromString(step.amountIn),
+          BigInteger.fromString(step.amountOut),
+          new Date(step.executed),
+          step.completed ? new Date(step.completed) : null,
+          step.status as ExternalTransactionStatus,
+          step.aggregatorId,
+          step.trackingId,
+        ),
+      );
+    }
+
+    return tx;
   }
 }

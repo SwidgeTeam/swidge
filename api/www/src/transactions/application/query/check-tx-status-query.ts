@@ -1,3 +1,3 @@
 export default class CheckTxStatusQuery {
-  constructor(readonly txHash: string) {}
+  constructor(readonly txId: string) {}
 }

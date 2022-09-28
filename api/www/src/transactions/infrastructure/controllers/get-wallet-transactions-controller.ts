@@ -21,16 +21,17 @@ export class GetWalletTransactionsController {
     return res.json({
       transactions: transactions.map((tx: Transaction) => {
         return {
-          txHash: tx.txHash,
+          txId: tx.id,
+          originTxHash: tx.originTxHash,
           destinationTxHash: tx.destinationTxHash,
-          status: tx.status,
-          date: tx.executed,
           fromChain: tx.fromChainId,
           toChain: tx.toChainId,
           srcAsset: tx.srcToken,
           dstAsset: tx.dstToken,
           amountIn: tx.amountIn,
           amountOut: tx.amountOut,
+          date: tx.executed,
+          status: tx.status,
         };
       }),
     });

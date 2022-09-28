@@ -1,5 +1,5 @@
 export interface StatusCheckRequest {
-    txHash: string
+    txId: string
 }
 
 export interface StatusCheckResponse {

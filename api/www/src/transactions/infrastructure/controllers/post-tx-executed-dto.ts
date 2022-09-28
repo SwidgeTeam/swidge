@@ -4,6 +4,13 @@ import { IsTxHash } from '../../../shared/infrastructure/validators/txHashValida
 export class PostTxExecutedDto {
   @IsString()
   @IsNotEmpty()
+  txId: string;
+
+  @IsTxHash()
+  txHash: string;
+
+  @IsString()
+  @IsNotEmpty()
   aggregatorId: string;
 
   @IsString()
@@ -23,12 +30,12 @@ export class PostTxExecutedDto {
   @IsEthereumAddress()
   fromToken: string;
 
+  @IsEthereumAddress()
+  toToken: string;
+
   @IsString()
   @IsNotEmpty()
   amountIn: string;
-
-  @IsTxHash()
-  txHash: string;
 
   @IsString()
   trackingId: string;

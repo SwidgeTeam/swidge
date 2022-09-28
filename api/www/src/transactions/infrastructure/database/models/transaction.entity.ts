@@ -3,10 +3,7 @@ import { Column, Entity, PrimaryColumn } from 'typeorm';
 @Entity({ name: 'transactions' })
 export class TransactionEntity {
   @PrimaryColumn()
-  txHash: string;
-
-  @Column({ length: 70 })
-  destinationTxHash: string;
+  txId: string;
 
   @Column({ length: 80 })
   walletAddress: string;
@@ -25,18 +22,6 @@ export class TransactionEntity {
 
   @Column({ length: 80 })
   dstToken: string;
-
-  @Column()
-  amountIn: string;
-
-  @Column()
-  amountOut: string;
-
-  @Column()
-  aggregatorId: string;
-
-  @Column()
-  trackingId: string;
 
   @Column()
   status: string;

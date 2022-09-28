@@ -6,7 +6,6 @@ import { useTransactionStore } from '@/store/transaction'
 import ModalNetworkAndTokenSelect from '@/components/Modals/ModalNetworkAndTokenSelect.vue'
 import ModalTransactionStatus from '@/components/Modals/ModalTransactionStatus.vue'
 import ModalSettings from '@/components/Modals/ModalSettings.vue'
-import Route from '@/domain/paths/path'
 import { useToast } from 'vue-toastification'
 import { TxHash } from '@/domain/wallets/IWallet'
 import SendingBox from '@/components/SendingBox.vue'
@@ -247,7 +246,7 @@ const onExecuteTransaction = async () => {
 
     await promise
         .then((txHash: TxHash) => {
-            onInitialTxCompleted(route, txHash)
+            onInitialTxCompleted(txHash)
             emitEventGTMTransaction()
         })
         .catch((error) => {
@@ -314,10 +313,9 @@ const executeDoubleQuoteExecution = async (): Promise<TxHash> => {
 
 /**
  * Manages the process once the tx has been executed
- * @param route
  * @param txHash
  */
-const onInitialTxCompleted = (route: Route, txHash: TxHash) => {
+const onInitialTxCompleted = (txHash: TxHash) => {
     transactionStore.informExecutedTx(txHash)
     if (routesStore.isCrossChainRoute) {
         routesStore.completeFirstStep()
@@ -356,6 +354,7 @@ const openTransactionStatusModal = () => {
  */
 const closeModalStatus = () => {
     isModalStatusOpen.value = false
+    transactionStore.stopCheckingStatus()
 }
 
 const handleChangedReceiver = (address: string) => {

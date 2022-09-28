@@ -12,7 +12,7 @@ export const useTransactionStore = defineStore('transaction', {
         mainTx: undefined as undefined | TransactionDetails,
         trackingId: '',
         statusCheckInterval: 0,
-        txHash: '',
+        txId: '',
         currentNonce: 0,
     }),
     getters: {
@@ -86,22 +86,24 @@ export const useTransactionStore = defineStore('transaction', {
          * Informs the provider the tx has been executed
          */
         async informExecutedTx(txHash: string) {
-            this.txHash = txHash
             const web3Store = useWeb3Store()
             const routesStore = useRoutesStore()
             const route = routesStore.getSelectedRoute
+            this.txId = route.id
             if (!this.mainTx) {
                 throw new Error('something very wrong, what did we execute then?')
             }
             const request = {
+                txId: this.txId,
+                txHash: txHash,
                 aggregatorId: route.aggregator.id,
                 fromChainId: routesStore.getOriginChainId,
                 toChainId: routesStore.getDestinationChainId,
                 fromAddress: web3Store.account,
                 toAddress: routesStore.receiverAddress,
                 fromToken: routesStore.getOriginTokenAddress,
+                toToken: routesStore.getDestinationTokenAddress,
                 amountIn: this.mainTx.value,
-                txHash: this.txHash,
                 trackingId: this.trackingId,
             }
             swidgeApi.informExecutedTx(request)
@@ -131,18 +133,24 @@ export const useTransactionStore = defineStore('transaction', {
         startCheckingStatus: function () {
             this.statusCheckInterval = window.setInterval(() => {
                 swidgeApi.checkTxStatus({
-                    txHash: this.txHash,
+                    txId: this.txId,
                 }).then(response => {
                     const routesStore = useRoutesStore()
                     if (response.status === TransactionStatus.Success) {
                         routesStore.completeRoute()
-                        clearInterval(this.statusCheckInterval)
+                        this.stopCheckingStatus()
                     } else if (response.status === TransactionStatus.Failed) {
                         // TODO do something
-                        clearInterval(this.statusCheckInterval)
+                        this.stopCheckingStatus()
                     }
                 })
             }, 5000)
+        },
+        /**
+         * stops the interval
+         */
+        stopCheckingStatus: function () {
+            clearInterval(this.statusCheckInterval)
         },
         /**
          * fetches and stores the current nonce of the wallet to have the correct count

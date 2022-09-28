@@ -1,4 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { Inject } from '@nestjs/common';
+import { Class } from '../../../shared/Class';
 import { ConfigService } from '../../../config/config.service';
 import { ExecutedTxCommand } from './executed-tx-command';
 import { ExternalAggregator } from '../../../aggregators/domain/aggregator';
@@ -9,12 +11,11 @@ import {
   ExternalTransactionStatus,
   StatusCheckResponse,
 } from '../../../aggregators/domain/status-check';
-import { Inject } from '@nestjs/common';
-import { Class } from '../../../shared/Class';
 import { TransactionsRepository } from '../../domain/TransactionsRepository';
 import { Logger } from '../../../shared/domain/logger';
 import { Transaction } from '../../domain/Transaction';
 import { BigInteger } from '../../../shared/domain/big-integer';
+import { TransactionStep } from '../../domain/TransactionStep';
 
 @CommandHandler(ExecutedTxCommand)
 export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
@@ -71,19 +72,34 @@ export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
       const status = await this.checkTxStatus(command);
 
       const tx = Transaction.create(
-        command.txHash,
+        command.txId,
         command.fromAddress,
         command.toAddress,
         command.fromChain,
         command.toChain,
-        status.fromToken,
+        command.fromToken,
+        status.toToken,
+        ExternalTransactionStatus.Success,
+      );
+
+      const step = new TransactionStep(
+        command.txHash,
+        status.dstTxHash,
+        command.fromChain,
+        command.toChain,
+        command.fromToken,
         status.toToken,
         status.amountIn,
         status.amountOut,
+        new Date(),
+        new Date(),
         ExternalTransactionStatus.Success,
         command.aggregatorId,
         command.trackingId,
       );
+
+      tx.addStep(step);
+
       await this.repository.create(tx);
     } catch (e) {
       this.logger.error(`Single chain tx ${command.txHash} processing failed: ${e}`);
@@ -102,19 +118,34 @@ export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
       this.logger.log(`Processing cross chain tx ${command.txHash}...`);
 
       const tx = Transaction.create(
-        command.txHash,
+        command.txId,
         command.fromAddress,
         command.toAddress,
+        command.fromChain,
+        command.toChain,
+        command.fromToken,
+        command.toToken,
+        ExternalTransactionStatus.Pending,
+      );
+
+      const step = new TransactionStep(
+        command.txHash,
+        '',
         command.fromChain,
         command.toChain,
         command.fromToken,
         '',
         BigInteger.fromString(command.amountIn),
         BigInteger.zero(),
+        new Date(),
+        null,
         ExternalTransactionStatus.Pending,
         command.aggregatorId,
         command.trackingId,
       );
+
+      tx.addStep(step);
+
       await this.repository.create(tx);
     } catch (e) {
       this.logger.error(`cross chain tx ${command.txHash} processing failed: ${e}`);

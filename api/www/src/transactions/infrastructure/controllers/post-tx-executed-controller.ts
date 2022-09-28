@@ -11,14 +11,16 @@ export class PostTxExecutedController {
   @Post('tx-executed')
   async build(@Body() params: PostTxExecutedDto, @Res() res: Response) {
     const command = new ExecutedTxCommand(
+      params.txId,
+      params.txHash,
       params.aggregatorId,
       params.fromChainId,
       params.toChainId,
       params.fromAddress,
       params.toAddress,
       params.fromToken,
+      params.toToken,
       params.amountIn,
-      params.txHash,
       params.trackingId,
     );
 
