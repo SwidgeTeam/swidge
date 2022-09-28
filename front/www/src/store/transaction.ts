@@ -104,7 +104,7 @@ export const useTransactionStore = defineStore('transaction', {
                 toAddress: routesStore.receiverAddress,
                 fromToken: routesStore.getOriginTokenAddress,
                 toToken: routesStore.getDestinationTokenAddress,
-                amountIn: ethers.utils.formatUnits(routesStore.getAmountIn, routesStore.getOriginToken()?.decimals),
+                amountIn: ethers.utils.parseUnits(routesStore.getAmountIn, routesStore.getOriginToken()?.decimals).toString(),
                 trackingId: this.trackingId,
             }
             swidgeApi.informExecutedTx(request)
