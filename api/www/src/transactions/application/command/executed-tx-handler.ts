@@ -104,7 +104,9 @@ export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
     } catch (e) {
       this.logger.error(`Single chain tx ${command.txHash} processing failed: ${e}`);
       // retry, we need to leave that done
-      await this.processSingleChainTx(command);
+      setTimeout(() => {
+        this.processSingleChainTx(command);
+      }, 5000);
     }
   }
 
@@ -150,7 +152,9 @@ export class ExecutedTxHandler implements ICommandHandler<ExecutedTxCommand> {
     } catch (e) {
       this.logger.error(`cross chain tx ${command.txHash} processing failed: ${e}`);
       // this needs to succeed
-      await this.processCrossChainTx(command);
+      setTimeout(() => {
+        this.processCrossChainTx(command);
+      }, 5000);
     }
   }
 
