@@ -34,7 +34,9 @@ const showContainer = () => {
 const loadingRoutes = () => {
     return routesStore.loadingRoutes
 }
-
+const thereAreNoRoutes = () => {
+    return routesStore.getAllRoutes.length == 0
+}
 const thereAreRoutes = () => {
     return routesStore.getAllRoutes.length > 0
 }
@@ -47,12 +49,13 @@ const thereAreMoreRoutes = () => {
 <template>
     <div class="flex flex-col px-1 receiving-box-colors relative">
         <div class="px-1">
-            <div class="flex items-center justify-between py-3 h-[var(--receive-selector-height)]">
+            <div class="flex items-center justify-between py-3 h-[5rem]">
                 <AssetSelector
                     :is-origin="false"
                     @open-token-list="() => emits('select-token')"
                 />
-                <div v-if="loadingRoutes()" class="flex items-center text-slate-300">
+                <div v-if="thereAreNoRoutes()" class="relative flex text-slate-400">0.0</div>
+                <div v-else-if="loadingRoutes()" class="flex items-center text-slate-300">
                     <LoadingCircle
                         class="h-9 w-9"
                     />

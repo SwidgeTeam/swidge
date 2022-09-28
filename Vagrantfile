@@ -16,6 +16,7 @@ Vagrant.configure("2") do |config|
     vb.memory = "4096"
   end
 
+
   # Enable provisioning with a provider
   # https://github.com/leighmcculloch/vagrant-docker-compose
   # vagrant plugin install vagrant-docker-compose
