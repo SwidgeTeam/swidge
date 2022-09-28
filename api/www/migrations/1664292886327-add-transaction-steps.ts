@@ -25,6 +25,153 @@ export class addTransactionSteps1664292886327 implements MigrationInterface {
            PRIMARY KEY (\`txId\`, \`originTxHash\`)
        ) ENGINE=InnoDB`,
     );
+
+    await queryRunner.query(
+      `create table transactions_tmp
+       (
+           walletAddress varchar(80)  not null,
+           fromChainId   varchar(50)  not null,
+           toChainId     varchar(50)  not null,
+           srcToken      varchar(80)  not null,
+           dstToken      varchar(80)  not null,
+           executed      timestamp null,
+           completed     timestamp null,
+           receiver      varchar(80)  not null,
+           status        varchar(255) not null,
+           id            varchar(255) not null primary key
+       )`,
+    );
+
+    await queryRunner.query(
+      `CREATE PROCEDURE migratetxs()
+BEGIN
+    DECLARE v_txHash VARCHAR(255);
+    DECLARE v_destinationTxHash VARCHAR(255);
+    DECLARE v_wallet VARCHAR(255);
+    DECLARE v_receiver VARCHAR(255);
+    DECLARE v_fromChainId VARCHAR(255);
+    DECLARE v_toChainId VARCHAR(255);
+    DECLARE v_srcToken VARCHAR(255);
+    DECLARE v_dstToken VARCHAR(255);
+    DECLARE v_amountIn VARCHAR(255);
+    DECLARE v_amountOut VARCHAR(255);
+    DECLARE v_aggregatorId VARCHAR(255);
+    DECLARE v_trackingId VARCHAR(255);
+    DECLARE v_status VARCHAR(255);
+    DECLARE v_executed date;
+    DECLARE v_completed date;
+    DECLARE v_uuid VARCHAR(255);
+
+    DECLARE finished INTEGER DEFAULT 0;
+
+    ## declare cursor
+    DECLARE tx_cursor CURSOR FOR SELECT txHash,
+                                        destinationTxHash,
+                                        fromChainId,
+                                        walletAddress,
+                                        receiver,
+                                        toChainId,
+                                        srcToken,
+                                        dstToken,
+                                        amountIn,
+                                        amountOut,
+                                        aggregatorId,
+                                        trackingId,
+                                        status,
+                                        executed,
+                                        completed
+                                 FROM transactions;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
+
+    OPEN tx_cursor;
+
+    txLoop:
+    LOOP
+        # fetch row
+        FETCH tx_cursor INTO
+            v_txHash,
+            v_destinationTxHash,
+            v_wallet,
+            v_receiver,
+            v_fromChainId,
+            v_toChainId,
+            v_srcToken,
+            v_dstToken,
+            v_amountIn,
+            v_amountOut,
+            v_aggregatorId,
+            v_trackingId,
+            v_status,
+            v_executed,
+            v_completed;
+
+        IF finished THEN LEAVE txLoop; END IF;
+
+        #  create unique ID
+        SET v_uuid = UUID();
+
+        # insert step
+        INSERT INTO transaction_steps (\`txId\`,
+                                       \`originTxHash\`,
+                                       \`destinationTxHash\`,
+                                       \`fromChainId\`,
+                                       \`toChainId\`,
+                                       \`srcToken\`,
+                                       \`dstToken\`,
+                                       \`amountIn\`,
+                                       \`amountOut\`,
+                                       \`aggregatorId\`,
+                                       \`trackingId\`,
+                                       \`status\`,
+                                       \`executed\`,
+                                       \`completed\`)
+        VALUES (v_uuid,
+                v_txHash,
+                v_destinationTxHash,
+                v_fromChainId,
+                v_toChainId,
+                v_srcToken,
+                v_dstToken,
+                v_amountIn,
+                v_amountOut,
+                v_aggregatorId,
+                v_trackingId,
+                v_status,
+                v_executed,
+                v_completed);
+
+        # insert tx
+        INSERT INTO transactions_tmp (walletAddress,
+                                   fromChainId,
+                                   toChainId,
+                                   srcToken,
+                                   dstToken,
+                                   executed,
+                                   completed,
+                                   receiver,
+                                   status,
+                                   id)
+        VALUES (v_wallet,
+                v_fromChainId,
+                v_toChainId,
+                v_srcToken,
+                v_dstToken,
+                v_executed,
+                v_completed,
+                v_receiver,
+                v_status,
+                v_uuid);
+
+    END LOOP txLoop;
+    CLOSE tx_cursor;
+    
+    TRUNCATE transactions;
+END`,
+    );
+
+    await queryRunner.query(`call migratetxs`);
+
     await queryRunner.query(`ALTER TABLE \`transactions\` DROP PRIMARY KEY`);
     await queryRunner.query(`ALTER TABLE \`transactions\` DROP COLUMN \`txHash\``);
     await queryRunner.query(`ALTER TABLE \`transactions\` DROP COLUMN \`amountIn\``);
@@ -36,6 +183,10 @@ export class addTransactionSteps1664292886327 implements MigrationInterface {
       `ALTER TABLE \`transactions\`
           ADD \`txId\` varchar(255) NOT NULL PRIMARY KEY`,
     );
+
+    await queryRunner.query(`INSERT INTO transactions SELECT * FROM transactions_tmp`);
+    await queryRunner.query(`DROP TABLE transactions_tmp`);
+    await queryRunner.query(`DROP PROCEDURE migratetxs`);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
