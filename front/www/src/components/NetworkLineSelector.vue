@@ -47,61 +47,69 @@ const onSelect = (id: string) => {
             :class="[selectedNetworkId !== network.id && selectedNetworkId !== '' && 'opacity-40']"
             @click="onSelect(network.id)">
             <span class="h-11 bg-[#2E283A] rounded-lg flex justify-center items-center">
-                <Ethereum 
-                v-if="network.id == '1'"
-                class="network-switch"></Ethereum>
-                <img 
-                v-else-if="network.id =='66'"
-                src="@/components/Icons/ChainsLogos/OKC.png"
-                class="network-switch">
+                <Ethereum
+                    v-if="network.id === '1'"
+                    class="network-switch"></Ethereum>
+                <img
+                    v-else-if="network.id ==='66'"
+                    src="@/components/Icons/ChainsLogos/OKC.png"
+                    class="network-switch">
                 <Aurora
-                v-else-if="network.id == '1313161554'"
-                class="network-switch"/>
-                <Gnosis 
-                v-else-if="network.id == '100'"
-                class="network-switch"/>
-                <FTM 
-                v-else-if="network.id == '250'"
-                class="network-switch"/>
-                <Avalanche 
-                v-else-if="network.id == '43114'"
-                class="network-switch"/>
-                <BSC 
-                v-else-if="network.id == '56'"
-                class="network-switch"/>
-                <Optimism 
-                v-else-if="network.id == '10'"
-                class="network-switch"/>
-                <Polygon 
-                v-else-if="network.id == '137'"
-                class="network-switch"/>
-                <Arbitrum 
-                v-else-if="network.id == '42161'"
-                class="network-switch"/>
-                <Cronos 
-                v-else-if="network.id == '25'"
-                class="network-switch"/>
-                <Celo 
-                v-else-if="network.id == '42220'"
-                class="network-switch"/>
-                <Moonriver 
-                v-else-if="network.id == '1285'"
-                class="network-switch"/>
-                <Boba 
-                v-else-if="network.id == '288'"
-                class="network-switch"/>
-                <Fuse 
-                v-else-if="network.id == '122'"
-                class="network-switch"/>
-                <Evmos 
-                v-else-if="network.id == '9001'"
-                class="network-switch"/>
-                <Moonbeam 
-                v-else-if="network.id == '1284'"
-                class="network-switch"/>
-                <Harmony 
-                v-else-if="network.id == '1666600000'"
-                class="network-switch"/>
+                    v-else-if="network.id === '1313161554'"
+                    class="network-switch"/>
+                <Gnosis
+                    v-else-if="network.id === '100'"
+                    class="network-switch"/>
+                <FTM
+                    v-else-if="network.id === '250'"
+                    class="network-switch"/>
+                <Avalanche
+                    v-else-if="network.id === '43114'"
+                    class="network-switch"/>
+                <BSC
+                    v-else-if="network.id === '56'"
+                    class="network-switch"/>
+                <Optimism
+                    v-else-if="network.id === '10'"
+                    class="network-switch"/>
+                <Polygon
+                    v-else-if="network.id === '137'"
+                    class="network-switch"/>
+                <Arbitrum
+                    v-else-if="network.id === '42161'"
+                    class="network-switch"/>
+                <Cronos
+                    v-else-if="network.id === '25'"
+                    class="network-switch"/>
+                <Celo
+                    v-else-if="network.id === '42220'"
+                    class="network-switch"/>
+                <Moonriver
+                    v-else-if="network.id === '1285'"
+                    class="network-switch"/>
+                <Boba
+                    v-else-if="network.id === '288'"
+                    class="network-switch"/>
+                <Fuse
+                    v-else-if="network.id === '122'"
+                    class="network-switch"/>
+                <img
+                    v-else-if="network.id ==='128'"
+                    src="@/components/Icons/ChainsLogos/HECO.png"
+                    class="network-switch">
+                <Evmos
+                    v-else-if="network.id === '9001'"
+                    class="network-switch"/>
+                <Moonbeam
+                    v-else-if="network.id === '1284'"
+                    class="network-switch"/>
+                <Harmony
+                    v-else-if="network.id === '1666600000'"
+                    class="network-switch"/>
+                <img
+                    v-else
+                    :src="network.logo"
+                    class="network-switch"/>
             </span>
         </button>
     </div>
