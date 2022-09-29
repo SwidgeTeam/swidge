@@ -107,14 +107,18 @@ const totalExecutionTime = computed({
                 :amount-in="route.resume.amountIn"
                 :amount-out="route.resume.amountOut"
             />
-            <div class="flex flex-col w-1/3">
+            <div class="flex grid grid-cols-2 grid-rows-2 ">
                 <div class="flex text-sm field--execution-time justify-center items-center">
                     <ClockIcon class="h-6 mr-1 stroke-1 stroke-gray-200"/>
+                </div>
+                <div class="flex text-sm field--execution-time justify-center items-center">
                     {{ totalExecutionTime }}
                 </div>
                 <div class="flex text-ellipsis text-sm field--global-fee justify-center items-center">
-                    <DollarSign class="h-8  mr-1 stroke-0 stroke-gray-200"/>
-                    ${{ Number(route.fees.amountInUsd).toFixed(2) }}
+                    <DollarSign class="h-8 mr-1 stroke-0 stroke-gray-200"/>
+                </div>
+                <div class="flex text-ellipsis text-sm field--global-fee justify-center items-center">
+                ${{ Number(route.fees.amountInUsd).toFixed(2) }}
                 </div>
             </div>
             <div class="relative flex flex-row w-1/3">
