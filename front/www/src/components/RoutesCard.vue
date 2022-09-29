@@ -7,6 +7,7 @@ import Clock from './svg/Clock.vue'
 import ProviderIcon from '@/components/Icons/ProviderIcon.vue'
 import Route from '@/domain/paths/path'
 import RouteCardOutputValue from '@/components/RouteCardOutputValue.vue';
+import SwapIcon from './svg/SwapIcon.vue';
 
 const props = defineProps<{
     route: Route
@@ -117,11 +118,14 @@ const totalExecutionTime = computed({
                 </div>
             </div>
             <div class="relative w-1/3">
+                <div>
+                    <SwapIcon/>
+                </div>
                 <div
                     v-for="(step, index) in route.steps"
-                        :key="index+1"
-                        :class="'z-'+index+' ml-'+(index+3)"
-                        class="absolute flex items-center -top-3 w-full">
+                        :key="index"
+                        :class="'z-'+index+' left-'+(index+2)"
+                        class="absolute flex items-center -top-[14px] w-12 h-12 pl-2">
                         <ProviderIcon
                             :name="step.name"
                             :logo="step.logo"

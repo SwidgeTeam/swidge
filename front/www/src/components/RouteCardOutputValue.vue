@@ -47,7 +47,7 @@ const computeDollarValue = (amount: string, price?: string): number => {
 
 <template>
     <div class="flex flex-col field--amount-out pt-2">
-        <span class="amount-tokens leading-5 text-right text-xl">{{ amountOut }}</span>
+        <span class="amount-tokens leading-5 text-right text-2xl font-bold">{{ amountOut }}</span>
         <span class="amount-dollars leading-5 text-right text-[13px] text-slate-500 hover:text-slate-400">
             <span
                 v-if="Number(priceChangePercentage) >= 0"
