@@ -28,7 +28,7 @@ const routes = () => {
 }
 
 const showContainer = () => {
-    return thereAreRoutes() || routesStore.showContainer && !loadingRoutes()
+    return thereAreRoutes() || (routesStore.showContainer && !loadingRoutes())
 }
 
 const loadingRoutes = () => {
@@ -42,19 +42,25 @@ const thereAreRoutes = () => {
 }
 
 const thereAreMoreRoutes = () => {
-    return routesStore.getAllRoutes.length > routesStore.getPromotedRoutes.length
+    return (
+        routesStore.getAllRoutes.length > routesStore.getPromotedRoutes.length
+    )
 }
 </script>
 
 <template>
-    <div class="flex flex-col px-1 receiving-box-colors relative">
+    <div
+        class="flex flex-col px-1 receiving-box-colors relative md:min-h-[123px] md:p-4 md:justify-center"
+    >
         <div class="px-1">
-            <div class="flex items-center justify-between py-3 h-[5rem]">
+            <div class="flex items-center justify-between py-3 h-[var(--receive-selector-height)]">
                 <AssetSelector
                     :is-origin="false"
                     @open-token-list="() => emits('select-token')"
                 />
-                <div v-if="thereAreNoRoutes() && !loadingRoutes()" class="relative flex text-xl text-slate-400">0.0</div>
+                <div v-if="thereAreNoRoutes() && !loadingRoutes()" class="relative flex text-xl text-slate-400">
+                    0.0
+                </div>
                 <div v-else-if="loadingRoutes()" class="flex items-center text-slate-300">
                     <LoadingCircle
                         class="h-9 w-9"
@@ -63,7 +69,7 @@ const thereAreMoreRoutes = () => {
                 </div>
             </div>
         </div>
-        <div v-if="showContainer()" class="routes-container">
+        <div v-if="showContainer()" class="routes-container md:mt-2">
             <div v-if="thereAreRoutes()" class="flex flex-col gap-2">
                 <RoutesCard
                     v-for="(route, index) in routes()"
@@ -72,6 +78,7 @@ const thereAreMoreRoutes = () => {
                     :selected-id="selectedId()"
                     @select-route="onSelected"
                 />
+
                 <div v-if="thereAreMoreRoutes()" class="flex justify-center">
                     <button
                         class="text-sm border rounded-lg border-[#54545F] bg-[#2F283A]/100 px-1"

@@ -92,7 +92,7 @@ const destinationChainSelected = computed({
     get: () => {
         return routesStore.getDestinationChainId
     },
-    set: () => null
+    set: () => null,
 })
 
 /**
@@ -119,13 +119,17 @@ const handleUpdateTokenFromModal = (token: IToken) => {
     const selectedOriginChainId = routesStore.getOriginChainId
     const selectedDestinationChainId = routesStore.getDestinationChainId
     const selectedOriginTokenAddress = routesStore.getOriginTokenAddress
-    const selectedDestinationTokenAddress = routesStore.getDestinationTokenAddress
+    const selectedDestinationTokenAddress =
+        routesStore.getDestinationTokenAddress
 
     if (isSourceChainToken.value) {
         // If the origin network is being chosen
         if (selectedOriginChainId != token.chainId) {
             // If network and token of source and destination are the same, switch inputs instead of setting new ones.
-            if (token.chainId == selectedDestinationChainId && token.address == selectedDestinationTokenAddress) {
+            if (
+                token.chainId == selectedDestinationChainId &&
+                token.address == selectedDestinationTokenAddress
+            ) {
                 switchHandlerFunction()
             } else {
                 updateOriginToken(token)
@@ -134,7 +138,10 @@ const handleUpdateTokenFromModal = (token: IToken) => {
             updateOriginToken(token)
         }
     } else {
-        if (token.chainId == selectedOriginChainId && token.address == selectedOriginTokenAddress) {
+        if (
+            token.chainId == selectedOriginChainId &&
+            token.address == selectedOriginTokenAddress
+        ) {
             switchHandlerFunction()
         } else {
             // Update token details
@@ -157,7 +164,10 @@ const updateOriginToken = async (token: IToken) => {
     const originTokenAddress = routesStore.getOriginTokenAddress
     const originTokenChainId = routesStore.getOriginChainId
     // If user selected a different token, update
-    if (originTokenAddress !== token.address || originTokenChainId !== token.chainId) {
+    if (
+        originTokenAddress !== token.address ||
+        originTokenChainId !== token.chainId
+    ) {
         // Update token details
         routesStore.selectOriginToken(token.chainId, token.address)
         // Reset amount
@@ -179,7 +189,10 @@ const switchHandlerFunction = () => {
  * Quotes the possible path for a given pair and amount
  */
 const tryToQuote = async () => {
-    if (!routesStore.bothTokensSelected || Number(routesStore.getAmountIn) === 0) {
+    if (
+        !routesStore.bothTokensSelected ||
+        Number(routesStore.getAmountIn) === 0
+    ) {
         return
     }
     unsetButtonAlert()
@@ -192,7 +205,10 @@ const tryToQuote = async () => {
         const thereAreRoutes = routesStore.getAllRoutes.length > 0
         if (!thereAreRoutes) {
             isExecuteButtonDisabled.value = false
-        } else if (Number(routesStore.getAmountIn) > Number(routesStore.getSelectedTokenBalance)) {
+        } else if (
+            Number(routesStore.getAmountIn) >
+            Number(routesStore.getSelectedTokenBalance)
+        ) {
             setButtonAlert('Insufficient Balance')
         } else {
             isExecuteButtonDisabled.value = false
@@ -366,10 +382,7 @@ const handleChangedReceiver = (address: string) => {
 <template>
     <div class="flex flex-col gap-3 px-3 md:mt-[20px] w-full max-w-md rounded-xl">
         <div class="flex justify-end gap-2 py-2 h-[var(--settings-line-height)]">
-            <ReloadIcon
-                class="w-5 h-5 cursor-pointer"
-                @click="tryToQuote"
-            />
+            <ReloadIcon class="w-5 h-5 cursor-pointer" @click="tryToQuote" />
             <AdjustmentsIcon
                 class="w-5 h-5 cursor-pointer"
                 @click="isSettingsModalOpen = true"
@@ -380,12 +393,8 @@ const handleChangedReceiver = (address: string) => {
                 @input-changed="handleSourceInputChanged"
                 @select-token="() => handleOpenTokenList(true)"
             />
-            <FromToArrow
-                @switch-tokens="switchHandlerFunction"
-            />
-            <ReceivingBox
-                @select-token="() => handleOpenTokenList(false)"
-            />
+            <FromToArrow @switch-tokens="switchHandlerFunction" />
+            <ReceivingBox @select-token="() => handleOpenTokenList(false)" />
         </div>
         <RecipientUserCard
             v-if="destinationChainSelected"
