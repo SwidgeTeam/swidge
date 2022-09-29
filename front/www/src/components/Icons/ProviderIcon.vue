@@ -13,7 +13,7 @@ defineProps<{
         </span>
         <img
             :src="logo"
-            class="relative z-10 w-6 h-6 ml-3 rounded-full bg-white"
+            class="relative w-6 h-6 rounded-full bg-white"
             alt="provider logo">
     </div>
 </template>

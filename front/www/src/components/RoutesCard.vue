@@ -98,38 +98,40 @@ const totalExecutionTime = computed({
         </div>
         <div
             v-if="route.tags.length > 0"
-            class="route-tag"
+            class="route-tag text-xl font-semibold"
         >
             {{ tag }}
         </div>
-        <div class="route-details ml-2 my-4 w-full">
+        <div class="route-details ml-2 my-4 justify-between">
             <RouteCardOutputValue
                 :amount-in="route.resume.amountIn"
                 :amount-out="route.resume.amountOut"
             />
-            <div class="">
-                <div class="flex text-sm field--execution-time  justify-between items-center">
+            <div class="flex flex-col w-1/3">
+                <div class="flex text-sm field--execution-time justify-center items-center">
                     <Clock class="h-8 mr-1"/>
                     {{ totalExecutionTime }}
                 </div>
-                <div class="flex text-ellipsis text-sm field--global-fee justify-between items-center">
+                <div class="flex text-ellipsis text-sm field--global-fee justify-center items-center">
                     <DollarSign class="h-8 mr-1"/>
                     ${{ Number(route.fees.amountInUsd).toFixed(2) }}
                 </div>
             </div>
-            <div class="relative w-1/3">
-                <div>
+            <div class="relative flex flex-row w-1/3">
+                <div class="flex items-center ">
                     <SwapIcon/>
                 </div>
-                <div
-                    v-for="(step, index) in route.steps"
-                        :key="index"
-                        :class="'z-'+index+' left-'+(index+2)"
-                        class="absolute flex items-center -top-[14px] w-12 h-12 pl-2">
-                        <ProviderIcon
-                            :name="step.name"
-                            :logo="step.logo"
-                        />
+                <div class="flex items-center justify-center ml-5">
+                    <div
+                        v-for="(step, index) in route.steps"
+                            :key="index"
+                            :class="'z-'+index"
+                            class="realtive flex-1 flex-row -top-[3px] w-6 h-6 -ml-2 shadow-inner">
+                            <ProviderIcon
+                                :name="step.name"
+                                :logo="step.logo"
+                            />
+                    </div>
                 </div>
             </div>
         </div>

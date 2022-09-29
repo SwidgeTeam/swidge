@@ -217,13 +217,13 @@
     }
 
     .route-card > .route-tag {
-        @apply absolute -top-3 left-6 text-xs border rounded-lg border-[#54545F] bg-[#2F283A]/100 px-3 py-[2px] uppercase
+        @apply absolute -top-4 left-6 text-base border-2 rounded-lg border-[#54545F] bg-[#2F283A]/100 px-[5px] py-[0px] uppercase
     }
 
     .route-card.selected > .route-tag {
         @apply
         bg-[#272730]
-        border border-[#733975]
+        border-2 border-[#733975]
     }
 
     .route-card > .route-details {
