@@ -217,7 +217,7 @@
     }
 
     .route-card > .route-tag {
-        @apply absolute -top-4 left-6 text-base border-2 rounded-lg border-[#54545F] bg-[#2F283A]/100 px-[5px] py-[0px] uppercase
+        @apply absolute -top-4 left-6 text-base border-2 rounded-lg text-gray-300 border-[#54545F] bg-[#2F283A]/100 px-[5px] py-[0px] uppercase
     }
 
     .route-card.selected > .route-tag {
@@ -227,7 +227,7 @@
     }
 
     .route-card > .route-details {
-        @apply flex items-center justify-around px-4 h-8 sm:h-10
+        @apply flex items-center justify-around px-4 h-8 sm:h-10 text-gray-300 stroke-gray-300
     }
 
     .route-card > .route-steps {
