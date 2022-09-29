@@ -199,7 +199,7 @@
     .route-card {
         @apply relative flex flex-col w-full
         bg-[#2A2934]/30
-        border border-[#545454] rounded-3xl
+        border-2 border-[#545454] rounded-3xl
         gap-4 pt-3 pb-2 px-2 mt-1
         cursor-pointer
     }
@@ -208,22 +208,28 @@
         @apply
         border-[#6B6B6B]
         bg-[#31313E]
+        border-2
+        text-gray-100
     }
 
     .route-card.selected {
-        @apply
+        @apply text-gray-900
         bg-[#272730]
         border-2 border-[#733975]
     }
 
     .route-card > .route-tag {
-        @apply absolute -top-4 left-6 text-base border-2 rounded-lg text-gray-300 border-[#54545F] bg-[#2F283A]/100 px-[5px] py-[0px] uppercase
+        @apply absolute -top-4 left-6 text-base border-2 rounded-lg text-gray-100 border-[#54545F] bg-[#2F283A]/100 px-[5px] py-[0px] uppercase
     }
 
     .route-card.selected > .route-tag {
         @apply
         bg-[#272730]
         border-2 border-[#733975]
+    }
+
+    .route-card.selected > .route-details {
+        @apply flex items-center justify-around px-4 h-8 sm:h-10 text-gray-100
     }
 
     .route-card > .route-details {

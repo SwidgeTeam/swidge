@@ -109,13 +109,13 @@ const totalExecutionTime = computed({
             />
             <div class="flex grid grid-cols-2 grid-rows-2 ">
                 <div class="flex text-sm field--execution-time justify-center items-center">
-                    <ClockIcon class="h-6 mr-1 stroke-1"/>
+                    <ClockIcon class="h-6 stroke-1"/>
                 </div>
                 <div class="flex text-sm field--execution-time justify-center items-center">
                     {{ totalExecutionTime }}
                 </div>
                 <div class="flex text-ellipsis text-sm field--global-fee justify-center items-center">
-                    <DollarSign class="h-8 mr-1 stroke-0 "/>
+                    <DollarSign class="h-8 w-[10px] stroke-1"/>
                 </div>
                 <div class="flex text-ellipsis text-sm field--global-fee justify-center items-center">
                 ${{ Number(route.fees.amountInUsd).toFixed(2) }}
@@ -123,7 +123,7 @@ const totalExecutionTime = computed({
             </div>
             <div class="relative flex flex-row w-1/3">
                 <div class="flex items-center ">
-                    <SwapIcon class="stroke-gray"/>
+                    <SwapIcon class="stroke-1 h-6 w-6 ml-2"/>
                 </div>
                 <div class="flex items-center justify-center ml-5">
                     <div
