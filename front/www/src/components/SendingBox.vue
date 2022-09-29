@@ -41,12 +41,9 @@ const inputValue = computed({
     set: () => null,
 })
 
-const trimmedBalance = asyncComputed(
-    async () => {
-        return AmountFormatter.format(await routesStore.getSelectedTokenBalance)
-    },
-    '0'
-)
+const trimmedBalance = asyncComputed(async () => {
+    return AmountFormatter.format(await routesStore.getSelectedTokenBalance)
+}, '0')
 
 const dollarValue = computed({
     get: () => {
@@ -59,18 +56,16 @@ const dollarValue = computed({
     },
     set: () => null,
 })
-
 </script>
 
 <template>
-    <div class="sending-box">
+    <div class="sending-box flex md:justify-between md:h-[146px] md:p-4">
         <div class="flex items-center justify-between pb-2 pt-3">
             <AssetSelector
                 :is-origin="true"
                 @open-token-list="() => emits('select-token')"
             />
-            <div
-                class="relative flex">
+            <div class="relative flex">
                 <input
                     type="text"
                     :disabled="false"
@@ -91,12 +86,10 @@ const dollarValue = computed({
             </div>
         </div>
         <div class="pl-2 flex items-center justify-between">
-            <div class="current-balance">
+            <div class="current-balance md:text-lg">
                 Balance:
-                <span
-                    class="cursor-pointer"
-                    @click="setToMaxAmount">
-                        {{ trimmedBalance }}
+                <span class="cursor-pointer" @click="setToMaxAmount">
+                    {{ trimmedBalance }}
                 </span>
             </div>
             <div class="input-dollar-value">~ $ {{ dollarValue }}</div>
