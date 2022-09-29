@@ -3,7 +3,7 @@ import { computed} from 'vue'
 
 import Check from './svg/Check.vue'
 import DollarSign from './svg/DollarSign.vue'
-import Clock from './svg/Clock.vue'
+import { ClockIcon } from '@heroicons/vue/outline'
 import ProviderIcon from '@/components/Icons/ProviderIcon.vue'
 import Route from '@/domain/paths/path'
 import RouteCardOutputValue from '@/components/RouteCardOutputValue.vue';
@@ -109,17 +109,17 @@ const totalExecutionTime = computed({
             />
             <div class="flex flex-col w-1/3">
                 <div class="flex text-sm field--execution-time justify-center items-center">
-                    <Clock class="h-8 mr-1"/>
+                    <ClockIcon class="h-6 mr-1 stroke-1 stroke-gray-200"/>
                     {{ totalExecutionTime }}
                 </div>
                 <div class="flex text-ellipsis text-sm field--global-fee justify-center items-center">
-                    <DollarSign class="h-8 mr-1"/>
+                    <DollarSign class="h-8  mr-1 stroke-0 stroke-gray-200"/>
                     ${{ Number(route.fees.amountInUsd).toFixed(2) }}
                 </div>
             </div>
             <div class="relative flex flex-row w-1/3">
                 <div class="flex items-center ">
-                    <SwapIcon/>
+                    <SwapIcon class="stroke-gray-200"/>
                 </div>
                 <div class="flex items-center justify-center ml-5">
                     <div
