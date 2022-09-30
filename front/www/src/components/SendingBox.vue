@@ -25,7 +25,7 @@ const onChange = (event: Event) => {
 
 const setToMaxAmount = async () => {
     const balance = await routesStore.getSelectedTokenBalance
-    updateValue(AmountFormatter.format(balance))
+    updateValue(balance)
     emits('input-changed')
 }
 
