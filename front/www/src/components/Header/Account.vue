@@ -10,6 +10,7 @@ import ChainLogo from '@/components/Icons/ChainLogo.vue'
 import { IToken } from '@/domain/metadata/Metadata'
 import Address from '@/domain/shared/address'
 import AmountFormatter from '@/domain/shared/AmountFormatter'
+import CopyButton from '@/components/Buttons/CopyButton.vue'
 
 const web3Store = useWeb3Store()
 const metadataStore = useMetadataStore()
@@ -53,8 +54,9 @@ const formattedBalance = (token: IToken) => {
             rounded-lg top-12 px-2 py-1 w-64 z-50 gradient-border-header-main-hover account-bg-gradient"
         >
             <div class="flex flex-col">
-                <div class="flex flex-row">
+                <div class="flex flex-row items-center gap-2">
                     {{ createShortAddress(account) }}
+                    <CopyButton :content="account"/>
                 </div>
                 <div class="flex flex-col">
                     <TabGroup>
