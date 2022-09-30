@@ -54,7 +54,7 @@ const thereAreMoreRoutes = () => {
                     :is-origin="false"
                     @open-token-list="() => emits('select-token')"
                 />
-                <div v-if="thereAreNoRoutes()" class="relative flex text-slate-400">0.0</div>
+                <div v-if="thereAreNoRoutes() && !loadingRoutes()" class="relative flex text-xl text-slate-400">0.0</div>
                 <div v-else-if="loadingRoutes()" class="flex items-center text-slate-300">
                     <LoadingCircle
                         class="h-9 w-9"
