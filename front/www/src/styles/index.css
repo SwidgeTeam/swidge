@@ -228,33 +228,12 @@
         border-2 border-[#733975]
     }
 
-    .route-card.selected > .route-details {
-        @apply flex items-center justify-around px-4 h-8 sm:h-10 text-gray-100
-    }
-
     .route-card > .route-details {
         @apply flex items-center justify-around px-4 h-8 sm:h-10 text-gray-300 stroke-gray-300
     }
 
-    .route-card > .route-steps {
-        @apply bg-[#222129]/40 rounded-2xl
-    }
-
-    .route-card > .route-steps > .details-line {
-        @apply relative flex items-center cursor-pointer shadow-lg px-2 py-1
-        rounded-2xl hover:bg-[#222129]/100
-        transition duration-150
-        ease-out hover:ease-in
-    }
-
-    .route-steps .vl {
-        border-left: 2px solid #626262;
-        box-shadow: 0 0 5px #626262;
-        height: 90%;
-        position: absolute;
-        left: 33px;
-        top: 0;
-        z-index: 1;
+    .route-card.selected > .route-details {
+        @apply text-gray-100
     }
 
     .asset-selector-shadow {

@@ -18,30 +18,13 @@ const emits = defineEmits<{
     (event: 'select-route', index: string): void
 }>()
 
-
 /**
  * when a click happens on the domain of the route card
  * @param event
  */
 const onClick = (event: Event) => {
     if (!(event.target instanceof HTMLElement)) return
-    const isClickOnSteps = hasParentWithClass(event.target.parentElement as HTMLElement, 'route-steps')
-    if (!isClickOnSteps) {
-        emits('select-route', props.route.id)
-    }
-}
-
-/**
- * recursively checks if an element or its parents contains a class
- * @param element
- * @param classname
- */
-const hasParentWithClass = (element: HTMLElement, classname: string): boolean => {
-    const existsHere = element.className.split(' ').indexOf(classname) >= 0
-    const existsOnParent = element.parentElement
-        ? hasParentWithClass(element.parentElement, classname)
-        : false
-    return existsHere || existsOnParent
+    emits('select-route', props.route.id)
 }
 
 /**
@@ -102,7 +85,7 @@ const totalExecutionTime = computed({
         >
             {{ tag }}
         </div>
-        <div class="route-details ml-2 my-4 justify-between">
+        <div class="route-details ml-2 my-3 justify-between">
             <RouteCardOutputValue
                 :amount-in="route.resume.amountIn"
                 :amount-out="route.resume.amountOut"
@@ -118,7 +101,7 @@ const totalExecutionTime = computed({
                     <DollarSign class="h-8 w-[10px] stroke-1"/>
                 </div>
                 <div class="flex text-ellipsis text-sm field--global-fee justify-center items-center">
-                ${{ Number(route.fees.amountInUsd).toFixed(2) }}
+                    ${{ Number(route.fees.amountInUsd).toFixed(2) }}
                 </div>
             </div>
             <div class="relative flex flex-row w-1/3">
@@ -141,6 +124,6 @@ const totalExecutionTime = computed({
                 </div>
             </div>
         </div>
-        
+
     </div>
 </template>
