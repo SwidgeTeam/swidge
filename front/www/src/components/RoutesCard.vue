@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { computed} from 'vue'
-
+import { computed } from 'vue'
 import Check from './svg/Check.vue'
 import DollarSign from './svg/DollarSign.vue'
 import { ClockIcon } from '@heroicons/vue/outline'
 import ProviderIcon from '@/components/Icons/ProviderIcon.vue'
 import Route from '@/domain/paths/path'
-import RouteCardOutputValue from '@/components/RouteCardOutputValue.vue';
-import SwapIcon from './svg/SwapIcon.vue';
+import RouteCardOutputValue from '@/components/RouteCardOutputValue.vue'
+import SwapIcon from './svg/SwapIcon.vue'
+import Toolip from '@/components/Toolip.vue';
 
 const props = defineProps<{
     route: Route
@@ -123,7 +123,9 @@ const totalExecutionTime = computed({
             </div>
             <div class="relative flex flex-row w-1/3">
                 <div class="flex items-center ">
-                    <SwapIcon class="stroke-1 h-6 w-6 ml-2"/>
+                    <Toolip text="Providers">
+                        <SwapIcon class="stroke-1 h-6 w-6 ml-2"/>
+                    </Toolip>
                 </div>
                 <div class="flex items-center justify-center ml-5">
                     <div

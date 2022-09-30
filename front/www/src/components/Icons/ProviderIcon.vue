@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import Toolip from '@/components/Toolip.vue'
+
 defineProps<{
     name: string
     logo: string
@@ -6,14 +8,10 @@ defineProps<{
 </script>
 
 <template>
-    <div class="relative has-tooltip">
-        <span
-            class='tooltip rounded-xl shadow-lg px-2 bg-[#31313E] text-white text-xs font-light absolute border border-cyan-700 -bottom-3'>
-            {{ name }}
-        </span>
+    <Toolip :text="name">
         <img
             :src="logo"
             class="relative w-6 h-6 rounded-full bg-white"
             alt="provider logo">
-    </div>
+    </Toolip>
 </template>
