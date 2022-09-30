@@ -91,13 +91,13 @@ const totalExecutionTime = computed({
                 :amount-out="route.resume.amountOut"
             />
             <div class="flex grid grid-cols-2 grid-rows-2 ">
-                <div class="flex text-sm field--execution-time justify-center items-center">
+                <div class="flex text-sm justify-center items-center">
                     <ClockIcon class="h-6 stroke-1"/>
                 </div>
                 <div class="flex text-sm field--execution-time justify-center items-center">
                     {{ totalExecutionTime }}
                 </div>
-                <div class="flex text-ellipsis text-sm field--global-fee justify-center items-center">
+                <div class="flex text-ellipsis text-sme justify-center items-center">
                     <DollarSign class="h-8 w-[10px] stroke-1"/>
                 </div>
                 <div class="flex text-ellipsis text-sm field--global-fee justify-center items-center">
