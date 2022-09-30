@@ -19,28 +19,11 @@ describe('route card', function () {
         const wrapper = mountRouteWith(RouteMother.default())
 
         // Assert
-        expect(wrapper.find('.field--global-fee').text()).toEqual('0.50')
+        expect(wrapper.find('.field--global-fee').text()).toEqual('$0.50')
         expect(wrapper.find('.field--amount-out .amount-tokens').text()).toEqual('77.14')
         expect(wrapper.find('.field--amount-out .amount-dollars').text()).toEqual('(-65.09%) ~ $ 38.57')
     })
 
-    test('fast route shows time in seconds', async () => {
-    // Arrange
-        prepareTokenStore()
-        //const wrapper = mountRouteWith(RouteMother.fastRoute())
-
-        // Assert
-        //expect(wrapper.find('.field--execution-time').text()).toEqual('30s')
-    })
-
-    test('slow route shows time in minutes', async () => {
-    // Arrange
-        prepareTokenStore()
-        //const wrapper = mountRouteWith(RouteMother.slowRoute())
-
-        // Assert
-        //expect(wrapper.find('.field--execution-time').text()).toEqual('6m')
-    })
 })
 
 function prepareTokenStore() {
