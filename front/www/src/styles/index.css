@@ -25,7 +25,7 @@
         + var(--main-action-button-height)
         + var(--footer-height)
         + 0.2rem
-        ))
+        ));
     }
 
     html {
@@ -204,6 +204,12 @@
         cursor-pointer
     }
 
+    .route-card.selected {
+        @apply text-gray-900
+        bg-[#272730]
+        border-2 border-[#733975]
+    }
+
     .route-card:not(.selected):hover {
         @apply
         border-[#6B6B6B]
@@ -212,14 +218,8 @@
         text-gray-100
     }
 
-    .route-card.selected {
-        @apply text-gray-900
-        bg-[#272730]
-        border-2 border-[#733975]
-    }
-
     .route-card > .route-tag {
-        @apply absolute -top-4 left-6 text-base border-2 rounded-lg text-gray-100 border-[#54545F] bg-[#2F283A]/100 px-[5px] py-[0px] uppercase
+        @apply absolute -top-3 left-6 text-sm border-2 rounded-lg text-gray-100 border-[#545454] bg-[#2F283A]/100 px-[5px] py-[0px] uppercase
     }
 
     .route-card.selected > .route-tag {

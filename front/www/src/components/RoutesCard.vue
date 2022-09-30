@@ -110,16 +110,16 @@ const totalExecutionTime = computed({
                         <SwapIcon class="stroke-1 h-6 w-6 ml-2"/>
                     </Toolip>
                 </div>
-                <div class="flex items-center justify-center ml-5">
+                <div class="flex items-center justify-center ml-4">
                     <div
                         v-for="(step, index) in route.steps"
-                            :key="index"
-                            :class="'z-'+index"
-                            class="realtive flex-1 flex-row -top-[3px] w-6 h-6 -ml-2 shadow-inner">
-                            <ProviderIcon
-                                :name="step.name"
-                                :logo="step.logo"
-                            />
+                        :key="index"
+                        :class="'z-'+index"
+                        class="flex-1 flex-row -top-[3px] w-6 h-6 -ml-1 shadow-inner">
+                        <ProviderIcon
+                            :name="step.name"
+                            :logo="step.logo"
+                        />
                     </div>
                 </div>
             </div>
