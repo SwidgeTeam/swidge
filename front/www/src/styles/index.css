@@ -41,7 +41,6 @@
     }
 
     /* custom scrollbar */
-
     ::-webkit-scrollbar {
         width: 5px;
         margin-left: 5px;
@@ -106,14 +105,24 @@
         @apply py-2 px-6 text-sm rounded-full font-medium border border-gray-600 hover:bg-gray-700
     }
 
-    .radial-gradient {
+    .wallets-bg-gradient {
+        background: #222129;
         background: radial-gradient(
-            farthest-corner at 10% 90%,
-            #7C2F82 0%,
-            #222129 90%
+                farthest-corner at 10% 90%,
+                #7C2F82 0%,
+                #222129 90%
         );
     }
-    
+
+    .account-bg-gradient {
+        background: #3E3085;
+        background: radial-gradient(
+                farthest-corner at 50% 50%,
+                #3E3085 0%,
+                #222129 150%
+        );
+    }
+
     .background-gradient {
         background-image: radial-gradient(100% 100% at 50% 25%, var(--tw-gradient-stops));
         --tw-gradient-to: #222129;
@@ -149,7 +158,7 @@
         border: 1px solid transparent;
         border-radius: 12px;
     }
-    
+
     .gradient-border-header-main-hover {
         border: 1px solid #54545F;
     }
@@ -159,6 +168,7 @@
         border: 2px solid #2E283A;
         border-radius: 12px;
     }
+
     .gradient-border-header-main-hover-wallet {
         background: rgba(191, 188, 193, 0.15);
         border: 2px #BFBCC1;
@@ -267,6 +277,17 @@
 
     .has-tooltip:hover .tooltip {
         @apply visible z-50;
+    }
+
+    .tab-button {
+        @apply w-full rounded-lg py-2 text-sm
+        font-medium leading-5 text-blue-700
+        text-blue-100
+        hover:bg-white/[0.12] hover:text-white
+    }
+
+    .tab-button.selected {
+        @apply text-blue-700 underline shadow
     }
 
 }
