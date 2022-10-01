@@ -241,6 +241,7 @@ export const useRoutesStore = defineStore('routes', {
             this.originChainId = chainId
             this.originTokenAddress = address
             this.routes = []
+            this.selectedRoute = ''
             this.showContainer = false
         },
         /**
@@ -252,6 +253,7 @@ export const useRoutesStore = defineStore('routes', {
             this.destinationChainId = chainId
             this.destinationTokenAddress = address
             this.routes = []
+            this.selectedRoute = ''
             this.showContainer = false
         },
         /**
@@ -268,6 +270,7 @@ export const useRoutesStore = defineStore('routes', {
             this.destinationTokenAddress = auxAddress
 
             this.routes = []
+            this.selectedRoute = ''
             this.showContainer = false
         },
         /**
