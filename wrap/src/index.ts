@@ -61,17 +61,17 @@ export function checker(args: Args_checker): CheckerResult {
 }
 
 function getCallData(job: JSON.Obj): JobResponse {
-  job.get('sender');
-  job.get('receiver');
-  job.get('inputAsset');
-  job.get('dstAsset');
-  job.get('srcAsset');
-  job.get('dstChain');
-  job.get('amountIn');
-  job.get('minAmountOut');
   let jobResponse = Http_Module.get({
     request: null,
-    url: 'https://api.swidge.xyz/',
+    url: `https://api.swidge.xyz/quote?` +
+      `srcChain=${job.get('srcChain')}` +
+      `&dstChain=${job.get('dstChain')}` +
+      `&srcAsset=${job.get('inputAsset')}` +
+      `&dstAsset=${job.get('dstAsset')}` +
+      `&sender=${job.get('sender')}` +
+      `&receiver=${job.get('receiver')}` +
+      `&amountIn=${job.get('amountIn')}` +
+      `&minAmountOut=${job.get('minAmountOut')}`,
   }).unwrap();
 
   return {
