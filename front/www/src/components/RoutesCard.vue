@@ -1,16 +1,13 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/vue/outline'
-import VerticalLine from './svg/VerticalLine.vue'
-import HorizontalLine from './svg/HorizontalLine.vue'
+import { computed } from 'vue'
 import Check from './svg/Check.vue'
 import DollarSign from './svg/DollarSign.vue'
-import Clock from './svg/Clock.vue'
-import StepConnectorArrow from '@/components/Icons/StepConnectorArrow.vue'
-import StepIcon from '@/components/Icons/StepIcon.vue'
+import { ClockIcon } from '@heroicons/vue/outline'
 import ProviderIcon from '@/components/Icons/ProviderIcon.vue'
-import Route, { RouteStep } from '@/domain/paths/path'
-import RouteCardOutputValue from '@/components/RouteCardOutputValue.vue';
+import Route from '@/domain/paths/path'
+import RouteCardOutputValue from '@/components/RouteCardOutputValue.vue'
+import SwapIcon from './svg/SwapIcon.vue'
+import Toolip from '@/components/Toolip.vue';
 
 const props = defineProps<{
     route: Route
@@ -21,31 +18,13 @@ const emits = defineEmits<{
     (event: 'select-route', index: string): void
 }>()
 
-const detailsOpen = ref<boolean>(false)
-
 /**
  * when a click happens on the domain of the route card
  * @param event
  */
 const onClick = (event: Event) => {
     if (!(event.target instanceof HTMLElement)) return
-    const isClickOnSteps = hasParentWithClass(event.target.parentElement as HTMLElement, 'route-steps')
-    if (!isClickOnSteps) {
-        emits('select-route', props.route.id)
-    }
-}
-
-/**
- * recursively checks if an element or its parents contains a class
- * @param element
- * @param classname
- */
-const hasParentWithClass = (element: HTMLElement, classname: string): boolean => {
-    const existsHere = element.className.split(' ').indexOf(classname) >= 0
-    const existsOnParent = element.parentElement
-        ? hasParentWithClass(element.parentElement, classname)
-        : false
-    return existsHere || existsOnParent
+    emits('select-route', props.route.id)
 }
 
 /**
@@ -88,22 +67,6 @@ const totalExecutionTime = computed({
     set: () => null
 })
 
-const firstStep = computed({
-    get: (): RouteStep => {
-        return props.route.steps[0]
-    },
-    set: () => null
-})
-
-const nextSteps = computed({
-    get: () => {
-        if (props.route.steps.length > 1) {
-            return props.route.steps.slice(1, props.route.steps.length)
-        }
-        return []
-    },
-    set: () => null
-})
 </script>
 
 
@@ -118,93 +81,49 @@ const nextSteps = computed({
         </div>
         <div
             v-if="route.tags.length > 0"
-            class="route-tag"
+            class="route-tag text-xl font-semibold"
         >
             {{ tag }}
         </div>
-        <div class="route-details ml-2 mt-1">
+        <div class="route-details ml-2 my-3 justify-between">
             <RouteCardOutputValue
                 :amount-in="route.resume.amountIn"
                 :amount-out="route.resume.amountOut"
             />
-            <div class="flex text-ellipsis text-md field--global-fee">
-                <DollarSign class="h-6 mr-1"/>
-                {{ Number(route.fees.amountInUsd).toFixed(2) }}
-            </div>
-            <div class="flex text-md field--execution-time">
-                <Clock class="h-6 mr-1"/>
-                {{ totalExecutionTime }}
-            </div>
-        </div>
-        <div class="route-steps">
-            <div
-                class="details-line"
-                @click="detailsOpen = !detailsOpen"
-            >
-                <div class="flex justify-left">
-                    <ChevronUpIcon
-                        v-if="detailsOpen"
-                        class="h-6 pr-4 ml-3"/>
-                    <ChevronDownIcon
-                        v-else
-                        class="h-6 pr-4 ml-3"/>
+            <div class="flex grid grid-cols-2 grid-rows-2 ">
+                <div class="flex text-sm justify-center items-center">
+                    <ClockIcon class="h-6 stroke-1"/>
                 </div>
-                <div>
-                    <VerticalLine class="w-2"/>
+                <div class="flex text-sm field--execution-time justify-center items-center">
+                    {{ totalExecutionTime }}
                 </div>
-                <div class="flex justify-center items-center gap-3 w-full">
-                    <StepIcon :icon="firstStep.tokenIn.icon"/>
-                    <StepConnectorArrow :step-type="firstStep.type"/>
-                    <StepIcon :icon="firstStep.tokenOut.icon"/>
-                    <template
-                        v-for="(step) in nextSteps"
-                        :key="step.tokenIn.address"
-                    >
-                        <StepConnectorArrow
-                            :step-type="step.type"/>
-                        <StepIcon
-                            :icon="step.tokenOut.icon"
+                <div class="flex text-ellipsis text-sme justify-center items-center">
+                    <DollarSign class="h-8 w-[10px] stroke-1"/>
+                </div>
+                <div class="flex text-ellipsis text-sm field--global-fee justify-center items-center">
+                    ${{ Number(route.fees.amountInUsd).toFixed(2) }}
+                </div>
+            </div>
+            <div class="relative flex flex-row w-1/3">
+                <div class="flex items-center ">
+                    <Toolip text="Providers">
+                        <SwapIcon class="stroke-1 h-6 w-6 ml-2"/>
+                    </Toolip>
+                </div>
+                <div class="flex items-center justify-center ml-4">
+                    <div
+                        v-for="(step, index) in route.steps"
+                        :key="index"
+                        :class="'z-'+index"
+                        class="flex-1 flex-row -top-[3px] w-6 h-6 -ml-1 shadow-inner">
+                        <ProviderIcon
+                            :name="step.name"
+                            :logo="step.logo"
                         />
-                    </template>
-                </div>
-            </div>
-            <div
-                class="w-full grid items-center px-2 relative max-h-0 overflow-hidden transition transition-all duration-400 ease-in-out"
-                :class="{'max-h-36':detailsOpen}"
-            >
-                <span class="vl"></span>
-                <div
-                    v-for="(step, index) in route.steps"
-                    :key="index"
-                    class="flex h-12 items-center relative">
-                    <ProviderIcon
-                        :name="step.name"
-                        :logo="step.logo"
-                    />
-                    <div class="pl-4 w-full">
-                        <div class="flex justify-around items-center">
-                            <div class="flex justify-center items-center">
-                                <StepIcon :icon="step.tokenIn.icon"/>
-                                <StepConnectorArrow :step-type="step.type"/>
-                                <StepIcon :icon="step.tokenOut.icon"/>
-                            </div>
-                            <div class="flex mx-1 xs:mx-2 text-xs xs:text-base">
-                                <DollarSign class="h-4 xs:h-6 mr-1"/>
-                                {{ Number(step.fee).toFixed(2) }}
-                            </div>
-                            <div class="flex mx-1 xs:mx-2 text-xs xs:text-base field--execution-time ">
-                                <Clock class="h-4 xs:h-6 mr-1"/>
-                                {{ getExecutionTime(step.executionTime) }}
-                            </div>
-                        </div>
-                        <div class="absolute bottom-0">
-                            <HorizontalLine
-                                v-if="index !== Object.keys(route.steps).length - 1"
-                                class="w-full mr-4 pr-2 h-1"/>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 </template>

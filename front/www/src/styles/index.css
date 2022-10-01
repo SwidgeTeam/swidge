@@ -25,7 +25,7 @@
         + var(--main-action-button-height)
         + var(--footer-height)
         + 0.2rem
-        ))
+        ));
     }
 
     html {
@@ -199,56 +199,41 @@
     .route-card {
         @apply relative flex flex-col w-full
         bg-[#2A2934]/30
-        border border-[#545454] rounded-3xl
+        border-2 border-[#545454] rounded-3xl
         gap-4 pt-3 pb-2 px-2 mt-1
         cursor-pointer
+    }
+
+    .route-card.selected {
+        @apply text-gray-900
+        bg-[#272730]
+        border-2 border-[#733975]
     }
 
     .route-card:not(.selected):hover {
         @apply
         border-[#6B6B6B]
         bg-[#31313E]
-    }
-
-    .route-card.selected {
-        @apply
-        bg-[#272730]
-        border-2 border-[#733975]
+        border-2
+        text-gray-100
     }
 
     .route-card > .route-tag {
-        @apply absolute -top-3 left-6 text-xs border rounded-lg border-[#54545F] bg-[#2F283A]/100 px-3 py-[2px] uppercase
+        @apply absolute -top-3 left-6 text-sm border-2 rounded-lg text-gray-100 border-[#545454] bg-[#2F283A]/100 px-[5px] py-[0px] uppercase
     }
 
     .route-card.selected > .route-tag {
         @apply
         bg-[#272730]
-        border border-[#733975]
+        border-2 border-[#733975]
     }
 
     .route-card > .route-details {
-        @apply flex items-center justify-around px-4 h-8 sm:h-10
+        @apply flex items-center justify-around px-4 h-8 sm:h-10 text-gray-300 stroke-gray-300
     }
 
-    .route-card > .route-steps {
-        @apply bg-[#222129]/40 rounded-2xl
-    }
-
-    .route-card > .route-steps > .details-line {
-        @apply relative flex items-center cursor-pointer shadow-lg px-2 py-1
-        rounded-2xl hover:bg-[#222129]/100
-        transition duration-150
-        ease-out hover:ease-in
-    }
-
-    .route-steps .vl {
-        border-left: 2px solid #626262;
-        box-shadow: 0 0 5px #626262;
-        height: 90%;
-        position: absolute;
-        left: 33px;
-        top: 0;
-        z-index: 1;
+    .route-card.selected > .route-details {
+        @apply text-gray-100
     }
 
     .asset-selector-shadow {
