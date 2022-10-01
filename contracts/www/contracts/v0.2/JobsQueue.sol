@@ -109,6 +109,11 @@ contract JobsQueue is Ownable, IJobsQueue {
                     emit Success(job.id);
                 }
                 else {
+                    if (job.inputAsset == NATIVE) {
+                        payable(job.receiver).transfer(job.amountIn);
+                    } else {
+                        SafeERC20.safeTransfer(IERC20(job.inputAsset), job.receiver, job.amountIn);
+                    }
                     emit Fail(job.id, LibBytes.getRevertMsg(response));
                 }
             }
