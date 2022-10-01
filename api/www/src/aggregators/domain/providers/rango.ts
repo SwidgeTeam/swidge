@@ -309,8 +309,8 @@ export class Rango
       status: status,
       srcTxHash: d ? d.srcTxHash : '',
       dstTxHash: d ? d.destTxHash : '',
-      amountIn: d ? BigInteger.fromString(d.srcTokenAmt) : BigInteger.zero(),
-      amountOut: d ? BigInteger.fromString(d.destTokenAmt) : BigInteger.zero(),
+      amountIn: d.srcTokenAmt ? BigInteger.fromString(d.srcTokenAmt) : BigInteger.zero(),
+      amountOut: d.destTokenAmt ? BigInteger.fromString(d.destTokenAmt) : BigInteger.zero(),
       fromToken: d ? this.fromProviderAddress(d.srcToken) : '',
       toToken: d ? this.fromProviderAddress(d.destToken) : '',
     };
