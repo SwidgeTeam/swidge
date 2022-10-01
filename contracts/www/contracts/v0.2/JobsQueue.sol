@@ -20,7 +20,7 @@ contract JobsQueue is Ownable, IJobsQueue {
     error JobWithNoReceiver();
     error JobIdInUse();
 
-    event Success(bytes16 indexed id);
+    event Success(bytes16 indexed id, bytes17 providerInfo);
     event Fail(bytes16 indexed id, string msg);
 
     struct HandlerMessage {
@@ -58,6 +58,7 @@ contract JobsQueue is Ownable, IJobsQueue {
 
     struct ExecuteCall {
         bytes16 jobId;
+        bytes17 providerInfo;
         address handler;
         bytes data;
     }
@@ -106,7 +107,7 @@ contract JobsQueue is Ownable, IJobsQueue {
                 delete usedJobIds[job.id];
 
                 if (success) {
-                    emit Success(job.id);
+                    emit Success(job.id, currentCall.providerInfo);
                 }
                 else {
                     if (job.inputAsset == NATIVE) {
