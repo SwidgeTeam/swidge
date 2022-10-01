@@ -29,6 +29,7 @@ export interface IChain {
     metamask: {
         chainName: string;
         rpcUrls: string[];
+        blockExplorerUrls: string[];
         nativeCurrency: {
             name: string;
             symbol: string;

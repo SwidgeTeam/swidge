@@ -22,6 +22,7 @@ export class GetMetadataController {
         l: chain.logo,
         m: {
           c: chain.metamask.chainName,
+          b: chain.metamask.blockExplorerUrls,
           r: chain.metamask.rpcUrls,
           n: {
             n: chain.metamask.nativeCurrency.name,

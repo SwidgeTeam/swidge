@@ -90,6 +90,7 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
           logo: chain.logoURI,
           metamask: {
             chainName: chain.metamask.chainName,
+            blockExplorerUrls: chain.metamask.blockExplorerUrls,
             nativeCurrency: {
               name: chain.metamask.nativeCurrency.name,
               symbol: chain.metamask.nativeCurrency.symbol,

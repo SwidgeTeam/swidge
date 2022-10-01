@@ -71,6 +71,7 @@ export class Metamask implements IWallet {
                         params: [
                             {
                                 chainId: hexChainId,
+                                blockExplorerUrls: chain.metamask.blockExplorerUrls,
                                 chainName: chain.metamask.chainName,
                                 nativeCurrency: {
                                     name: chain.metamask.nativeCurrency.name,

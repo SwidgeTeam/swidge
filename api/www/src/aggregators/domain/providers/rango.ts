@@ -64,9 +64,13 @@ declare type BlockchainMeta = {
   logo: string;
   type: string;
   info: {
+    chainName: string;
     nativeCurrency: {
+      name: string;
       symbol: string;
+      decimals: number;
     };
+    blockExplorerUrls: string[];
     rpcUrls: string[];
   };
 };
@@ -144,13 +148,11 @@ export class Rango
             name: chain.displayName,
             logo: chain.logo,
             metamask: {
-              // @ts-ignore
               chainName: chain.info.chainName,
+              blockExplorerUrls: chain.info.blockExplorerUrls,
               nativeCurrency: {
-                // @ts-ignore
                 name: chain.info.nativeCurrency.name,
                 symbol: chain.info.nativeCurrency.symbol,
-                // @ts-ignore
                 decimals: chain.info.nativeCurrency.decimals,
               },
               rpcUrls: chain.info.rpcUrls,

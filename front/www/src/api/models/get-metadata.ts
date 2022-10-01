@@ -11,6 +11,7 @@ export interface ChainListItemJson {
     m: {
         c: string
         r: string[]
+        b: string[]
         n: {
             n: string
             s: string

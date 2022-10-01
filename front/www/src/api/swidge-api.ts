@@ -33,6 +33,7 @@ class SwidgeAPI extends HttpClient {
                     logo: chain.l,
                     metamask: {
                         chainName: chain.m.c,
+                        blockExplorerUrls: chain.m.b,
                         rpcUrls: chain.m.r,
                         nativeCurrency: {
                             name: chain.m.n.n,

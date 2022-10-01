@@ -5,6 +5,7 @@ export interface IChain {
   logo: string;
   metamask: {
     chainName: string;
+    blockExplorerUrls: string[];
     nativeCurrency: {
       name: string;
       symbol: string;
