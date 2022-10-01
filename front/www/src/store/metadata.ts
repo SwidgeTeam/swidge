@@ -69,6 +69,17 @@ export const useMetadataStore = defineStore('metadata', {
                     })
             }
         },
+        /**
+         * returns the URL for the TX on the chain explorer
+         */
+        getExplorerTxUrl() {
+            return (chainId: string, txHash: string): string => {
+                const chain = this.getChain(chainId)
+                return chain
+                    ? chain.metamask.blockExplorerUrls[0] + '/tx/' + txHash
+                    : ''
+            }
+        },
     },
     actions: {
         /**
