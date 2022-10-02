@@ -6,6 +6,7 @@ import SelectTokenList from '../SelectTokenList.vue'
 import Modal from '@/components/Modals/Modal.vue'
 import { ethers } from 'ethers'
 import { useMetadataStore } from '@/store/metadata'
+import { useWeb3Store } from '@/store/web3'
 import IERC20Abi from '@/contracts/IERC20.json'
 import ModalImportToken from '@/components/Modals/ModalImportToken.vue'
 import { debounce } from 'lodash'
@@ -157,7 +158,7 @@ const fetchToken = async (network: IChain, address: string): Promise<IToken | un
         const decimals = await token.functions.decimals()
         const name = await token.functions.name()
         const symbol = await token.functions.symbol()
-        const balance = await token.functions.balanceOf(address)
+        const balance = await token.functions.balanceOf(useWeb3Store().account)
 
         return {
             chainId: network.id,
