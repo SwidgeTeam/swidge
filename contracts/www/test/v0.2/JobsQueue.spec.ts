@@ -153,7 +153,12 @@ describe("Jobs Queue", () => {
       await core
         .connect(gelato)
         .executeJobs([
-          [jobsBefore[1].id, faker.finance.ethereumAddress(), "0x"],
+          [
+            jobsBefore[1].id,
+            "0x1231231231231231231232212122121213",
+            faker.finance.ethereumAddress(),
+            "0x",
+          ],
         ]);
 
       // Assert
@@ -171,8 +176,18 @@ describe("Jobs Queue", () => {
 
       // Act
       await core.connect(gelato).executeJobs([
-        [jobsBefore[0].id, faker.finance.ethereumAddress(), "0x"],
-        [jobsBefore[1].id, faker.finance.ethereumAddress(), "0x"],
+        [
+          jobsBefore[0].id,
+          "0x1231231231231231231232212122121213",
+          faker.finance.ethereumAddress(),
+          "0x",
+        ],
+        [
+          jobsBefore[1].id,
+          "0x1231231231231231231232212122121213",
+          faker.finance.ethereumAddress(),
+          "0x",
+        ],
       ]);
 
       // Assert
@@ -188,9 +203,24 @@ describe("Jobs Queue", () => {
 
       // Act
       await core.connect(gelato).executeJobs([
-        [jobsBefore[0].id, faker.finance.ethereumAddress(), "0x"],
-        [jobsBefore[1].id, faker.finance.ethereumAddress(), "0x"],
-        [jobsBefore[2].id, faker.finance.ethereumAddress(), "0x"],
+        [
+          jobsBefore[0].id,
+          "0x1231231231231231231232212122121213",
+          faker.finance.ethereumAddress(),
+          "0x",
+        ],
+        [
+          jobsBefore[1].id,
+          "0x1231231231231231231232212122121213",
+          faker.finance.ethereumAddress(),
+          "0x",
+        ],
+        [
+          jobsBefore[2].id,
+          "0x1231231231231231231232212122121213",
+          faker.finance.ethereumAddress(),
+          "0x",
+        ],
       ]);
 
       // Assert
