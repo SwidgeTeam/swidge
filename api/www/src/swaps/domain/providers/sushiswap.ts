@@ -17,7 +17,6 @@ import {
   Trade,
   TradeType,
 } from '@sushiswap/sdk';
-import { SushiPairsRepository } from '../sushi-pairs-repository';
 import { AbiEncoder } from '../../../shared/domain/call-encoder';
 import { DeployedAddresses } from '../../../shared/DeployedAddresses';
 import { SushiPairs } from '../sushi-pairs';
@@ -34,10 +33,7 @@ const gasEstimations = {
 export class Sushiswap implements Exchange {
   private readonly enabledChains: string[];
 
-  constructor(
-    private readonly theGraph: SushiPoolsTheGraph,
-    private readonly repository: SushiPairsRepository,
-  ) {
+  constructor(private readonly theGraph: SushiPoolsTheGraph) {
     this.enabledChains = [Polygon, Fantom];
   }
 
@@ -53,7 +49,7 @@ export class Sushiswap implements Exchange {
    */
   public async execute(request: SwapRequest): Promise<SwapOrder> {
     const chainId = Number(request.chainId);
-    let sushiPairs = await this.repository.getPairs(request.chainId);
+    let sushiPairs = new SushiPairs([]);
 
     if (!sushiPairs.contains(request.tokenIn)) {
       const extraPairs = await this.getExtraPairs(request.chainId, request.tokenIn);

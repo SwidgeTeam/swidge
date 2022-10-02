@@ -6,7 +6,6 @@ import { Logger } from '../../../src/shared/domain/logger';
 import { ZeroEx } from '../../../src/swaps/domain/providers/zero-ex';
 import { createMock } from 'ts-auto-mock';
 import { Sushiswap } from '../../../src/swaps/domain/providers/sushiswap';
-import { SushiPairsRepository } from '../../../src/swaps/domain/sushi-pairs-repository';
 import { TokenDetailsFetcher } from '../../../src/shared/infrastructure/TokenDetailsFetcher';
 import { IHttpClient } from '../../../src/shared/domain/http/IHttpClient';
 import { SushiPoolsTheGraph } from '../../../src/swaps/infrastructure/theGraph/sushi-pools-the-graph';
@@ -26,7 +25,7 @@ export function getZeroEx(): ZeroEx {
 }
 
 export function getSushi(): Sushiswap {
-  return new Sushiswap(sushiTheGraphMock(), sushiRepositoryMock());
+  return new Sushiswap(sushiTheGraphMock());
 }
 
 export function httpClientMock(args = {}) {
@@ -35,10 +34,6 @@ export function httpClientMock(args = {}) {
 
 export function sushiTheGraphMock() {
   return new SushiPoolsTheGraph(httpClientMock());
-}
-
-export function sushiRepositoryMock(args = {}) {
-  return createMock<SushiPairsRepository>(args);
 }
 
 export function getTokenDetailsFetcher(results: any[]): TokenDetailsFetcher {
