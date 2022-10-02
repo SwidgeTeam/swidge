@@ -63,6 +63,14 @@ contract JobsQueue is Ownable, IJobsQueue {
         bytes data;
     }
 
+    struct TxInfo {
+        uint256 amountIn;
+        address srcAsset;
+        address dstAsset;
+        address handler;
+        bytes data;
+    }
+
     constructor(address _ops) {
         gelatoProxy = _ops;
     }
@@ -118,6 +126,56 @@ contract JobsQueue is Ownable, IJobsQueue {
                     emit Fail(job.id, LibBytes.getRevertMsg(response));
                 }
             }
+        }
+    }
+
+    /**
+     * called by users to start a swidge
+     */
+    function start(TxInfo[] calldata calls) external payable {
+        TxInfo memory currentTx = calls[0];
+        uint256 valueToSend;
+        uint256 amountToTrade;
+        uint256 callsLength = calls.length;
+        uint256 boughtAmount;
+
+        // transfer from user if necessary
+        if (currentTx.srcAsset != NATIVE) {
+            SafeERC20.safeTransferFrom(IERC20(currentTx.srcAsset), msg.sender, address(this), currentTx.amountIn);
+        }
+
+        // set initial amount
+        amountToTrade = currentTx.amountIn;
+
+        // iterate to execute all trades
+        for (uint i = 0; i < callsLength;) {
+            currentTx = calls[i];
+
+            // check is there's an excess
+            if (amountToTrade > currentTx.amountIn) {
+
+            }
+
+            // check value and approval
+            if (currentTx.srcAsset == NATIVE) {
+                valueToSend = amountToTrade;
+            } else {
+                valueToSend = 0;
+                SafeERC20.safeApprove(IERC20(currentTx.srcAsset), currentTx.handler, amountToTrade);
+            }
+
+            // initial amount of destination asset
+            boughtAmount = getBalance(currentTx.dstAsset);
+
+            // execute
+            (bool success, bytes memory response) = currentTx.handler.call{value : valueToSend}(currentTx.data);
+
+            // compute amount for next trade
+            amountToTrade = getBalance(currentTx.dstAsset) - boughtAmount;
+
+        unchecked {
+            ++i;
+        }
         }
     }
 
@@ -216,5 +274,17 @@ contract JobsQueue is Ownable, IJobsQueue {
             }
         }
         return returnJobs;
+    }
+
+    /**
+     * returns the current balance of an asset
+     */
+    function getBalance(address asset) internal returns (uint256){
+        if (asset == NATIVE) {
+            return address(this).balance;
+        }
+        else {
+            return IERC20(asset).balanceOf(address(this));
+        }
     }
 }
