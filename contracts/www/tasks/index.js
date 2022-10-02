@@ -42,3 +42,6 @@ task("retrieve", "Get tokens on the forked network")
 task("update-relayer", "Update the relayer's address")
   .addParam("chain", "Name of the network to update")
   .setAction(require("./update-relayer"));
+
+task("update-queue", "Update JobQueue files on wrap")
+  .setAction(require("./update-queue"));

@@ -3,7 +3,7 @@ import { ethers } from "hardhat";
 import { getAccounts, ZeroAddress } from "../shared";
 import { Contract } from "ethers";
 
-const Deployer = require("../../scripts/Deployer");
+const Deployer = require("../../../scripts/Deployer");
 
 describe("Update Providers", function () {
   let contract: Contract;
