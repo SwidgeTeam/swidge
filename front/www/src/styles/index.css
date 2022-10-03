@@ -280,14 +280,17 @@
     }
 
     .tab-button {
+        @apply text-slate-400
+    }
+
+    .tab-button {
         @apply w-full rounded-lg py-2 text-sm
-        font-medium leading-5 text-blue-700
-        text-blue-100
+        font-medium leading-5
         hover:bg-white/[0.12] hover:text-white
     }
 
     .tab-button.selected {
-        @apply text-blue-700 underline shadow
+        @apply underline text-slate-100
     }
 
 }

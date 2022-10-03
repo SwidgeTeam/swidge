@@ -16,6 +16,10 @@ const web3Store = useWeb3Store()
 const metadataStore = useMetadataStore()
 const { account } = storeToRefs(web3Store)
 
+const disconnect = () => {
+    web3Store.disconnect()
+}
+
 const tokens = computed({
     get: () => {
         return metadataStore.getBalances
@@ -37,7 +41,7 @@ const createShorterAddress = (address: string): string => {
 }
 
 const formattedBalance = (token: IToken) => {
-    return AmountFormatter.format(ethers.utils.formatUnits(token.balance.toString(), token.decimals))
+    return AmountFormatter.format(ethers.utils.formatUnits(token.balance.toString(), token.decimals), 8)
 }
 </script>
 
@@ -46,7 +50,9 @@ const formattedBalance = (token: IToken) => {
         <PopoverButton
             class="header-button"
         >
-            {{ createShorterAddress(account) }}
+            <div class="header-button">
+                {{ createShorterAddress(account) }}
+            </div>
         </PopoverButton>
 
         <PopoverPanel
@@ -54,9 +60,21 @@ const formattedBalance = (token: IToken) => {
             rounded-lg top-12 px-2 py-1 w-64 z-50 gradient-border-header-main-hover account-bg-gradient"
         >
             <div class="flex flex-col">
-                <div class="flex flex-row items-center gap-2">
-                    {{ createShortAddress(account) }}
-                    <CopyButton :content="account"/>
+                <div class="flex flex-row justify-between">
+                    <div class="flex justify-start items-center gap-2">
+                        <img src="src/assets/metamask.svg" class="w-5"/>
+                        {{ createShortAddress(account) }}
+                        <CopyButton :content="account"/>
+                        <a :href="`https://blockscan.com/address/${account}`" target="_blank">
+                            <img src="src/assets/explorer.svg"/>
+                        </a>
+                    </div>
+                    <div class="">
+                        <img
+                            src="src/assets/disconnect.svg"
+                            class="cursor-pointer"
+                            @click="disconnect"/>
+                    </div>
                 </div>
                 <div class="flex flex-col">
                     <TabGroup>

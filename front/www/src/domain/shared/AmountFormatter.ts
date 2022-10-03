@@ -1,13 +1,16 @@
 export default class AmountFormatter {
-    public static format(amount: string): string {
+    public static format(amount: string, decimals?: number): string {
         const value = Number(amount)
-        if (value < 1) {
-            return AmountFormatter.commaSeparateNumber(value.toFixed(6))
-        } else if (value > 1000000) {
-            return AmountFormatter.commaSeparateNumber(value.toFixed(0))
-        } else {
-            return AmountFormatter.commaSeparateNumber(value.toFixed(2))
+        if (!decimals) {
+            if (value < 1) {
+                decimals = 6
+            } else if (value > 1000000) {
+                decimals = 0
+            } else {
+                decimals = 2
+            }
         }
+        return AmountFormatter.commaSeparateNumber(value.toFixed(decimals))
     }
 
     private static commaSeparateNumber(amount: string): string {
