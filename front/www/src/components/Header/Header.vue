@@ -11,7 +11,6 @@ import Account from '@/components/Header/Account.vue'
 
 const web3Store = useWeb3Store()
 const { isConnected } = storeToRefs(web3Store)
-
 const isWalletsModalOpen = ref(false)
 
 const connect = () => {

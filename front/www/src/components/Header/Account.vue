@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Popover, PopoverButton, PopoverPanel, TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
-import { useWeb3Store } from '@/store/web3'
+import { NATIVE_COIN_ADDRESS, useWeb3Store } from '@/store/web3'
 import { storeToRefs } from 'pinia'
 import { useMetadataStore } from '@/store/metadata'
 import { computed } from 'vue'
@@ -43,14 +43,30 @@ const createShorterAddress = (address: string): string => {
 const formattedBalance = (token: IToken) => {
     return AmountFormatter.format(ethers.utils.formatUnits(token.balance.toString(), token.decimals), 8)
 }
+
+const getSelectedChainLogo = () => {
+    return getChainLogo(web3Store.selectedNetworkId)
+}
+
+const getNativeCoinAmount = () => {
+    const token = metadataStore.getToken(web3Store.selectedNetworkId, NATIVE_COIN_ADDRESS)
+    if (!token) {
+        return '0.0'
+    }
+    const amount = AmountFormatter.format(ethers.utils.formatEther(token.balance), 4)
+    return `${amount} ${token.symbol}`
+}
 </script>
 
 <template>
     <Popover>
-        <PopoverButton
-            class="header-button"
-        >
-            <div class="header-button">
+        <PopoverButton class="header-button">
+            <div class="hidden sm:inline flex justify-between items-center gap-1">
+                <img :src="getSelectedChainLogo()" class="w-5 h-5 rounded-full inline"/>
+                {{ getNativeCoinAmount() }}
+            </div>
+            <div class="flex justify-between gap-2 rounded-xl sm:pr-2 sm:bg-[#54545F]">
+                <img src="src/assets/metamask.svg" class="w-5"/>
                 {{ createShorterAddress(account) }}
             </div>
         </PopoverButton>
