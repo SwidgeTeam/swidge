@@ -16,20 +16,20 @@ const year = computed({
 
 <template>
     <div class="flex flex-col md:w-[453px]">
-        <SwapInterface />
+        <SwapInterface/>
         <div class="flex justify-center">
             <div
-                class="flex justify-between px-4 py-2 h-16 font-extralight text-xs sm:text-base w-full max-w-sm md:max-w-xl"
+                class="flex justify-between px-4 py-2 h-16 font-extralight text-xs sm:text-base w-full"
             >
                 <div class="flex flex-col">
                     <span>This is a beta version</span>
                     <span class="text-xs">{{ year }} - Swidge</span>
                 </div>
-                <QuestionMark @click="isFaqOpen = true" />
+                <QuestionMark @click="isFaqOpen = true"/>
             </div>
         </div>
     </div>
-    <ModalFaq :is-open="isFaqOpen" @close="isFaqOpen = false" />
+    <ModalFaq :is-open="isFaqOpen" @close="isFaqOpen = false"/>
 </template>
 
 <route lang="yaml">

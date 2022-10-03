@@ -59,7 +59,7 @@ const dollarValue = computed({
 </script>
 
 <template>
-    <div class="sending-box flex md:justify-between md:h-[146px] md:p-4">
+    <div class="sending-box">
         <div class="flex items-center justify-between pb-2 pt-3">
             <AssetSelector
                 :is-origin="true"

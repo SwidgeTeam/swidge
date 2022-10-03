@@ -20,7 +20,7 @@ const getChainLogo = () => {
 
 <template>
     <div
-        class="flex relative has-tooltip items-center gap-2 text-xl px-2 py-1 font-extralight md:gap-4"
+        class="flex relative has-tooltip items-center gap-2 text-xl px-2 py-1 font-extralight"
     >
         <div class="relative w-6">
             <TokenLogo

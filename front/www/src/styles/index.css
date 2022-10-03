@@ -11,7 +11,7 @@
         --settings-line-height: 1.75rem;
         --sending-line-height: 5.5rem;
         --arrow-line-height: 1.5rem;
-        --receive-selector-height: 5rem;
+        --receive-selector-height: 4rem;
         --recipient-address-height: 2.5rem;
         --main-action-button-height: 5.2rem;
         --footer-height: 4rem;
@@ -178,11 +178,12 @@
     }
 
     .sending-box {
-        @apply flex flex-col px-2 sending-box-colors h-[var(--sending-line-height)]
+        @apply flex flex-col pl-2 pr-3 sending-box-colors h-[var(--sending-line-height)]
+        md:justify-between md:h-[130px] md:p-3
     }
 
     .routes-container {
-        @apply flex flex-col pt-3 pb-3 px-1
+        @apply flex flex-col pt-3 pb-3 px-1 md:mt-2
         border-t border-[#34313D]
         overflow-y-auto overflow-x-hidden
         max-h-[var(--routes-box-height)]
