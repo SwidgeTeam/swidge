@@ -30,7 +30,7 @@ const getChainLogo = () => {
             />
             <ChainLogo :logo="getChainLogo()" size="12" />
         </div>
-        <span class="flex text-sm py-2 md:text-xl">
+        <span class="flex text-sm py-2 md:text-xl md:font-medium">
             {{ token.symbol }}
         </span>
         <ChevronDownIcon class="h-5" />
