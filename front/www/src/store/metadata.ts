@@ -53,10 +53,12 @@ export const useMetadataStore = defineStore('metadata', {
          */
         getToken(state) {
             return (chainId: string, address: string): IToken | undefined => {
-                return state.tokens[chainId]
-                    .find(token => {
+                const list = state.tokens[chainId]
+                return list
+                    ? list.find(token => {
                         return token.address.toLowerCase() === address.toLowerCase()
                     })
+                    : undefined
             }
         },
         /**
