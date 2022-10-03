@@ -10,7 +10,7 @@ const faqTexts = [
     },
     {
         header: 'Does Swidge charge fees?',
-        text: "No! We don't charge zero fees. The only fees you need to pay are gas fees (for transactions), swap fees (fees for swapping tokens if needed) and bridge fees (fee paid to bridging provider). We calculate an estimate for you before the transaction is executed."
+        text: "We currently don't charge fees. The only fees you need to pay are gas fees (for transactions), swap fees (fees for swapping tokens if needed) and bridge fees (fee paid to bridging provider). We calculate an estimate for you before the transaction is executed."
     },
     {
         header: 'Looking for a specific token?',
