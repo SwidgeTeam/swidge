@@ -41,7 +41,13 @@ const createShorterAddress = (address: string): string => {
 }
 
 const formattedBalance = (token: IToken) => {
-    return AmountFormatter.format(ethers.utils.formatUnits(token.balance.toString(), token.decimals), 8)
+    return AmountFormatter.format(ethers.utils.formatUnits(token.balance.toString(), token.decimals))
+}
+
+const formattedUsdValue = (token: IToken) => {
+    const amount = ethers.utils.formatUnits(token.balance.toString(), token.decimals)
+    const dollarValue = Number(amount) * Number(token.price)
+    return AmountFormatter.format(dollarValue.toFixed(2))
 }
 
 const getSelectedChainLogo = () => {
@@ -129,9 +135,10 @@ const getNativeCoinAmount = () => {
                                             <ChainLogo :logo="getChainLogo(token.chainId)" size="14"/>
                                         </div>
                                         <div class="flex w-full justify-center gap-2">
-                                            <div class="w-3/5 text-right">
+                                            <div class="w-3/5 text-right relative">
                                                 <!-- add tooltip -->
                                                 {{ formattedBalance(token) }}
+                                                <span class="absolute top-[13px] right-0 text-[8px]">~ $ {{ formattedUsdValue(token) }}</span>
                                             </div>
                                             <div class="w-2/5 text-left">
                                                 {{ token.symbol }}
