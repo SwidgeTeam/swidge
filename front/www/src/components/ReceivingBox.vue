@@ -28,7 +28,7 @@ const routes = () => {
 }
 
 const showContainer = () => {
-    return thereAreRoutes() || routesStore.showContainer && !loadingRoutes()
+    return thereAreRoutes() || (routesStore.showContainer && !loadingRoutes())
 }
 
 const loadingRoutes = () => {
@@ -42,25 +42,25 @@ const thereAreRoutes = () => {
 }
 
 const thereAreMoreRoutes = () => {
-    return routesStore.getAllRoutes.length > routesStore.getPromotedRoutes.length
+    return (
+        routesStore.getAllRoutes.length > routesStore.getPromotedRoutes.length
+    )
 }
 </script>
 
 <template>
-    <div class="flex flex-col px-1 receiving-box-colors relative">
-        <div class="px-1">
-            <div class="flex items-center justify-between py-3 h-[5rem]">
-                <AssetSelector
-                    :is-origin="false"
-                    @open-token-list="() => emits('select-token')"
-                />
-                <div v-if="thereAreNoRoutes() && !loadingRoutes()" class="relative flex text-xl text-slate-400">0.0</div>
-                <div v-else-if="loadingRoutes()" class="flex items-center text-slate-300">
-                    <LoadingCircle
-                        class="h-9 w-9"
-                    />
-                    Searching routes...
-                </div>
+    <div class="flex flex-col pl-2 pr-3 receiving-box-colors relative md:min-h-[110px] md:p-3 md:justify-center">
+        <div class="flex items-center justify-between py-3 h-[var(--receive-selector-height)]">
+            <AssetSelector
+                :is-origin="false"
+                @open-token-list="() => emits('select-token')"
+            />
+            <div v-if="thereAreNoRoutes() && !loadingRoutes()" class="relative flex text-xl text-slate-400">
+                0.0
+            </div>
+            <div v-else-if="loadingRoutes()" class="flex items-center text-slate-300">
+                <LoadingCircle class="h-9 w-9"/>
+                Searching routes...
             </div>
         </div>
         <div v-if="showContainer()" class="routes-container">

@@ -41,12 +41,9 @@ const inputValue = computed({
     set: () => null,
 })
 
-const trimmedBalance = asyncComputed(
-    async () => {
-        return AmountFormatter.format(await routesStore.getSelectedTokenBalance)
-    },
-    '0'
-)
+const trimmedBalance = asyncComputed(async () => {
+    return AmountFormatter.format(await routesStore.getSelectedTokenBalance)
+}, '0')
 
 const dollarValue = computed({
     get: () => {
@@ -59,7 +56,6 @@ const dollarValue = computed({
     },
     set: () => null,
 })
-
 </script>
 
 <template>
@@ -69,8 +65,7 @@ const dollarValue = computed({
                 :is-origin="true"
                 @open-token-list="() => emits('select-token')"
             />
-            <div
-                class="relative flex">
+            <div class="relative flex">
                 <input
                     type="text"
                     :disabled="false"
@@ -91,11 +86,10 @@ const dollarValue = computed({
             </div>
         </div>
         <div class="pl-2 flex items-center justify-between">
-            <div class="current-balance">
-                <span
-                    class="cursor-pointer"
-                    @click="setToMaxAmount">
-                    Balance: {{ trimmedBalance }}
+            <div class="current-balance md:text-lg">
+                Balance:
+                <span class="cursor-pointer" @click="setToMaxAmount">
+                    {{ trimmedBalance }}
                 </span>
             </div>
             <div class="input-dollar-value">~ $ {{ dollarValue }}</div>
