@@ -7,9 +7,9 @@ const props = defineProps<{
 
 <template>
     <img
-        :style="`width: ${size}px; height: ${size}px; top: -20%; right: -20%`"
         :src="logo"
-        class="rounded-full absolute shadow-lg shadow-black"
+        class="rounded-full absolute shadow-lg shadow-black w-[1rem] md:w-[1.5rem] top-[-20%] right-[-20%]"
         alt="chain logo"
     />
 </template>
+<!-- :style="`width: ${size}px; height: ${size}px; top: -20%; right: -20%`" -->

@@ -29,7 +29,7 @@ const copyHash = (txnHash: string) => {
 </script>
 
 <template>
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-2 md:gap-3">
         <div class="relative scale-100 has-tooltip">
             <span
                 class="tooltip rounded-xl shadow-lg p-1 bg-[#31313E] text-white text-sm font-light absolute border border-cyan-700 -bottom-6 -left-20 px-2"
@@ -44,9 +44,9 @@ const copyHash = (txnHash: string) => {
 
             <ChainLogo :logo="chainLogo" size="25" />
         </div>
-        <span class="">{{ tokenName }}</span>
+        <span class="flex-[0.2] sm:text-md md:text-xl">{{ tokenName }}</span>
         <div
-            class="flex relative overflow-visible justify-center text-xl font-bold"
+            class="flex relative overflow-visible justify-center text-md md:text-xl font-bold flex-[0.4]"
             :class="amount === '0' ? 'blur' : ''"
         >
             {{ fixedAmount(+amount) }}

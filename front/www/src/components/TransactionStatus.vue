@@ -5,6 +5,7 @@ import TransactionStatusDetails from './TransactionStatusDetails.vue'
 import { TransactionStatus } from '@/api/models/get-status-check'
 import { CheckIcon } from '@heroicons/vue/outline'
 import BridgeStepArrow from './svg/BridgeStepArrow.vue'
+import StatusLoading from './svg/StatusLoading.vue'
 
 defineProps<{
     date: string
@@ -32,6 +33,15 @@ defineProps<{
             >
                 <CheckIcon class="h-5 font-extrabold stroke-[4px]" />
             </div>
+
+            <div
+                class="h-7 w-7 rounded-full flex items-center justify-center p-[1px]"
+                v-if="status === TransactionStatus.Pending"
+            >
+                <StatusLoading
+                    class="h-7 w-6 font-extrabold stroke-[4px] fill-[#B22F7F] fill-cyan-500"
+                />
+            </div>
         </div>
 
         <div class="bottom flex">
@@ -50,7 +60,9 @@ defineProps<{
             <div
                 class="flex flex-[0.2] items-center justify-center mb-8 w-full"
             >
-                <BridgeStepArrow class="h-[4rem] w-[3.5rem]" />
+                <BridgeStepArrow
+                    class="h-[2rem] w-[2rem] md:h-[4rem] md:w-[3.5rem]"
+                />
             </div>
 
             <div
