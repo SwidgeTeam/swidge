@@ -9,6 +9,7 @@ defineProps<{
     tokenLogo: string
     chainLogo: string
     txnHash: string
+    explorerTxUrl: string
 }>()
 
 const fixedAmount = (amount: number) => {
@@ -59,7 +60,7 @@ const copyHash = (txnHash: string) => {
     >
         <a
             id="txnHash"
-            :href="'https://etherscan.io/tx/:' + txnHash"
+            :href="explorerTxUrl"
             target="_blank"
             class="text-[#6C9CE4] underline decoration-1 underline-offset-2 font-light text-sm"
             >{{ trimmedTxnHash(txnHash) }}</a

@@ -20,6 +20,8 @@ defineProps<{
     tokenNameOut: string
     txnHash: string
     destinationTxHash: string
+    explorerOriginTxUrl: string
+    explorerDestinationTxUrl: string
 }>()
 </script>
 
@@ -54,6 +56,7 @@ defineProps<{
                     :token-logo="tokenLogoIn"
                     :chain-logo="chainLogoIn"
                     :txnHash="txnHash"
+                    :explorerTxUrl="explorerOriginTxUrl"
                 />
             </div>
 
@@ -74,6 +77,7 @@ defineProps<{
                     :token-logo="tokenLogoOut"
                     :chain-logo="chainLogoOut"
                     :txnHash="destinationTxHash"
+                    :explorerTxUrl="explorerDestinationTxUrl"
                 />
             </div>
         </div>

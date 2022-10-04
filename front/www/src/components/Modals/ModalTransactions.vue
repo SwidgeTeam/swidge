@@ -82,6 +82,11 @@ const getChainIcon = (chainId: string): string => {
     return chain ? chain.logo : ''
 }
 
+const getExplorerTxUrl = (chainId: string, txHash: string): string => {
+    const url = metadataStore.getExplorerTxUrl(chainId, txHash)
+    return url ? url : ''
+}
+
 /**
  * Gets a token from a specific chain
  * @param chainId
@@ -155,8 +160,14 @@ const formattedAmount = (
                 "
                 :token-name-in="getTokenName(tx.fromChain, tx.srcAsset)"
                 :token-name-out="getTokenName(tx.toChain, tx.dstAsset)"
-                :txn-hash="tx.txHash"
+                :txn-hash="tx.originTxHash"
                 :destination-txn-hash="tx.destinationTxHash"
+                :explorerOriginTxUrl="
+                    getExplorerTxUrl(tx.fromChain, tx.originTxHash)
+                "
+                :explorerDestinationTxUrl="
+                    getExplorerTxUrl(tx.toChain, tx.destinationTxHash)
+                "
             />
         </div>
     </Modal>
