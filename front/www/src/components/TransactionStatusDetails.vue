@@ -2,6 +2,7 @@
 import TokenLogo from './Icons/TokenLogo.vue'
 import ChainLogo from './Icons/ChainLogo.vue'
 import CopyIcon from './Icons/CopyIcon.vue'
+import AmountFormatter from '@/domain/shared/AmountFormatter'
 
 defineProps<{
     amount: string
@@ -12,13 +13,13 @@ defineProps<{
     explorerTxUrl: string
 }>()
 
-const fixedAmount = (amount: number) => {
-    const fixedAmount = Number(amount)
-    if (fixedAmount === 0) {
-        return '0'
-    } else {
-        return fixedAmount.toFixed(2)
+const fixedAmount = (amount: string) => {
+    const number = Number(amount)
+    if (number > 1000000) {
+        const millions = number / 1000000
+        return AmountFormatter.format(millions.toString()) + ' M'
     }
+    return AmountFormatter.format(amount)
 }
 
 const trimmedTxnHash = (txHash: string) => {
@@ -30,45 +31,36 @@ const copyHash = (txHash: string) => {
 </script>
 
 <template>
-    <div class="flex items-center gap-2 md:gap-3">
-        <div class="relative scale-100 has-tooltip">
-            <span
-                class="tooltip rounded-xl shadow-lg p-1 bg-[#31313E] text-white text-sm font-light absolute border border-cyan-700 -bottom-6 -left-20 px-2"
+    <div class="flex mt-2 p-2 flex-col items-flex-start justify-between gap-3 flex-[0.4]">
+        <div class="flex items-center gap-2 md:gap-3">
+            <div class="relative">
+                <TokenLogo
+                    :token-logo="tokenLogo"
+                    :chain-logo="chainLogo"
+                    size="32"
+                />
+                <ChainLogo :logo="chainLogo" size="16"/>
+            </div>
+            <div
+                class="flex xs:w-16 sm:w-24 justify-center text-xs sm:text-base"
+                :class="amount === '0' ? 'blur' : ''"
             >
-                {{ tokenName }}
-            </span>
-            <TokenLogo
-                :token-logo="tokenLogo"
-                :chain-logo="chainLogo"
-                size="50"
-            />
-
-            <ChainLogo :logo="chainLogo" size="25" />
+                {{ fixedAmount(amount) }}
+            </div>
+            <span class="flex font-medium text-slate-400 text-xs">{{ tokenName }}</span>
         </div>
-        <span class="flex-[0.2] sm:text-md md:text-xl">{{ tokenName }}</span>
-        <div
-            class="flex relative overflow-visible justify-center text-md md:text-xl font-bold flex-[0.4]"
-            :class="amount === '0' ? 'blur' : ''"
-        >
-            {{ fixedAmount(+amount) }}
+        <div v-if="txHash" class="flex w-full">
+            <div class="flex rounded-lg px-2 py-1 gap-2 bg-[#83789B26]">
+                <a
+                    id="txHash"
+                    :href="explorerTxUrl"
+                    target="_blank"
+                    class="text-[#6C9CE4] underline decoration-1 underline-offset-2 font-light text-sm"
+                >
+                    {{ trimmedTxnHash(txHash) }}
+                </a>
+                <CopyIcon class="h-4 w-4 cursor-pointer" @click="copyHash(txHash)"/>
+            </div>
         </div>
-    </div>
-
-    <div
-        v-if="txHash"
-        class="flex items-center gap-2 bg-[#83789B26] w-[max-content] px-2 py-1 rounded-lg"
-    >
-        <a
-            id="txHash"
-            :href="explorerTxUrl"
-            target="_blank"
-            class="text-[#6C9CE4] underline decoration-1 underline-offset-2 font-light text-sm"
-            >{{ trimmedTxnHash(txHash) }}</a
-        >
-        <CopyIcon class="h-4 w-4 cursor-pointer" @click="copyHash(txHash)" />
-        <!-- <ClipboardCopyIcon
-            class="h-4 w-4 cursor-pointer"
-            @click="copyHash(txnHash)"
-        /> -->
     </div>
 </template>

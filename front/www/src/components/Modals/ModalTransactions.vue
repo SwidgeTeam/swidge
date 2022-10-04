@@ -103,7 +103,7 @@ const getToken = (chainId: string, address: string): IToken | undefined => {
  */
 const getTokenName = (chainId: string, address: string): string => {
     const token = getToken(chainId, address)
-    return token ? token.name : ''
+    return token ? token.symbol : ''
 }
 
 /**
@@ -152,22 +152,14 @@ const formattedAmount = (
                 :token-logo-out="getTokenIcon(tx.toChain, tx.dstAsset)"
                 :chain-logo-in="getChainIcon(tx.fromChain)"
                 :chain-logo-out="getChainIcon(tx.toChain)"
-                :amount-in="
-                    formattedAmount(tx.fromChain, tx.srcAsset, tx.amountIn)
-                "
-                :amount-out="
-                    formattedAmount(tx.toChain, tx.dstAsset, tx.amountOut)
-                "
+                :amount-in="formattedAmount(tx.fromChain, tx.srcAsset, tx.amountIn)"
+                :amount-out="formattedAmount(tx.toChain, tx.dstAsset, tx.amountOut)"
                 :token-name-in="getTokenName(tx.fromChain, tx.srcAsset)"
                 :token-name-out="getTokenName(tx.toChain, tx.dstAsset)"
                 :tx-hash="tx.originTxHash"
                 :destination-tx-hash="tx.destinationTxHash"
-                :explorer-origin-tx-url="
-                    getExplorerTxUrl(tx.fromChain, tx.originTxHash)
-                "
-                :explorer-destination-tx-url="
-                    getExplorerTxUrl(tx.toChain, tx.destinationTxHash)
-                "
+                :explorer-origin-tx-url="getExplorerTxUrl(tx.fromChain, tx.originTxHash)"
+                :explorer-destination-tx-url="getExplorerTxUrl(tx.toChain, tx.destinationTxHash)"
             />
         </div>
     </Modal>

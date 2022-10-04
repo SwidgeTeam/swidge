@@ -27,59 +27,42 @@ defineProps<{
 
 <template>
     <div class="gradient-border-header-main p-2 mb-4">
-        <div class="top flex items-center justify-between">
+        <div class="flex items-center justify-between">
             <div class="font-light">{{ date }}</div>
             <div
-                class="bg-[#1CBA3E] h-5 w-5 rounded-full flex items-center justify-center p-[1px]"
-                v-if="status === TransactionStatus.Success"
+                class="h-6 w-6 rounded-full flex items-center justify-center p-[1px]"
+                :class="{'bg-[#1CBA3E]': status === TransactionStatus.Success}"
             >
-                <CheckIcon class="h-5 font-extrabold stroke-[4px]" />
-            </div>
-
-            <div
-                class="h-7 w-7 rounded-full flex items-center justify-center p-[1px]"
-                v-if="status === TransactionStatus.Pending"
-            >
+                <CheckIcon
+                    v-if="status === TransactionStatus.Success"
+                    class="h-5 w-5 font-extrabold stroke-[4px]"/>
                 <StatusLoading
-                    class="h-7 w-6 font-extrabold stroke-[4px] fill-[#B22F7F] fill-cyan-500"
-                />
+                    v-if="status === TransactionStatus.Pending"
+                    class="h-7 w-7 font-extrabold stroke-[4px] fill-[#B22F7F] fill-cyan-500"/>
             </div>
         </div>
-
-        <div class="bottom flex">
-            <div
-                class="flex mt-2 p-2 flex-col items-flex-start justify-between gap-3 flex-[0.4]"
-            >
-                <TransactionStatusDetails
-                    :amount="amountIn"
-                    :token-name="tokenNameIn"
-                    :token-logo="tokenLogoIn"
-                    :chain-logo="chainLogoIn"
-                    :tx-hash="txHash"
-                    :explorer-tx-url="explorerOriginTxUrl"
-                />
-            </div>
-
-            <div
-                class="flex flex-[0.2] items-center justify-center mb-8 w-full"
-            >
+        <div class="flex">
+            <TransactionStatusDetails
+                :amount="amountIn"
+                :token-name="tokenNameIn"
+                :token-logo="tokenLogoIn"
+                :chain-logo="chainLogoIn"
+                :tx-hash="txHash"
+                :explorer-tx-url="explorerOriginTxUrl"
+            />
+            <div class="flex flex-[0.2] items-center justify-center mb-8 w-full">
                 <BridgeStepArrow
-                    class="h-[2rem] w-[2rem] md:h-[4rem] md:w-[3.5rem]"
+                    class="h-[2rem] w-[2rem] md:h-[4rem] md:w-[3rem]"
                 />
             </div>
-
-            <div
-                class="flex mt-2 p-2 flex-col items-flex-start justify-between gap-3 flex-[0.4]"
-            >
-                <TransactionStatusDetails
-                    :amount="amountOut"
-                    :token-name="tokenNameOut"
-                    :token-logo="tokenLogoOut"
-                    :chain-logo="chainLogoOut"
-                    :tx-hash="destinationTxHash"
-                    :explorer-tx-url="explorerDestinationTxUrl"
-                />
-            </div>
+            <TransactionStatusDetails
+                :amount="amountOut"
+                :token-name="tokenNameOut"
+                :token-logo="tokenLogoOut"
+                :chain-logo="chainLogoOut"
+                :tx-hash="destinationTxHash"
+                :explorer-tx-url="explorerDestinationTxUrl"
+            />
         </div>
     </div>
 </template>
