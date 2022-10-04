@@ -8,7 +8,7 @@ defineProps<{
     tokenName: string
     tokenLogo: string
     chainLogo: string
-    txnHash: string
+    txHash: string
     explorerTxUrl: string
 }>()
 
@@ -21,11 +21,11 @@ const fixedAmount = (amount: number) => {
     }
 }
 
-const trimmedTxnHash = (txnHash: string) => {
-    return `${txnHash.slice(0, 4)}....${txnHash.slice(-4)}`
+const trimmedTxnHash = (txHash: string) => {
+    return `${txHash.slice(0, 4)}....${txHash.slice(-4)}`
 }
-const copyHash = (txnHash: string) => {
-    navigator.clipboard.writeText(txnHash)
+const copyHash = (txHash: string) => {
+    navigator.clipboard.writeText(txHash)
 }
 </script>
 
@@ -55,17 +55,17 @@ const copyHash = (txnHash: string) => {
     </div>
 
     <div
-        v-if="txnHash"
+        v-if="txHash"
         class="flex items-center gap-2 bg-[#83789B26] w-[max-content] px-2 py-1 rounded-lg"
     >
         <a
-            id="txnHash"
+            id="txHash"
             :href="explorerTxUrl"
             target="_blank"
             class="text-[#6C9CE4] underline decoration-1 underline-offset-2 font-light text-sm"
-            >{{ trimmedTxnHash(txnHash) }}</a
+            >{{ trimmedTxnHash(txHash) }}</a
         >
-        <CopyIcon class="h-4 w-4 cursor-pointer" @click="copyHash(txnHash)" />
+        <CopyIcon class="h-4 w-4 cursor-pointer" @click="copyHash(txHash)" />
         <!-- <ClipboardCopyIcon
             class="h-4 w-4 cursor-pointer"
             @click="copyHash(txnHash)"

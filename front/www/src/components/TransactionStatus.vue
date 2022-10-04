@@ -18,7 +18,7 @@ defineProps<{
     amountOut: string
     tokenNameIn: string
     tokenNameOut: string
-    txnHash: string
+    txHash: string
     destinationTxHash: string
     explorerOriginTxUrl: string
     explorerDestinationTxUrl: string
@@ -55,8 +55,8 @@ defineProps<{
                     :token-name="tokenNameIn"
                     :token-logo="tokenLogoIn"
                     :chain-logo="chainLogoIn"
-                    :txnHash="txnHash"
-                    :explorerTxUrl="explorerOriginTxUrl"
+                    :tx-hash="txHash"
+                    :explorer-tx-url="explorerOriginTxUrl"
                 />
             </div>
 
@@ -76,8 +76,8 @@ defineProps<{
                     :token-name="tokenNameOut"
                     :token-logo="tokenLogoOut"
                     :chain-logo="chainLogoOut"
-                    :txnHash="destinationTxHash"
-                    :explorerTxUrl="explorerDestinationTxUrl"
+                    :tx-hash="destinationTxHash"
+                    :explorer-tx-url="explorerDestinationTxUrl"
                 />
             </div>
         </div>

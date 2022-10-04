@@ -160,12 +160,12 @@ const formattedAmount = (
                 "
                 :token-name-in="getTokenName(tx.fromChain, tx.srcAsset)"
                 :token-name-out="getTokenName(tx.toChain, tx.dstAsset)"
-                :txn-hash="tx.originTxHash"
-                :destination-txn-hash="tx.destinationTxHash"
-                :explorerOriginTxUrl="
+                :tx-hash="tx.originTxHash"
+                :destination-tx-hash="tx.destinationTxHash"
+                :explorer-origin-tx-url="
                     getExplorerTxUrl(tx.fromChain, tx.originTxHash)
                 "
-                :explorerDestinationTxUrl="
+                :explorer-destination-tx-url="
                     getExplorerTxUrl(tx.toChain, tx.destinationTxHash)
                 "
             />
