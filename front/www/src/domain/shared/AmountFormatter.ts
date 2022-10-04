@@ -4,7 +4,7 @@ export default class AmountFormatter {
         if (value < 1) {
             return AmountFormatter.commaSeparateNumber(value.toFixed(6))
         } else if (value > 1000000) {
-            return AmountFormatter.commaSeparateNumber(value.toFixed(1))
+            return AmountFormatter.commaSeparateNumber(value.toFixed(0))
         } else {
             return AmountFormatter.commaSeparateNumber(value.toFixed(2))
         }
