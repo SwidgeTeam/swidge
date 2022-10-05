@@ -75,7 +75,7 @@ const getNativeCoinAmount = () => {
                 {{ getNativeCoinAmount() }}
             </div>
             <div class="flex justify-between gap-2 rounded-xl sm:pr-2 sm:bg-[#54545F]">
-                <img src="src/assets/metamask.svg" class="w-5"/>
+                <img src="../../assets/metamask.svg" class="w-5"/>
                 {{ createShorterAddress(account) }}
             </div>
         </PopoverButton>
@@ -88,16 +88,16 @@ const getNativeCoinAmount = () => {
             <div class="flex flex-col">
                 <div class="flex flex-row justify-between">
                     <div class="flex justify-start items-center gap-2">
-                        <img src="src/assets/metamask.svg" class="w-5"/>
+                        <img src="../../assets/metamask.svg" class="w-5"/>
                         {{ createShortAddress(account) }}
                         <CopyButton :content="account"/>
                         <a :href="`https://blockscan.com/address/${account}`" target="_blank">
-                            <img src="src/assets/explorer.svg"/>
+                            <img src="../../assets/explorer.svg"/>
                         </a>
                     </div>
                     <div class="">
                         <img
-                            src="src/assets/disconnect.svg"
+                            src="../../assets/disconnect.svg"
                             class="cursor-pointer"
                             @click="disconnect"/>
                     </div>
