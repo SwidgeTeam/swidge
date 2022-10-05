@@ -3,8 +3,8 @@ import { useMetadataStore } from '@/store/metadata'
 import { CheckIcon } from '@heroicons/vue/outline'
 import TransactionStatusDetails from './TransactionStatusDetails.vue'
 import { TransactionStatus } from '@/api/models/get-status-check'
-import BridgeStepArrow from './svg/BridgeStepArrow.vue'
-import StatusLoading from './svg/StatusLoading.vue'
+import BridgeStepArrow from '../svg/BridgeStepArrow.vue'
+import StatusLoading from '../svg/StatusLoading.vue'
 import { Transaction } from '@/domain/transactions/transactions'
 import { IToken } from '@/domain/metadata/Metadata'
 import { ethers } from 'ethers'
@@ -125,7 +125,7 @@ const getTokenIcon = (chainId: string, address: string): string => {
                 :token-logo="getTokenIcon(transaction.fromChain, transaction.srcAsset)"
                 :chain-logo="getChainIcon(transaction.fromChain)"
                 :tx-hash="transaction.originTxHash"
-                :explorer-tx-url="getExplorerTxUrl(transaction.fromChain, transaction.srcAsset)"
+                :explorer-tx-url="getExplorerTxUrl(transaction.fromChain, transaction.originTxHash)"
             />
             <div class="flex items-center justify-center mb-7 w-full">
                 <BridgeStepArrow class="h-[2rem] w-[1rem]"/>
@@ -136,7 +136,7 @@ const getTokenIcon = (chainId: string, address: string): string => {
                 :token-logo="getTokenIcon(transaction.toChain, transaction.dstAsset)"
                 :chain-logo="getChainIcon(transaction.toChain)"
                 :tx-hash="transaction.destinationTxHash"
-                :explorer-tx-url="getExplorerTxUrl(transaction.toChain, transaction.dstAsset)"
+                :explorer-tx-url="getExplorerTxUrl(transaction.toChain, transaction.destinationTxHash)"
             />
         </div>
     </div>
