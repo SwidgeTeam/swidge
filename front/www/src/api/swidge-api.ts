@@ -14,7 +14,7 @@ import { Metadata, TokenBalance } from '@/domain/metadata/Metadata'
 import { WalletBalancesJson } from '@/api/models/get-balances'
 import { BigNumber } from 'ethers'
 import { TxExecutedRequest } from '@/api/models/post-tx-executed'
-import { TransactionsList } from '@/domain/transactions/transactions'
+import { Transaction } from '@/domain/transactions/transactions'
 
 class SwidgeAPI extends HttpClient {
     public constructor() {
@@ -175,10 +175,24 @@ class SwidgeAPI extends HttpClient {
         }
     }
 
-    public async getTransactions(walletAddress: string): Promise<TransactionsList> {
+    public async getTransactions(walletAddress: string): Promise<Transaction[]> {
         try {
             const response = await this.instance.get<TransactionsListJson>(`/transactions/${walletAddress}`)
-            return response.data
+            return response.data.transactions.map(tx => {
+                return {
+                    id: tx.id,
+                    originTxHash: tx.originTxHash,
+                    destinationTxHash: tx.destinationTxHash,
+                    status: tx.status,
+                    date: tx.date,
+                    fromChain: tx.fromChain,
+                    toChain: tx.toChain,
+                    srcAsset: tx.srcAsset,
+                    dstAsset: tx.dstAsset,
+                    amountIn: tx.amountIn,
+                    amountOut: tx.amountOut,
+                }
+            })
         } catch (e: unknown) {
             if (axios.isAxiosError(e)) {
                 const apiErrorResponse = e.response?.data as ApiErrorResponse
