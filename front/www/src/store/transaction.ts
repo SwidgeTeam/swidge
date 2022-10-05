@@ -6,6 +6,7 @@ import { useRoutesStore } from '@/store/routes'
 import { TransactionStatus } from '@/api/models/get-status-check'
 import { TxExecutedRequest } from '@/api/models/post-tx-executed'
 import { ethers } from 'ethers'
+import { Transaction } from '@/domain/transactions/transactions'
 
 export const useTransactionStore = defineStore('transaction', {
     state: () => ({
@@ -15,6 +16,7 @@ export const useTransactionStore = defineStore('transaction', {
         statusCheckInterval: 0,
         txId: '',
         currentNonce: 0,
+        list: [] as Transaction[]
     }),
     getters: {
         getApprovalTx(): ApprovalTransactionDetails | undefined {
@@ -170,6 +172,13 @@ export const useTransactionStore = defineStore('transaction', {
         incrementNonce: function () {
             this.currentNonce = this.currentNonce + 1
         },
+        fetchTransactions: function() {
+            swidgeApi.getTransactions(useWeb3Store().account).then(
+                (transactionList) => {
+                    this.list = transactionList.transactions
+                }
+            )
+        }
     }
 })
 

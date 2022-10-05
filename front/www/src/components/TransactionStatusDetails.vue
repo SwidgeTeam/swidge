@@ -6,7 +6,7 @@ import AmountFormatter from '@/domain/shared/AmountFormatter'
 
 defineProps<{
     amount: string
-    tokenName: string
+    tokenSymbol: string
     tokenLogo: string
     chainLogo: string
     txHash: string
@@ -14,10 +14,14 @@ defineProps<{
 }>()
 
 const fixedAmount = (amount: string) => {
-    const number = Number(amount)
+    let number = Number(amount)
     if (number > 1000000) {
-        const millions = number / 1000000
-        return AmountFormatter.format(millions.toString()) + ' M'
+        number /= 1000000
+        if (number > 1000) {
+            number /= 1000
+            return AmountFormatter.format(number.toString(), 0) + ' B'
+        }
+        return AmountFormatter.format(number.toString()) + ' M'
     }
     return AmountFormatter.format(amount)
 }
@@ -47,7 +51,7 @@ const copyHash = (txHash: string) => {
             >
                 {{ fixedAmount(amount) }}
             </div>
-            <span class="flex font-medium text-slate-400 text-xs">{{ tokenName }}</span>
+            <span class="flex font-medium text-slate-400 text-xs">{{ tokenSymbol }}</span>
         </div>
         <div v-if="txHash" class="flex w-full">
             <div class="flex rounded-lg px-2 py-1 gap-2 bg-[#83789B26]">
