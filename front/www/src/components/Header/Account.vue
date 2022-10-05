@@ -154,11 +154,14 @@ const getNativeCoinAmount = () => {
                                         v-if="tokens.length === 0"
                                         class="py-3 justify-center flex"
                                     >
-                                        No assets yet
+                                        We couldn't find assets
                                     </div>
                                 </div>
                             </TabPanel>
-                            <TabPanel class="h-[500px] overflow-auto overflow-x-hidden my-2">
+                            <TabPanel
+                                class="my-2"
+                                :class="{'h-[500px] overflow-auto overflow-x-hidden': transactionsStore.list.length > 0}"
+                            >
                                 <div
                                     v-if="transactionsStore.list.length > 0"
                                     class="flex flex-col gap-2">
