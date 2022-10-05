@@ -82,7 +82,8 @@ const getNativeCoinAmount = () => {
 
         <PopoverPanel
             class="absolute left-1/2 -translate-x-1/2 xs:right-2 xs:left-auto xs:translate-x-0 bg-black
-            rounded-lg top-12 px-2 py-1 z-50 gradient-border-header-main-hover account-bg-gradient"
+            rounded-lg top-12 px-2 py-1 w-80 z-50 gradient-border-header-main-hover account-bg-gradient
+            max-h-[90%] overflow-hidden"
         >
             <div class="flex flex-col">
                 <div class="flex flex-row justify-between">
@@ -137,7 +138,7 @@ const getNativeCoinAmount = () => {
                                             />
                                             <ChainLogo :logo="getChainLogo(token.chainId)" size="14"/>
                                         </div>
-                                        <div class="flex w-full justify-center gap-2">
+                                        <div class="flex w-full justify-center gap-3">
                                             <div class="w-3/5 text-right relative">
                                                 <!-- add tooltip -->
                                                 {{ formattedBalance(token) }}
@@ -152,7 +153,7 @@ const getNativeCoinAmount = () => {
                                     </div>
                                 </div>
                             </TabPanel>
-                            <TabPanel>
+                            <TabPanel class="h-[500px] overflow-auto overflow-x-hidden">
                                 <TransactionStatus
                                     v-for="(tx, index) in transactionsStore.list"
                                     :key="index"

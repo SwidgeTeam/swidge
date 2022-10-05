@@ -103,19 +103,19 @@ const getTokenIcon = (chainId: string, address: string): string => {
 </script>
 
 <template>
-    <div class="gradient-border-header-main p-2 mb-4">
-        <div class="flex items-center justify-between">
-            <div class="font-light">{{ transformDate() }}</div>
+    <div class="gradient-border-header-main p-2 mb-2">
+        <div class="flex items-center justify-between mb-4">
+            <div class="font-light text-xs">{{ transformDate() }}</div>
             <div
-                class="h-6 w-6 rounded-full flex items-center justify-center p-[1px]"
+                class="h-4 w-4 rounded-full flex items-center justify-center p-[1px]"
                 :class="{'bg-[#1CBA3E]': transaction.status === TransactionStatus.Success}"
             >
                 <CheckIcon
                     v-if="transaction.status === TransactionStatus.Success"
-                    class="h-5 w-5 font-extrabold stroke-[4px]"/>
+                    class="h-4 w-4 font-extrabold stroke-[4px]"/>
                 <StatusLoading
                     v-if="transaction.status === TransactionStatus.Pending"
-                    class="h-7 w-7 font-extrabold stroke-[4px] fill-[#B22F7F] fill-cyan-500"/>
+                    class="font-extrabold stroke-[4px] fill-[#B22F7F] fill-cyan-500"/>
             </div>
         </div>
         <div class="flex">
@@ -127,10 +127,8 @@ const getTokenIcon = (chainId: string, address: string): string => {
                 :tx-hash="transaction.originTxHash"
                 :explorer-tx-url="getExplorerTxUrl(transaction.fromChain, transaction.srcAsset)"
             />
-            <div class="flex flex-[0.2] items-center justify-center mb-8 w-full">
-                <BridgeStepArrow
-                    class="h-[2rem] w-[2rem] md:h-[4rem] md:w-[3rem]"
-                />
+            <div class="flex items-center justify-center mb-7 w-full">
+                <BridgeStepArrow class="h-[2rem] w-[1rem]"/>
             </div>
             <TransactionStatusDetails
                 :amount="formattedAmount(transaction.toChain, transaction.dstAsset, transaction.amountOut)"

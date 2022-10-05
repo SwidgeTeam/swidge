@@ -3,7 +3,7 @@ export default class AmountFormatter {
         const value = Number(amount)
         if (decimals === undefined) {
             if (value < 1) {
-                decimals = 6
+                decimals = 5
             } else if (value > 1000000) {
                 decimals = 0
             } else {

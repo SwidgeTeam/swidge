@@ -35,23 +35,23 @@ const copyHash = (txHash: string) => {
 </script>
 
 <template>
-    <div class="flex mt-2 p-2 flex-col items-flex-start justify-between gap-3 flex-[0.4]">
-        <div class="flex items-center gap-2 md:gap-3">
+    <div class="flex flex-col items-flex-start justify-between gap-3 flex-[0.4] w-28">
+        <div class="flex items-center gap-2">
             <div class="relative">
                 <TokenLogo
                     :token-logo="tokenLogo"
                     :chain-logo="chainLogo"
-                    size="32"
+                    size="22"
                 />
-                <ChainLogo :logo="chainLogo" size="16"/>
+                <ChainLogo :logo="chainLogo" size="14"/>
             </div>
             <div
-                class="flex xs:w-16 sm:w-24 justify-center text-xs sm:text-base"
+                class="flex w-14 justify-center text-xs"
                 :class="amount === '0' ? 'blur' : ''"
             >
                 {{ fixedAmount(amount) }}
             </div>
-            <span class="flex font-medium text-slate-400 text-xs">{{ tokenSymbol }}</span>
+            <span class="flex w-10 font-medium text-slate-400 text-xs">{{ tokenSymbol }}</span>
         </div>
         <div v-if="txHash" class="flex w-full">
             <div class="flex rounded-lg px-2 py-1 gap-2 bg-[#83789B26]">
@@ -59,7 +59,7 @@ const copyHash = (txHash: string) => {
                     id="txHash"
                     :href="explorerTxUrl"
                     target="_blank"
-                    class="text-[#6C9CE4] underline decoration-1 underline-offset-2 font-light text-sm"
+                    class="text-[#6C9CE4] font-light text-xs"
                 >
                     {{ trimmedTxnHash(txHash) }}
                 </a>
