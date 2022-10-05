@@ -83,12 +83,6 @@ export const useMetadataStore = defineStore('metadata', {
                     : ''
             }
         },
-        /**
-         * returns the list of tokens that hold balance
-         */
-        getBalances(): IToken[] {
-            return this.balances
-        }
     },
     actions: {
         /**
@@ -123,6 +117,7 @@ export const useMetadataStore = defineStore('metadata', {
                     return token
                 })
             }
+            console.log(this.balances)
         },
         /**
          * Imports a token into the list if it doesn't exist already

@@ -25,7 +25,7 @@ const disconnect = () => {
 
 const tokens = computed({
     get: () => {
-        return metadataStore.getBalances
+        return metadataStore.balances
     },
     set: () => null
 })
@@ -140,7 +140,6 @@ const getNativeCoinAmount = () => {
                                         </div>
                                         <div class="flex w-full justify-center gap-3">
                                             <div class="w-3/5 text-right relative">
-                                                <!-- add tooltip -->
                                                 {{ formattedBalance(token) }}
                                                 <span class="absolute top-[13px] right-0 text-[8px]">~ $ {{
                                                         formattedUsdValue(token)
@@ -151,14 +150,30 @@ const getNativeCoinAmount = () => {
                                             </div>
                                         </div>
                                     </div>
+                                    <div
+                                        v-if="tokens.length === 0"
+                                        class="py-3 justify-center flex"
+                                    >
+                                        No assets yet
+                                    </div>
                                 </div>
                             </TabPanel>
-                            <TabPanel class="h-[500px] overflow-auto overflow-x-hidden">
-                                <TransactionStatus
-                                    v-for="(tx, index) in transactionsStore.list"
-                                    :key="index"
-                                    :transaction="tx"
-                                />
+                            <TabPanel class="h-[500px] overflow-auto overflow-x-hidden my-2">
+                                <div
+                                    v-if="transactionsStore.list.length > 0"
+                                    class="flex flex-col gap-2">
+                                    <TransactionStatus
+                                        v-for="(tx, index) in transactionsStore.list"
+                                        :key="index"
+                                        :transaction="tx"
+                                    />
+                                </div>
+                                <div
+                                    v-else
+                                    class="py-3 justify-center flex"
+                                >
+                                    No transactions yet
+                                </div>
                             </TabPanel>
                         </TabPanels>
                     </TabGroup>
