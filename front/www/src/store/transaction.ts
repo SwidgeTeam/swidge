@@ -143,15 +143,32 @@ export const useTransactionStore = defineStore('transaction', {
                     txId: this.txId,
                 }).then(response => {
                     const routesStore = useRoutesStore()
+                    this.setTransactionResult(response.txId, response.status, response.amountOut, response.dstTxHash)
+                    this.stopCheckingStatus()
                     if (response.status === TransactionStatus.Success) {
                         routesStore.completeRoute()
-                        this.stopCheckingStatus()
                     } else if (response.status === TransactionStatus.Failed) {
                         // TODO do something
-                        this.stopCheckingStatus()
                     }
                 })
             }, 5000)
+        },
+        /**
+         * updates the ongoing transaction
+         * @param txId
+         * @param status
+         * @param amountOut
+         * @param txHash
+         */
+        setTransactionResult: function (txId: string, status: TransactionStatus, amountOut: string, txHash: string) {
+            this.list = this.list.map(tx => {
+                if (tx.id == txId) {
+                    tx.status = status
+                    tx.amountOut = amountOut
+                    tx.destinationTxHash = txHash
+                }
+                return tx
+            })
         },
         /**
          * stops the interval
@@ -172,10 +189,13 @@ export const useTransactionStore = defineStore('transaction', {
         incrementNonce: function () {
             this.currentNonce = this.currentNonce + 1
         },
-        fetchTransactions: function() {
+        /**
+         * fetches and loads the list of the wallet txs
+         */
+        fetchTransactions: function () {
             swidgeApi.getTransactions(useWeb3Store().account).then(
-                (transactionList) => {
-                    this.list = transactionList.transactions
+                (transactions) => {
+                    this.list = transactions
                 }
             )
         }

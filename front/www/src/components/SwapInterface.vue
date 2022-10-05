@@ -370,7 +370,6 @@ const openTransactionStatusModal = () => {
  */
 const closeModalStatus = () => {
     isModalStatusOpen.value = false
-    transactionStore.stopCheckingStatus()
 }
 
 const handleChangedReceiver = (address: string) => {
