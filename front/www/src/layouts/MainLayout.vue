@@ -13,6 +13,9 @@ tryOnBeforeMount(async () => {
     fetchMetadata()
         .then(() => {
             web3Store.init()
+                .then(() => {
+                    transactionStore.fetchTransactions()
+                })
         })
     transactionStore.startRetryingSendingPendingTxs()
 })

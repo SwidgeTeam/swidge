@@ -3,6 +3,7 @@ import { Popover, PopoverButton, PopoverPanel, TabGroup, TabList, Tab, TabPanels
 import { NATIVE_COIN_ADDRESS, useWeb3Store } from '@/store/web3'
 import { storeToRefs } from 'pinia'
 import { useMetadataStore } from '@/store/metadata'
+import { useTransactionStore } from '@/store/transaction'
 import { computed } from 'vue'
 import { ethers } from 'ethers'
 import TokenLogo from '@/components/Icons/TokenLogo.vue'
@@ -11,9 +12,11 @@ import { IToken } from '@/domain/metadata/Metadata'
 import Address from '@/domain/shared/address'
 import AmountFormatter from '@/domain/shared/AmountFormatter'
 import CopyButton from '@/components/Buttons/CopyButton.vue'
+import TransactionStatus from '@/components/TransactionStatus.vue'
 
 const web3Store = useWeb3Store()
 const metadataStore = useMetadataStore()
+const transactionsStore = useTransactionStore()
 const { account } = storeToRefs(web3Store)
 
 const disconnect = () => {
@@ -79,7 +82,7 @@ const getNativeCoinAmount = () => {
 
         <PopoverPanel
             class="absolute left-1/2 -translate-x-1/2 xs:right-2 xs:left-auto xs:translate-x-0 bg-black
-            rounded-lg top-12 px-2 py-1 w-64 z-50 gradient-border-header-main-hover account-bg-gradient"
+            rounded-lg top-12 px-2 py-1 z-50 gradient-border-header-main-hover account-bg-gradient"
         >
             <div class="flex flex-col">
                 <div class="flex flex-row justify-between">
@@ -138,7 +141,9 @@ const getNativeCoinAmount = () => {
                                             <div class="w-3/5 text-right relative">
                                                 <!-- add tooltip -->
                                                 {{ formattedBalance(token) }}
-                                                <span class="absolute top-[13px] right-0 text-[8px]">~ $ {{ formattedUsdValue(token) }}</span>
+                                                <span class="absolute top-[13px] right-0 text-[8px]">~ $ {{
+                                                        formattedUsdValue(token)
+                                                    }}</span>
                                             </div>
                                             <div class="w-2/5 text-left">
                                                 {{ token.symbol }}
@@ -147,7 +152,13 @@ const getNativeCoinAmount = () => {
                                     </div>
                                 </div>
                             </TabPanel>
-                            <TabPanel>Content 2</TabPanel>
+                            <TabPanel>
+                                <TransactionStatus
+                                    v-for="(tx, index) in transactionsStore.list"
+                                    :key="index"
+                                    :transaction="tx"
+                                />
+                            </TabPanel>
                         </TabPanels>
                     </TabGroup>
                 </div>

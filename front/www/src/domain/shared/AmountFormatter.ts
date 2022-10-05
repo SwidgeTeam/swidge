@@ -1,7 +1,7 @@
 export default class AmountFormatter {
     public static format(amount: string, decimals?: number): string {
         const value = Number(amount)
-        if (!decimals) {
+        if (decimals === undefined) {
             if (value < 1) {
                 decimals = 6
             } else if (value > 1000000) {
