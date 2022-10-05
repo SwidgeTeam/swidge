@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import { ref } from 'vue'
 import Check from '@/components/svg/Check.vue'
-import Copy from '@/components/svg/Copy.vue'
+import CopyIcon from '@/components/Icons/CopyIcon.vue'
 
 const props = defineProps<{
     content: string
@@ -14,14 +14,18 @@ const copyContent = () => {
     justCopied.value = true
     setTimeout(() => {
         justCopied.value = false
-    }, 1000)
+    }, 600)
 }
 </script>
 
 <template>
-    <Check v-if="justCopied"/>
-    <Copy
+    <Check
+        v-if="justCopied"
+        class="h-4 w-4"
+    />
+    <CopyIcon
         v-else
-        class="cursor-pointer"
-        @click="copyContent"/>
+        class="h-4 w-4 cursor-pointer"
+        @click="copyContent"
+    />
 </template>

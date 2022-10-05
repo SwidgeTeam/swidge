@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import TokenLogo from '../Icons/TokenLogo.vue'
 import ChainLogo from '../Icons/ChainLogo.vue'
-import CopyIcon from '../Icons/CopyIcon.vue'
 import AmountFormatter from '@/domain/shared/AmountFormatter'
+import CopyButton from '@/components/Buttons/CopyButton.vue'
 
 defineProps<{
     amount: string
@@ -28,9 +28,6 @@ const fixedAmount = (amount: string) => {
 
 const trimmedTxnHash = (txHash: string) => {
     return `${txHash.slice(0, 4)}....${txHash.slice(-4)}`
-}
-const copyHash = (txHash: string) => {
-    navigator.clipboard.writeText(txHash)
 }
 </script>
 
@@ -63,9 +60,7 @@ const copyHash = (txHash: string) => {
                 >
                     {{ trimmedTxnHash(txHash) }}
                 </a>
-                <CopyIcon
-                    class="h-4 w-4 cursor-pointer"
-                    @click="copyHash(txHash)"/>
+                <CopyButton :content="txHash"/>
             </div>
         </div>
     </div>
