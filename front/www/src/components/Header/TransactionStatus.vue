@@ -103,7 +103,7 @@ const getTokenIcon = (chainId: string, address: string): string => {
 </script>
 
 <template>
-    <div class="gradient-border-header-main p-2 mb-2">
+    <div class="gradient-border-header-main p-2">
         <div class="flex items-center justify-between mb-4">
             <div class="font-light text-xs">{{ transformDate() }}</div>
             <div
