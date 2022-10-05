@@ -12,7 +12,7 @@ import { IToken } from '@/domain/metadata/Metadata'
 import Address from '@/domain/shared/address'
 import AmountFormatter from '@/domain/shared/AmountFormatter'
 import CopyButton from '@/components/Buttons/CopyButton.vue'
-import TransactionStatus from '@/components/TransactionStatus.vue'
+import TransactionStatus from '@/components/Header/TransactionStatus.vue'
 
 const web3Store = useWeb3Store()
 const metadataStore = useMetadataStore()

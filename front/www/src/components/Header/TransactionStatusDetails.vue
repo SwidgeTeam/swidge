@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import TokenLogo from './Icons/TokenLogo.vue'
-import ChainLogo from './Icons/ChainLogo.vue'
-import CopyIcon from './Icons/CopyIcon.vue'
+import TokenLogo from '../Icons/TokenLogo.vue'
+import ChainLogo from '../Icons/ChainLogo.vue'
+import CopyIcon from '../Icons/CopyIcon.vue'
 import AmountFormatter from '@/domain/shared/AmountFormatter'
 
 defineProps<{
@@ -56,14 +56,16 @@ const copyHash = (txHash: string) => {
         <div v-if="txHash" class="flex w-full">
             <div class="flex rounded-lg px-2 py-1 gap-2 bg-[#83789B26]">
                 <a
-                    id="txHash"
                     :href="explorerTxUrl"
                     target="_blank"
                     class="text-[#6C9CE4] font-light text-xs"
+                    :class="txHash === '' ? 'blur' : ''"
                 >
                     {{ trimmedTxnHash(txHash) }}
                 </a>
-                <CopyIcon class="h-4 w-4 cursor-pointer" @click="copyHash(txHash)"/>
+                <CopyIcon
+                    class="h-4 w-4 cursor-pointer"
+                    @click="copyHash(txHash)"/>
             </div>
         </div>
     </div>
