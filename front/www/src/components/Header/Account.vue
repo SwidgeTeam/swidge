@@ -1,10 +1,20 @@
 <script setup lang="ts">
-import { Popover, PopoverButton, PopoverPanel, TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
+import {
+    Popover,
+    PopoverButton,
+    PopoverPanel,
+    TabGroup,
+    TabList,
+    Tab,
+    TabPanels,
+    TabPanel,
+    Switch
+} from '@headlessui/vue'
 import { NATIVE_COIN_ADDRESS, useWeb3Store } from '@/store/web3'
 import { storeToRefs } from 'pinia'
 import { useMetadataStore } from '@/store/metadata'
 import { useTransactionStore } from '@/store/transaction'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { ethers } from 'ethers'
 import TokenLogo from '@/components/Icons/TokenLogo.vue'
 import ChainLogo from '@/components/Icons/ChainLogo.vue'
@@ -19,6 +29,8 @@ const metadataStore = useMetadataStore()
 const transactionsStore = useTransactionStore()
 const { account } = storeToRefs(web3Store)
 
+const showSmallBalances = ref(false)
+
 const disconnect = () => {
     web3Store.disconnect()
 }
@@ -26,6 +38,31 @@ const disconnect = () => {
 const tokens = computed({
     get: () => {
         return metadataStore.balances
+            .filter(token => {
+                const amount = ethers.utils.formatUnits(token.balance.toString(), token.decimals)
+                const dollarValue = Number(amount) * Number(token.price)
+                return showSmallBalances.value || dollarValue >= 1
+            })
+            .sort((a, b) => {
+                const amountA = ethers.utils.formatUnits(a.balance.toString(), a.decimals)
+                const dollarValueA = Number(amountA) * Number(a.price)
+                const amountB = ethers.utils.formatUnits(b.balance.toString(), b.decimals)
+                const dollarValueB = Number(amountB) * Number(b.price)
+                if (dollarValueA > dollarValueB) {
+                    return -1
+                } else if (dollarValueB > dollarValueA) {
+                    return 1
+                } else {
+                    return 0
+                }
+            })
+    },
+    set: () => null
+})
+
+const emptyTokens = computed({
+    get: () => {
+        return tokens.value.length === 0
     },
     set: () => null
 })
@@ -123,38 +160,53 @@ const getNativeCoinAmount = () => {
                             </Tab>
                         </TabList>
                         <TabPanels>
-                            <TabPanel>
-                                <div class="flex flex-col my-2 gap-2">
-                                    <div
-                                        v-for="(token, index) in tokens"
-                                        :key="index"
-                                        class="flex flex-row justify-start py-1 pl-2"
-                                    >
-                                        <div class="relative w-7">
-                                            <TokenLogo
-                                                :token-logo="token.logo"
-                                                :chain-logo="token.logo"
-                                                size="28"
-                                            />
-                                            <ChainLogo :logo="getChainLogo(token.chainId)" size="14"/>
-                                        </div>
-                                        <div class="flex w-full justify-center gap-3">
-                                            <div class="w-3/5 text-right relative">
-                                                {{ formattedBalance(token) }}
-                                                <span class="absolute top-[13px] right-0 text-[8px]">~ $ {{
-                                                        formattedUsdValue(token)
-                                                    }}</span>
-                                            </div>
-                                            <div class="w-2/5 text-left">
-                                                {{ token.symbol }}
-                                            </div>
-                                        </div>
+                            <TabPanel class="">
+                                <div
+                                    v-if="emptyTokens"
+                                    class="my-2 py-3 justify-center flex">
+                                    We couldn't find assets
+                                </div>
+                                <div v-else>
+                                    <div class="w-full items-center flex mb-3 gap-2">
+                                        <Switch
+                                            v-model="showSmallBalances"
+                                            :class="showSmallBalances ? 'bg-blue-600' : 'bg-gray-200'"
+                                            class="relative inline-flex h-4 w-10 items-center rounded-full"
+                                        >
+                                        <span
+                                            :class="showSmallBalances ? 'translate-x-6' : 'translate-x-1'"
+                                            class="inline-block h-3 w-3 transform rounded-full bg-[#543E71] transition"
+                                        />
+                                        </Switch>
+                                        <span class="text-xs">Hide small balances</span>
                                     </div>
                                     <div
-                                        v-if="tokens.length === 0"
-                                        class="py-3 justify-center flex"
-                                    >
-                                        We couldn't find assets
+                                        class="flex flex-col gap-2"
+                                        :class="{'h-[500px] overflow-auto overflow-x-hidden': !emptyTokens}">
+                                        <div
+                                            v-for="(token, index) in tokens"
+                                            :key="index"
+                                            class="flex flex-row justify-start py-1 pl-2">
+                                            <div class="relative w-7">
+                                                <TokenLogo
+                                                    :token-logo="token.logo"
+                                                    :chain-logo="token.logo"
+                                                    size="28"
+                                                />
+                                                <ChainLogo :logo="getChainLogo(token.chainId)" size="14"/>
+                                            </div>
+                                            <div class="flex w-full justify-center gap-3">
+                                                <div class="w-3/5 text-right relative">
+                                                    {{ formattedBalance(token) }}
+                                                    <span class="absolute top-[13px] right-0 text-[8px]">~ $ {{
+                                                            formattedUsdValue(token)
+                                                        }}</span>
+                                                </div>
+                                                <div class="w-2/5 text-left">
+                                                    {{ token.symbol }}
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </TabPanel>
