@@ -10,6 +10,7 @@ export const useMetadataStore = defineStore('metadata', {
     state: () => ({
         tokens: {} as ITokenList,
         chains: [] as IChain[],
+        balances: [] as IToken[],
         emptyPrices: true,
     }),
     getters: {
@@ -52,10 +53,12 @@ export const useMetadataStore = defineStore('metadata', {
          */
         getToken(state) {
             return (chainId: string, address: string): IToken | undefined => {
-                return state.tokens[chainId]
-                    .find(token => {
+                const list = state.tokens[chainId]
+                return list
+                    ? list.find(token => {
                         return token.address.toLowerCase() === address.toLowerCase()
                     })
+                    : undefined
             }
         },
         /**
@@ -109,6 +112,7 @@ export const useMetadataStore = defineStore('metadata', {
                     })
                     if (tokenBalance) {
                         token.balance = tokenBalance.balance
+                        this.balances.push(token)
                     }
                     return token
                 })

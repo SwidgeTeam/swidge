@@ -3,7 +3,10 @@ export interface StatusCheckRequest {
 }
 
 export interface StatusCheckResponse {
+    txId: string;
     status: TransactionStatus;
+    amountOut: string;
+    dstTxHash: string;
 }
 
 export enum TransactionStatus {

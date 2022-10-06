@@ -2,7 +2,7 @@ import axios from 'axios'
 import HttpClient from './http-base-client'
 import { GetQuoteRequest, GetQuoteResponse } from './models/get-quote'
 import { ApiErrorResponse } from '@/api/models/ApiErrorResponse'
-import { TransactionsList } from '@/api/models/transactions'
+import { TransactionsListJson } from '@/api/models/get-transactions'
 import Route, { ApprovalTransactionDetails, TransactionDetails } from '@/domain/paths/path'
 import GetApprovalTxResponseJson from '@/api/models/get-approval-tx-response'
 import GetMainTxResponse from '@/api/models/get-main-tx-response'
@@ -14,6 +14,7 @@ import { Metadata, TokenBalance } from '@/domain/metadata/Metadata'
 import { WalletBalancesJson } from '@/api/models/get-balances'
 import { BigNumber } from 'ethers'
 import { TxExecutedRequest } from '@/api/models/post-tx-executed'
+import { Transaction } from '@/domain/transactions/transactions'
 
 class SwidgeAPI extends HttpClient {
     public constructor() {
@@ -174,10 +175,24 @@ class SwidgeAPI extends HttpClient {
         }
     }
 
-    public async getTransactions(walletAddress: string): Promise<TransactionsList> {
+    public async getTransactions(walletAddress: string): Promise<Transaction[]> {
         try {
-            const response = await this.instance.get(`/transactions/${walletAddress}`)
-            return response.data
+            const response = await this.instance.get<TransactionsListJson>(`/transactions/${walletAddress}`)
+            return response.data.transactions.map(tx => {
+                return {
+                    id: tx.txId,
+                    originTxHash: tx.originTxHash,
+                    destinationTxHash: tx.destinationTxHash,
+                    status: tx.status,
+                    date: tx.date,
+                    fromChain: tx.fromChain,
+                    toChain: tx.toChain,
+                    srcAsset: tx.srcAsset,
+                    dstAsset: tx.dstAsset,
+                    amountIn: tx.amountIn,
+                    amountOut: tx.amountOut,
+                }
+            })
         } catch (e: unknown) {
             if (axios.isAxiosError(e)) {
                 const apiErrorResponse = e.response?.data as ApiErrorResponse

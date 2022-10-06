@@ -1,9 +1,7 @@
-export interface TransactionsList {
-    transactions: Transaction[]
-}
-
 export interface Transaction {
+    id: string
     originTxHash: string
+    destinationTxHash: string
     status: string
     date: string
     fromChain: string
@@ -12,5 +10,4 @@ export interface Transaction {
     dstAsset: string
     amountIn: string
     amountOut: string
-    destinationTxHash: string
 }

@@ -4,7 +4,7 @@ const props = defineProps<{
     size: string
 }>()
 const getPad = () => {
-    return (Number(props.size) * 0.5).toFixed(0)
+    return (Number(props.size) * 0.3).toFixed(0)
 }
 </script>
 

@@ -2,7 +2,7 @@
 import { tryOnBeforeMount } from '@vueuse/core'
 import { useMetadataStore } from '@/store/metadata'
 import { useWeb3Store } from '@/store/web3'
-import Header from '@/components/Header.vue'
+import Header from '@/components/Header/Header.vue'
 import { useTransactionStore } from '@/store/transaction'
 
 const { fetchMetadata } = useMetadataStore()
@@ -13,6 +13,9 @@ tryOnBeforeMount(async () => {
     fetchMetadata()
         .then(() => {
             web3Store.init()
+                .then(() => {
+                    transactionStore.fetchTransactions(web3Store.account)
+                })
         })
     transactionStore.startRetryingSendingPendingTxs()
 })

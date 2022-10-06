@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import TokenLogo from './Icons/TokenLogo.vue'
-import ChainLogo from './Icons/ChainLogo.vue'
-import CopyIcon from './Icons/CopyIcon.vue'
+import TokenLogo from '../Icons/TokenLogo.vue'
+import ChainLogo from '../Icons/ChainLogo.vue'
 import AmountFormatter from '@/domain/shared/AmountFormatter'
+import CopyButton from '@/components/Buttons/CopyButton.vue'
 
 defineProps<{
     amount: string
-    tokenName: string
+    tokenSymbol: string
     tokenLogo: string
     chainLogo: string
     txHash: string
@@ -14,10 +14,14 @@ defineProps<{
 }>()
 
 const fixedAmount = (amount: string) => {
-    const number = Number(amount)
+    let number = Number(amount)
     if (number > 1000000) {
-        const millions = number / 1000000
-        return AmountFormatter.format(millions.toString()) + ' M'
+        number /= 1000000
+        if (number > 1000) {
+            number /= 1000
+            return AmountFormatter.format(number.toString(), 0) + ' B'
+        }
+        return AmountFormatter.format(number.toString()) + ' M'
     }
     return AmountFormatter.format(amount)
 }
@@ -25,41 +29,38 @@ const fixedAmount = (amount: string) => {
 const trimmedTxnHash = (txHash: string) => {
     return `${txHash.slice(0, 4)}....${txHash.slice(-4)}`
 }
-const copyHash = (txHash: string) => {
-    navigator.clipboard.writeText(txHash)
-}
 </script>
 
 <template>
-    <div class="flex mt-2 p-2 flex-col items-flex-start justify-between gap-3 flex-[0.4]">
-        <div class="flex items-center gap-2 md:gap-3">
+    <div class="flex flex-col items-flex-start justify-between gap-3 flex-[0.4] w-28">
+        <div class="flex items-center gap-2">
             <div class="relative">
                 <TokenLogo
                     :token-logo="tokenLogo"
                     :chain-logo="chainLogo"
-                    size="32"
+                    size="22"
                 />
-                <ChainLogo :logo="chainLogo" size="16"/>
+                <ChainLogo :logo="chainLogo" size="14"/>
             </div>
             <div
-                class="flex xs:w-16 sm:w-24 justify-center text-xs sm:text-base"
+                class="flex w-14 justify-center text-xs"
                 :class="amount === '0' ? 'blur' : ''"
             >
                 {{ fixedAmount(amount) }}
             </div>
-            <span class="flex font-medium text-slate-400 text-xs">{{ tokenName }}</span>
+            <span class="flex w-10 font-medium text-slate-400 text-xs">{{ tokenSymbol }}</span>
         </div>
         <div v-if="txHash" class="flex w-full">
             <div class="flex rounded-lg px-2 py-1 gap-2 bg-[#83789B26]">
                 <a
-                    id="txHash"
                     :href="explorerTxUrl"
                     target="_blank"
-                    class="text-[#6C9CE4] underline decoration-1 underline-offset-2 font-light text-sm"
+                    class="text-[#6C9CE4] font-light text-xs"
+                    :class="txHash === '' ? 'blur' : ''"
                 >
                     {{ trimmedTxnHash(txHash) }}
                 </a>
-                <CopyIcon class="h-4 w-4 cursor-pointer" @click="copyHash(txHash)"/>
+                <CopyButton :content="txHash"/>
             </div>
         </div>
     </div>

@@ -6,6 +6,7 @@ import { useRoutesStore } from '@/store/routes'
 import { TransactionStatus } from '@/api/models/get-status-check'
 import { TxExecutedRequest } from '@/api/models/post-tx-executed'
 import { ethers } from 'ethers'
+import { Transaction } from '@/domain/transactions/transactions'
 
 export const useTransactionStore = defineStore('transaction', {
     state: () => ({
@@ -15,6 +16,7 @@ export const useTransactionStore = defineStore('transaction', {
         statusCheckInterval: 0,
         txId: '',
         currentNonce: 0,
+        list: [] as Transaction[]
     }),
     getters: {
         getApprovalTx(): ApprovalTransactionDetails | undefined {
@@ -112,6 +114,21 @@ export const useTransactionStore = defineStore('transaction', {
                 trackingId: this.trackingId,
             }
             swidgeApi.informExecutedTx(request)
+                .then(() => {
+                    this.list.unshift({
+                        id: route.id,
+                        originTxHash: txHash,
+                        destinationTxHash: '',
+                        status: TransactionStatus.Pending,
+                        date: new Date().toString(),
+                        fromChain: request.fromChainId,
+                        toChain: request.toChainId,
+                        srcAsset: request.fromToken,
+                        dstAsset: request.toToken,
+                        amountIn: amountIn,
+                        amountOut: '',
+                    })
+                })
                 .catch(() => {
                     storePendingTx(request)
                     this.startRetryingSendingPendingTxs()
@@ -142,14 +159,33 @@ export const useTransactionStore = defineStore('transaction', {
                 }).then(response => {
                     const routesStore = useRoutesStore()
                     if (response.status === TransactionStatus.Success) {
+                        this.setTransactionResult(response.txId, response.status, response.amountOut, response.dstTxHash)
+                        this.stopCheckingStatus()
                         routesStore.completeRoute()
-                        this.stopCheckingStatus()
                     } else if (response.status === TransactionStatus.Failed) {
-                        // TODO do something
+                        this.setTransactionResult(response.txId, response.status, response.amountOut, response.dstTxHash)
                         this.stopCheckingStatus()
+                        // TODO do something
                     }
                 })
             }, 5000)
+        },
+        /**
+         * updates the ongoing transaction
+         * @param txId
+         * @param status
+         * @param amountOut
+         * @param txHash
+         */
+        setTransactionResult: function (txId: string, status: TransactionStatus, amountOut: string, txHash: string) {
+            this.list = this.list.map(tx => {
+                if (tx.id == txId) {
+                    tx.status = status
+                    tx.amountOut = amountOut
+                    tx.destinationTxHash = txHash
+                }
+                return tx
+            })
         },
         /**
          * stops the interval
@@ -170,6 +206,16 @@ export const useTransactionStore = defineStore('transaction', {
         incrementNonce: function () {
             this.currentNonce = this.currentNonce + 1
         },
+        /**
+         * fetches and loads the list of the wallet txs
+         */
+        fetchTransactions: function (address: string) {
+            swidgeApi.getTransactions(address).then(
+                (transactions) => {
+                    this.list = transactions
+                }
+            )
+        }
     }
 })
 
