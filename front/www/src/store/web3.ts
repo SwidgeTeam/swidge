@@ -239,6 +239,7 @@ export const useWeb3Store = defineStore('web3', () => {
         routesStore.setReceiverAddress(address)
         isConnected.value = true
         await metadataStore.fetchBalances(address)
+        await useTransactionStore().fetchTransactions(address)
     }
 
     /**

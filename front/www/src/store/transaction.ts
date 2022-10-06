@@ -192,8 +192,8 @@ export const useTransactionStore = defineStore('transaction', {
         /**
          * fetches and loads the list of the wallet txs
          */
-        fetchTransactions: function () {
-            swidgeApi.getTransactions(useWeb3Store().account).then(
+        fetchTransactions: function (address: string) {
+            swidgeApi.getTransactions(address).then(
                 (transactions) => {
                     this.list = transactions
                 }
