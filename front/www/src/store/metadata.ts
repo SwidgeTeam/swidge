@@ -117,7 +117,6 @@ export const useMetadataStore = defineStore('metadata', {
                     return token
                 })
             }
-            console.log(this.balances)
         },
         /**
          * Imports a token into the list if it doesn't exist already
