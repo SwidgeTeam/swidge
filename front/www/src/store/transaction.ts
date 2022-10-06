@@ -158,11 +158,13 @@ export const useTransactionStore = defineStore('transaction', {
                     txId: this.txId,
                 }).then(response => {
                     const routesStore = useRoutesStore()
-                    this.setTransactionResult(response.txId, response.status, response.amountOut, response.dstTxHash)
-                    this.stopCheckingStatus()
                     if (response.status === TransactionStatus.Success) {
+                        this.setTransactionResult(response.txId, response.status, response.amountOut, response.dstTxHash)
+                        this.stopCheckingStatus()
                         routesStore.completeRoute()
                     } else if (response.status === TransactionStatus.Failed) {
+                        this.setTransactionResult(response.txId, response.status, response.amountOut, response.dstTxHash)
+                        this.stopCheckingStatus()
                         // TODO do something
                     }
                 })
