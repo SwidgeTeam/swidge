@@ -29,7 +29,7 @@ const metadataStore = useMetadataStore()
 const transactionsStore = useTransactionStore()
 const { account } = storeToRefs(web3Store)
 
-const showSmallBalances = ref(false)
+const showSmallBalances = ref(true)
 
 const disconnect = () => {
     web3Store.disconnect()
