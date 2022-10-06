@@ -14,7 +14,7 @@ tryOnBeforeMount(async () => {
         .then(() => {
             web3Store.init()
                 .then(() => {
-                    transactionStore.fetchTransactions()
+                    transactionStore.fetchTransactions(web3Store.account)
                 })
         })
     transactionStore.startRetryingSendingPendingTxs()

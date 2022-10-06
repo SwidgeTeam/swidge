@@ -180,7 +180,7 @@ class SwidgeAPI extends HttpClient {
             const response = await this.instance.get<TransactionsListJson>(`/transactions/${walletAddress}`)
             return response.data.transactions.map(tx => {
                 return {
-                    id: tx.id,
+                    id: tx.txId,
                     originTxHash: tx.originTxHash,
                     destinationTxHash: tx.destinationTxHash,
                     status: tx.status,

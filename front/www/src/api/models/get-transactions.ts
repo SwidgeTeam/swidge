@@ -3,7 +3,7 @@ export interface TransactionsListJson {
 }
 
 export interface TransactionJson {
-    id: string
+    txId: string
     originTxHash: string
     destinationTxHash: string
     status: string
