@@ -114,6 +114,21 @@ export const useTransactionStore = defineStore('transaction', {
                 trackingId: this.trackingId,
             }
             swidgeApi.informExecutedTx(request)
+                .then(() => {
+                    this.list.unshift({
+                        id: route.id,
+                        originTxHash: txHash,
+                        destinationTxHash: '',
+                        status: TransactionStatus.Pending,
+                        date: new Date().toString(),
+                        fromChain: request.fromChainId,
+                        toChain: request.toChainId,
+                        srcAsset: request.fromToken,
+                        dstAsset: request.toToken,
+                        amountIn: amountIn,
+                        amountOut: '',
+                    })
+                })
                 .catch(() => {
                     storePendingTx(request)
                     this.startRetryingSendingPendingTxs()
