@@ -4,4 +4,5 @@ export enum AggregatorProviders {
   Socket = '2',
   Via = '3',
   Rango = '4',
+  Swing = '5',
 }

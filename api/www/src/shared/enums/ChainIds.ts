@@ -1,3 +1,4 @@
+export const Solana = '0';
 export const Mainnet = '1';
 export const Optimism = '10';
 export const Cronos = '25';
@@ -9,6 +10,7 @@ export const Huobi = '128';
 export const Polygon = '137';
 export const Fantom = '250';
 export const Boba = '288';
+export const Metis = '1088';
 export const Moonbeam = '1284';
 export const Moonriver = '1285';
 export const Evmos = '9001';
