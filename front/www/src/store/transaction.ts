@@ -7,7 +7,7 @@ import swidgeApi from '@/api/swidge-api'
 import { TransactionStatus } from '@/api/models/get-status-check'
 import { TxExecutedRequest } from '@/api/models/post-tx-executed'
 import { ethers } from 'ethers'
-import { Transaction } from '@/domain/transactions/transactions'
+import { Tx } from '@/domain/transactions/transactions'
 
 export const useTransactionStore = defineStore('transaction', {
     state: () => ({
@@ -17,7 +17,7 @@ export const useTransactionStore = defineStore('transaction', {
         statusCheckInterval: 0,
         txId: '',
         currentNonce: 0,
-        list: [] as Transaction[]
+        list: [] as Tx[]
     }),
     getters: {
         getApprovalTx(): ApprovalTransactionDetails | undefined {
@@ -27,7 +27,7 @@ export const useTransactionStore = defineStore('transaction', {
             return this.mainTx
         },
         getTxFromList(state) {
-            return (txId: string): Transaction | undefined => {
+            return (txId: string): Tx | undefined => {
                 return state.list.find(tx => tx.id === txId)
             }
         }
@@ -120,7 +120,7 @@ export const useTransactionStore = defineStore('transaction', {
             }
 
             // immediately store in local array
-            this.addTxToLocalList(request, amountOut)
+            this.addTxToLocalList(request, amountOut, route.resume.executionTime)
 
             // inform backend about tx
             swidgeApi.informExecutedTx(request)
@@ -131,6 +131,10 @@ export const useTransactionStore = defineStore('transaction', {
                     this.startRetryingSendingPendingTxs()
                 })
         },
+        /**
+         * used to check if pending txs to be stored
+         * and fire an interval to try to store them until success
+         */
         startRetryingSendingPendingTxs() {
             const pendingTxs = getStoredPendingTxs()
             // if pending txs to inform to backend, start trying
@@ -138,6 +142,9 @@ export const useTransactionStore = defineStore('transaction', {
                 setInterval(this.retrySendingPendingTxs, 5000)
             }
         },
+        /**
+         * tries to store all pending executed txs until success
+         */
         retrySendingPendingTxs() {
             const pendingTxs = getStoredPendingTxs()
             // for every pending tx, try to inform
@@ -151,7 +158,13 @@ export const useTransactionStore = defineStore('transaction', {
                     })
             })
         },
-        addTxToLocalList(params: TxExecutedRequest, expectedAmount = '') {
+        /**
+         * adds a tx to the local list
+         * @param params
+         * @param expectedAmount
+         * @param executionTime
+         */
+        addTxToLocalList(params: TxExecutedRequest, expectedAmount = '', executionTime = 0) {
             const tx = this.list.find(tx => tx.id === params.txId)
             if (!tx) {
                 // store only if not existent
@@ -167,6 +180,7 @@ export const useTransactionStore = defineStore('transaction', {
                     dstAsset: params.toToken,
                     amountIn: params.amountIn,
                     amountOut: expectedAmount,
+                    expectedTime: executionTime
                 })
             }
         },

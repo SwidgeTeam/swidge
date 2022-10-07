@@ -9,6 +9,7 @@ import { ethers } from 'ethers'
 import AmountFormatter from '@/domain/shared/AmountFormatter'
 import AssetDisplay from '@/components/Modals/TxStatus/AssetDisplay.vue'
 import CopyButton from '@/components/Buttons/CopyButton.vue'
+import { PendingTransaction } from '@/domain/transactions/transactions'
 
 const metadataStore = useMetadataStore()
 const transactionsStore = useTransactionStore()
@@ -23,8 +24,8 @@ const emits = defineEmits<{
 }>()
 
 const transaction = computed({
-    get: () => {
-        return transactionsStore.getTxFromList(props.txId)
+    get: (): PendingTransaction => {
+        return transactionsStore.getTxFromList(props.txId) as PendingTransaction
     },
     set: () => null
 })
@@ -256,7 +257,10 @@ const trimmedTxnHash = (txHash: string) => {
 
         <div class="flex flex-col gap-10 items-center pt-16 xs:pt-0">
             <div class="flex">
-                <Timer :seconds="200"/>
+                <Timer
+                    :seconds="Math.round(transaction.expectedTime)"
+                    :finished="completed"
+                />
             </div>
             <div class="flex">
                 <AssetDisplay
@@ -277,6 +281,11 @@ const trimmedTxnHash = (txHash: string) => {
                     :amount="amountOut"
                     :symbol="symbolOut"
                 />
+            </div>
+            <div
+                v-if="!completed"
+                class="text-lg text-green-700">
+                Swidge successful
             </div>
             <div class="flex flex-col items-center w-64">
                 <div class="flex flex-row items-center gap-1">
