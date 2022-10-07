@@ -31,14 +31,11 @@
 
 <script setup lang='ts'>
 import { ref, computed, watch, onMounted } from 'vue'
-const FULL_DASH_ARRAY = 365
-
+let timePassed = ref<number>(0)
+let timerInterval = ref<number>(0)
 const props = defineProps<{
     seconds: number
 }>()
-
-let timePassed = ref<number>(0)
-let timerInterval = ref<number>(0)
 
 onMounted(() => {
     startTimer()
@@ -52,6 +49,7 @@ const onTimesUp = () => {
     clearInterval(timerInterval.value)
 }
 
+const FULL_DASH_ARRAY = 283
 const circleDasharray = computed({
     get: () => {
         return `${(timeFraction.value * FULL_DASH_ARRAY).toFixed(0)} ${FULL_DASH_ARRAY}`

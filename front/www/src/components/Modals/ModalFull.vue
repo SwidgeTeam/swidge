@@ -2,7 +2,6 @@
 import { Dialog, DialogOverlay, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { XIcon } from '@heroicons/vue/solid'
 
-
 defineProps({
     isOpen: {
         type: Boolean,
@@ -52,8 +51,8 @@ const onCloseModal = () => {
                     leave-from="opacity-100 translate-y-0 sm:scale-100"
                     leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
                     <div
-                        class="inline-block w-full h-full sm:py-12 xs:py-12 text-left 
-                        relative transition-all transform shadow-xl 
+                        class="inline-block w-full h-full sm:py-12 xs:py-12 text-left
+                        relative transition-all transform shadow-xl
                         bg-[#222129] background-gradient-transaction-modal"
                     >
                         <XIcon

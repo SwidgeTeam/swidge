@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useGtm } from '@gtm-support/vue-gtm'
 import { useWeb3Store } from '@/store/web3'
 import { useRoutesStore } from '@/store/routes'
 import { useTransactionStore } from '@/store/transaction'
+import { useMetadataStore } from '@/store/metadata'
 import { storeToRefs } from 'pinia'
 import { useToast } from 'vue-toastification'
 import ModalNetworkAndTokenSelect from '@/components/Modals/ModalNetworkAndTokenSelect.vue'
@@ -33,6 +34,7 @@ const isModalTokensOpen = ref(false)
 const isSourceChainToken = ref(false)
 const isExecuteButtonDisabled = ref(true)
 const isModalStatusOpen = ref(false)
+const statusModalTxId = ref<string>('')
 const isSettingsModalOpen = ref(false)
 const showTransactionAlert = ref(false)
 const transactionAlertMessage = ref<string>('')
@@ -244,10 +246,11 @@ const onExecuteTransaction = async () => {
 
     // Make sure on the correct chain
     await web3Store.switchToNetwork(route.resume.fromChain)
-
-    setExecutingButton()
-
     await transactionStore.setCurrentNonce()
+
+    // Start execution
+    setExecutingButton()
+    const toastId = toast.success('Starting execution...', { timeout: false })
 
     let promise
     const aggregator = route.aggregator
@@ -262,7 +265,9 @@ const onExecuteTransaction = async () => {
 
     await promise
         .then((txHash: TxHash) => {
+            toast.dismiss(toastId)
             onInitialTxCompleted(txHash)
+            openTransactionStatusModal(route.id)
             emitEventGTMTransaction()
         })
         .catch((error) => {
@@ -287,8 +292,6 @@ const executeRoute = async (): Promise<TxHash> => {
     if (approvalTx) {
         await web3Store.sendApprovalTransaction(approvalTx)
     }
-    openTransactionStatusModal()
-
     return web3Store.sendMainTransaction(mainTx)
 }
 
@@ -305,7 +308,6 @@ const executeSingleQuoteExecution = async (): Promise<TxHash> => {
     if (approvalTx) {
         await web3Store.sendApprovalTransaction(approvalTx)
     }
-    openTransactionStatusModal()
     return web3Store.sendMainTransaction(mainTx)
 }
 
@@ -323,7 +325,6 @@ const executeDoubleQuoteExecution = async (): Promise<TxHash> => {
     if (!mainTx) {
         throw new Error('trying to execute an empty transaction')
     }
-    openTransactionStatusModal()
     return web3Store.sendMainTransaction(mainTx)
 }
 
@@ -334,10 +335,10 @@ const executeDoubleQuoteExecution = async (): Promise<TxHash> => {
 const onInitialTxCompleted = (txHash: TxHash) => {
     transactionStore.informExecutedTx(txHash)
     if (routesStore.isCrossChainRoute) {
-        routesStore.completeFirstStep()
         transactionStore.startCheckingStatus()
-    } else {
-        routesStore.completeRoute()
+    }
+    else {
+        useMetadataStore().fetchBalances()
     }
 }
 
@@ -360,8 +361,9 @@ const unsetExecutingButton = () => {
 /**
  * Opens the transaction status modal after an executed transaction
  */
-const openTransactionStatusModal = () => {
+const openTransactionStatusModal = (txId: string) => {
     isModalStatusOpen.value = true
+    statusModalTxId.value = txId
 }
 
 /**
@@ -370,6 +372,7 @@ const openTransactionStatusModal = () => {
  */
 const closeModalStatus = () => {
     isModalStatusOpen.value = false
+    statusModalTxId.value = ''
 }
 
 const handleChangedReceiver = (address: string) => {
@@ -418,6 +421,7 @@ const handleChangedReceiver = (address: string) => {
     />
     <ModalTransactionStatus
         :show="isModalStatusOpen"
+        :tx-id="statusModalTxId"
         @close-modal="closeModalStatus"
     />
 </template>

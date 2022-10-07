@@ -216,23 +216,6 @@ export const useRoutesStore = defineStore('routes', {
             transactionStore.mainTx = route.tx
         },
         /**
-         * Sets as completed the first step of the selected route
-         */
-        completeFirstStep() {
-            this.getSelectedRoute.steps[0].completed = true
-        },
-        /**
-         * Sets as completed the whole selected route
-         */
-        completeRoute() {
-            this.getSelectedRoute.steps.forEach(step => {
-                step.completed = true
-            })
-            this.getSelectedRoute.completed = true
-            const wallet = useWeb3Store().account
-            useMetadataStore().fetchBalances(wallet)
-        },
-        /**
          * Sets a specific token as selected on origin
          * @param chainId
          * @param address

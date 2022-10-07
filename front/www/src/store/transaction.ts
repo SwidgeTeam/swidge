@@ -1,8 +1,9 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { ApprovalTransactionDetails, TransactionDetails } from '@/domain/paths/path'
-import { NATIVE_COIN_ADDRESS, useWeb3Store } from '@/store/web3'
-import swidgeApi from '@/api/swidge-api'
+import { useWeb3Store } from '@/store/web3'
 import { useRoutesStore } from '@/store/routes'
+import { useMetadataStore } from '@/store/metadata'
+import swidgeApi from '@/api/swidge-api'
 import { TransactionStatus } from '@/api/models/get-status-check'
 import { TxExecutedRequest } from '@/api/models/post-tx-executed'
 import { ethers } from 'ethers'
@@ -25,6 +26,11 @@ export const useTransactionStore = defineStore('transaction', {
         getMainTx(): TransactionDetails | undefined {
             return this.mainTx
         },
+        getTxFromList(state) {
+            return (txId: string): Transaction | undefined => {
+                return state.list.find(tx => tx.id === txId)
+            }
+        }
     },
     actions: {
         /**
@@ -96,9 +102,7 @@ export const useTransactionStore = defineStore('transaction', {
             if (!this.mainTx) {
                 throw new Error('something very wrong, what did we execute then?')
             }
-            const amountIn = routesStore.getOriginTokenAddress === NATIVE_COIN_ADDRESS
-                ? this.mainTx.value
-                : ethers.utils.parseUnits(routesStore.getAmountIn, routesStore.getOriginToken()?.decimals).toString()
+            const amountIn = ethers.utils.parseUnits(routesStore.getAmountIn, routesStore.getOriginToken()?.decimals).toString()
 
             const request = {
                 txId: this.txId,
@@ -113,45 +117,57 @@ export const useTransactionStore = defineStore('transaction', {
                 amountIn: amountIn,
                 trackingId: this.trackingId,
             }
+
+            // immediately store in local array
+            this.addTxToLocalList(request)
+
+            // inform backend about tx
             swidgeApi.informExecutedTx(request)
-                .then(() => {
-                    this.addTxToLocalList(request)
-                })
                 .catch(() => {
+                    // if request failed, store on localstorage
+                    // and start retrying until success
                     storePendingTx(request)
                     this.startRetryingSendingPendingTxs()
                 })
         },
         startRetryingSendingPendingTxs() {
             const pendingTxs = getStoredPendingTxs()
+            // if pending txs to inform to backend, start trying
             if (pendingTxs.length > 0) {
                 setInterval(this.retrySendingPendingTxs, 5000)
             }
         },
         retrySendingPendingTxs() {
             const pendingTxs = getStoredPendingTxs()
+            // for every pending tx, try to inform
             pendingTxs.forEach((params) => {
                 swidgeApi.informExecutedTx(params)
                     .then(() => {
+                        // when successful make sure its on the list
+                        // and remove pending
                         this.addTxToLocalList(params)
                         removePendingTx(params)
                     })
             })
         },
         addTxToLocalList(params: TxExecutedRequest) {
-            this.list.unshift({
-                id: params.txId,
-                originTxHash: params.txHash,
-                destinationTxHash: '',
-                status: TransactionStatus.Pending,
-                date: new Date().toString(),
-                fromChain: params.fromChainId,
-                toChain: params.toChainId,
-                srcAsset: params.fromToken,
-                dstAsset: params.toToken,
-                amountIn: params.amountIn,
-                amountOut: '',
-            })
+            const tx = this.list.find(tx => tx.id === params.txId)
+            if (!tx) {
+                // store only if not existent
+                this.list.unshift({
+                    id: params.txId,
+                    originTxHash: params.txHash,
+                    destinationTxHash: '',
+                    status: TransactionStatus.Pending,
+                    date: new Date().toString(),
+                    fromChain: params.fromChainId,
+                    toChain: params.toChainId,
+                    srcAsset: params.fromToken,
+                    dstAsset: params.toToken,
+                    amountIn: params.amountIn,
+                    amountOut: '',
+                })
+            }
         },
         /**
          * Sets an interval to check the status of the TX until it succeeds or fails
@@ -161,15 +177,13 @@ export const useTransactionStore = defineStore('transaction', {
                 swidgeApi.checkTxStatus({
                     txId: this.txId,
                 }).then(response => {
-                    const routesStore = useRoutesStore()
-                    if (response.status === TransactionStatus.Success) {
+                    const metadataStore = useMetadataStore()
+                    if (response.status !== TransactionStatus.Pending) {
                         this.setTransactionResult(response.txId, response.status, response.amountOut, response.dstTxHash)
                         this.stopCheckingStatus()
-                        routesStore.completeRoute()
-                    } else if (response.status === TransactionStatus.Failed) {
-                        this.setTransactionResult(response.txId, response.status, response.amountOut, response.dstTxHash)
-                        this.stopCheckingStatus()
-                        // TODO do something
+                        if (response.status === TransactionStatus.Success) {
+                            metadataStore.fetchBalances()
+                        }
                     }
                 })
             }, 5000)
