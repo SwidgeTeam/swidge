@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import Check from './svg/Check.vue'
 import DollarSign from './svg/DollarSign.vue'
 import { ClockIcon } from '@heroicons/vue/outline'
 import ProviderIcon from '@/components/Icons/ProviderIcon.vue'
@@ -77,7 +76,9 @@ const totalExecutionTime = computed({
         @click="onClick"
     >
         <div v-if="isSelected" class="absolute -right-1 -top-1 bg-[#633767] rounded-3xl">
-            <Check class="h-4 w-4 m-[2px]"/>
+            <img
+                src="../assets/check.svg"
+                class="h-4 w-4 m-[2px]"/>
         </div>
         <div
             v-if="route.tags.length > 0"
