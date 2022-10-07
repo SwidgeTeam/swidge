@@ -1,6 +1,6 @@
 <!-- https://medium.com/js-dojo/how-to-create-an-animated-countdown-timer-with-vue-89738903823f -->
 <template>
-    <div class="timer relative w-64 h-64">
+    <div class="timer relative w-40 h-40">
         <svg
             class="timer__svg"
             viewBox="0 0 100 100"
@@ -23,7 +23,7 @@
                 ></path>
             </g>
         </svg>
-        <span class="absolute w-64 h-64 top-0 flex items-center justify-center text-[48px]">
+        <span class="absolute w-40 h-40 top-0 flex items-center justify-center text-[40px]">
             {{ formattedTimeLeft }}
         </span>
     </div>

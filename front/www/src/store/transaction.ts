@@ -103,6 +103,7 @@ export const useTransactionStore = defineStore('transaction', {
                 throw new Error('something very wrong, what did we execute then?')
             }
             const amountIn = ethers.utils.parseUnits(routesStore.getAmountIn, routesStore.getOriginToken()?.decimals).toString()
+            const amountOut = ethers.utils.parseUnits(route.resume.amountOut, routesStore.getDestinationToken()?.decimals).toString()
 
             const request = {
                 txId: this.txId,
@@ -119,7 +120,7 @@ export const useTransactionStore = defineStore('transaction', {
             }
 
             // immediately store in local array
-            this.addTxToLocalList(request)
+            this.addTxToLocalList(request, amountOut)
 
             // inform backend about tx
             swidgeApi.informExecutedTx(request)
@@ -150,7 +151,7 @@ export const useTransactionStore = defineStore('transaction', {
                     })
             })
         },
-        addTxToLocalList(params: TxExecutedRequest) {
+        addTxToLocalList(params: TxExecutedRequest, expectedAmount = '') {
             const tx = this.list.find(tx => tx.id === params.txId)
             if (!tx) {
                 // store only if not existent
@@ -165,7 +166,7 @@ export const useTransactionStore = defineStore('transaction', {
                     srcAsset: params.fromToken,
                     dstAsset: params.toToken,
                     amountIn: params.amountIn,
-                    amountOut: '',
+                    amountOut: expectedAmount,
                 })
             }
         },

@@ -5,8 +5,10 @@ import { useTransactionStore } from '@/store/transaction'
 import ModalFull from '@/components/Modals/ModalFull.vue'
 import SwidgeLogo from '../svg/SwidgeLogo.vue'
 import Timer from '@/components/Timer.vue'
-import TokenLogo from '@/components/Icons/TokenLogo.vue'
-import ChainLogo from '@/components/Icons/ChainLogo.vue'
+import { ethers } from 'ethers'
+import AmountFormatter from '@/domain/shared/AmountFormatter'
+import AssetDisplay from '@/components/Modals/TxStatus/AssetDisplay.vue'
+import CopyButton from '@/components/Buttons/CopyButton.vue'
 
 const metadataStore = useMetadataStore()
 const transactionsStore = useTransactionStore()
@@ -23,6 +25,17 @@ const emits = defineEmits<{
 const transaction = computed({
     get: () => {
         return transactionsStore.getTxFromList(props.txId)
+    },
+    set: () => null
+})
+
+const completed = computed({
+    get: () => {
+        if (!transaction.value) {
+            return false
+        }
+        console.log(transaction.value.destinationTxHash)
+        return transaction.value.destinationTxHash !== ''
     },
     set: () => null
 })
@@ -67,6 +80,109 @@ const dstChainIcon = computed({
     set: () => null
 })
 
+const srcChainName = computed({
+    get: () => {
+        if (!transaction.value) {
+            return ''
+        }
+        return getChainName(transaction.value.fromChain)
+    },
+    set: () => null
+})
+
+const dstChainName = computed({
+    get: () => {
+        if (!transaction.value) {
+            return ''
+        }
+        return getChainName(transaction.value.toChain)
+    },
+    set: () => null
+})
+
+const amountIn = computed({
+    get: () => {
+        if (!transaction.value) {
+            return ''
+        }
+        return formattedAmount(transaction.value.fromChain, transaction.value.srcAsset, transaction.value.amountIn)
+    },
+    set: () => null
+})
+
+const amountOut = computed({
+    get: () => {
+        if (!transaction.value) {
+            return ''
+        }
+        const amount = formattedAmount(transaction.value.toChain, transaction.value.dstAsset, transaction.value.amountOut)
+        return completed.value
+            ? amount
+            : `~ ${amount}`
+    },
+    set: () => null
+})
+
+const originHash = computed({
+    get: () => {
+        if (!transaction.value) {
+            return ''
+        }
+        return transaction.value.originTxHash
+    },
+    set: () => null
+})
+
+const destinationHash = computed({
+    get: () => {
+        if (!transaction.value) {
+            return ''
+        }
+        return transaction.value.destinationTxHash
+    },
+    set: () => null
+})
+
+const originExplorerUrl = computed({
+    get: () => {
+        if (!transaction.value) {
+            return ''
+        }
+        return metadataStore.getExplorerTxUrl(transaction.value.fromChain, transaction.value.originTxHash)
+    },
+    set: () => null
+})
+
+const destinationExplorerUrl = computed({
+    get: () => {
+        if (!transaction.value) {
+            return ''
+        }
+        return metadataStore.getExplorerTxUrl(transaction.value.toChain, transaction.value.destinationTxHash)
+    },
+    set: () => null
+})
+
+const symbolIn = computed({
+    get: () => {
+        if (!transaction.value) {
+            return ''
+        }
+        return getTokenSymbol(transaction.value.fromChain, transaction.value.srcAsset)
+    },
+    set: () => null
+})
+
+const symbolOut = computed({
+    get: () => {
+        if (!transaction.value) {
+            return ''
+        }
+        return getTokenSymbol(transaction.value.toChain, transaction.value.dstAsset)
+    },
+    set: () => null
+})
+
 /**
  * Returns the chain icon
  * @param chainId
@@ -74,6 +190,15 @@ const dstChainIcon = computed({
 const getChainIcon = (chainId: string): string => {
     const chain = metadataStore.getChain(chainId)
     return chain ? chain.logo : ''
+}
+
+/**
+ * Returns the chain icon
+ * @param chainId
+ */
+const getChainName = (chainId: string): string => {
+    const chain = metadataStore.getChain(chainId)
+    return chain ? chain.name : ''
 }
 
 /**
@@ -85,6 +210,40 @@ const getTokenIcon = (chainId: string, address: string): string => {
     const token = metadataStore.getToken(chainId, address)
     return token ? token.logo : ''
 }
+
+/**
+ * Returns the token symbol
+ * @param chainId
+ * @param address
+ */
+const getTokenSymbol = (chainId: string, address: string): string => {
+    const token = metadataStore.getToken(chainId, address)
+    return token ? token.symbol : ''
+}
+
+/**
+ * Formats an amount of the given token
+ * @param chainId
+ * @param address
+ * @param amount
+ */
+const formattedAmount = (
+    chainId: string,
+    address: string,
+    amount: string
+): string => {
+    const token = metadataStore.getToken(chainId, address)
+    return token && amount
+        ? AmountFormatter.format(ethers.utils.formatUnits(amount, token.decimals).toString())
+        : '0'
+}
+
+const trimmedTxnHash = (txHash: string) => {
+    if (!txHash) {
+        return '0x000...000'
+    }
+    return `${txHash.slice(0, 5)}....${txHash.slice(-3)}`
+}
 </script>
 
 <template>
@@ -94,41 +253,56 @@ const getTokenIcon = (chainId: string, address: string): string => {
 
         <SwidgeLogo class="absolute w-32 top-2 left-2 cursor-pointer"/>
 
-        <div class="flex flex-col">
-            <div class="flex justify-center">
+        <div class="flex flex-col gap-10 items-center">
+            <div class="flex">
                 <Timer :seconds="200"/>
             </div>
-            <div class="flex justify-center">
-                <div class="relative">
-                    <TokenLogo
-                        :token-logo="srcTokenIcon"
-                        :chain-logo="srcChainIcon"
-                        size="22"
-                    />
-                    <ChainLogo :logo="srcChainIcon" size="14"/>
+            <div class="flex">
+                <AssetDisplay
+                    v-if="!completed"
+                    :token-icon="srcTokenIcon"
+                    :chain-icon="srcChainIcon"
+                    :amount="amountIn"
+                    :symbol="symbolIn"
+                />
+                <div
+                    v-if="!completed"
+                    class="flex">
+                    <img src="../../assets/horizontal-arrow.svg"/>
                 </div>
-                <div>
-                    arrow
+                <AssetDisplay
+                    :token-icon="dstTokenIcon"
+                    :chain-icon="dstChainIcon"
+                    :amount="amountOut"
+                    :symbol="symbolOut"
+                />
+            </div>
+            <div class="flex flex-col items-center w-64">
+                <div class="flex flex-row items-center gap-1">
+                    <span>{{ srcChainName }}:</span>
+                    <a class="link" :href="originExplorerUrl">{{ trimmedTxnHash(originHash) }}</a>
+                    <CopyButton :content="originHash"/>
                 </div>
-                <div class="relative">
-                    <TokenLogo
-                        :token-logo="dstTokenIcon"
-                        :chain-logo="dstChainIcon"
-                        size="22"
-                    />
-                    <ChainLogo :logo="dstChainIcon" size="14"/>
+                <div class="flex flex-row items-center gap-1">
+                    <span>{{ dstChainName }}:</span>
+                    <a
+                        v-if="completed"
+                        :href="destinationExplorerUrl"
+                        class="link">
+                        {{ trimmedTxnHash(destinationHash) }}
+                    </a>
+                    <span
+                        v-else
+                        class="link blur cursor-default">
+                        {{ trimmedTxnHash(destinationHash) }}
+                    </span>
+                    <CopyButton v-if="completed" :content="destinationHash"/>
                 </div>
             </div>
-            <div class="flex justify-center">
-                <div>Start Chain Hash</div>
-                <div>Dest. Chain Hash</div>
-            </div>
-            <div class="flex justify-center">
+            <div class="flex flex-col items-center">
                 <div>Twitter</div>
                 <div>Discord</div>
             </div>
         </div>
-
-        <div class="text-3xl font-bold">Swidge successful!</div>
     </ModalFull>
 </template>
