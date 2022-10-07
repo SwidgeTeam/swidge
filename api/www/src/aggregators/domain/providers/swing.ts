@@ -76,26 +76,34 @@ export class Swing implements Aggregator, ExternalAggregator, MetadataProviderAg
   }
 
   constructor(client: SwingSDK, logger: Logger) {
-    this.client = client; // do we need to initialise this? i.e. .init() -- we good, initializing on the static call
+    this.client = client;
     this.logger = logger;
   }
 
-  // code still relevant -- yeah, so we have granular control over where we enable providers
   isEnabledOn(fromChainId: string, toChainId: string): boolean {
     return this.enabledChains.includes(fromChainId) && this.enabledChains.includes(toChainId);
   }
 
-  // check with Sandro
   public async getMetadata(): Promise<AggregatorMetadata> {
     const chains = this.client.chains.map((chain) => {
       return {
+        type: chain.chainId.toString() === '0' ? 'Non-EVM' : 'EVM',
         id: chain.chainId.toString(),
         name: chain.name,
         logo: chain.logo,
-        rpcUrls: chain.rpcUrls,
-        // missing fields to completed IChain
+        metamask: {
+          chainName: chain.name,
+          blockExplorerUrls: chain.blockExploreUrls,
+          nativeCurrency: {
+            name: chain.nativeCurrency, // is this ok, using both for name and symbol?
+            symbol: chain.nativeCurrency,
+            decimals: 18, // ask Swing to provide this data.
+          },
+          rpcUrls: chain.rpcUrls,
+        },
       };
     });
+
     const tokens = {};
     for (const token of this.client.tokens) {
       tokens[token.chainId.toString()] = this.client.tokens.map((token) => {
@@ -123,16 +131,17 @@ export class Swing implements Aggregator, ExternalAggregator, MetadataProviderAg
 
   async execute(request: AggregatorRequest): Promise<Route> {
     let response;
-    const fromChain = request.fromChain as Components.Schemas.ChainSlug;
+    const fromChain = request.fromChain;
     // would this syntax work? ^
     // it would if we were sure that the chain "key"/slug are the same for them and for us,
     // but we are using the
     // chainID and they are using a string. So we need converting
+    // MT: OK, have removed
     const toChain = request.toChain;
 
     try {
       response = await this.client.getQuote({
-        fromChain: fromChain,
+        fromChain: this.toProviderChainType(fromChain),
         toChain: this.toProviderChainType(toChain),
         fromToken: request.fromToken.symbol as Components.Schemas.TokenSymbol,
         toToken: request.toToken.symbol as Components.Schemas.TokenSymbol,
@@ -149,7 +158,7 @@ export class Swing implements Aggregator, ExternalAggregator, MetadataProviderAg
 
     const route = response.routes[0];
 
-    const steps = this.createSteps(response);
+    const steps = this.createSteps();
     const fees = this.buildFees(response.estimate);
 
     const resume = new RouteResume(
@@ -243,9 +252,8 @@ export class Swing implements Aggregator, ExternalAggregator, MetadataProviderAg
   async checkStatus(request: StatusCheckRequest): Promise<StatusCheckResponse> {
     const response = await this.client.api.getStatus({
       txHash: request.txHash,
-      fromChain: this.toProviderChainType(request.fromChain),
-      toChain: this.toProviderChainType(request.toChain),
       bridge: request.trackingId, // we can simply send `trackingId` cos its the puprose of it, it will be sent to frontend when asking for calldata
+      // MT: OK, removed the other two paramters. txHash is required though.
     });
     let status;
     switch (response.status) {
@@ -307,76 +315,14 @@ export class Swing implements Aggregator, ExternalAggregator, MetadataProviderAg
   }
 
   /**
-   * Create the steps of the route
-   * @param step
+   * Create the steps of the route.
+   * Swing are a OneSteppedAggregator. Return an empty array of RouteSteps.
    * @private
    */
 
-  private createSteps(step: Step): RouteSteps {
+  private createSteps(): RouteSteps {
     let steps = [];
-
-    switch (step.type) {
-      case 'swap':
-        steps.push(this.createStep(step));
-        break;
-      case 'cross':
-        steps.push(this.createStep(step));
-        break;
-      case 'lifi':
-        steps = step.includedSteps.map((s) => this.createStep(s));
-        break;
-    }
-
     return new RouteSteps(steps);
-  }
-
-  /**
-   * Create a single step
-   * @param step
-   * @private
-   */
-  private createStep(step: Step): RouteStep {
-    const fromToken = new Token(
-      step.action.fromToken.chainId.toString(),
-      step.action.fromToken.name,
-      step.action.fromToken.address,
-      step.action.fromToken.decimals,
-      step.action.fromToken.symbol,
-      step.action.fromToken.logoURI,
-    );
-    const toToken = new Token(
-      step.action.toToken.chainId.toString(),
-      step.action.toToken.name,
-      step.action.toToken.address,
-      step.action.toToken.decimals,
-      step.action.toToken.symbol,
-      step.action.toToken.logoURI,
-    );
-
-    const feeInUSD = this.computeFeeInUsd(step.estimate);
-
-    let type;
-    switch (step.type) {
-      case 'swap':
-        type = RouteStep.TYPE_SWAP;
-        break;
-      case 'cross':
-        type = RouteStep.TYPE_BRIDGE;
-        break;
-    }
-
-    const details = new ProviderDetails(step.toolDetails.name, step.toolDetails.logoURI);
-
-    return new RouteStep(
-      type,
-      details,
-      fromToken,
-      toToken,
-      BigInteger.fromString(step.estimate.fromAmount),
-      BigInteger.fromString(step.estimate.toAmount),
-      feeInUSD.toString(),
-      step.estimate.executionDuration,
-    );
   }
 
   private computeFeeInUsd(estimate: Estimate): number {
