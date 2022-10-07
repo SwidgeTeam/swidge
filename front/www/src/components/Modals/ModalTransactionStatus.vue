@@ -300,9 +300,20 @@ const trimmedTxnHash = (txHash: string) => {
                 </div>
             </div>
             <div class="flex flex-col items-center">
-                <div>Twitter</div>
-                <div>Discord</div>
+                <div class="flex flex-row items-center">
+                    <img src="../../assets/discord.svg" class="w-10 h-10 itmes-center align-center"/>
+                    Tweet about your one-click swidge
+                </div>
+                <div class="flex flex-row items-center">
+                    <a href="https://discord.swidge.xyz/">
+                        <img src="../../assets/twitter.svg" class="w-10 h-10 items-center align-center"/>
+                        Join our community on Discord
+                    </a>
+                </div>
             </div>
         </div>
     </ModalFull>
 </template>
+<a href="https://twitter.com/therealswidge">
+
+</a>
