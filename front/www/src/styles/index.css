@@ -300,4 +300,7 @@
         @apply underline text-slate-100
     }
 
+    .link {
+        @apply text-[#6C9CE4] font-light
+    }
 }

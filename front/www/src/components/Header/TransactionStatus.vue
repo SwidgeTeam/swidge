@@ -42,8 +42,7 @@ function padTo2Digits(num: number) {
  * @param txHash
  */
 const getExplorerTxUrl = (chainId: string, txHash: string): string => {
-    const url = metadataStore.getExplorerTxUrl(chainId, txHash)
-    return url ? url : ''
+    return metadataStore.getExplorerTxUrl(chainId, txHash)
 }
 
 /**
