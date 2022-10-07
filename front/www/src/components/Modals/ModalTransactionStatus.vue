@@ -249,11 +249,12 @@ const trimmedTxnHash = (txHash: string) => {
 <template>
     <ModalFull
         :is-open="show"
-        @close="emits('close-modal')">
+        @close="emits('close-modal')"
+    >
 
         <SwidgeLogo class="absolute w-32 top-2 left-2 cursor-pointer"/>
 
-        <div class="flex flex-col gap-10 items-center">
+        <div class="flex flex-col gap-10 items-center pt-16 xs:pt-0">
             <div class="flex">
                 <Timer :seconds="200"/>
             </div>
@@ -299,14 +300,16 @@ const trimmedTxnHash = (txHash: string) => {
                     <CopyButton v-if="completed" :content="destinationHash"/>
                 </div>
             </div>
-            <div class="flex flex-col items-center">
-                <div class="flex flex-row items-center">
-                    <img src="../../assets/discord.svg" class="w-10 h-10 itmes-center align-center"/>
-                    Tweet about your one-click swidge
+            <div class="flex flex-col w-[60%] items-center text-xs text-gray-500 gap-2">
+                <div class="flex flex-row items-center gap-2">
+                    <img src="../../assets/twitter-grey.png" class="w-6 h-6 itmes-center align-center"/>
+                    <a href="https://twitter.com/therealswidge" target="_blank">
+                        Tweet about your one-click swidge
+                    </a>
                 </div>
-                <div class="flex flex-row items-center">
-                    <a href="https://discord.swidge.xyz/">
-                        <img src="../../assets/twitter.svg" class="w-10 h-10 items-center align-center"/>
+                <div class="flex flex-row items-center gap-2">
+                    <img src="../../assets/discord-grey.png" class="w-6 h-6 items-center align-center"/>
+                    <a href="https://discord.swidge.xyz/" target="_blank">
                         Join our community on Discord
                     </a>
                 </div>
@@ -314,6 +317,3 @@ const trimmedTxnHash = (txHash: string) => {
         </div>
     </ModalFull>
 </template>
-<a href="https://twitter.com/therealswidge">
-
-</a>
