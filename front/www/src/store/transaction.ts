@@ -115,19 +115,7 @@ export const useTransactionStore = defineStore('transaction', {
             }
             swidgeApi.informExecutedTx(request)
                 .then(() => {
-                    this.list.unshift({
-                        id: route.id,
-                        originTxHash: txHash,
-                        destinationTxHash: '',
-                        status: TransactionStatus.Pending,
-                        date: new Date().toString(),
-                        fromChain: request.fromChainId,
-                        toChain: request.toChainId,
-                        srcAsset: request.fromToken,
-                        dstAsset: request.toToken,
-                        amountIn: amountIn,
-                        amountOut: '',
-                    })
+                    this.addTxToLocalList(request)
                 })
                 .catch(() => {
                     storePendingTx(request)
@@ -145,8 +133,24 @@ export const useTransactionStore = defineStore('transaction', {
             pendingTxs.forEach((params) => {
                 swidgeApi.informExecutedTx(params)
                     .then(() => {
+                        this.addTxToLocalList(params)
                         removePendingTx(params)
                     })
+            })
+        },
+        addTxToLocalList(params: TxExecutedRequest) {
+            this.list.unshift({
+                id: params.txId,
+                originTxHash: params.txHash,
+                destinationTxHash: '',
+                status: TransactionStatus.Pending,
+                date: new Date().toString(),
+                fromChain: params.fromChainId,
+                toChain: params.toChainId,
+                srcAsset: params.fromToken,
+                dstAsset: params.toToken,
+                amountIn: params.amountIn,
+                amountOut: '',
             })
         },
         /**
