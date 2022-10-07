@@ -7,7 +7,7 @@ import ProviderIcon from '@/components/Icons/ProviderIcon.vue'
 import Route from '@/domain/paths/path'
 import RouteCardOutputValue from '@/components/RouteCardOutputValue.vue'
 import SwapIcon from './svg/SwapIcon.vue'
-import Toolip from '@/components/Toolip.vue';
+import Toolip from '@/components/Toolip.vue'
 
 const props = defineProps<{
     route: Route
