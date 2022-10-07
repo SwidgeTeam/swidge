@@ -29,68 +29,68 @@
     </div>
 </template>
 
-<script setup lang='ts'>
-import { ref, computed, watch, onMounted } from 'vue'
-let timePassed = ref<number>(0)
-let timerInterval = ref<number>(0)
-const props = defineProps<{
-    seconds: number
-}>()
 
-onMounted(() => {
-    startTimer()
-})
-
-const startTimer = () => {
-    timerInterval.value = window.setInterval(() => (timePassed.value += 1), 1000)
-}
-
-const onTimesUp = () => {
-    clearInterval(timerInterval.value)
-}
-
+<script>
 const FULL_DASH_ARRAY = 283
-const circleDasharray = computed({
-    get: () => {
-        return `${(timeFraction.value * FULL_DASH_ARRAY).toFixed(0)} ${FULL_DASH_ARRAY}`
-    },
-    set: () => null
-})
 
-const formattedTimeLeft = computed({
-    get: () => {
-        const minutes = Math.floor(timeLeft.value / 60)
-        let seconds = `${timeLeft.value % 60}`
-
-        if (Number(seconds) < 10) {
-            seconds = `0${seconds}`
+export default {
+    props: {
+        seconds: {
+            type: Number,
+            default: 0
         }
-
-        return `${minutes}:${seconds}`
     },
-    set: () => null
-})
-
-const timeLeft = computed({
-    get: () => {
-        return props.seconds - timePassed.value
+    data() {
+        return {
+            timePassed: 0,
+            timerInterval: null
+        }
     },
-    set: () => null
-})
+    computed: {
+        circleDasharray() {
+            return `${(this.timeFraction * FULL_DASH_ARRAY).toFixed(0)} 283`;
+        },
 
-const timeFraction = computed({
-    get: () => {
-        const rawTimeFraction = timeLeft.value / props.seconds
-        return rawTimeFraction - (1 / props.seconds) * (1 - rawTimeFraction)
+        formattedTimeLeft() {
+            const minutes = Math.floor(this.timeLeft / 60)
+            let seconds = `${this.timeLeft % 60}`
+
+            if (Number(seconds) < 10) {
+                seconds = `0${seconds}`
+            }
+
+            return `${minutes}:${seconds}`
+        },
+
+        timeLeft() {
+            return this.seconds - this.timePassed
+        },
+
+        timeFraction() {
+            const rawTimeFraction = this.timeLeft / this.seconds
+            return rawTimeFraction - (1 / this.seconds) * (1 - rawTimeFraction)
+        },
     },
-    set: () => null
-})
+    watch: {
+        timeLeft(newValue) {
+            if (newValue === 0) {
+                this.onTimesUp()
+            }
+        }
+    },
+    mounted() {
+        this.startTimer()
+    },
+    methods: {
+        onTimesUp() {
+            clearInterval(this.timerInterval)
+        },
 
-watch(timeLeft, (newValue) => {
-    if (newValue === 0) {
-        onTimesUp()
+        startTimer() {
+            this.timerInterval = setInterval(() => (this.timePassed += 1), 1000)
+        }
     }
-})
+}
 </script>
 
 <style scoped>
