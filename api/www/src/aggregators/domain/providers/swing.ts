@@ -1,6 +1,6 @@
 import { Aggregator, ExternalAggregator, MetadataProviderAggregator } from '../aggregator';
 import { AggregatorRequest } from '../aggregator-request';
-import SwingSDK, { TransferParams, Components } from '@swing.xyz/sdk';
+import SwingSDK, { Components } from '@swing.xyz/sdk';
 import { Paths } from '@swing.xyz/sdk/gen/api.d';
 import { BigInteger } from '../../../shared/domain/big-integer';
 import { TransactionDetails } from '../../../shared/domain/route/transaction-details';
@@ -29,8 +29,10 @@ import {
   Avalanche,
   Boba,
   BSC,
+  Celo,
   Cronos,
   Fantom,
+  Fuse,
   Harmony,
   Huobi,
   Mainnet,
@@ -44,7 +46,6 @@ import {
   xDAI,
 } from '../../../shared/enums/ChainIds';
 import { Logger } from '../../../shared/domain/logger';
-import { ApiRequestTimeoutResponse } from '@nestjs/swagger';
 
 export class Swing implements Aggregator, ExternalAggregator, MetadataProviderAggregator {
   private enabledChains = [
@@ -75,44 +76,38 @@ export class Swing implements Aggregator, ExternalAggregator, MetadataProviderAg
   }
 
   constructor(client: SwingSDK, logger: Logger) {
-    this.client = client; // do we need to initialise this? i.e. .init()
+    this.client = client; // do we need to initialise this? i.e. .init() -- we good, initializing on the static call
     this.logger = logger;
   }
-  // code still relevant
+
+  // code still relevant -- yeah, so we have granular control over where we enable providers
   isEnabledOn(fromChainId: string, toChainId: string): boolean {
     return this.enabledChains.includes(fromChainId) && this.enabledChains.includes(toChainId);
   }
+
   // check with Sandro
   public async getMetadata(): Promise<AggregatorMetadata> {
-    let chains, tokens;
-    try {
-      const chainsResponse = this.client.chains;
-      const tokensResponse = this.client.tokens;
-      chains = chainsResponse.map((chain) => {
+    const chains = this.client.chains.map((chain) => {
+      return {
+        id: chain.chainId.toString(),
+        name: chain.name,
+        logo: chain.logo,
+        rpcUrls: chain.rpcUrls,
+        // missing fields to completed IChain
+      };
+    });
+    const tokens = {};
+    for (const token of this.client.tokens) {
+      tokens[token.chainId.toString()] = this.client.tokens.map((token) => {
         return {
-          id: chain.chainId.toString(),
-          name: chain.name,
-          logo: chain.logo,
-          rpcUrls: chain.rpcUrls,
+          chainId: token.chainId.toString(),
+          address: this.fromProviderAddress(token.address),
+          name: token.name,
+          symbol: token.symbol,
+          decimals: token.decimals,
+          logo: token.logoURI,
         };
       });
-      tokens = {};
-      for (const token of tokensResponse) {
-        tokens[token.chainId.toString()] = tokensResponse.map((token) => {
-          return {
-            chainId: token.chainId.toString(),
-            address: this.fromProviderAddress(token.address),
-            name: token.name,
-            symbol: token.symbol,
-            decimals: token.decimals,
-            logo: token.logoURI,
-          };
-        });
-      }
-    } catch (e) {
-      this.logger.error(`Swing failed to fetch metadata: ${e}`);
-      chains = [];
-      tokens = {};
     }
 
     return {
@@ -128,17 +123,19 @@ export class Swing implements Aggregator, ExternalAggregator, MetadataProviderAg
 
   async execute(request: AggregatorRequest): Promise<Route> {
     let response;
-    const fromChain = request.fromChain as Components.Schemas.ChainSlug; // would this syntax work?
-    const fromToken = this.toProviderAddress(request.fromToken);
+    const fromChain = request.fromChain as Components.Schemas.ChainSlug;
+    // would this syntax work? ^
+    // it would if we were sure that the chain "key"/slug are the same for them and for us,
+    // but we are using the
+    // chainID and they are using a string. So we need converting
     const toChain = request.toChain;
-    const toToken = this.toProviderAddress(request.toToken);
 
     try {
       response = await this.client.getQuote({
         fromChain: fromChain,
-        fromToken: this.toProviderTokenType(fromToken),
         toChain: this.toProviderChainType(toChain),
-        toToken: this.toProviderTokenType(toToken),
+        fromToken: request.fromToken.symbol as Components.Schemas.TokenSymbol,
+        toToken: request.toToken.symbol as Components.Schemas.TokenSymbol,
         amount: request.amountIn.toString(),
         fromUserAddress: request.senderAddress,
         toUserAddress: request.receiverAddress,
@@ -248,7 +245,7 @@ export class Swing implements Aggregator, ExternalAggregator, MetadataProviderAg
       txHash: request.txHash,
       fromChain: this.toProviderChainType(request.fromChain),
       toChain: this.toProviderChainType(request.toChain),
-      bridge: this.toProviderBridgeType(request.trackingId),
+      bridge: request.trackingId, // we can simply send `trackingId` cos its the puprose of it, it will be sent to frontend when asking for calldata
     });
     let status;
     switch (response.status) {
@@ -284,7 +281,7 @@ export class Swing implements Aggregator, ExternalAggregator, MetadataProviderAg
           ? BigInteger.fromString(response.toAmount)
           : BigInteger.zero(),
       fromToken: response.fromTokenAddress
-        ? this.fromProviderAddress(response.fromTokenAddress)
+        ? this.fromProviderAddress(response.fromTokenAddress) // curious to see which address they use for native coin (prob either 0xeeeee.., 0x0000.. or null)
         : '',
       toToken:
         response.status === 'Completed' ? this.fromProviderAddress(response.toTokenAddress) : '',
@@ -434,128 +431,61 @@ export class Swing implements Aggregator, ExternalAggregator, MetadataProviderAg
    */
 
   private toProviderChainType(chain: string): Components.Schemas.ChainSlug {
-    let chainSlug: Components.Schemas.ChainSlug;
     switch (chain) {
-      case 'ethereum':
+      case Mainnet:
         return 'ethereum';
-      case 'arbitrum':
+      case Arbitrum:
         return 'arbitrum';
-      case 'avalanche':
+      case Avalanche:
         return 'avalanche';
-      case 'boba':
+      case Boba:
         return 'boba';
-      case 'bsc':
+      case BSC:
         return 'bsc';
-      case 'bsctest':
-        return 'bsctest';
-      case 'celo':
+      case Celo:
         return 'celo';
-      case 'cronos':
+      case Cronos:
         return 'cronos';
-      case 'fantom':
+      case Fantom:
         return 'fantom';
-      case 'fuji':
-        return 'fuji';
-      case 'fuse':
+      case Fuse:
         return 'fuse';
-      case 'gnosis':
+      case xDAI:
         return 'gnosis';
-      case 'harmony':
+      case Harmony:
         return 'harmony';
-      case 'heco':
+      case Huobi:
         return 'heco';
-      case 'metis':
+      case Metis:
         return 'metis';
-      case 'moonbeam':
+      case Moonbeam:
         return 'moonbeam';
-      case 'moonriver':
+      case Moonriver:
         return 'moonriver';
-      case 'mumbai':
-        return 'mumbai';
-      case 'fuji':
-        return 'fuji';
-      case 'kovan':
-        return 'kovan';
-      case 'goerli':
-        return 'goerli';
-      case 'rinkeby':
-        return 'rinkeby';
-      case 'ropsten':
-        return 'ropsten';
-      case 'aurora':
+      //case 'fuji':
+      //  return 'fuji';
+      case Aurora:
         return 'aurora';
       case 'oec':
         return 'oec';
-      case 'optimism':
+      case Optimism:
         return 'optimism';
-      case 'polygon':
+      case Polygon:
         return 'polygon';
-      case 'solana':
-        return 'solana';
-      case 'terra':
-        return 'terra';
-      case 'oasis':
-        return 'oasis';
-      case 'dfk':
-        return 'dfk';
-      case 'bttc':
-        return 'bttc';
-      case 'kcc':
-        return 'kcc';
-      case 'gather':
-        return 'gather';
+      //case 'solana':
+      //  return 'solana';
+      //case 'oasis':
+      //  return 'oasis';
+      //case 'dfk':
+      //  return 'dfk';
+      //case 'bttc':
+      //  return 'bttc';
+      //case 'kcc':
+      //  return 'kcc';
+      //case 'gather':
+      //  return 'gather';
       default:
         throw new Error('blockchain not supported');
-    }
-  }
-
-  /**
-   * makes sure a token symbol is in the format the provider uses
-   * @param token
-   * @private
-   */
-
-  private toProviderTokenType(token: string): Components.Schemas.TokenSymbol {
-    let tokenSymbol: Components.Schemas.TokenSymbol;
-    switch (token) {
-      case 'ETH':
-        return 'ETH';
-      case 'MATIC':
-        return 'MATIC';
-      case 'XDAI':
-        return 'XDAI';
-      case 'USDC':
-        return 'USDC';
-      case 'USDT':
-        return 'USDT';
-      case 'DAI':
-        return 'DAI';
-      case 'WBTC':
-        return 'WBTC';
-      case 'sBTC':
-        return 'sBTC';
-      case 'sETH':
-        return 'sETH';
-      case 'WETH':
-        return 'WETH';
-      case 'WMATIC':
-        return 'WMATIC';
-      case 'WXDAI':
-        return 'WXDAI';
-      case 'hETH':
-        return 'hETH';
-      case 'hMATIC':
-        return 'hMATIC';
-      case 'hUSDC':
-        return 'hUSDC';
-      case 'hUSDT':
-        return 'hUSDT';
-      case 'hDAI':
-        return 'hDAI';
-      case 'AVAX':
-        return 'AVAX';
-      default:
-        throw new Error('token not supported');
     }
   }
 
@@ -564,7 +494,6 @@ export class Swing implements Aggregator, ExternalAggregator, MetadataProviderAg
    * @param bridge
    * @private
    */
-
   private toProviderBridgeType(bridge: string): Components.Schemas.Bridge {
     let bridgeSlug: Components.Schemas.Bridge;
     switch (bridge) {
