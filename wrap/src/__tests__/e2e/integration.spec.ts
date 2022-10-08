@@ -8,6 +8,7 @@ import { encode } from "@msgpack/msgpack";
 import { ethers } from 'ethers';
 import { createJob, deployQueue, getConfig } from '../utils';
 import { CheckerResult } from '../../wrap';
+import { getClientConfig } from '../../../workflows/client-config';
 
 jest.setTimeout(60000);
 
@@ -23,7 +24,7 @@ describe("Checker", () => {
 
     await initTestEnvironment();
 
-    client = new PolywrapClient(getConfig());
+    client = new PolywrapClient(await getClientConfig(getConfig()));
   })
 
   afterAll(async () => {

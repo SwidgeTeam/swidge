@@ -2,9 +2,12 @@ name: template-wasm-rs
 format: 0.1
 validation: "./workflows/validation.cue"
 jobs:
-  sampleMethod:
+  quote:
     steps:
-      - uri: fs/build
-        method: sampleMethod
+      - uri: wrap://fs/./build
+        method: checker
         args:
-          arg: "polywrap"
+          userArgsBuffer:
+            queueAddress: '0x2323412312312312312312312312312312312312'
+          gelatoArgsBuffer: null
+

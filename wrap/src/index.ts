@@ -5,8 +5,6 @@ import {
   Ethereum_Module,
   Http_Module,
   JobResponse,
-  Logger_Logger_LogLevel,
-  Logger_Module,
   UserArgs
 } from "./wrap";
 
@@ -33,10 +31,12 @@ export function checker(args: Args_checker): CheckerResult {
     const pendingJob = item as JSON.Obj;
     const jobResponse = getCallData(pendingJob);
     const job = JSON.Value.Object();
-    job.set('jobId', pendingJob.get('id'));
-    job.set('providerInfo', pendingJob.get('providerInfo'));
-    job.set('handler', jobResponse.handler);
-    job.set('data', jobResponse.data);
+    if (!jobResponse.error) {
+      job.set('jobId', pendingJob.get('id'));
+      job.set('providerInfo', pendingJob.get('providerInfo'));
+      job.set('handler', jobResponse.handler);
+      job.set('data', jobResponse.data);
+    }
     return job;
   });
 
@@ -61,22 +61,60 @@ export function checker(args: Args_checker): CheckerResult {
 }
 
 function getCallData(job: JSON.Obj): JobResponse {
+  const srcChain = job.get('srcChain');
+  const dstChain = job.get('dstChain');
+  const inputAsset = job.get('inputAsset');
+  const dstAsset = job.get('dstAsset');
+  const sender = job.get('sender');
+  const receiver = job.get('receiver');
+  const amountIn = job.get('amountIn');
+  const minAmountOut = job.get('minAmountOut');
+
+  if (!srcChain || !dstChain || !inputAsset || !dstAsset ||
+    !sender || !receiver || !amountIn || !minAmountOut) {
+    return {
+      error: true,
+      handler: '',
+      data: '',
+    };
+  }
+
   let jobResponse = Http_Module.get({
     request: null,
-    url: `https://api.swidge.xyz/quote?` +
-      `srcChain=${job.get('srcChain')}` +
-      `&dstChain=${job.get('dstChain')}` +
-      `&srcAsset=${job.get('inputAsset')}` +
-      `&dstAsset=${job.get('dstAsset')}` +
-      `&sender=${job.get('sender')}` +
-      `&receiver=${job.get('receiver')}` +
-      `&amountIn=${job.get('amountIn')}` +
-      `&minAmountOut=${job.get('minAmountOut')}`,
+    url: 'https://api.swidge.xyz/quote?' +
+      `srcChain=${srcChain}` +
+      `&dstChain=${dstChain}` +
+      `&srcAsset=${inputAsset}` +
+      `&dstAsset=${dstAsset}` +
+      `&sender=${sender}` +
+      `&receiver=${receiver}` +
+      `&amountIn=${amountIn}` +
+      `&minAmountOut=${minAmountOut}`,
   }).unwrap();
 
+  if (!jobResponse)
+    return {
+      error: true,
+      handler: '',
+      data: '',
+    };
+
+  const jobObj = <JSON.Obj>JSON.parse(jobResponse.body);
+  const handler = jobObj.get('handler');
+  const data = jobObj.get('data');
+
+  if (!handler || !data) {
+    return {
+      error: true,
+      handler: '',
+      data: '',
+    };
+  }
+
   return {
-    handler: '0x2323412312312312312312312312312312312312',
-    data: '0x',
+    error: false,
+    handler: handler.toString(),
+    data: data.toString(),
   };
 }
 

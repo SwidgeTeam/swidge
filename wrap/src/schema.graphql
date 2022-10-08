@@ -25,6 +25,7 @@ type GelatoArgs {
 }
 
 type JobResponse {
+    error: Boolean!
     handler: String!
     data: String!
 }
