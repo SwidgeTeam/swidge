@@ -6,14 +6,14 @@ import {
 import { Swidge_Module } from "../types/wrap";
 import path from "path";
 import { encode } from "@msgpack/msgpack";
-import { createJob, deployQueue } from "../utils";
+import { createJob, deployQueue, getConfig } from "../utils";
 import { ethers } from 'ethers';
 
 jest.setTimeout(60000);
 
 describe("Template Wrapper End to End Tests", () => {
 
-  const client: PolywrapClient = new PolywrapClient();
+  const client: PolywrapClient = new PolywrapClient(getConfig());
   let wrapperUri: string;
 
   beforeAll(async () => {
