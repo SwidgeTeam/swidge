@@ -40,6 +40,8 @@ const showTransactionAlert = ref(false)
 const transactionAlertMessage = ref<string>('')
 const isExecutingTransaction = ref<boolean>(false)
 
+let quote: number
+
 const buttonLabel = computed({
     get: () => {
         if (!web3Store.isConnected) {
@@ -101,6 +103,8 @@ const destinationChainSelected = computed({
  * Handles the update of the amount on the origin amount
  */
 const handleSourceInputChanged = () => {
+    // console.log('CLEAR')
+    clearInterval(quote)
     tryToQuote()
 }
 
@@ -152,6 +156,7 @@ const handleUpdateTokenFromModal = (token: IToken) => {
     }
 
     // Check if we can quote
+    clearInterval(quote)
     tryToQuote()
 
     // Close modal
@@ -203,6 +208,9 @@ const tryToQuote = async () => {
 
     try {
         await routesStore.quotePath()
+        quote = setInterval(async () => {
+            return await routesStore.quotePath()
+        }, 15000)
 
         const thereAreRoutes = routesStore.getAllRoutes.length > 0
         if (!thereAreRoutes) {
@@ -217,6 +225,7 @@ const tryToQuote = async () => {
         }
     } catch (e: unknown) {
         onQuotingError(e as Error)
+        clearInterval(quote)
     }
 }
 
@@ -378,13 +387,18 @@ const closeModalStatus = () => {
 
 const handleChangedReceiver = (address: string) => {
     routesStore.setReceiverAddress(address)
+    clearInterval(quote)
     tryToQuote()
 }
 </script>
 
 <template>
-    <div class="flex flex-col gap-3 px-3 md:mt-[20px] w-full max-w-md rounded-xl">
-        <div class="flex justify-end gap-2 py-2 h-[var(--settings-line-height)]">
+    <div
+        class="flex flex-col gap-3 px-3 md:mt-[20px] w-full max-w-md rounded-xl"
+    >
+        <div
+            class="flex justify-end gap-2 py-2 h-[var(--settings-line-height)]"
+        >
             <ReloadIcon class="w-5 h-5 cursor-pointer" @click="tryToQuote" />
             <AdjustmentsIcon
                 class="w-5 h-5 cursor-pointer"
