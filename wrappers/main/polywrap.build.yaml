@@ -1,8 +1,12 @@
 format: 0.1.0
 docker:
-  name: template-wasm-rs
+  name: build-env
+  dockerfile: ./.polywrap/Dockerfile
 config:
   node_version: "16.13.0"
   include:
     - ./package.json
     - ./src
+linked_packages:
+  - name: node_modules
+    path: ./node_modules
