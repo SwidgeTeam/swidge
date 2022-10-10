@@ -40,7 +40,7 @@ const showTransactionAlert = ref(false)
 const transactionAlertMessage = ref<string>('')
 const isExecutingTransaction = ref<boolean>(false)
 
-let quote: number
+let quote: ReturnType<typeof setInterval> | undefined
 
 const buttonLabel = computed({
     get: () => {
