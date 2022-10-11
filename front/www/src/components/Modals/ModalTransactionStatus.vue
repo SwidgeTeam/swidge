@@ -310,16 +310,22 @@ const trimmedTxnHash = (txHash: string) => {
                     <CopyButton v-if="completed" :content="destinationHash"/>
                 </div>
             </div>
-            <div class="flex flex-col w-[60%] items-center text-xs text-gray-500 gap-2">
-                <div class="flex flex-row items-center gap-2">
-                    <img src="../../assets/twitter-grey.png" class="w-6 h-6 itmes-center align-center"/>
-                    <a href="https://twitter.com/therealswidge" target="_blank">
+            <div class="flex flex-col w-[60%] items-center text-xs text-gray-500 gap-3">
+                <div>
+                    <a
+                        href="https://twitter.com/therealswidge"
+                        target="_blank"
+                        class="flex flex-row items-center gap-2">
+                        <img src="../../assets/twitter-grey.png" class="w-6 h-6 itmes-center align-center"/>
                         Tweet about your one-click swidge
                     </a>
                 </div>
-                <div class="flex flex-row items-center gap-2">
-                    <img src="../../assets/discord-grey.png" class="w-6 h-6 items-center align-center"/>
-                    <a href="https://discord.swidge.xyz/" target="_blank">
+                <div>
+                    <a
+                        href="https://discord.swidge.xyz/"
+                        target="_blank"
+                        class="flex flex-row items-center gap-2">
+                        <img src="../../assets/discord-grey.png" class="w-6 h-6 items-center align-center"/>
                         Join our community on Discord
                     </a>
                 </div>
