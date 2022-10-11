@@ -29,8 +29,7 @@ export const requests = [
       "&amountIn=100" +
       "&minAmountOut=90",
     reply: '{' +
-      '"providerId": "4",' +
-      '"trackingId": "hop",' +
+      '"providerDetails": "0x041532108bb8db43e9afe1593d1003640d",' +
       '"handler": "0x2323412312312312312312312312312312312312",' +
       '"data": "0x"' +
       '}',

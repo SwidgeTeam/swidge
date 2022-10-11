@@ -5,6 +5,7 @@ import { Connection, Connections, ethereumPlugin } from "@polywrap/ethereum-plug
 import { ipfsPlugin } from "@polywrap/ipfs-plugin-js";
 import { ContractFactory, Contract, Signer, ethers } from 'ethers';
 import { abi, bytecode } from './contracts/JobsQueue';
+import nock from 'nock';
 
 export function getConfig(): Partial<ClientConfig> {
   return {
@@ -52,7 +53,14 @@ export async function createJob(queue: string, args: any[]): Promise<void> {
   await contract.connect(signer).createJob(calldata);
 }
 
+export function mockEndpoint(basePath: string, url: string, result: any) {
+  nock(basePath)
+    .get(url)
+    .reply(200, result);
+}
+
 function getSigner(): Signer {
   const connection = new Connection({ provider: providers.ethereum });
   return connection.getSigner();
 }
+
