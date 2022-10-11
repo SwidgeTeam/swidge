@@ -272,6 +272,7 @@ const onExecuteTransaction = async () => {
         })
         .catch((error) => {
             console.log(error)
+            toast.dismiss(toastId)
             toast.error('Transaction failed')
             closeModalStatus()
         })
