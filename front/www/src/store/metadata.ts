@@ -105,6 +105,7 @@ export const useMetadataStore = defineStore('metadata', {
         async fetchBalances(wallet: string) {
             const tokenBalances = await swidgeApi.fetchBalances(wallet)
             this.emptyPrices = tokenBalances.empty
+            this.balances = []
             for (const [chainId, tokens] of Object.entries(this.tokens)) {
                 this.tokens[chainId] = tokens.map(token => {
                     const tokenBalance = tokenBalances.tokens.find(tokenBalance => {
