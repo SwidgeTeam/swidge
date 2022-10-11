@@ -3,13 +3,13 @@ import { computed } from 'vue'
 import { useMetadataStore } from '@/store/metadata'
 import { useTransactionStore } from '@/store/transaction'
 import ModalFull from '@/components/Modals/ModalFull.vue'
-import SwidgeLogo from '../svg/SwidgeLogo.vue'
 import Timer from '@/components/Timer.vue'
 import { ethers } from 'ethers'
 import AmountFormatter from '@/domain/shared/AmountFormatter'
 import AssetDisplay from '@/components/Modals/TxStatus/AssetDisplay.vue'
 import CopyButton from '@/components/Buttons/CopyButton.vue'
 import { PendingTransaction } from '@/domain/transactions/transactions'
+import SwidgeLogoWithText from '@/components/Icons/SwidgeLogoWithText.vue'
 
 const metadataStore = useMetadataStore()
 const transactionsStore = useTransactionStore()
@@ -35,7 +35,6 @@ const completed = computed({
         if (!transaction.value) {
             return false
         }
-        console.log(transaction.value.destinationTxHash)
         return transaction.value.destinationTxHash !== ''
     },
     set: () => null
@@ -253,12 +252,14 @@ const trimmedTxnHash = (txHash: string) => {
         @close="emits('close-modal')"
     >
 
-        <SwidgeLogo class="absolute w-32 top-2 left-2 cursor-pointer"/>
+        <div class="absolute flex flex-row w-32 top-2 left-2 cursor-pointer">
+            <SwidgeLogoWithText/>
+        </div>
 
         <div class="flex flex-col gap-10 items-center pt-16 xs:pt-0">
             <div class="flex">
                 <Timer
-                    :seconds="Math.round(transaction.expectedTime)"
+                    :seconds="transaction ? Math.round(transaction.expectedTime) : 0"
                     :finished="completed"
                 />
             </div>

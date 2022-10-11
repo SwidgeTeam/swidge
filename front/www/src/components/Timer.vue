@@ -94,6 +94,9 @@ export default {
     mounted() {
         this.startTimer()
     },
+    beforeUnmount() {
+        this.onTimesUp()
+    },
     methods: {
         onTimesUp() {
             clearInterval(this.timerInterval)
