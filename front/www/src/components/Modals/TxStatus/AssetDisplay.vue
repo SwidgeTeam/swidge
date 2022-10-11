@@ -21,9 +21,9 @@ defineProps<{
             />
             <ChainLogo :logo="chainIcon" size="14"/>
         </div>
-        <div class="flex gap-1">
-            <span>{{ amount }}</span>
-            <span class="text-xs">{{ symbol }}</span>
+        <div class="flex gap-2 items-center">
+            <div>{{ amount }}</div>
+            <div class="text-xs">{{ symbol }}</div>
         </div>
     </div>
 </template>

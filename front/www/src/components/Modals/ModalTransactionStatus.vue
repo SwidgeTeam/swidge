@@ -280,10 +280,11 @@ const trimmedTxnHash = (txHash: string) => {
                     :chain-icon="dstChainIcon"
                     :amount="amountOut"
                     :symbol="symbolOut"
+                    :class="{'text-xl': completed}"
                 />
             </div>
             <div
-                v-if="!completed"
+                v-if="completed"
                 class="text-lg text-green-700">
                 Swidge successful
             </div>
