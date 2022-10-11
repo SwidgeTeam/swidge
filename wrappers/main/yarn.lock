@@ -1293,11 +1293,11 @@
 
 "@polywrap/ethereum-plugin-js@file:../../../../../personal/tech/polywrap/toolchain/packages/js/plugins/ethereum":
   "resolved" "file:../../../../../personal/tech/polywrap/toolchain/packages/js/plugins/ethereum"
-  "version" "0.9.0"
+  "version" "0.7.0"
   dependencies:
     "@ethersproject/address" "5.0.7"
     "@ethersproject/providers" "5.0.7"
-    "@polywrap/core-js" "0.9.0"
+    "@polywrap/core-js" "0.7.0"
     "ethers" "5.0.7"
 
 "@polywrap/fs-plugin-js@0.8.0":
@@ -4580,6 +4580,11 @@
   dependencies:
     "@apidevtools/json-schema-ref-parser" "9.0.9"
 
+"json-stringify-safe@^5.0.1":
+  "integrity" "sha512-ZClg6AaYvamvYEE82d3Iyd3vSSIjQ+odgjaTzRuO3s7toCdFKczob2i0zCh7JE8kWn17yvAWhUVxvqGwUalsRA=="
+  "resolved" "https://registry.npmjs.org/json-stringify-safe/-/json-stringify-safe-5.0.1.tgz"
+  "version" "5.0.1"
+
 "json-text-sequence@~0.1.0":
   "integrity" "sha512-L3mEegEWHRekSHjc7+sc8eJhba9Clq1PZ8kMkzf8OxElhXc8O4TS5MwcVlj9aEbm5dr81N90WHC5nAz3UO971w=="
   "resolved" "https://registry.npmjs.org/json-text-sequence/-/json-text-sequence-0.1.1.tgz"
@@ -4747,7 +4752,7 @@
   "resolved" "https://registry.npmjs.org/lodash.upperfirst/-/lodash.upperfirst-4.3.1.tgz"
   "version" "4.3.1"
 
-"lodash@^4.7.0", "lodash@4.x":
+"lodash@^4.17.21", "lodash@^4.7.0", "lodash@4.x":
   "integrity" "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="
   "resolved" "https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz"
   "version" "4.17.21"
@@ -5190,6 +5195,16 @@
   "resolved" "https://registry.npmjs.org/nice-try/-/nice-try-1.0.5.tgz"
   "version" "1.0.5"
 
+"nock@^13.2.9":
+  "integrity" "sha512-1+XfJNYF1cjGB+TKMWi29eZ0b82QOvQs2YoLNzbpWGqFMtRQHTa57osqdGj4FrFPgkO4D4AZinzUJR9VvW3QUA=="
+  "resolved" "https://registry.npmjs.org/nock/-/nock-13.2.9.tgz"
+  "version" "13.2.9"
+  dependencies:
+    "debug" "^4.1.0"
+    "json-stringify-safe" "^5.0.1"
+    "lodash" "^4.17.21"
+    "propagate" "^2.0.0"
+
 "node-fetch@*", "node-fetch@^2.6.0":
   "integrity" "sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ=="
   "resolved" "https://registry.npmjs.org/node-fetch/-/node-fetch-2.6.7.tgz"
@@ -5617,6 +5632,11 @@
   dependencies:
     "kleur" "^3.0.3"
     "sisteransi" "^1.0.5"
+
+"propagate@^2.0.0":
+  "integrity" "sha512-vGrhOavPSTz4QVNuBNdcNXePNdNMaO1xj9yBeH1ScQPjk/rhg9sSlCXPhMkFuaNNW/syTvYqsnbIJxMBfRbbag=="
+  "resolved" "https://registry.npmjs.org/propagate/-/propagate-2.0.1.tgz"
+  "version" "2.0.1"
 
 "protocol-buffers-schema@^3.3.1":
   "integrity" "sha512-TdDRD+/QNdrCGCE7v8340QyuXd4kIWIgapsE2+n/SaGiSSbomYl4TjHlvIoCWRpE7wFt02EpB35VVA2ImcBVqw=="
