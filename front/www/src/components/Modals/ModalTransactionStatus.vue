@@ -35,7 +35,7 @@ const crossChainTx = computed({
         if (!transaction.value) {
             return false
         }
-        return transaction.value.fromChain === transaction.value.toChain
+        return transaction.value.fromChain !== transaction.value.toChain
     },
     set: () => null
 })
@@ -45,7 +45,7 @@ const completed = computed({
         if (!transaction.value) {
             return false
         }
-        return crossChainTx.value || transaction.value.destinationTxHash !== ''
+        return !crossChainTx.value || transaction.value.destinationTxHash !== ''
     },
     set: () => null
 })
