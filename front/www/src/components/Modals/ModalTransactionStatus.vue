@@ -30,12 +30,22 @@ const transaction = computed({
     set: () => null
 })
 
+const crossChainTx = computed({
+    get: () => {
+        if (!transaction.value) {
+            return false
+        }
+        return transaction.value.fromChain === transaction.value.toChain
+    },
+    set: () => null
+})
+
 const completed = computed({
     get: () => {
         if (!transaction.value) {
             return false
         }
-        return transaction.value.fromChain === transaction.value.toChain || transaction.value.destinationTxHash !== ''
+        return crossChainTx.value || transaction.value.destinationTxHash !== ''
     },
     set: () => null
 })
@@ -295,7 +305,7 @@ const trimmedTxnHash = (txHash: string) => {
                     <a class="link" :href="originExplorerUrl">{{ trimmedTxnHash(originHash) }}</a>
                     <CopyButton :content="originHash"/>
                 </div>
-                <div class="flex flex-row items-center gap-1">
+                <div v-if="crossChainTx" class="flex flex-row items-center gap-1">
                     <span>{{ dstChainName }}:</span>
                     <a
                         v-if="completed"
