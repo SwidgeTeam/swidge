@@ -15,7 +15,10 @@ module.exports = async function (taskArguments, hre, runSuper) {
   const bytecode = data.bytecode;
 
   fs.writeFileSync(
-    path.join(__dirname, "/../../../wrap/src/__tests__/contracts/JobsQueue.ts"),
+    path.join(
+      __dirname,
+      "/../../../wrappers/standalone/src/__tests__/contracts/JobsQueue.ts"
+    ),
     `export const abi = '${abi}';\nexport const bytecode = '${bytecode}';`
   );
 };
