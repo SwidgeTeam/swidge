@@ -11,7 +11,7 @@ import { ProviderDetails } from '../../../shared/domain/provider-details';
 import { TransactionDetails } from '../../../shared/domain/route/transaction-details';
 import { ApprovalTransactionDetails } from '../../../shared/domain/route/approval-transaction-details';
 import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
-import { Aggregator, ExternalAggregator, TwoSteppedAggregator } from '../aggregator';
+import { Aggregator, ExternalAggregator } from '../aggregator';
 import {
   ExternalTransactionStatus,
   StatusCheckRequest,
@@ -23,7 +23,7 @@ import { IPriceFeedFetcher } from '../../../shared/domain/price-feed-fetcher';
 import { IGasPriceFetcher } from '../../../shared/domain/gas-price-fetcher';
 import { Action } from 'rxjs/internal/scheduler/Action';
 
-export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAggregator {
+export class ViaExchange implements Aggregator, ExternalAggregator {
   private enabledChains = [];
   private client: Via;
   private gasPriceFetcher: IGasPriceFetcher;

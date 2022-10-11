@@ -3,17 +3,17 @@ import { Inject } from '@nestjs/common';
 import { Class } from '../../../shared/Class';
 import { Logger } from '../../../shared/domain/logger';
 import { AggregatorProviders } from '../../domain/providers/aggregator-providers';
-import { ViaExchange } from '../../domain/providers/via-exchange';
 import BuildMainTxQuery from './build-main-tx-query';
-import { TransactionDetails } from '../../../shared/domain/route/transaction-details';
 import { ConfigService } from '../../../config/config.service';
-import { TwoSteppedAggregator } from 'src/aggregators/domain/aggregator';
+import { AggregatorTx, SteppedAggregator } from 'src/aggregators/domain/aggregator';
 import { CachedGasPriceFetcher } from '../../../shared/domain/cached-gas-price-fetcher';
 import { CachedPriceFeedFetcher } from '../../../shared/domain/cached-price-feed-fetcher';
+import { Rango } from '../../domain/providers/rango';
+import { AggregatorRequest } from '../../domain/aggregator-request';
 
 @QueryHandler(BuildMainTxQuery)
 export class BuildMainTxHandler implements IQueryHandler<BuildMainTxQuery> {
-  private aggregators: Map<string, TwoSteppedAggregator>;
+  private aggregators: Map<string, SteppedAggregator>;
 
   constructor(
     private readonly configService: ConfigService,
@@ -21,16 +21,22 @@ export class BuildMainTxHandler implements IQueryHandler<BuildMainTxQuery> {
     @Inject(Class.PriceFeedFetcher) private readonly priceFeedFetcher: CachedPriceFeedFetcher,
     @Inject(Class.Logger) private readonly logger: Logger,
   ) {
-    this.aggregators = new Map<string, TwoSteppedAggregator>([
-      [
-        AggregatorProviders.Via,
-        ViaExchange.create(configService.getViaApiKey(), gasPriceFetcher, priceFeedFetcher),
-      ],
+    this.aggregators = new Map<string, SteppedAggregator>([
+      [AggregatorProviders.Rango, Rango.create(configService.getRangoApiKey(), logger)],
     ]);
   }
 
-  execute(query: BuildMainTxQuery): Promise<TransactionDetails> {
+  async execute(query: BuildMainTxQuery): Promise<AggregatorTx> {
+    this.logger.log(`Building tx for ${query.aggregatorId}...`);
+    const request = new AggregatorRequest(
+      query.srcToken,
+      query.dstToken,
+      query.amount,
+      query.slippage,
+      query.senderAddress,
+      query.receiverAddress,
+    );
     const aggregator = this.aggregators.get(query.aggregatorId);
-    return aggregator.buildTx(query.routeId, query.senderAddress, query.receiverAddress);
+    return aggregator.buildTx(request);
   }
 }

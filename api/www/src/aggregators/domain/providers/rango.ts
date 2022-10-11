@@ -33,10 +33,10 @@ import { TransactionDetails } from '../../../shared/domain/route/transaction-det
 import { ApprovalTransactionDetails } from '../../../shared/domain/route/approval-transaction-details';
 import BothTxs from '../both-txs';
 import {
-  Aggregator,
+  Aggregator, AggregatorTx,
   ExternalAggregator,
   MetadataProviderAggregator,
-  OneSteppedAggregator,
+  SteppedAggregator,
 } from '../aggregator';
 import {
   ExternalTransactionStatus,
@@ -83,8 +83,7 @@ declare type RangoToken = {
 };
 
 export class Rango
-  implements Aggregator, OneSteppedAggregator, ExternalAggregator, MetadataProviderAggregator
-{
+  implements Aggregator, SteppedAggregator, ExternalAggregator, MetadataProviderAggregator {
   private enabled = true;
   private enabledChains = [
     Mainnet,
@@ -236,7 +235,7 @@ export class Rango
    * Builds callData transactions
    * @param request
    */
-  public async buildTxs(request: AggregatorRequest): Promise<BothTxs> {
+  public async buildTx(request: AggregatorRequest): Promise<AggregatorTx> {
     const response = await this.client.swap({
       from: {
         blockchain: this.getBlockchainCode(request.fromChain),
@@ -261,14 +260,7 @@ export class Rango
       throw new InsufficientLiquidity();
     }
 
-    console.log(response);
-
     const tx = response.tx as EvmTransaction;
-
-    const approvalTx =
-      tx.approveTo && tx.approveData
-        ? new ApprovalTransactionDetails(tx.approveTo, tx.approveData)
-        : null;
 
     const mainTx = new TransactionDetails(
       tx.txTo,
@@ -277,7 +269,10 @@ export class Rango
       tx.gasLimit ? BigInteger.fromString(tx.gasLimit) : BigInteger.zero(),
     );
 
-    return new BothTxs(response.requestId, approvalTx, mainTx);
+    return {
+      tx: mainTx,
+      trackingId: response.requestId,
+    };
   }
 
   /**

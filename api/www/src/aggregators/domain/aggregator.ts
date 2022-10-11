@@ -1,7 +1,5 @@
 import { AggregatorRequest } from './aggregator-request';
 import { Route } from '../../shared/domain/route/route';
-import BothTxs from './both-txs';
-import { ApprovalTransactionDetails } from '../../shared/domain/route/approval-transaction-details';
 import { TransactionDetails } from '../../shared/domain/route/transaction-details';
 import { StatusCheckRequest, StatusCheckResponse } from './status-check';
 import { AggregatorMetadata } from '../../shared/domain/metadata';
@@ -18,17 +16,8 @@ export interface MetadataProviderAggregator {
   getMetadata: () => Promise<AggregatorMetadata>;
 }
 
-export interface OneSteppedAggregator {
-  buildTxs: (request: AggregatorRequest) => Promise<BothTxs>;
-}
-
-export interface TwoSteppedAggregator {
-  buildApprovalTx: (routeId: string, senderAddress: string) => Promise<ApprovalTransactionDetails>;
-  buildTx: (
-    routeId: string,
-    senderAddress: string,
-    receiverAddress: string,
-  ) => Promise<TransactionDetails>;
+export interface SteppedAggregator {
+  buildTx: (request: AggregatorRequest) => Promise<AggregatorTx>;
 }
 
 export interface ExternalAggregator {
@@ -39,4 +28,9 @@ export interface ExternalAggregator {
     toAddress: string,
   ) => Promise<void>;
   checkStatus: (request: StatusCheckRequest) => Promise<StatusCheckResponse>;
+}
+
+export interface AggregatorTx {
+  tx: TransactionDetails;
+  trackingId: string;
 }
