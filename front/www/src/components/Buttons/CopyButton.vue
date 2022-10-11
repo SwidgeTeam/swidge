@@ -1,6 +1,5 @@
 <script setup lang='ts'>
 import { ref } from 'vue'
-import Check from '@/components/svg/Check.vue'
 import CopyIcon from '@/components/Icons/CopyIcon.vue'
 
 const props = defineProps<{
@@ -19,8 +18,9 @@ const copyContent = () => {
 </script>
 
 <template>
-    <Check
+    <img
         v-if="justCopied"
+        src="../../assets/check.svg"
         class="h-4 w-4"
     />
     <CopyIcon

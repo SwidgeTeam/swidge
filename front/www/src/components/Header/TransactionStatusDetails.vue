@@ -55,7 +55,7 @@ const trimmedTxnHash = (txHash: string) => {
                 <a
                     :href="explorerTxUrl"
                     target="_blank"
-                    class="text-[#6C9CE4] font-light text-xs"
+                    class="link text-xs"
                     :class="txHash === '' ? 'blur' : ''"
                 >
                     {{ trimmedTxnHash(txHash) }}

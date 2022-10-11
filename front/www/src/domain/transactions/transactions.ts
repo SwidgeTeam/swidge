@@ -11,3 +11,9 @@ export interface Transaction {
     amountIn: string
     amountOut: string
 }
+
+export interface PendingTransaction extends Transaction {
+    expectedTime: number
+}
+
+export type Tx = PendingTransaction | Transaction
