@@ -35,7 +35,7 @@ const completed = computed({
         if (!transaction.value) {
             return false
         }
-        return transaction.value.destinationTxHash !== ''
+        return transaction.value.fromChain === transaction.value.toChain || transaction.value.destinationTxHash !== ''
     },
     set: () => null
 })
