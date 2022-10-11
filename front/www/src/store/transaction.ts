@@ -91,6 +91,24 @@ export const useTransactionStore = defineStore('transaction', {
             this.approvalTx = txs.approvalTx
             this.mainTx = txs.mainTx
         },
+
+        execute: async function () {
+            const web3Store = useWeb3Store()
+            const routesStore = useRoutesStore()
+            const route = routesStore.getSelectedRoute
+            if (!this.mainTx) {
+                await this.fetchMainTx()
+            }
+            if (!this.mainTx) {
+                throw new Error('failed fetching tx')
+            }
+            await web3Store.approveIfRequired({
+                token: route.resume.tokenIn.address,
+                spender: this.mainTx.to,
+                amount: routesStore.getRawAmountIn
+            })
+            return web3Store.sendMainTransaction(this.mainTx)
+        },
         /**
          * Informs the provider the tx has been executed
          */
@@ -102,7 +120,7 @@ export const useTransactionStore = defineStore('transaction', {
             if (!this.mainTx) {
                 throw new Error('something very wrong, what did we execute then?')
             }
-            const amountIn = ethers.utils.parseUnits(routesStore.getAmountIn, routesStore.getOriginToken()?.decimals).toString()
+            const amountIn = routesStore.getRawAmountIn
             const amountOut = ethers.utils.parseUnits(route.resume.amountOut, routesStore.getDestinationToken()?.decimals).toString()
 
             const request = {

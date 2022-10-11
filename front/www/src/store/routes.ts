@@ -132,6 +132,12 @@ export const useRoutesStore = defineStore('routes', {
             return this.amountIn
         },
         /**
+         * returns selected input amount for the route
+         */
+        getRawAmountIn(): string {
+            return ethers.utils.parseUnits(this.amountIn, this.getOriginToken()?.decimals).toString()
+        },
+        /**
          * returns the selected slippage
          */
         getSlippage(): string {

@@ -210,6 +210,34 @@ export const useWeb3Store = defineStore('web3', () => {
     }
 
     /**
+     * approves amount for a token if required
+     * @param params
+     */
+    async function approveIfRequired(params: { token: string, spender: string, amount: string }): Promise<void> {
+        const provider = getWalletProvider()
+        const signer = provider.getSigner()
+
+        // Get token contract
+        const Token = new ethers.Contract(
+            params.token,
+            IERC20Abi,
+            signer
+        )
+
+        const allowance = await Token.allowance(account.value, params.spender)
+
+        if (allowance.toString() === params.amount) {
+            return
+        }
+
+        // Create the transaction
+        const tx = await Token.approve(params.spender, params.amount)
+
+        // Broadcast & wait
+        await tx.wait()
+    }
+
+    /**
      * sends a main transaction(swap/bridge)
      * @param tx
      */
@@ -286,6 +314,7 @@ export const useWeb3Store = defineStore('web3', () => {
         disconnect,
         getBalance,
         switchToNetwork,
+        approveIfRequired,
         sendApprovalTransaction,
         sendMainTransaction,
         getCurrentNonce,
