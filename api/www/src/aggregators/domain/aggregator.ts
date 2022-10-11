@@ -33,4 +33,5 @@ export interface ExternalAggregator {
 export interface AggregatorTx {
   tx: TransactionDetails;
   trackingId: string;
+  approvalContract: string;
 }

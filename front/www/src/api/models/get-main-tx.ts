@@ -17,6 +17,7 @@ export interface GetMainTxRequest {
 
 export interface GetMainTxResponse {
     trackingId: string;
+    approvalContract: string;
     tx: {
         to: string;
         value: string;

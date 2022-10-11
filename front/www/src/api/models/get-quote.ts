@@ -48,7 +48,7 @@ interface RouteJson {
     resume: RouteResumeJson
     fees: RouteFeesJson
     providers: ProviderDetailsJson[]
-    approvalTx: ApprovalTransactionDetailsJson | null
+    approvalContract: string | null
     mainTx: TransactionDetailsJson | null
 }
 

@@ -217,8 +217,9 @@ export const useRoutesStore = defineStore('routes', {
             const transactionStore = useTransactionStore()
             this.selectedRoute = id
             const route = this.getSelectedRoute
-            transactionStore.trackingId = route.aggregator.trackingId
             transactionStore.mainTx = route.tx
+            transactionStore.trackingId = route.aggregator.trackingId
+            transactionStore.approvalContract = route.approvalContract
         },
         /**
          * Sets a specific token as selected on origin

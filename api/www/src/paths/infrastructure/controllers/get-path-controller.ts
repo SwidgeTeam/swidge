@@ -43,22 +43,6 @@ export class GetPathController {
   }
 
   private mapRoute(route: Route) {
-    const approvalTx = route.approvalTransaction
-      ? {
-          to: route.approvalTransaction.to,
-          callData: route.approvalTransaction.callData,
-          gasLimit: route.approvalTransaction.gasLimit.toString(),
-        }
-      : null;
-    const mainTx = route.transaction
-      ? {
-          to: route.transaction.to,
-          callData: route.transaction.callData,
-          value: route.transaction.value.toString(),
-          gasLimit: route.transaction.gasLimit.toString(),
-        }
-      : null;
-
     return {
       amountOut: route.amountOut,
       id: route.id,
@@ -90,8 +74,15 @@ export class GetPathController {
           logo: provider.logo,
         };
       }),
-      approvalTx,
-      mainTx,
+      approvalContract: route.approvalContract ? route.approvalContract : null,
+      mainTx: route.transaction
+        ? {
+            to: route.transaction.to,
+            callData: route.transaction.callData,
+            value: route.transaction.value.toString(),
+            gasLimit: route.transaction.gasLimit.toString(),
+          }
+        : null,
     };
   }
 

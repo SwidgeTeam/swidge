@@ -30,10 +30,9 @@ import {
   xDAI,
 } from '../../../shared/enums/ChainIds';
 import { TransactionDetails } from '../../../shared/domain/route/transaction-details';
-import { ApprovalTransactionDetails } from '../../../shared/domain/route/approval-transaction-details';
-import BothTxs from '../both-txs';
 import {
-  Aggregator, AggregatorTx,
+  Aggregator,
+  AggregatorTx,
   ExternalAggregator,
   MetadataProviderAggregator,
   SteppedAggregator,
@@ -83,7 +82,8 @@ declare type RangoToken = {
 };
 
 export class Rango
-  implements Aggregator, SteppedAggregator, ExternalAggregator, MetadataProviderAggregator {
+  implements Aggregator, SteppedAggregator, ExternalAggregator, MetadataProviderAggregator
+{
   private enabled = true;
   private enabledChains = [
     Mainnet,
@@ -269,9 +269,15 @@ export class Rango
       tx.gasLimit ? BigInteger.fromString(tx.gasLimit) : BigInteger.zero(),
     );
 
+    const [spender, _] = ethers.utils.defaultAbiCoder.decode(
+      ['address', 'uint256'],
+      `0x${tx.approveData.slice(10)}`,
+    );
+
     return {
       tx: mainTx,
       trackingId: response.requestId,
+      approvalContract: spender,
     };
   }
 

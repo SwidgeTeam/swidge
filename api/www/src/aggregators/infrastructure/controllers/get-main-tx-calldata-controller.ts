@@ -44,6 +44,7 @@ export class GetMainTxCalldataController {
 
     return res.json({
       trackingId: tx.trackingId,
+      approvalContract: tx.approvalContract,
       tx: {
         to: tx.tx.to,
         callData: tx.tx.callData,

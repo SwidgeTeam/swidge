@@ -42,6 +42,7 @@ export default interface Route {
     fees: RouteFees
     providers: ProviderDetails[]
     tx?: TransactionDetails
+    approvalContract?: string
     completed: boolean
 }
 

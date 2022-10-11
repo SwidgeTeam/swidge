@@ -201,8 +201,8 @@ export const useWeb3Store = defineStore('web3', () => {
      * approves amount for a token if required
      * @param params
      */
-    async function approveIfRequired(params: { token: string, spender: string, amount: string }): Promise<void> {
-        if (params.token === NATIVE_COIN_ADDRESS) {
+    async function approveIfRequired(params: { token: string, spender: string | undefined, amount: string }): Promise<void> {
+        if (params.token === NATIVE_COIN_ADDRESS || !params.spender) {
             return
         }
 

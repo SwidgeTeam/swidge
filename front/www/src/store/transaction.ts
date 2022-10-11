@@ -12,6 +12,7 @@ import { Tx } from '@/domain/transactions/transactions'
 export const useTransactionStore = defineStore('transaction', {
     state: () => ({
         mainTx: undefined as undefined | TransactionDetails,
+        approvalContract: undefined as undefined | string,
         trackingId: '',
         statusCheckInterval: 0,
         txId: '',
@@ -59,6 +60,7 @@ export const useTransactionStore = defineStore('transaction', {
             })
             this.mainTx = details.tx
             this.trackingId = details.trackingId
+            this.approvalContract = details.approvalContract
         },
         /**
          * process that executes the selected route
@@ -75,7 +77,7 @@ export const useTransactionStore = defineStore('transaction', {
             }
             await web3Store.approveIfRequired({
                 token: route.resume.tokenIn.address,
-                spender: this.mainTx.to,
+                spender: this.approvalContract,
                 amount: routesStore.getRawAmountIn
             })
             return web3Store.sendMainTransaction(this.mainTx)

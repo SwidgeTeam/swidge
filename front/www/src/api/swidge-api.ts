@@ -138,6 +138,7 @@ class SwidgeAPI extends HttpClient {
                     }),
                     completed: false,
                 }
+                route.approvalContract = r.approvalContract ? r.approvalContract : undefined
                 if (r.mainTx) {
                     route.tx = {
                         to: r.mainTx.to,
@@ -187,6 +188,7 @@ class SwidgeAPI extends HttpClient {
 
     async getMainTx(query: GetMainTxRequest): Promise<{
         trackingId: string,
+        approvalContract: string,
         tx: TransactionDetails
     }> {
         try {
@@ -198,7 +200,8 @@ class SwidgeAPI extends HttpClient {
                     callData: response.data.tx.callData,
                     gasLimit: response.data.tx.gasLimit,
                 },
-                trackingId: response.data.trackingId
+                trackingId: response.data.trackingId,
+                approvalContract: response.data.approvalContract,
             }
         } catch (e: unknown) {
             if (axios.isAxiosError(e)) {
