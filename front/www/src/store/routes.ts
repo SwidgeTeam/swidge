@@ -218,7 +218,6 @@ export const useRoutesStore = defineStore('routes', {
             this.selectedRoute = id
             const route = this.getSelectedRoute
             transactionStore.trackingId = route.aggregator.trackingId
-            transactionStore.approvalTx = route.approvalTx
             transactionStore.mainTx = route.tx
         },
         /**

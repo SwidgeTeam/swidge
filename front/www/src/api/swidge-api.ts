@@ -3,11 +3,8 @@ import HttpClient from './http-base-client'
 import { GetQuoteRequest, GetQuoteResponse } from './models/get-quote'
 import { ApiErrorResponse } from '@/api/models/ApiErrorResponse'
 import { TransactionsListJson } from '@/api/models/get-transactions'
-import Route, { ApprovalTransactionDetails, TransactionDetails } from '@/domain/paths/path'
-import GetApprovalTxResponseJson from '@/api/models/get-approval-tx-response'
-import GetMainTxResponse from '@/api/models/get-main-tx-response'
-import GetBothTxsResponse from '@/api/models/get-both-txs-response'
-import GetBothTxsRequest from '@/api/models/get-both-txs-request'
+import Route, { TransactionDetails } from '@/domain/paths/path'
+import { GetMainTxRequest, GetMainTxResponse } from '@/api/models/get-main-tx'
 import { StatusCheckRequest, StatusCheckResponse } from '@/api/models/get-status-check'
 import { MetadataJson } from '@/api/models/get-metadata'
 import { Metadata, TokenBalance } from '@/domain/metadata/Metadata'
@@ -149,13 +146,6 @@ class SwidgeAPI extends HttpClient {
                         gasLimit: r.mainTx.gasLimit,
                     }
                 }
-                if (r.approvalTx) {
-                    route.approvalTx = {
-                        to: r.approvalTx.to,
-                        callData: r.approvalTx.callData,
-                        gasLimit: r.approvalTx.gasLimit,
-                    }
-                }
                 return route
             })
         } catch (e: unknown) {
@@ -195,74 +185,20 @@ class SwidgeAPI extends HttpClient {
         }
     }
 
-    async getApprovalTx(query: {
-        aggregatorId: string
-        routeId: string
-        senderAddress: string
-    }): Promise<ApprovalTransactionDetails> {
-        try {
-            const response = await this.instance.get<GetApprovalTxResponseJson>('/build-approval-tx', { params: query })
-            return {
-                to: response.data.tx.to,
-                callData: response.data.tx.callData,
-                gasLimit: response.data.tx.gasLimit,
-            }
-        } catch (e: unknown) {
-            if (axios.isAxiosError(e)) {
-                const apiErrorResponse = e.response?.data as ApiErrorResponse
-                const errorMessage = apiErrorResponse.message ?? 'Unhandled error!'
-                throw new Error(errorMessage)
-            }
-            throw new Error('UnknownError no axios error')
-        }
-    }
-
-    async getMainTx(query: {
-        aggregatorId: string
-        routeId: string
-        senderAddress: string
-        receiverAddress: string
-    }): Promise<TransactionDetails> {
+    async getMainTx(query: GetMainTxRequest): Promise<{
+        trackingId: string,
+        tx: TransactionDetails
+    }> {
         try {
             const response = await this.instance.get<GetMainTxResponse>('/build-main-tx', { params: query })
             return {
-                to: response.data.tx.to,
-                value: response.data.tx.value,
-                callData: response.data.tx.callData,
-                gasLimit: response.data.tx.gasLimit,
-            }
-        } catch (e: unknown) {
-            if (axios.isAxiosError(e)) {
-                const apiErrorResponse = e.response?.data as ApiErrorResponse
-                const errorMessage = apiErrorResponse.message ?? 'Unhandled error!'
-                throw new Error(errorMessage)
-            }
-            throw new Error('UnknownError no axios error')
-        }
-    }
-
-    async getBothTxs(query: GetBothTxsRequest): Promise<{
-        trackingId: string,
-        approvalTx: ApprovalTransactionDetails | undefined,
-        mainTx: TransactionDetails,
-    }> {
-        try {
-            const response = await this.instance.get<GetBothTxsResponse>('/build-both-txs', { params: query })
-            return {
-                trackingId: response.data.trackingId,
-                approvalTx: response.data.approvalTx
-                    ? {
-                        to: response.data.approvalTx.to,
-                        callData: response.data.approvalTx.callData,
-                        gasLimit: response.data.approvalTx.gasLimit,
-                    }
-                    : undefined,
-                mainTx: {
-                    to: response.data.mainTx.to,
-                    value: response.data.mainTx.value,
-                    callData: response.data.mainTx.callData,
-                    gasLimit: response.data.mainTx.gasLimit,
-                }
+                tx: {
+                    to: response.data.tx.to,
+                    value: response.data.tx.value,
+                    callData: response.data.tx.callData,
+                    gasLimit: response.data.tx.gasLimit,
+                },
+                trackingId: response.data.trackingId
             }
         } catch (e: unknown) {
             if (axios.isAxiosError(e)) {

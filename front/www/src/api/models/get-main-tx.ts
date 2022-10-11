@@ -1,5 +1,6 @@
-export default interface GetBothTxsRequest {
+export interface GetMainTxRequest {
     aggregatorId: string,
+    routeId: string,
     fromChainId: string,
     srcTokenAddress: string,
     srcTokenSymbol: string,
@@ -12,4 +13,14 @@ export default interface GetBothTxsRequest {
     slippage: number,
     senderAddress: string,
     receiverAddress: string,
+}
+
+export interface GetMainTxResponse {
+    trackingId: string;
+    tx: {
+        to: string;
+        value: string;
+        callData: string;
+        gasLimit: string;
+    }
 }

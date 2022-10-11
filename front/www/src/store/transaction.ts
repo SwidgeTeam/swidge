@@ -1,5 +1,5 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import { ApprovalTransactionDetails, TransactionDetails } from '@/domain/paths/path'
+import { TransactionDetails } from '@/domain/paths/path'
 import { useWeb3Store } from '@/store/web3'
 import { useRoutesStore } from '@/store/routes'
 import { useMetadataStore } from '@/store/metadata'
@@ -11,7 +11,6 @@ import { Tx } from '@/domain/transactions/transactions'
 
 export const useTransactionStore = defineStore('transaction', {
     state: () => ({
-        approvalTx: undefined as undefined | ApprovalTransactionDetails,
         mainTx: undefined as undefined | TransactionDetails,
         trackingId: '',
         statusCheckInterval: 0,
@@ -20,9 +19,6 @@ export const useTransactionStore = defineStore('transaction', {
         list: [] as Tx[]
     }),
     getters: {
-        getApprovalTx(): ApprovalTransactionDetails | undefined {
-            return this.approvalTx
-        },
         getMainTx(): TransactionDetails | undefined {
             return this.mainTx
         },
@@ -34,36 +30,9 @@ export const useTransactionStore = defineStore('transaction', {
     },
     actions: {
         /**
-         * Fetches the callData for the approval tx
-         */
-        async fetchApprovalTx() {
-            const web3Store = useWeb3Store()
-            const routesStore = useRoutesStore()
-            const route = routesStore.getSelectedRoute
-            this.approvalTx = await swidgeApi.getApprovalTx({
-                aggregatorId: route.aggregator.id,
-                routeId: route.aggregator.routeId,
-                senderAddress: web3Store.account
-            })
-        },
-        /**
          * Fetches the callData for the main tx
          */
         async fetchMainTx() {
-            const web3Store = useWeb3Store()
-            const routesStore = useRoutesStore()
-            const route = routesStore.getSelectedRoute
-            this.mainTx = await swidgeApi.getMainTx({
-                aggregatorId: route.aggregator.id,
-                routeId: route.aggregator.routeId,
-                senderAddress: web3Store.account,
-                receiverAddress: routesStore.receiverAddress,
-            })
-        },
-        /**
-         * Fetches the callData of both required transactions to execute the swidge
-         */
-        async fetchBothTxs() {
             const web3Store = useWeb3Store()
             const routesStore = useRoutesStore()
             const srcToken = routesStore.getOriginToken()
@@ -72,8 +41,9 @@ export const useTransactionStore = defineStore('transaction', {
                 throw new Error('Some token is not selected')
             }
             const route = routesStore.getSelectedRoute
-            const txs = await swidgeApi.getBothTxs({
+            const details = await swidgeApi.getMainTx({
                 aggregatorId: route.aggregator.id,
+                routeId: route.aggregator.routeId,
                 fromChainId: routesStore.getOriginChainId,
                 toChainId: routesStore.getDestinationChainId,
                 srcTokenAddress: srcToken.address,
@@ -85,14 +55,15 @@ export const useTransactionStore = defineStore('transaction', {
                 amount: routesStore.getAmountIn,
                 slippage: Number(routesStore.getSlippage),
                 senderAddress: web3Store.account,
-                receiverAddress: routesStore.receiverAddress
+                receiverAddress: routesStore.receiverAddress,
             })
-            this.trackingId = txs.trackingId
-            this.approvalTx = txs.approvalTx
-            this.mainTx = txs.mainTx
+            this.mainTx = details.tx
+            this.trackingId = details.trackingId
         },
-
-        execute: async function () {
+        /**
+         * process that executes the selected route
+         */
+        executeRoute: async function () {
             const web3Store = useWeb3Store()
             const routesStore = useRoutesStore()
             const route = routesStore.getSelectedRoute

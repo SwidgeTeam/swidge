@@ -252,7 +252,7 @@ const onExecuteTransaction = async () => {
     setExecutingButton()
     const toastId = toast.success('Starting execution...', { timeout: false })
 
-    const promise = transactionStore.execute()
+    const promise = transactionStore.executeRoute()
 
     await promise
         .then((txHash: TxHash) => {

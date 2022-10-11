@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import IERC20Abi from '@/contracts/IERC20.json'
 import { IWallet, TxHash, Wallet, WalletEvents } from '@/domain/wallets/IWallet'
-import { ApprovalTransactionDetails, TransactionDetails } from '@/domain/paths/path'
+import { TransactionDetails } from '@/domain/paths/path'
 import { WalletConnect } from '@/domain/wallets/WalletConnect'
 import { Metamask } from '@/domain/wallets/Metamask'
 import { useTransactionStore } from '@/store/transaction'
@@ -35,14 +35,14 @@ export const useWeb3Store = defineStore('web3', () => {
         }
 
         switch (code) {
-        case Wallet.Metamask:
-            wallet.value = new Metamask(events)
-            break
-        case Wallet.WalletConnect:
-            wallet.value = new WalletConnect(events)
-            break
-        default:
-            throw new Error('Unsupported wallet')
+            case Wallet.Metamask:
+                wallet.value = new Metamask(events)
+                break
+            case Wallet.WalletConnect:
+                wallet.value = new WalletConnect(events)
+                break
+            default:
+                throw new Error('Unsupported wallet')
         }
 
         await connect(request)
@@ -198,24 +198,17 @@ export const useWeb3Store = defineStore('web3', () => {
     }
 
     /**
-     * sends an approval transaction
-     * @param tx
-     */
-    async function sendApprovalTransaction(tx: ApprovalTransactionDetails): Promise<TxHash> {
-        return sendTransaction({
-            to: tx.to,
-            data: tx.callData,
-            gasLimit: tx.gasLimit,
-        })
-    }
-
-    /**
      * approves amount for a token if required
      * @param params
      */
     async function approveIfRequired(params: { token: string, spender: string, amount: string }): Promise<void> {
+        if (params.token === NATIVE_COIN_ADDRESS) {
+            return
+        }
+
         const provider = getWalletProvider()
         const signer = provider.getSigner()
+        const transactionStore = useTransactionStore()
 
         // Get token contract
         const Token = new ethers.Contract(
@@ -235,6 +228,9 @@ export const useWeb3Store = defineStore('web3', () => {
 
         // Broadcast & wait
         await tx.wait()
+            .then(() => {
+                transactionStore.incrementNonce()
+            })
     }
 
     /**
@@ -315,7 +311,6 @@ export const useWeb3Store = defineStore('web3', () => {
         getBalance,
         switchToNetwork,
         approveIfRequired,
-        sendApprovalTransaction,
         sendMainTransaction,
         getCurrentNonce,
     }
