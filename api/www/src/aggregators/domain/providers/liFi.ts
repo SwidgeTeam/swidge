@@ -4,7 +4,6 @@ import LIFI, { Estimate, GasCost, Step, Token as LifiToken } from '@lifi/sdk';
 import { BigInteger } from '../../../shared/domain/big-integer';
 import { TransactionDetails } from '../../../shared/domain/route/transaction-details';
 import { Route } from '../../../shared/domain/route/route';
-import { RouteStep } from '../../../shared/domain/route/route-step';
 import { Token } from '../../../shared/domain/token';
 import { InsufficientLiquidity } from '../../../swaps/domain/insufficient-liquidity';
 import { ProviderDetails } from '../../../shared/domain/provider-details';
@@ -14,7 +13,6 @@ import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
 import { ApprovalTransactionDetails } from '../../../shared/domain/route/approval-transaction-details';
 import { RouterCallEncoder } from '../../../shared/domain/router-call-encoder';
 import { RouteFees } from '../../../shared/domain/route/route-fees';
-import { RouteSteps } from '../../../shared/domain/route/route-steps';
 import {
   ExternalTransactionStatus,
   StatusCheckRequest,
@@ -168,7 +166,6 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
       BigInteger.fromString(response.transactionRequest.gasLimit.toString()),
     );
 
-    const steps = this.createSteps(response);
     const fees = this.buildFees(response.estimate);
 
     const resume = new RouteResume(
@@ -179,7 +176,7 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
       request.amountIn,
       BigInteger.fromString(response.estimate.toAmount),
       BigInteger.fromString(response.estimate.toAmountMin),
-      steps.totalExecutionTime(),
+      response.estimate.executionDuration,
     );
 
     const bridgeTrackingId = request.fromChain !== request.toChain ? response.tool : '';
@@ -192,14 +189,7 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
       bridgeTrackingId,
     );
 
-    return new Route(
-      aggregatorDetails,
-      resume,
-      steps,
-      fees,
-      approvalTransaction,
-      transactionDetails,
-    );
+    return new Route(aggregatorDetails, resume, fees, approvalTransaction, transactionDetails);
   }
 
   /**
@@ -278,78 +268,6 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
     }, 0);
 
     return new RouteFees(totalFees, totalFeesInUsd.toString());
-  }
-
-  /**
-   * Create the steps of the route
-   * @param step
-   * @private
-   */
-  private createSteps(step: Step): RouteSteps {
-    let steps = [];
-
-    switch (step.type) {
-      case 'swap':
-        steps.push(this.createStep(step));
-        break;
-      case 'cross':
-        steps.push(this.createStep(step));
-        break;
-      case 'lifi':
-        steps = step.includedSteps.map((s) => this.createStep(s));
-        break;
-    }
-
-    return new RouteSteps(steps);
-  }
-
-  /**
-   * Create a single step
-   * @param step
-   * @private
-   */
-  private createStep(step: Step): RouteStep {
-    const fromToken = new Token(
-      step.action.fromToken.chainId.toString(),
-      step.action.fromToken.name,
-      step.action.fromToken.address,
-      step.action.fromToken.decimals,
-      step.action.fromToken.symbol,
-      step.action.fromToken.logoURI,
-    );
-    const toToken = new Token(
-      step.action.toToken.chainId.toString(),
-      step.action.toToken.name,
-      step.action.toToken.address,
-      step.action.toToken.decimals,
-      step.action.toToken.symbol,
-      step.action.toToken.logoURI,
-    );
-
-    const feeInUSD = this.computeFeeInUsd(step.estimate);
-
-    let type;
-    switch (step.type) {
-      case 'swap':
-        type = RouteStep.TYPE_SWAP;
-        break;
-      case 'cross':
-        type = RouteStep.TYPE_BRIDGE;
-        break;
-    }
-
-    const details = new ProviderDetails(step.toolDetails.name, step.toolDetails.logoURI);
-
-    return new RouteStep(
-      type,
-      details,
-      fromToken,
-      toToken,
-      BigInteger.fromString(step.estimate.fromAmount),
-      BigInteger.fromString(step.estimate.toAmount),
-      feeInUSD.toString(),
-      step.estimate.executionDuration,
-    );
   }
 
   private computeFeeInUsd(estimate: Estimate): number {

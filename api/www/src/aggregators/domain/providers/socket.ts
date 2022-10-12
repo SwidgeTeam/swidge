@@ -6,7 +6,6 @@ import { IHttpClient } from '../../../shared/domain/http/IHttpClient';
 import { TransactionDetails } from '../../../shared/domain/route/transaction-details';
 import { BigInteger } from '../../../shared/domain/big-integer';
 import { RouteResume } from '../../../shared/domain/route/route-resume';
-import { RouteStep } from '../../../shared/domain/route/route-step';
 import { Token } from '../../../shared/domain/token';
 import { ProviderDetails } from '../../../shared/domain/provider-details';
 import { AggregatorProviders } from './aggregator-providers';
@@ -14,7 +13,6 @@ import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
 import { ApprovalTransactionDetails } from '../../../shared/domain/route/approval-transaction-details';
 import { RouterCallEncoder } from '../../../shared/domain/router-call-encoder';
 import { RouteFees } from '../../../shared/domain/route/route-fees';
-import { RouteSteps } from '../../../shared/domain/route/route-steps';
 import {
   ExternalTransactionStatus,
   StatusCheckRequest,
@@ -121,8 +119,9 @@ export class Socket implements Aggregator, ExternalAggregator {
 
     const route = response.result.routes[0];
     const amountOut = BigInteger.fromString(route.toAmount);
-
-    const steps = this.buildSteps(route.userTxs[0].steps);
+    const estimatedTime = response.result.routes[0].userTxs.reduce((total, { serviceTime }) => {
+      return total + serviceTime;
+    }, 0);
 
     const resume = new RouteResume(
       request.fromChain,
@@ -132,7 +131,7 @@ export class Socket implements Aggregator, ExternalAggregator {
       request.amountIn,
       amountOut,
       amountOut,
-      steps.totalExecutionTime(),
+      estimatedTime,
     );
     const responseTxDetails = await this.getTxDetails(route);
 
@@ -163,7 +162,7 @@ export class Socket implements Aggregator, ExternalAggregator {
 
     const aggregatorDetails = new AggregatorDetails(AggregatorProviders.Socket);
 
-    return new Route(aggregatorDetails, resume, steps, fees, approvalTxDetails, txDetails);
+    return new Route(aggregatorDetails, resume, fees, approvalTxDetails, txDetails);
   }
 
   /**
@@ -253,62 +252,6 @@ export class Socket implements Aggregator, ExternalAggregator {
     });
 
     return response.result;
-  }
-
-  /**
-   * Builds the whole set of steps
-   * @param steps
-   * @private
-   */
-  private buildSteps(steps: SocketUserTxStep[]): RouteSteps {
-    const items: RouteStep[] = [];
-    for (const step of steps) {
-      items.push(this.buildStep(step));
-    }
-    return new RouteSteps(items);
-  }
-
-  /**
-   * Builds a single step
-   * @param step
-   * @private
-   */
-  private buildStep(step: SocketUserTxStep): RouteStep {
-    const fromToken = new Token(
-      step.fromAsset.chainId,
-      step.fromAsset.name,
-      step.fromAsset.address,
-      step.fromAsset.decimals,
-      step.fromAsset.symbol,
-      step.fromAsset.icon,
-    );
-    const toToken = new Token(
-      step.toAsset.chainId,
-      step.toAsset.name,
-      step.toAsset.address,
-      step.toAsset.decimals,
-      step.toAsset.symbol,
-      step.toAsset.icon,
-    );
-    const details = new ProviderDetails(step.protocol.displayName, step.protocol.icon);
-    const amountIn = BigInteger.fromString(step.fromAmount);
-    const amountOut = BigInteger.fromString(step.toAmount);
-    const feeInUSD = step.gasFees.feesInUsd.toString();
-
-    switch (step.type) {
-      case 'middleware':
-        return RouteStep.swap(details, fromToken, toToken, amountIn, amountOut, feeInUSD, 0);
-      case 'bridge':
-        return RouteStep.bridge(
-          details,
-          fromToken,
-          toToken,
-          amountIn,
-          amountOut,
-          feeInUSD,
-          step.serviceTime,
-        );
-    }
   }
 
   /**

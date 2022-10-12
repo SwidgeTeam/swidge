@@ -422,14 +422,7 @@ export class PathComputer {
 
     const aggregatorDetails = new AggregatorDetails(AggregatorProviders.Swidge);
 
-    return new Route(
-      aggregatorDetails,
-      resume,
-      steps,
-      fees,
-      approvalTransaction,
-      transactionDetails,
-    );
+    return new Route(aggregatorDetails, resume, fees, approvalTransaction, transactionDetails);
   }
 
   /**

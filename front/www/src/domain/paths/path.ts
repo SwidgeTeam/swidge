@@ -7,19 +7,6 @@ interface TokenDetails {
     icon: string
 }
 
-export interface RouteStep {
-    type: string
-    name: string
-    logo: string
-    tokenIn: TokenDetails
-    tokenOut: TokenDetails
-    amountIn: string
-    amountOut: string
-    fee: string
-    executionTime: number
-    completed: boolean
-}
-
 interface RouteResume {
     fromChain: string
     toChain: string
@@ -53,7 +40,6 @@ export default interface Route {
     tags: string[]
     aggregator: AggregatorDetails
     resume: RouteResume
-    steps: RouteStep[]
     fees: RouteFees
     approvalTx?: ApprovalTransactionDetails
     tx?: TransactionDetails
