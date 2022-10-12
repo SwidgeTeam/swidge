@@ -35,12 +35,18 @@ export interface TransactionDetails {
     gasLimit: string
 }
 
+interface ProviderDetails {
+    name: string
+    logo: string
+}
+
 export default interface Route {
     id: string
     tags: string[]
     aggregator: AggregatorDetails
     resume: RouteResume
     fees: RouteFees
+    providers: ProviderDetails[]
     approvalTx?: ApprovalTransactionDetails
     tx?: TransactionDetails
     completed: boolean

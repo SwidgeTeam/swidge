@@ -113,7 +113,7 @@ const totalExecutionTime = computed({
                 </div>
                 <div class="flex items-center justify-center ml-4">
                     <div
-                        v-for="(step, index) in route.steps"
+                        v-for="(step, index) in route.providers"
                         :key="index"
                         :class="'z-'+index"
                         class="flex-1 flex-row -top-[3px] w-6 h-6 -ml-1 shadow-inner">

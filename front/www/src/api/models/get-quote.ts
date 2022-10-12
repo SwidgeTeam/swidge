@@ -35,6 +35,11 @@ interface RouteFeesJson {
     amountInUsd: string
 }
 
+interface ProviderDetailsJson {
+    name: string
+    logo: string
+}
+
 interface RouteJson {
     amountOut: string
     id: string
@@ -42,6 +47,7 @@ interface RouteJson {
     aggregator: AggregatorDetailsJson
     resume: RouteResumeJson
     fees: RouteFeesJson
+    providers: ProviderDetailsJson[]
     approvalTx: ApprovalTransactionDetailsJson | null
     mainTx: TransactionDetailsJson | null
 }
