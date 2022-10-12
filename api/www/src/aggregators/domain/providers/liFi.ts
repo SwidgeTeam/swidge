@@ -1,6 +1,6 @@
 import { Aggregator, ExternalAggregator, MetadataProviderAggregator } from '../aggregator';
 import { AggregatorRequest } from '../aggregator-request';
-import LIFI, { Estimate, GasCost, Step, Token as LifiToken } from '@lifi/sdk';
+import LIFI, { Estimate, GasCost, Step } from '@lifi/sdk';
 import { BigInteger } from '../../../shared/domain/big-integer';
 import { TransactionDetails } from '../../../shared/domain/route/transaction-details';
 import { Route } from '../../../shared/domain/route/route';
@@ -167,7 +167,7 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
     );
 
     const fees = this.buildFees(response.estimate);
-    let providerDetails: ProviderDetails[];
+    let providerDetails: ProviderDetails[] = [];
     switch (response.type) {
       case 'swap':
         providerDetails.push(
@@ -291,31 +291,6 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
     }, 0);
 
     return new RouteFees(totalFees, totalFeesInUsd.toString());
-  }
-
-  private computeFeeInUsd(estimate: Estimate): number {
-    let feeInUSD = 0;
-    if (estimate.gasCosts) {
-      for (const entry of estimate.gasCosts) {
-        feeInUSD += this.computeEntryCost(entry.amountUSD, entry.amount, entry.token);
-      }
-    }
-    if (estimate.feeCosts) {
-      for (const entry of estimate.feeCosts) {
-        feeInUSD += this.computeEntryCost(entry.amountUSD, entry.amount, entry.token);
-      }
-    }
-    return feeInUSD;
-  }
-
-  private computeEntryCost(amountUSD: string, amount: string, token: LifiToken): number {
-    if (amountUSD) {
-      return Number(amountUSD);
-    } else if (amount && token.priceUSD) {
-      return Number(ethers.utils.formatUnits(amount, token.decimals)) * Number(token.priceUSD);
-    } else {
-      return 0;
-    }
   }
 
   /**

@@ -8,7 +8,7 @@ import { BigInteger } from '../../../shared/domain/big-integer';
 import { Token } from '../../../shared/domain/token';
 import { ProviderDetails } from '../../../shared/domain/provider-details';
 import { InsufficientLiquidity } from '../../../swaps/domain/insufficient-liquidity';
-import { QuotePath, QuoteSimulationResult } from 'rango-sdk-basic/lib/types/api/common';
+import { QuotePath } from 'rango-sdk-basic/lib/types/api/common';
 import {
   Arbitrum,
   Aurora,
@@ -48,7 +48,6 @@ import { AggregatorMetadata } from '../../../shared/domain/metadata';
 import { NATIVE_TOKEN_ADDRESS } from '../../../shared/enums/Natives';
 import { ethers } from 'ethers';
 import { Logger } from '../../../shared/domain/logger';
-import { Step } from '@lifi/sdk';
 
 interface MetadataResponse {
   blockchains: BlockchainMeta[];
@@ -216,7 +215,7 @@ export class Rango
     const aggregatorDetails = new AggregatorDetails(AggregatorProviders.Rango, '', true, true);
 
     const fees = this.buildFees(response.route.fee);
-    let providerDetails = this.buildProviderDetails(response.route.path);
+    const providerDetails = this.buildProviderDetails(response.route.path);
 
     const amountOut = BigInteger.fromString(response.route.outputAmount);
     const resume = new RouteResume(
