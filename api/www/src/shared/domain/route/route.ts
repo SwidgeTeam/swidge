@@ -50,6 +50,10 @@ export class Route {
     return this._transactionDetails;
   }
 
+  get providers(): ProviderDetails[] {
+    return this._providerDetails;
+  }
+
   get tags(): string[] {
     return this._tags;
   }

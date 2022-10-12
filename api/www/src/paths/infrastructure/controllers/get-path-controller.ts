@@ -84,17 +84,10 @@ export class GetPathController {
         amount: route.fees.nativeWei.toString(),
         amountInUsd: route.fees.feeInUsd.toString(),
       },
-      steps: route.steps.map((step) => {
+      providers: route.providers.map((provider) => {
         return {
-          type: step.type,
-          name: step.name,
-          logo: step.logo,
-          tokenIn: this.mapTokenDetails(step.tokenIn),
-          tokenOut: this.mapTokenDetails(step.tokenOut),
-          amountIn: step.amountIn.toDecimal(step.tokenIn.decimals),
-          amountOut: step.amountOut.toDecimal(step.tokenOut.decimals),
-          fee: step.feeInUSD,
-          executionTime: step.timeInSeconds,
+          name: provider.name,
+          logo: provider.logo,
         };
       }),
       approvalTx,
