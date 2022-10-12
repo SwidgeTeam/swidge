@@ -153,6 +153,8 @@ export class Socket implements Aggregator, ExternalAggregator {
     );
     const gasLimit = BigInteger.fromString(routeFees.gasLimit.toString());
 
+    const providerDetails = this.buildProviderDetails(route.userTxs[0].steps);
+
     const txDetails = new TransactionDetails(
       responseTxDetails.txTarget,
       responseTxDetails.txData,
@@ -162,7 +164,14 @@ export class Socket implements Aggregator, ExternalAggregator {
 
     const aggregatorDetails = new AggregatorDetails(AggregatorProviders.Socket);
 
-    return new Route(aggregatorDetails, resume, fees, approvalTxDetails, txDetails);
+    return new Route(
+      aggregatorDetails,
+      resume,
+      fees,
+      providerDetails,
+      approvalTxDetails,
+      txDetails,
+    );
   }
 
   /**
@@ -252,6 +261,19 @@ export class Socket implements Aggregator, ExternalAggregator {
     });
 
     return response.result;
+  }
+
+  /**
+   * Builds the set of provider details
+   * @param steps
+   * @private
+   */
+  private buildProviderDetails(steps: SocketUserTxStep[]): ProviderDetails[] {
+    const items: ProviderDetails[] = [];
+    for (const step of steps) {
+      items.push(new ProviderDetails(step.protocol.displayName, step.protocol.icon));
+    }
+    return items;
   }
 
   /**

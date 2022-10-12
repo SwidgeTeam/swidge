@@ -21,6 +21,7 @@ import { RouteFees } from '../../../shared/domain/route/route-fees';
 import { PriceFeed } from '../../../shared/domain/price-feed';
 import { IPriceFeedFetcher } from '../../../shared/domain/price-feed-fetcher';
 import { IGasPriceFetcher } from '../../../shared/domain/gas-price-fetcher';
+import { Action } from 'rxjs/internal/scheduler/Action';
 
 export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAggregator {
   private enabledChains = [];
@@ -84,6 +85,8 @@ export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAg
       return total + tool.estimatedTime;
     }, 0);
 
+    const providerDetails = this.buildProviderDetails(route.actions);
+
     const resume = new RouteResume(
       request.fromChain,
       request.toChain,
@@ -103,7 +106,7 @@ export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAg
       action.uuid,
     );
 
-    return new Route(aggregatorDetails, resume, fees);
+    return new Route(aggregatorDetails, resume, fees, providerDetails);
   }
 
   /**
@@ -233,6 +236,21 @@ export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAg
       .toDecimal(nativePrice.decimals);
 
     return new RouteFees(totalFees, feesInUsd);
+  }
+
+  /**
+   * Builds the set of provider details
+   * @param steps
+   * @private
+   */
+  private buildProviderDetails(actions: IRouteAction[]): ProviderDetails[] {
+    const items: ProviderDetails[] = [];
+    for (const action of actions) {
+      for (const step of action.steps) {
+        items.push(new ProviderDetails(step.tool.name, step.tool.logoURI));
+      }
+    }
+    return items;
   }
 
   /**

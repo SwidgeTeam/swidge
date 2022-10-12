@@ -4,6 +4,7 @@ import { AggregatorDetails } from '../aggregator-details';
 import { ApprovalTransactionDetails } from './approval-transaction-details';
 import { RouteFees } from './route-fees';
 import { randomUUID } from 'crypto';
+import { ProviderDetails } from '../provider-details';
 
 export class Route {
   private readonly _id: string;
@@ -13,6 +14,7 @@ export class Route {
     private readonly _aggregator: AggregatorDetails,
     private readonly _resume: RouteResume,
     private readonly _fees: RouteFees,
+    private readonly _providerDetails: ProviderDetails[],
     private readonly _approvalTransaction?: ApprovalTransactionDetails,
     private readonly _transactionDetails?: TransactionDetails,
   ) {

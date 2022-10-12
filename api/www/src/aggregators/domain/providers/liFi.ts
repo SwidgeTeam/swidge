@@ -167,6 +167,10 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
     );
 
     const fees = this.buildFees(response.estimate);
+    let providerDetails = [];
+    providerDetails.push(
+      new ProviderDetails(response.toolDetails.name, response.toolDetails.logoURI),
+    );
 
     const resume = new RouteResume(
       request.fromChain,
@@ -189,7 +193,14 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
       bridgeTrackingId,
     );
 
-    return new Route(aggregatorDetails, resume, fees, approvalTransaction, transactionDetails);
+    return new Route(
+      aggregatorDetails,
+      resume,
+      fees,
+      providerDetails,
+      approvalTransaction,
+      transactionDetails,
+    );
   }
 
   /**

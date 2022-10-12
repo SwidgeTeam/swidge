@@ -215,6 +215,10 @@ export class Rango
     const aggregatorDetails = new AggregatorDetails(AggregatorProviders.Rango, '', true, true);
 
     const fees = this.buildFees(response.route.fee);
+    let providerDetails = [];
+    providerDetails.push(
+      new ProviderDetails(response.route.swapper.title, response.route.swapper.logo),
+    );
 
     const amountOut = BigInteger.fromString(response.route.outputAmount);
     const resume = new RouteResume(
@@ -228,7 +232,7 @@ export class Rango
       response.route.estimatedTimeInSeconds,
     );
 
-    return new Route(aggregatorDetails, resume, fees);
+    return new Route(aggregatorDetails, resume, fees, providerDetails);
   }
 
   /**
