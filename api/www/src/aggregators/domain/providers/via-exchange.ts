@@ -5,11 +5,10 @@ import { AggregatorProviders } from './aggregator-providers';
 import { RouteResume } from '../../../shared/domain/route/route-resume';
 import { InsufficientLiquidity } from '../../../swaps/domain/insufficient-liquidity';
 import { BigInteger } from '../../../shared/domain/big-integer';
-import { IActionStep, IRouteAction } from '@viaprotocol/router-sdk/dist/types';
+import { IRouteAction } from '@viaprotocol/router-sdk/dist/types';
 import { Token } from '../../../shared/domain/token';
 import { ProviderDetails } from '../../../shared/domain/provider-details';
 import { TransactionDetails } from '../../../shared/domain/route/transaction-details';
-import { ApprovalTransactionDetails } from '../../../shared/domain/route/approval-transaction-details';
 import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
 import { Aggregator, ExternalAggregator } from '../aggregator';
 import {
@@ -21,7 +20,6 @@ import { RouteFees } from '../../../shared/domain/route/route-fees';
 import { PriceFeed } from '../../../shared/domain/price-feed';
 import { IPriceFeedFetcher } from '../../../shared/domain/price-feed-fetcher';
 import { IGasPriceFetcher } from '../../../shared/domain/gas-price-fetcher';
-import { Action } from 'rxjs/internal/scheduler/Action';
 
 export class ViaExchange implements Aggregator, ExternalAggregator {
   private enabledChains = [];
@@ -107,24 +105,6 @@ export class ViaExchange implements Aggregator, ExternalAggregator {
     );
 
     return new Route(aggregatorDetails, resume, fees, providerDetails);
-  }
-
-  /**
-   * Builds the required transaction to approve the assets
-   * @param routeId
-   * @param senderAddress
-   */
-  public async buildApprovalTx(
-    routeId: string,
-    senderAddress: string,
-  ): Promise<ApprovalTransactionDetails> {
-    const txApproval = await this.client.buildApprovalTx({
-      routeId: routeId,
-      owner: senderAddress,
-      numAction: 0,
-    });
-
-    return new ApprovalTransactionDetails(txApproval.to, txApproval.data);
   }
 
   /**

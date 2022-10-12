@@ -10,7 +10,6 @@ import { ProviderDetails } from '../../../shared/domain/provider-details';
 import { RouteResume } from '../../../shared/domain/route/route-resume';
 import { AggregatorProviders } from './aggregator-providers';
 import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
-import { ApprovalTransactionDetails } from '../../../shared/domain/route/approval-transaction-details';
 import { RouterCallEncoder } from '../../../shared/domain/router-call-encoder';
 import { RouteFees } from '../../../shared/domain/route/route-fees';
 import {

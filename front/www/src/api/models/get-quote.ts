@@ -7,12 +7,6 @@ interface TokenDetailsJson {
     icon: string
 }
 
-export interface ApprovalTransactionDetailsJson {
-    to: string
-    callData: string
-    gasLimit: string
-}
-
 interface TransactionDetailsJson {
     to: string
     callData: string
