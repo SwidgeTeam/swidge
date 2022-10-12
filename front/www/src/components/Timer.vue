@@ -61,7 +61,10 @@ export default {
     },
     computed: {
         circleDasharray() {
-            return `${(this.timeFraction * FULL_DASH_ARRAY).toFixed(0)} 283`
+            if (this.finished) {
+                return `${FULL_DASH_ARRAY} ${FULL_DASH_ARRAY}`
+            }
+            return `${(this.timeFraction * FULL_DASH_ARRAY).toFixed(0)} ${FULL_DASH_ARRAY}`
         },
         formattedTimeLeft() {
             const minutes = Math.floor(this.timeLeft / 60)
