@@ -167,10 +167,22 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
     );
 
     const fees = this.buildFees(response.estimate);
-    let providerDetails = [];
-    providerDetails.push(
-      new ProviderDetails(response.toolDetails.name, response.toolDetails.logoURI),
-    );
+    let providerDetails: ProviderDetails[];
+    switch (response.type) {
+      case 'swap':
+        providerDetails.push(
+          new ProviderDetails(response.toolDetails.name, response.toolDetails.logoURI),
+        );
+        break;
+      case 'cross':
+        providerDetails.push(
+          new ProviderDetails(response.toolDetails.name, response.toolDetails.logoURI),
+        );
+        break;
+      case 'lifi':
+        providerDetails = this.buildProviderDetails(response.includedSteps);
+        break;
+    }
 
     const resume = new RouteResume(
       request.fromChain,
@@ -304,6 +316,19 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
     } else {
       return 0;
     }
+  }
+
+  /**
+   * Builds the set of provider details
+   * @param steps
+   * @private
+   */
+  private buildProviderDetails(steps: Step[]): ProviderDetails[] {
+    const items: ProviderDetails[] = [];
+    for (const step of steps) {
+      items.push(new ProviderDetails(step.toolDetails.name, step.toolDetails.logoURI));
+    }
+    return items;
   }
 
   /**

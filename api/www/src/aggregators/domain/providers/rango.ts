@@ -48,6 +48,7 @@ import { AggregatorMetadata } from '../../../shared/domain/metadata';
 import { NATIVE_TOKEN_ADDRESS } from '../../../shared/enums/Natives';
 import { ethers } from 'ethers';
 import { Logger } from '../../../shared/domain/logger';
+import { Step } from '@lifi/sdk';
 
 interface MetadataResponse {
   blockchains: BlockchainMeta[];
@@ -215,10 +216,7 @@ export class Rango
     const aggregatorDetails = new AggregatorDetails(AggregatorProviders.Rango, '', true, true);
 
     const fees = this.buildFees(response.route.fee);
-    let providerDetails = [];
-    providerDetails.push(
-      new ProviderDetails(response.route.swapper.title, response.route.swapper.logo),
-    );
+    let providerDetails = this.buildProviderDetails(response.route.path);
 
     const amountOut = BigInteger.fromString(response.route.outputAmount);
     const resume = new RouteResume(
@@ -360,6 +358,19 @@ export class Rango
       }
     }
     return new RouteFees(amountWei, feesInUsd.toString());
+  }
+
+  /**
+   * Builds the set of provider details
+   * @param steps
+   * @private
+   */
+  private buildProviderDetails(steps: QuotePath[]): ProviderDetails[] {
+    const items: ProviderDetails[] = [];
+    for (const step of steps) {
+      items.push(new ProviderDetails(step.swapper.title, step.swapper.logo));
+    }
+    return items;
   }
 
   /**
