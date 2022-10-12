@@ -1,10 +1,9 @@
 import { Aggregator, ExternalAggregator, MetadataProviderAggregator } from '../aggregator';
 import { AggregatorRequest } from '../aggregator-request';
-import LIFI, { Estimate, GasCost, Step, Token as LifiToken } from '@lifi/sdk';
+import LIFI, { Estimate, GasCost, Step } from '@lifi/sdk';
 import { BigInteger } from '../../../shared/domain/big-integer';
 import { TransactionDetails } from '../../../shared/domain/route/transaction-details';
 import { Route } from '../../../shared/domain/route/route';
-import { RouteStep } from '../../../shared/domain/route/route-step';
 import { Token } from '../../../shared/domain/token';
 import { InsufficientLiquidity } from '../../../swaps/domain/insufficient-liquidity';
 import { ProviderDetails } from '../../../shared/domain/provider-details';
@@ -14,7 +13,6 @@ import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
 import { ApprovalTransactionDetails } from '../../../shared/domain/route/approval-transaction-details';
 import { RouterCallEncoder } from '../../../shared/domain/router-call-encoder';
 import { RouteFees } from '../../../shared/domain/route/route-fees';
-import { RouteSteps } from '../../../shared/domain/route/route-steps';
 import {
   ExternalTransactionStatus,
   StatusCheckRequest,
@@ -168,8 +166,23 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
       BigInteger.fromString(response.transactionRequest.gasLimit.toString()),
     );
 
-    const steps = this.createSteps(response);
     const fees = this.buildFees(response.estimate);
+    let providerDetails: ProviderDetails[] = [];
+    switch (response.type) {
+      case 'swap':
+        providerDetails.push(
+          new ProviderDetails(response.toolDetails.name, response.toolDetails.logoURI),
+        );
+        break;
+      case 'cross':
+        providerDetails.push(
+          new ProviderDetails(response.toolDetails.name, response.toolDetails.logoURI),
+        );
+        break;
+      case 'lifi':
+        providerDetails = this.buildProviderDetails(response.includedSteps);
+        break;
+    }
 
     const resume = new RouteResume(
       request.fromChain,
@@ -179,7 +192,7 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
       request.amountIn,
       BigInteger.fromString(response.estimate.toAmount),
       BigInteger.fromString(response.estimate.toAmountMin),
-      steps.totalExecutionTime(),
+      response.estimate.executionDuration,
     );
 
     const bridgeTrackingId = request.fromChain !== request.toChain ? response.tool : '';
@@ -195,8 +208,8 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
     return new Route(
       aggregatorDetails,
       resume,
-      steps,
       fees,
+      providerDetails,
       approvalTransaction,
       transactionDetails,
     );
@@ -281,100 +294,16 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
   }
 
   /**
-   * Create the steps of the route
-   * @param step
+   * Builds the set of provider details
+   * @param steps
    * @private
    */
-  private createSteps(step: Step): RouteSteps {
-    let steps = [];
-
-    switch (step.type) {
-      case 'swap':
-        steps.push(this.createStep(step));
-        break;
-      case 'cross':
-        steps.push(this.createStep(step));
-        break;
-      case 'lifi':
-        steps = step.includedSteps.map((s) => this.createStep(s));
-        break;
+  private buildProviderDetails(steps: Step[]): ProviderDetails[] {
+    const items: ProviderDetails[] = [];
+    for (const step of steps) {
+      items.push(new ProviderDetails(step.toolDetails.name, step.toolDetails.logoURI));
     }
-
-    return new RouteSteps(steps);
-  }
-
-  /**
-   * Create a single step
-   * @param step
-   * @private
-   */
-  private createStep(step: Step): RouteStep {
-    const fromToken = new Token(
-      step.action.fromToken.chainId.toString(),
-      step.action.fromToken.name,
-      step.action.fromToken.address,
-      step.action.fromToken.decimals,
-      step.action.fromToken.symbol,
-      step.action.fromToken.logoURI,
-    );
-    const toToken = new Token(
-      step.action.toToken.chainId.toString(),
-      step.action.toToken.name,
-      step.action.toToken.address,
-      step.action.toToken.decimals,
-      step.action.toToken.symbol,
-      step.action.toToken.logoURI,
-    );
-
-    const feeInUSD = this.computeFeeInUsd(step.estimate);
-
-    let type;
-    switch (step.type) {
-      case 'swap':
-        type = RouteStep.TYPE_SWAP;
-        break;
-      case 'cross':
-        type = RouteStep.TYPE_BRIDGE;
-        break;
-    }
-
-    const details = new ProviderDetails(step.toolDetails.name, step.toolDetails.logoURI);
-
-    return new RouteStep(
-      type,
-      details,
-      fromToken,
-      toToken,
-      BigInteger.fromString(step.estimate.fromAmount),
-      BigInteger.fromString(step.estimate.toAmount),
-      feeInUSD.toString(),
-      step.estimate.executionDuration,
-    );
-  }
-
-  private computeFeeInUsd(estimate: Estimate): number {
-    let feeInUSD = 0;
-    if (estimate.gasCosts) {
-      for (const entry of estimate.gasCosts) {
-        feeInUSD += this.computeEntryCost(entry.amountUSD, entry.amount, entry.token);
-      }
-    }
-    if (estimate.feeCosts) {
-      for (const entry of estimate.feeCosts) {
-        feeInUSD += this.computeEntryCost(entry.amountUSD, entry.amount, entry.token);
-      }
-    }
-    return feeInUSD;
-  }
-
-  private computeEntryCost(amountUSD: string, amount: string, token: LifiToken): number {
-    if (amountUSD) {
-      return Number(amountUSD);
-    } else if (amount && token.priceUSD) {
-      return Number(ethers.utils.formatUnits(amount, token.decimals)) * Number(token.priceUSD);
-    } else {
-      return 0;
-    }
+    return items;
   }
 
   /**

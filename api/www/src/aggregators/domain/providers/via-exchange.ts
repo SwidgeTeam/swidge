@@ -5,7 +5,6 @@ import { AggregatorProviders } from './aggregator-providers';
 import { RouteResume } from '../../../shared/domain/route/route-resume';
 import { InsufficientLiquidity } from '../../../swaps/domain/insufficient-liquidity';
 import { BigInteger } from '../../../shared/domain/big-integer';
-import { RouteStep } from '../../../shared/domain/route/route-step';
 import { IActionStep, IRouteAction } from '@viaprotocol/router-sdk/dist/types';
 import { Token } from '../../../shared/domain/token';
 import { ProviderDetails } from '../../../shared/domain/provider-details';
@@ -22,7 +21,7 @@ import { RouteFees } from '../../../shared/domain/route/route-fees';
 import { PriceFeed } from '../../../shared/domain/price-feed';
 import { IPriceFeedFetcher } from '../../../shared/domain/price-feed-fetcher';
 import { IGasPriceFetcher } from '../../../shared/domain/gas-price-fetcher';
-import { RouteSteps } from '../../../shared/domain/route/route-steps';
+import { Action } from 'rxjs/internal/scheduler/Action';
 
 export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAggregator {
   private enabledChains = [];
@@ -82,7 +81,11 @@ export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAg
     const gasPrice = await this.gasPriceFetcher.fetch(request.fromChain);
     const nativePrice = await this.priceFeedFetcher.fetch(request.fromChain);
     const fees = this.buildFees(action, gasPrice, nativePrice);
-    const steps = this.buildSteps(route.actions);
+    const executionTime = route.actions[0].steps.reduce((total, { tool }) => {
+      return total + tool.estimatedTime;
+    }, 0);
+
+    const providerDetails = this.buildProviderDetails(route.actions);
 
     const resume = new RouteResume(
       request.fromChain,
@@ -92,7 +95,7 @@ export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAg
       request.amountIn,
       BigInteger.fromString(route.toTokenAmount.toString()),
       BigInteger.fromString(route.toTokenAmount.toString()),
-      steps.totalExecutionTime(),
+      executionTime,
     );
 
     const aggregatorDetails = new AggregatorDetails(
@@ -103,7 +106,7 @@ export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAg
       action.uuid,
     );
 
-    return new Route(aggregatorDetails, resume, steps, fees);
+    return new Route(aggregatorDetails, resume, fees, providerDetails);
   }
 
   /**
@@ -236,67 +239,18 @@ export class ViaExchange implements Aggregator, TwoSteppedAggregator, ExternalAg
   }
 
   /**
-   * Builds the whole set of steps
-   * @param actions
+   * Builds the set of provider details
+   * @param steps
    * @private
    */
-  private buildSteps(actions: IRouteAction[]): RouteSteps {
-    const items: RouteStep[] = [];
+  private buildProviderDetails(actions: IRouteAction[]): ProviderDetails[] {
+    const items: ProviderDetails[] = [];
     for (const action of actions) {
       for (const step of action.steps) {
-        items.push(this.buildStep(step));
+        items.push(new ProviderDetails(step.tool.name, step.tool.logoURI));
       }
     }
-    return new RouteSteps(items);
-  }
-
-  /**
-   * Builds a single step
-   * @param step
-   * @private
-   */
-  private buildStep(step: IActionStep): RouteStep {
-    const fromToken = new Token(
-      step.fromToken.chainId.toString(),
-      step.fromToken.name,
-      step.fromToken.address,
-      step.fromToken.decimals,
-      step.fromToken.symbol,
-      step.fromToken.logoURI,
-    );
-    const toToken = new Token(
-      step.toToken.chainId.toString(),
-      step.toToken.name,
-      step.toToken.address,
-      step.toToken.decimals,
-      step.toToken.symbol,
-      step.toToken.logoURI,
-    );
-    const details = new ProviderDetails(step.tool.name, step.tool.logoURI);
-    const amountIn = BigInteger.fromString(step.fromTokenAmount.toString());
-    const amountOut = BigInteger.fromString(step.toTokenAmount.toString());
-    //const feeInUSD = step.gasFees.feesInUsd.toString();
-
-    let type;
-    switch (step.type) {
-      case 'swap':
-        type = RouteStep.TYPE_SWAP;
-        break;
-      case 'cross':
-        type = RouteStep.TYPE_BRIDGE;
-        break;
-    }
-
-    return new RouteStep(
-      type,
-      details,
-      fromToken,
-      toToken,
-      amountIn,
-      amountOut,
-      '',
-      step.tool.estimatedTime,
-    );
+    return items;
   }
 
   /**

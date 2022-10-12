@@ -133,18 +133,10 @@ class SwidgeAPI extends HttpClient {
                         amount: r.fees.amount,
                         amountInUsd: r.fees.amountInUsd,
                     },
-                    steps: r.steps.map((step) => {
+                    providers: r.providers.map((provider) => {
                         return {
-                            type: step.type,
-                            name: step.name,
-                            logo: step.logo,
-                            tokenIn: step.tokenIn,
-                            tokenOut: step.tokenOut,
-                            amountIn: step.amountIn,
-                            amountOut: step.amountOut,
-                            fee: step.fee,
-                            executionTime: step.executionTime,
-                            completed: false,
+                            name: provider.name,
+                            logo: provider.logo,
                         }
                     }),
                     completed: false,

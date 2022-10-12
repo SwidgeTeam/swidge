@@ -1,11 +1,10 @@
 import { TransactionDetails } from './transaction-details';
-import { RouteStep } from './route-step';
 import { RouteResume } from './route-resume';
 import { AggregatorDetails } from '../aggregator-details';
 import { ApprovalTransactionDetails } from './approval-transaction-details';
 import { RouteFees } from './route-fees';
-import { RouteSteps } from './route-steps';
 import { randomUUID } from 'crypto';
+import { ProviderDetails } from '../provider-details';
 
 export class Route {
   private readonly _id: string;
@@ -14,8 +13,8 @@ export class Route {
   constructor(
     private readonly _aggregator: AggregatorDetails,
     private readonly _resume: RouteResume,
-    private readonly _steps: RouteSteps,
     private readonly _fees: RouteFees,
+    private readonly _providerDetails: ProviderDetails[],
     private readonly _approvalTransaction?: ApprovalTransactionDetails,
     private readonly _transactionDetails?: TransactionDetails,
   ) {
@@ -39,10 +38,6 @@ export class Route {
     return this._resume;
   }
 
-  get steps(): RouteStep[] {
-    return this._steps.items<RouteStep[]>();
-  }
-
   get fees(): RouteFees {
     return this._fees;
   }
@@ -53,6 +48,10 @@ export class Route {
 
   get transaction(): TransactionDetails | undefined {
     return this._transactionDetails;
+  }
+
+  get providers(): ProviderDetails[] {
+    return this._providerDetails;
   }
 
   get tags(): string[] {

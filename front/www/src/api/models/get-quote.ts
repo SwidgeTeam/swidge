@@ -7,18 +7,6 @@ interface TokenDetailsJson {
     icon: string
 }
 
-interface RouteStepJson {
-    type: string
-    name: string
-    logo: string
-    tokenIn: TokenDetailsJson
-    tokenOut: TokenDetailsJson
-    amountIn: string
-    amountOut: string
-    fee: string
-    executionTime: number
-}
-
 export interface ApprovalTransactionDetailsJson {
     to: string
     callData: string
@@ -47,14 +35,19 @@ interface RouteFeesJson {
     amountInUsd: string
 }
 
+interface ProviderDetailsJson {
+    name: string
+    logo: string
+}
+
 interface RouteJson {
     amountOut: string
     id: string
     tags: string[]
     aggregator: AggregatorDetailsJson
     resume: RouteResumeJson
-    steps: RouteStepJson[]
     fees: RouteFeesJson
+    providers: ProviderDetailsJson[]
     approvalTx: ApprovalTransactionDetailsJson | null
     mainTx: TransactionDetailsJson | null
 }

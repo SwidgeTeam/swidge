@@ -5,11 +5,10 @@ import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
 import { AggregatorProviders } from './aggregator-providers';
 import { RouteResume } from '../../../shared/domain/route/route-resume';
 import { BigInteger } from '../../../shared/domain/big-integer';
-import { RouteStep } from '../../../shared/domain/route/route-step';
 import { Token } from '../../../shared/domain/token';
 import { ProviderDetails } from '../../../shared/domain/provider-details';
 import { InsufficientLiquidity } from '../../../swaps/domain/insufficient-liquidity';
-import { QuotePath, QuoteSimulationResult } from 'rango-sdk-basic/lib/types/api/common';
+import { QuotePath } from 'rango-sdk-basic/lib/types/api/common';
 import {
   Arbitrum,
   Aurora,
@@ -45,7 +44,6 @@ import {
   StatusCheckResponse,
 } from '../status-check';
 import { RouteFees } from '../../../shared/domain/route/route-fees';
-import { RouteSteps } from '../../../shared/domain/route/route-steps';
 import { AggregatorMetadata } from '../../../shared/domain/metadata';
 import { NATIVE_TOKEN_ADDRESS } from '../../../shared/enums/Natives';
 import { ethers } from 'ethers';
@@ -85,7 +83,8 @@ declare type RangoToken = {
 };
 
 export class Rango
-  implements Aggregator, OneSteppedAggregator, ExternalAggregator, MetadataProviderAggregator {
+  implements Aggregator, OneSteppedAggregator, ExternalAggregator, MetadataProviderAggregator
+{
   private enabled = true;
   private enabledChains = [
     Mainnet,
@@ -215,8 +214,8 @@ export class Rango
 
     const aggregatorDetails = new AggregatorDetails(AggregatorProviders.Rango, '', true, true);
 
-    const steps = this.buildSteps(request.amountIn, response.route);
     const fees = this.buildFees(response.route.fee);
+    const providerDetails = this.buildProviderDetails(response.route.path);
 
     const amountOut = BigInteger.fromString(response.route.outputAmount);
     const resume = new RouteResume(
@@ -227,10 +226,10 @@ export class Rango
       request.amountIn,
       amountOut,
       amountOut,
-      steps.totalExecutionTime(),
+      response.route.estimatedTimeInSeconds,
     );
 
-    return new Route(aggregatorDetails, resume, steps, fees);
+    return new Route(aggregatorDetails, resume, fees, providerDetails);
   }
 
   /**
@@ -360,130 +359,17 @@ export class Rango
     return new RouteFees(amountWei, feesInUsd.toString());
   }
 
-  private buildSteps(generalAmountIn: BigInteger, route: QuoteSimulationResult): RouteSteps {
-    if (route.path) {
-      return this.buildMultiSteps(generalAmountIn, route.path);
-    } else {
-      return this.buildSingleSteps(generalAmountIn, route);
-    }
-  }
-
   /**
-   * Builds the whole set of steps
-   * @param generalAmountIn
-   * @param route
-   * @private
-   */
-  private buildSingleSteps(generalAmountIn: BigInteger, route: QuoteSimulationResult): RouteSteps {
-    const fromToken = new Token(
-      // @ts-ignore
-      this.getChainId(route.from.blockchain),
-      // @ts-ignore
-      route.from.symbol,
-      // @ts-ignore
-      this.fromProviderAddress(route.from.address),
-      // @ts-ignore
-      route.from.decimals,
-      // @ts-ignore
-      route.from.symbol,
-      // @ts-ignore
-      route.from.image,
-    );
-    const toToken = new Token(
-      // @ts-ignore
-      this.getChainId(route.to.blockchain),
-      // @ts-ignore
-      route.to.symbol,
-      // @ts-ignore
-      this.fromProviderAddress(route.to.address),
-      // @ts-ignore
-      route.to.decimals,
-      // @ts-ignore
-      route.to.symbol,
-      // @ts-ignore
-      route.to.image,
-    );
-    const details = new ProviderDetails(route.swapper.title, route.swapper.logo);
-    const amountOut = BigInteger.fromString(route.outputAmount);
-    //const feeInUSD = step.gasFees.feesInUsd.toString();
-
-    const step = new RouteStep(
-      RouteStep.TYPE_SWAP,
-      details,
-      fromToken,
-      toToken,
-      generalAmountIn,
-      amountOut,
-      '',
-      route.estimatedTimeInSeconds,
-    );
-    return new RouteSteps([step]);
-  }
-
-  /**
-   * Builds the whole set of steps
-   * @param generalAmountIn
+   * Builds the set of provider details
    * @param steps
    * @private
    */
-  private buildMultiSteps(generalAmountIn: BigInteger, steps: QuotePath[]): RouteSteps {
-    const items: RouteStep[] = [];
+  private buildProviderDetails(steps: QuotePath[]): ProviderDetails[] {
+    const items: ProviderDetails[] = [];
     for (const step of steps) {
-      const amountIn = items.length > 0 ? items[items.length - 1].amountOut : generalAmountIn;
-      items.push(this.buildStep(amountIn, step));
+      items.push(new ProviderDetails(step.swapper.title, step.swapper.logo));
     }
-    return new RouteSteps(items);
-  }
-
-  /**
-   * Builds a single step
-   * @param amountIn
-   * @param step
-   * @private
-   */
-  private buildStep(amountIn: BigInteger, step: QuotePath): RouteStep {
-    const fromToken = new Token(
-      this.getChainId(step.from.blockchain),
-      step.from.symbol,
-      step.from.address,
-      step.from.decimals,
-      step.from.symbol,
-      step.from.image,
-    );
-    const toToken = new Token(
-      this.getChainId(step.to.blockchain),
-      step.to.symbol,
-      step.to.address,
-      step.to.decimals,
-      step.to.symbol,
-      step.to.image,
-    );
-    const details = new ProviderDetails(step.swapper.title, step.swapper.logo);
-    const amountOut = BigInteger.fromString(step.expectedOutput);
-    //const feeInUSD = step.gasFees.feesInUsd.toString();
-
-    let type;
-    switch (step.swapperType) {
-      case 'DEX':
-        type = RouteStep.TYPE_SWAP;
-        break;
-      case 'BRIDGE':
-        type = RouteStep.TYPE_BRIDGE;
-        break;
-    }
-
-    return new RouteStep(
-      type,
-      details,
-      fromToken,
-      toToken,
-      amountIn,
-      amountOut,
-      '',
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      step.estimatedTimeInSeconds,
-    );
+    return items;
   }
 
   /**
