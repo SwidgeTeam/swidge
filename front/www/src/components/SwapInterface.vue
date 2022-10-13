@@ -40,7 +40,7 @@ const showTransactionAlert = ref(false)
 const transactionAlertMessage = ref<string>('')
 const isExecutingTransaction = ref<boolean>(false)
 
-let quote: ReturnType<typeof setInterval> | undefined
+const reloadTimeout = ref<ReturnType<typeof setTimeout> | undefined>(undefined)
 
 const buttonLabel = computed({
     get: () => {
@@ -103,7 +103,6 @@ const destinationChainSelected = computed({
  * Handles the update of the amount on the origin amount
  */
 const handleSourceInputChanged = () => {
-    clearInterval(quote)
     tryToQuote()
 }
 
@@ -155,7 +154,6 @@ const handleUpdateTokenFromModal = (token: IToken) => {
     }
 
     // Check if we can quote
-    clearInterval(quote)
     tryToQuote()
 
     // Close modal
@@ -206,14 +204,12 @@ const tryToQuote = async () => {
         return
     }
     unsetButtonAlert()
+    clearTimeout(reloadTimeout.value)
 
     isExecuteButtonDisabled.value = true
 
     try {
         await routesStore.quotePath()
-        quote = setInterval(async () => {
-            return await routesStore.quotePath()
-        }, 15000)
 
         const thereAreRoutes = routesStore.getAllRoutes.length > 0
         if (!thereAreRoutes) {
@@ -228,7 +224,8 @@ const tryToQuote = async () => {
         }
     } catch (e: unknown) {
         onQuotingError(e as Error)
-        clearInterval(quote)
+    } finally {
+        reloadTimeout.value = setTimeout(tryToQuote, 15000)
     }
 }
 
@@ -349,8 +346,7 @@ const onInitialTxCompleted = (txHash: TxHash) => {
     transactionStore.informExecutedTx(txHash)
     if (routesStore.isCrossChainRoute) {
         transactionStore.startCheckingStatus()
-    }
-    else {
+    } else {
         useMetadataStore().fetchBalances()
     }
 }
@@ -390,7 +386,6 @@ const closeModalStatus = () => {
 
 const handleChangedReceiver = (address: string) => {
     routesStore.setReceiverAddress(address)
-    clearInterval(quote)
     tryToQuote()
 }
 </script>
@@ -405,7 +400,7 @@ const handleChangedReceiver = (address: string) => {
             <ReloadIcon
                 class="w-5 h-5 cursor-pointer"
                 :class="
-                    loadingRoutes()
+                    reloadTimeout && !loadingRoutes()
                         ? 'animate-[spin_1.5s_ease-in-out_infinite]'
                         : ''
                 "
@@ -421,8 +416,8 @@ const handleChangedReceiver = (address: string) => {
                 @input-changed="handleSourceInputChanged"
                 @select-token="() => handleOpenTokenList(true)"
             />
-            <FromToArrow @switch-tokens="switchHandlerFunction" />
-            <ReceivingBox @select-token="() => handleOpenTokenList(false)" />
+            <FromToArrow @switch-tokens="switchHandlerFunction"/>
+            <ReceivingBox @select-token="() => handleOpenTokenList(false)"/>
         </div>
         <RecipientUserCard
             v-if="destinationChainSelected"
