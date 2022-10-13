@@ -40,6 +40,8 @@ const showTransactionAlert = ref(false)
 const transactionAlertMessage = ref<string>('')
 const isExecutingTransaction = ref<boolean>(false)
 
+const reloadTimeout = ref<ReturnType<typeof setTimeout> | undefined>(undefined)
+
 const buttonLabel = computed({
     get: () => {
         if (!web3Store.isConnected) {
@@ -187,6 +189,10 @@ const switchHandlerFunction = () => {
     isExecuteButtonDisabled.value = true
 }
 
+const loadingRoutes = () => {
+    return routesStore.loadingRoutes
+}
+
 /**
  * Quotes the possible path for a given pair and amount
  */
@@ -198,6 +204,7 @@ const tryToQuote = async () => {
         return
     }
     unsetButtonAlert()
+    clearTimeout(reloadTimeout.value)
 
     isExecuteButtonDisabled.value = true
 
@@ -217,6 +224,8 @@ const tryToQuote = async () => {
         }
     } catch (e: unknown) {
         onQuotingError(e as Error)
+    } finally {
+        reloadTimeout.value = setTimeout(tryToQuote, 15000)
     }
 }
 
@@ -337,8 +346,7 @@ const onInitialTxCompleted = (txHash: TxHash) => {
     transactionStore.informExecutedTx(txHash)
     if (routesStore.isCrossChainRoute) {
         transactionStore.startCheckingStatus()
-    }
-    else {
+    } else {
         useMetadataStore().fetchBalances()
     }
 }
@@ -383,9 +391,21 @@ const handleChangedReceiver = (address: string) => {
 </script>
 
 <template>
-    <div class="flex flex-col gap-3 px-3 md:mt-[20px] w-full max-w-md rounded-xl">
-        <div class="flex justify-end gap-2 py-2 h-[var(--settings-line-height)]">
-            <ReloadIcon class="w-5 h-5 cursor-pointer" @click="tryToQuote" />
+    <div
+        class="flex flex-col gap-3 px-3 md:mt-[20px] w-full max-w-md rounded-xl"
+    >
+        <div
+            class="flex justify-end gap-2 py-2 h-[var(--settings-line-height)]"
+        >
+            <ReloadIcon
+                class="w-5 h-5 cursor-pointer"
+                :class="
+                    reloadTimeout && !loadingRoutes()
+                        ? 'animate-[spin_1.5s_ease-in-out_infinite]'
+                        : ''
+                "
+                @click="tryToQuote"
+            />
             <AdjustmentsIcon
                 class="w-5 h-5 cursor-pointer"
                 @click="isSettingsModalOpen = true"
@@ -396,8 +416,8 @@ const handleChangedReceiver = (address: string) => {
                 @input-changed="handleSourceInputChanged"
                 @select-token="() => handleOpenTokenList(true)"
             />
-            <FromToArrow @switch-tokens="switchHandlerFunction" />
-            <ReceivingBox @select-token="() => handleOpenTokenList(false)" />
+            <FromToArrow @switch-tokens="switchHandlerFunction"/>
+            <ReceivingBox @select-token="() => handleOpenTokenList(false)"/>
         </div>
         <RecipientUserCard
             v-if="destinationChainSelected"
