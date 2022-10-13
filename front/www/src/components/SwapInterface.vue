@@ -103,7 +103,6 @@ const destinationChainSelected = computed({
  * Handles the update of the amount on the origin amount
  */
 const handleSourceInputChanged = () => {
-    // console.log('CLEAR')
     clearInterval(quote)
     tryToQuote()
 }
@@ -190,6 +189,10 @@ const switchHandlerFunction = () => {
     routesStore.switchTokens()
     routesStore.setAmountIn('')
     isExecuteButtonDisabled.value = true
+}
+
+const loadingRoutes = () => {
+    return routesStore.loadingRoutes
 }
 
 /**
@@ -399,7 +402,15 @@ const handleChangedReceiver = (address: string) => {
         <div
             class="flex justify-end gap-2 py-2 h-[var(--settings-line-height)]"
         >
-            <ReloadIcon class="w-5 h-5 cursor-pointer" @click="tryToQuote" />
+            <ReloadIcon
+                class="w-5 h-5 cursor-pointer"
+                :class="
+                    loadingRoutes()
+                        ? 'animate-[spin_1.5s_ease-in-out_infinite]'
+                        : ''
+                "
+                @click="tryToQuote"
+            />
             <AdjustmentsIcon
                 class="w-5 h-5 cursor-pointer"
                 @click="isSettingsModalOpen = true"
