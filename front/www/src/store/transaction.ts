@@ -163,7 +163,9 @@ export const useTransactionStore = defineStore('transaction', {
                     id: params.txId,
                     originTxHash: params.txHash,
                     destinationTxHash: '',
-                    status: TransactionStatus.Pending,
+                    status: params.fromChainId === params.toChainId
+                        ? TransactionStatus.Success
+                        : TransactionStatus.Pending,
                     date: new Date().toString(),
                     fromChain: params.fromChainId,
                     toChain: params.toChainId,
