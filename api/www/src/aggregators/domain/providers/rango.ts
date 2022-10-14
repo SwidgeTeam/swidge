@@ -82,8 +82,7 @@ declare type RangoToken = {
 };
 
 export class Rango
-  implements Aggregator, SteppedAggregator, ExternalAggregator, MetadataProviderAggregator
-{
+  implements Aggregator, SteppedAggregator, ExternalAggregator, MetadataProviderAggregator {
   private enabled = true;
   private enabledChains = [
     Mainnet,
@@ -269,10 +268,13 @@ export class Rango
       tx.gasLimit ? BigInteger.fromString(tx.gasLimit) : BigInteger.zero(),
     );
 
-    const [spender, _] = ethers.utils.defaultAbiCoder.decode(
-      ['address', 'uint256'],
-      `0x${tx.approveData.slice(10)}`,
-    );
+    let spender;
+    if (tx.approveData) {
+      [spender] = ethers.utils.defaultAbiCoder.decode(
+        ['address', 'uint256'],
+        `0x${tx.approveData.slice(10)}`,
+      );
+    }
 
     return {
       tx: mainTx,
