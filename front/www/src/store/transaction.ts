@@ -1,5 +1,5 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import { TransactionDetails } from '@/domain/paths/path'
+import Route, { TransactionDetails } from '@/domain/paths/path'
 import { useWeb3Store } from '@/store/web3'
 import { useRoutesStore } from '@/store/routes'
 import { useMetadataStore } from '@/store/metadata'
@@ -13,6 +13,7 @@ export const useTransactionStore = defineStore('transaction', {
     state: () => ({
         mainTx: undefined as undefined | TransactionDetails,
         approvalContract: undefined as undefined | string,
+        executingRoute: undefined as undefined | Route,
         trackingId: '',
         statusCheckInterval: 0,
         txId: '',
@@ -65,20 +66,19 @@ export const useTransactionStore = defineStore('transaction', {
         /**
          * process that executes the selected route
          */
-        executeRoute: async function () {
-            const web3Store = useWeb3Store()
-            const routesStore = useRoutesStore()
-            const route = routesStore.getSelectedRoute
+        executeRoute: async function (route: Route) {
+            this.executingRoute = route
             if (!this.mainTx) {
                 await this.fetchMainTx()
             }
             if (!this.mainTx) {
                 throw new Error('failed fetching tx')
             }
+            const web3Store = useWeb3Store()
             await web3Store.approveIfRequired({
                 token: route.resume.tokenIn.address,
                 spender: this.approvalContract,
-                amount: routesStore.getRawAmountIn
+                amount: ethers.utils.parseUnits(route.resume.amountIn, route.resume.tokenIn.decimals).toString()
             })
             return web3Store.sendMainTransaction(this.mainTx)
         },
@@ -88,30 +88,34 @@ export const useTransactionStore = defineStore('transaction', {
         async informExecutedTx(txHash: string) {
             const web3Store = useWeb3Store()
             const routesStore = useRoutesStore()
-            const route = routesStore.getSelectedRoute
-            this.txId = route.id
+            const route = this.executingRoute
+            if (!route) {
+                throw new Error('no executing route')
+            }
             if (!this.mainTx) {
                 throw new Error('something very wrong, what did we execute then?')
             }
-            const amountIn = routesStore.getRawAmountIn
-            const amountOut = ethers.utils.parseUnits(route.resume.amountOut, routesStore.getDestinationToken()?.decimals).toString()
+            this.txId = route.id
+            const amountIn = ethers.utils.parseUnits(route.resume.amountIn, route.resume.tokenIn.decimals).toString()
+            const amountOut = ethers.utils.parseUnits(route.resume.amountOut, route.resume.tokenOut.decimals).toString()
 
             const request = {
                 txId: this.txId,
                 txHash: txHash,
                 aggregatorId: route.aggregator.id,
-                fromChainId: routesStore.getOriginChainId,
-                toChainId: routesStore.getDestinationChainId,
+                fromChainId: route.resume.fromChain,
+                toChainId: route.resume.toChain,
                 fromAddress: web3Store.account,
                 toAddress: routesStore.receiverAddress,
-                fromToken: routesStore.getOriginTokenAddress,
-                toToken: routesStore.getDestinationTokenAddress,
+                fromToken: route.resume.tokenIn.address,
+                toToken: route.resume.tokenOut.address,
                 amountIn: amountIn,
                 trackingId: this.trackingId,
             }
 
             // immediately store in local array
             this.addTxToLocalList(request, amountOut, route.resume.executionTime)
+            this.executingRoute = undefined
 
             // inform backend about tx
             swidgeApi.informExecutedTx(request)

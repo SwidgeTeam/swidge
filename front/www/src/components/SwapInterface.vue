@@ -243,6 +243,7 @@ const onQuotingError = (e: Error) => {
  * Executes the transaction process
  */
 const onExecuteTransaction = async () => {
+    clearTimeout(reloadTimeout.value)
     const route = routesStore.getSelectedRoute
     if (!route) {
         throw new Error('No route')
@@ -261,7 +262,7 @@ const onExecuteTransaction = async () => {
     setExecutingButton()
     const toastId = toast.success('Starting execution...', { timeout: false })
 
-    const promise = transactionStore.executeRoute()
+    const promise = transactionStore.executeRoute(route)
 
     await promise
         .then((txHash: TxHash) => {
