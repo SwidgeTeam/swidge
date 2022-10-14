@@ -7,12 +7,6 @@ interface TokenDetailsJson {
     icon: string
 }
 
-export interface ApprovalTransactionDetailsJson {
-    to: string
-    callData: string
-    gasLimit: string
-}
-
 interface TransactionDetailsJson {
     to: string
     callData: string
@@ -48,7 +42,7 @@ interface RouteJson {
     resume: RouteResumeJson
     fees: RouteFeesJson
     providers: ProviderDetailsJson[]
-    approvalTx: ApprovalTransactionDetailsJson | null
+    approvalContract: string | null
     mainTx: TransactionDetailsJson | null
 }
 

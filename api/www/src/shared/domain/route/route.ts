@@ -1,7 +1,6 @@
 import { TransactionDetails } from './transaction-details';
 import { RouteResume } from './route-resume';
 import { AggregatorDetails } from '../aggregator-details';
-import { ApprovalTransactionDetails } from './approval-transaction-details';
 import { RouteFees } from './route-fees';
 import { randomUUID } from 'crypto';
 import { ProviderDetails } from '../provider-details';
@@ -15,7 +14,7 @@ export class Route {
     private readonly _resume: RouteResume,
     private readonly _fees: RouteFees,
     private readonly _providerDetails: ProviderDetails[],
-    private readonly _approvalTransaction?: ApprovalTransactionDetails,
+    private readonly _approvalContract?: string,
     private readonly _transactionDetails?: TransactionDetails,
   ) {
     this._id = randomUUID();
@@ -42,8 +41,8 @@ export class Route {
     return this._fees;
   }
 
-  get approvalTransaction(): ApprovalTransactionDetails {
-    return this._approvalTransaction;
+  get approvalContract(): string {
+    return this._approvalContract;
   }
 
   get transaction(): TransactionDetails | undefined {

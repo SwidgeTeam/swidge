@@ -132,6 +132,12 @@ export const useRoutesStore = defineStore('routes', {
             return this.amountIn
         },
         /**
+         * returns selected input amount for the route
+         */
+        getRawAmountIn(): string {
+            return ethers.utils.parseUnits(this.amountIn, this.getOriginToken()?.decimals).toString()
+        },
+        /**
          * returns the selected slippage
          */
         getSlippage(): string {
@@ -211,9 +217,9 @@ export const useRoutesStore = defineStore('routes', {
             const transactionStore = useTransactionStore()
             this.selectedRoute = id
             const route = this.getSelectedRoute
-            transactionStore.trackingId = route.aggregator.trackingId
-            transactionStore.approvalTx = route.approvalTx
             transactionStore.mainTx = route.tx
+            transactionStore.trackingId = route.aggregator.trackingId
+            transactionStore.approvalContract = route.approvalContract
         },
         /**
          * Sets a specific token as selected on origin

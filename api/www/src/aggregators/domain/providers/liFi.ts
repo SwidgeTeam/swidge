@@ -10,7 +10,6 @@ import { ProviderDetails } from '../../../shared/domain/provider-details';
 import { RouteResume } from '../../../shared/domain/route/route-resume';
 import { AggregatorProviders } from './aggregator-providers';
 import { AggregatorDetails } from '../../../shared/domain/aggregator-details';
-import { ApprovalTransactionDetails } from '../../../shared/domain/route/approval-transaction-details';
 import { RouterCallEncoder } from '../../../shared/domain/router-call-encoder';
 import { RouteFees } from '../../../shared/domain/route/route-fees';
 import {
@@ -149,16 +148,6 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
       throw new InsufficientLiquidity();
     }
 
-    const approvalTransaction = request.fromToken.isNative()
-      ? null
-      : new ApprovalTransactionDetails(
-          request.fromToken.address,
-          this.routerCallEncoder.encodeApproval(
-            response.estimate.approvalAddress,
-            request.amountIn,
-          ),
-        );
-
     const transactionDetails = new TransactionDetails(
       response.transactionRequest.to,
       response.transactionRequest.data.toString(),
@@ -210,7 +199,7 @@ export class LiFi implements Aggregator, ExternalAggregator, MetadataProviderAgg
       resume,
       fees,
       providerDetails,
-      approvalTransaction,
+      response.estimate.approvalAddress,
       transactionDetails,
     );
   }

@@ -22,12 +22,6 @@ interface RouteFees {
     amountInUsd: string
 }
 
-export interface ApprovalTransactionDetails {
-    to: string
-    callData: string
-    gasLimit: string
-}
-
 export interface TransactionDetails {
     to: string
     callData: string
@@ -47,8 +41,8 @@ export default interface Route {
     resume: RouteResume
     fees: RouteFees
     providers: ProviderDetails[]
-    approvalTx?: ApprovalTransactionDetails
     tx?: TransactionDetails
+    approvalContract?: string
     completed: boolean
 }
 

@@ -261,16 +261,7 @@ const onExecuteTransaction = async () => {
     setExecutingButton()
     const toastId = toast.success('Starting execution...', { timeout: false })
 
-    let promise
-    const aggregator = route.aggregator
-
-    if (!aggregator.requiresCallDataQuoting) {
-        promise = executeRoute()
-    } else {
-        promise = aggregator.bothQuotesInOne
-            ? executeSingleQuoteExecution()
-            : executeDoubleQuoteExecution()
-    }
+    const promise = transactionStore.executeRoute()
 
     await promise
         .then((txHash: TxHash) => {
@@ -288,54 +279,6 @@ const onExecuteTransaction = async () => {
         .finally(() => {
             unsetExecutingButton()
         })
-}
-
-/**
- * Executes the route when the aggregator already sent all the callData
- */
-const executeRoute = async (): Promise<TxHash> => {
-    const approvalTx = transactionStore.getApprovalTx
-    const mainTx = transactionStore.getMainTx
-    if (!mainTx) {
-        throw new Error('trying to execute an empty transaction')
-    }
-    if (approvalTx) {
-        await web3Store.sendApprovalTransaction(approvalTx)
-    }
-    return web3Store.sendMainTransaction(mainTx)
-}
-
-/**
- * Executes the route when the aggregator requires quoting the callData
- */
-const executeSingleQuoteExecution = async (): Promise<TxHash> => {
-    await transactionStore.fetchBothTxs()
-    const approvalTx = transactionStore.getApprovalTx
-    const mainTx = transactionStore.getMainTx
-    if (!mainTx) {
-        throw new Error('trying to execute an empty transaction')
-    }
-    if (approvalTx) {
-        await web3Store.sendApprovalTransaction(approvalTx)
-    }
-    return web3Store.sendMainTransaction(mainTx)
-}
-
-/**
- * Executes the route when the aggregator requires quoting the callData
- */
-const executeDoubleQuoteExecution = async (): Promise<TxHash> => {
-    await transactionStore.fetchApprovalTx()
-    const approvalTx = transactionStore.getApprovalTx
-    if (approvalTx) {
-        await web3Store.sendApprovalTransaction(approvalTx)
-    }
-    await transactionStore.fetchMainTx()
-    const mainTx = transactionStore.getMainTx
-    if (!mainTx) {
-        throw new Error('trying to execute an empty transaction')
-    }
-    return web3Store.sendMainTransaction(mainTx)
 }
 
 /**
