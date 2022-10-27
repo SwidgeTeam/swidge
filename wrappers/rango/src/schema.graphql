@@ -1,0 +1,94 @@
+#import { Module } into Http from "wrap://ens/http.polywrap.eth"
+
+type Module {
+    getMetadata: Metadata!
+
+    quote(
+        request: QuoteRequest!
+    ): QuoteResponse!
+}
+
+
+type Metadata {
+    chains: [Chain!]!,
+    tokens: Map! @annotate(type: "Map<String!, [Token!]!>!"),
+}
+
+type Chain {
+    chain_type: String!,
+    chain_id: String!,
+    name: String!,
+    logo: String!,
+    metamask: ChainInfo!,
+}
+
+type ChainInfo {
+    chain_name: String!,
+    native_currency: ChainNativeCurrency!,
+    block_explorer_urls: [String!]!,
+    rpc_urls: [String!]!,
+}
+
+type ChainNativeCurrency {
+    name: String!,
+    symbol: String!,
+    decimals: Int!,
+}
+
+type Token {
+    chain_id: String!,
+    address: String!,
+    name: String!,
+    symbol: String!,
+    decimals: Int!,
+    logo: String,
+    price: BigNumber,
+}
+
+type QuoteRequest {
+    tokenIn: Token!
+    tokenOut: Token!
+    amountIn: String!
+    slippage: BigInt!
+    senderAddress: String!
+    receiverAddress: String!
+}
+
+type QuoteResponse {
+    aggregator: AggregatorDetails!
+    resume: RouteResume!
+    fees: String!
+    providerDetails: [ProviderDetails!]!
+    approvalContract: String!
+    transactionDetails: TransactionDetails!
+}
+
+type AggregatorDetails {
+    id: String!
+    routeId: String
+    requiresCallDataQuoting: Boolean!
+    bothQuotesInOne: Boolean!
+    trackingId: String
+}
+
+type RouteResume {
+    fromChain: String!
+    toChain: String!
+    fromToken: String!
+    toToken: String!
+    amountIn: BigInt!
+    amountOut: BigInt!
+    estimatedTime: String!
+}
+
+type TransactionDetails {
+    to: String!
+    callData: String!
+    value: String!
+    gasLimit: String!
+}
+
+type ProviderDetails {
+    name: String!
+    logo: String!
+}
