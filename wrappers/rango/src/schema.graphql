@@ -2,12 +2,7 @@
 
 type Module {
     getMetadata: Metadata!
-
-    quote(
-        request: QuoteRequest!
-    ): QuoteResponse!
 }
-
 
 type Metadata {
     chains: [Chain!]!,
@@ -52,43 +47,4 @@ type QuoteRequest {
     slippage: BigInt!
     senderAddress: String!
     receiverAddress: String!
-}
-
-type QuoteResponse {
-    aggregator: AggregatorDetails!
-    resume: RouteResume!
-    fees: String!
-    providerDetails: [ProviderDetails!]!
-    approvalContract: String!
-    transactionDetails: TransactionDetails!
-}
-
-type AggregatorDetails {
-    id: String!
-    routeId: String
-    requiresCallDataQuoting: Boolean!
-    bothQuotesInOne: Boolean!
-    trackingId: String
-}
-
-type RouteResume {
-    fromChain: String!
-    toChain: String!
-    fromToken: String!
-    toToken: String!
-    amountIn: BigInt!
-    amountOut: BigInt!
-    estimatedTime: String!
-}
-
-type TransactionDetails {
-    to: String!
-    callData: String!
-    value: String!
-    gasLimit: String!
-}
-
-type ProviderDetails {
-    name: String!
-    logo: String!
 }

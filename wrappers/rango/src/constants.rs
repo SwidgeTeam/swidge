@@ -40,8 +40,17 @@ const FUSE_ID: &str = "122";
 const OKC_CODE: &str = "OKC";
 const OKC_ID: &str = "66";
 
+#[derive(Debug, Default)]
+pub struct MyErr;
 
-pub fn get_chain_id(code: &str) -> Result<&'static str, Box<dyn Error>> {
+impl std::fmt::Display for MyErr {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        f.write_str("I AM ERROR")
+    }
+}
+impl Error for MyErr {}
+
+pub fn get_chain_id(code: &str) -> Result<&'static str, MyErr> {
     return match code {
         ETHEREUM_CODE => Ok(ETHEREUM_ID),
         OPTIMISM_CODE => Ok(OPTIMISM_ID),
@@ -61,6 +70,6 @@ pub fn get_chain_id(code: &str) -> Result<&'static str, Box<dyn Error>> {
         EVMOS_CODE => Ok(EVMOS_ID),
         FUSE_CODE => Ok(FUSE_ID),
         OKC_CODE => Ok(OKC_ID),
-        _ => Err(Box::new("Wrong chain")),
+        _ => Err(MyErr),
     };
 }
