@@ -1,0 +1,4 @@
+#import { Module } into Interface from "wrap://ipfs/QmbNDPveRPowNTV8CCn546XZd1niaurSENSm7eVgbNDN4Q"
+
+type Module implements Interface_Module {
+}

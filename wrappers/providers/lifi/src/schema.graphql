@@ -1,0 +1,3 @@
+#import { Module } into Provider from "wrap://ipfs/QmbNDPveRPowNTV8CCn546XZd1niaurSENSm7eVgbNDN4Q"
+
+type Module implements Provider_Module {}
