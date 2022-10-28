@@ -11,7 +11,7 @@
     "test:env:down": "npx polywrap infra down --modules=eth-ens-ipfs",
     "deploy": "npx polywrap deploy",
     "test": "yarn test:e2e && yarn test:workflow",
-    "test:e2e": "yarn test:e2e:codegen && jest --passWithNoTests --runInBand --verbose",
+    "test:e2e": "jest --passWithNoTests --runInBand --verbose",
     "test:e2e:codegen": "npx polywrap codegen -m ./src/__tests__/types/polywrap.app.yaml -g ./src/__tests__/types/wrap",
     "test:workflow": "npx polywrap run -o ./workflows/output.json"
   },

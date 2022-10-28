@@ -1,9 +1,9 @@
 pub mod wrap;
+mod constants;
+mod metadata;
+mod utils;
+mod types;
+
 pub use wrap::*;
 
-pub fn sample_method(args: ArgsSampleMethod) -> SampleResult {
-    return SampleResult {
-        result: args.arg
-    };
-}
-
+pub use metadata::get_metadata;
