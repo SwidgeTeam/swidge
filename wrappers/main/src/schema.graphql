@@ -1,0 +1,41 @@
+#import { Module } into Rango from "wrap://ipfs/QmYsrzQW2bmom3N7D8t1bHPaPGe6rZ4vgi7asZvHjapzwU"
+
+type Module {
+    getMetadata: Metadata!
+}
+
+type Metadata {
+    chains: [Chain!]!,
+    tokens: Map! @annotate(type: "Map<String!, [Token!]!>!"),
+}
+
+type Chain {
+    chain_type: String!,
+    chain_id: String!,
+    name: String!,
+    logo: String!,
+    metamask: ChainInfo!,
+}
+
+type ChainInfo {
+    chain_name: String!,
+    native_currency: ChainNativeCurrency!,
+    block_explorer_urls: [String!]!,
+    rpc_urls: [String!]!,
+}
+
+type ChainNativeCurrency {
+    name: String!,
+    symbol: String!,
+    decimals: Int!,
+}
+
+type Token {
+    chain_id: String!,
+    address: String!,
+    name: String!,
+    symbol: String!,
+    decimals: Int!,
+    logo: String,
+    price: BigNumber,
+}
