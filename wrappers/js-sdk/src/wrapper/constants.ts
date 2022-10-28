@@ -1,0 +1,1 @@
+export const WRAPPER_URI = "wrap://ipfs/QmYsrzQW2bmom3N7D8t1bHPaPGe6rZ4vgi7asZvHjapzwU";
