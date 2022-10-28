@@ -3,7 +3,8 @@ use polywrap_wasm_rs::JSON;
 use crate::wrap::*;
 use crate::types::*;
 use crate::imported::http_module;
-use crate::utils::{get_chain_id, http_get};
+use crate::utils::{http_get};
+use crate::constants::get_chain_id;
 
 pub fn get_metadata(args: ArgsGetMetadata) -> Metadata {
     let response_body = http_get("/basic/meta", None);

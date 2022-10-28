@@ -7,21 +7,6 @@ use crate::wrap::{
 use crate::imported::http_module;
 use polywrap_wasm_rs::{BigNumber, Map, JSON};
 
-pub fn get_chain_id(code: &str) -> Result<&'static str, Box<dyn Error>> {
-    return match code {
-        "ETH" => Ok("1"),
-        "OPTIMISM" => Ok("10"),
-        "BSC" => Ok("56"),
-        "POLYGON" => Ok("137"),
-        "FANTOM" => Ok("250"),
-        "AVAX_CCHAIN" => Ok("43114"),
-        "MOONRIVER" => Ok("1285"),
-        "BOBA" => Ok("288"),
-        "HECO" => Ok("128"),
-        _ => Ok("128"),
-    };
-}
-
 pub fn http_get(url: &str, params: Option<Map<String, String>>) -> String {
     let mut params = match params {
         Some(params) => params,
