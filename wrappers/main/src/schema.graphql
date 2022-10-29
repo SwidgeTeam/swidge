@@ -1,4 +1,5 @@
-#import { Module } into Rango from "wrap://ipfs/QmYsrzQW2bmom3N7D8t1bHPaPGe6rZ4vgi7asZvHjapzwU"
+#import { Module } into Rango from "wrap://ipfs/QmNfgGbY8s1TRr8mRahE6RxDzsBkj1o7a6VJs2ne6mGFgB"
+#import { Module } into Lifi from "wrap://ipfs/QmVZptPRpj4KyER6Ry1wzm4HNKBxRPS4Gs6Xhoy2tmg4kp"
 
 type Module {
     getMetadata: Metadata!
@@ -6,7 +7,7 @@ type Module {
 
 type Metadata {
     chains: [Chain!]!,
-    tokens: Map! @annotate(type: "Map<String!, [Token!]!>!"),
+    tokens: Map! @annotate(type: "Map<String!, [String!]!>!"),
 }
 
 type Chain {
@@ -14,20 +15,6 @@ type Chain {
     chain_id: String!,
     name: String!,
     logo: String!,
-    metamask: ChainInfo!,
-}
-
-type ChainInfo {
-    chain_name: String!,
-    native_currency: ChainNativeCurrency!,
-    block_explorer_urls: [String!]!,
-    rpc_urls: [String!]!,
-}
-
-type ChainNativeCurrency {
-    name: String!,
-    symbol: String!,
-    decimals: Int!,
 }
 
 type Token {

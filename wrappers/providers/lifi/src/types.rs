@@ -1,6 +1,9 @@
 use polywrap_wasm_rs::{BigNumber, Map};
 use serde::{Deserialize, Serialize};
-use crate::wrap::{ChainInfo, ChainNativeCurrency};
+use crate::wrap::{
+    ProviderChainInfo as ChainInfo,
+    ProviderChainNativeCurrency as ChainNativeCurrency,
+};
 
 #[derive(Serialize, Deserialize)]
 pub struct ChainsJson {

@@ -1,8 +1,12 @@
 use std::borrow::Borrow;
 use std::collections::BTreeMap;
 use polywrap_wasm_rs::{BigNumber, JSON};
-use serde::de::Unexpected::Map;
-use crate::wrap::*;
+use crate::wrap::{
+    ProviderMetadata as Metadata,
+    ProviderChain as Chain,
+    ProviderChainInfo as ChainInfo,
+    ArgsGetMetadata,
+};
 use crate::types::*;
 use crate::utils::{http_get};
 
@@ -26,7 +30,7 @@ pub fn get_metadata(args: ArgsGetMetadata) -> Metadata {
         })
         .collect();
 
-    let mut tokens: BTreeMap<String, Vec<Token>> = BTreeMap::new();
+    let mut tokens: BTreeMap<String, Vec<String>> = BTreeMap::new();
 
     for (chain_id, list_json) in tokens_response.tokens {
         tokens.insert(chain_id.clone(), Vec::new());
@@ -34,21 +38,7 @@ pub fn get_metadata(args: ArgsGetMetadata) -> Metadata {
         list_json
             .into_iter()
             .for_each(|t| {
-                list.push(Token {
-                    chain_id: t.chain_id.to_string(),
-                    address: t.address,
-                    name: t.name,
-                    symbol: t.symbol,
-                    decimals: t.decimals,
-                    logo: t.logo_uri,
-                    price: match t.price_usd {
-                        Some(price) => {
-                            let p: f32 = price.parse().unwrap();
-                            BigNumber::try_from(p).ok()
-                        }
-                        None => Some(BigNumber::from(0)),
-                    },
-                })
+                list.push(t.address)
             })
     }
 

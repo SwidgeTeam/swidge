@@ -1,12 +1,10 @@
-#import { Module } into Http from "wrap://ens/http.polywrap.eth"
-
 type Module {
     getMetadata: Metadata!
 }
 
 type Metadata {
     chains: [Chain!]!,
-    tokens: Map! @annotate(type: "Map<String!, [Token!]!>!"),
+    tokens: Map! @annotate(type: "Map<String!, [String!]!>!"),
 }
 
 type Token {

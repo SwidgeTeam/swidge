@@ -1,8 +1,12 @@
 use std::collections::BTreeMap;
 use polywrap_wasm_rs::JSON;
-use crate::wrap::*;
+use crate::wrap::{
+    ProviderMetadata as Metadata,
+    ProviderChain as Chain,
+    ProviderChainInfo as ChainInfo,
+};
+use crate::wrap::module::ArgsGetMetadata;
 use crate::types::*;
-use crate::imported::http_module;
 use crate::utils::{http_get};
 use crate::constants::get_chain_id;
 
@@ -33,7 +37,7 @@ pub fn get_metadata(args: ArgsGetMetadata) -> Metadata {
         })
         .collect();
 
-    let mut tokens: BTreeMap<String, Vec<Token>> = BTreeMap::new();
+    let mut tokens: BTreeMap<String, Vec<String>> = BTreeMap::new();
 
     content.tokens
         .into_iter()
@@ -50,15 +54,7 @@ pub fn get_metadata(args: ArgsGetMetadata) -> Metadata {
             tokens
                 .get_mut(chain_id)
                 .unwrap()
-                .push(Token {
-                    chain_id: chain_id.to_string(),
-                    address: t.address.unwrap_or("0x00".to_string()),
-                    name: t.symbol.to_string(),
-                    symbol: t.symbol.to_string(),
-                    decimals: t.decimals,
-                    logo: t.image,
-                    price: t.usd_price,
-                });
+                .push(t.address.unwrap_or("0x00".to_string()));
         });
 
     return Metadata {
