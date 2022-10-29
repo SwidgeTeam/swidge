@@ -1,5 +1,5 @@
-#import { Module } into Rango from "wrap://ipfs/QmNfgGbY8s1TRr8mRahE6RxDzsBkj1o7a6VJs2ne6mGFgB"
-#import { Module } into Lifi from "wrap://ipfs/QmVZptPRpj4KyER6Ry1wzm4HNKBxRPS4Gs6Xhoy2tmg4kp"
+#import { Module } into Provider from "wrap://ipfs/QmbaTvgNrDafcChhFZw83aSKMq57iyWwdvWzuMhWKmgj55"
+#use { getImplementations } for Provider
 
 type Module {
     getMetadata: Metadata!
@@ -7,7 +7,7 @@ type Module {
 
 type Metadata {
     chains: [Chain!]!,
-    tokens: Map! @annotate(type: "Map<String!, [String!]!>!"),
+    tokens: Map! @annotate(type: "Map<String!, [Token!]!>!"),
 }
 
 type Chain {
