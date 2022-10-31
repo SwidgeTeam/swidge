@@ -17,6 +17,7 @@
     "typescript": "^4.3.5"
   },
   "dependencies": {
-    "@polywrap/client-js": "^0.9.3"
+    "@polywrap/client-js": "^0.9.3",
+    "@polywrap/ethereum-plugin-js": "^0.9.3"
   }
 }
