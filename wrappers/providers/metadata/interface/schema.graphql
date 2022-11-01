@@ -1,0 +1,13 @@
+type Module {
+    getTokens: Map! @annotate(type: "Map<String!, [Token!]!>!"),
+}
+
+type Token {
+    chain_id: String!,
+    address: String!,
+    name: String!,
+    symbol: String!,
+    decimals: Int!,
+    logo: String,
+    price: BigNumber,
+}
