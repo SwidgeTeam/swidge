@@ -1,3 +1,3 @@
-export const ETHEREUM_KEY = "ethereum";
-export const POLYGON_KEY = "polygon";
-export const FANTOM_KEY = "fantom";
+export const ETHEREUM_KEY = "Ethereum";
+export const POLYGON_KEY = "Polygon";
+export const FANTOM_KEY = "Fantom";

@@ -1,3 +1,14 @@
-#import { Module } into Provider from "wrap://ipfs/QmbaTvgNrDafcChhFZw83aSKMq57iyWwdvWzuMhWKmgj55"
+#import { Module } into Http from "wrap://ens/http.polywrap.eth"
 
-type Module implements Provider_Module {}
+type Module {
+    getTokens: Map! @annotate(type: "Map<String!, [Token!]!>!"),
+}
+
+type Token {
+    address: String!,
+    name: String!,
+    symbol: String!,
+    decimals: Int!,
+    logo: String,
+    price: BigNumber,
+}

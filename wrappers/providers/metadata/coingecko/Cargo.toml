@@ -10,6 +10,7 @@ edition = "2021"
 [dependencies]
 polywrap-wasm-rs = { version = "0.1.0" }
 serde = { version = "1.0", features = ["derive"] }
+enum-utils = { version = "0.1.2" }
 
 [lib]
 crate-type = ["cdylib"]

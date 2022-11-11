@@ -6,5 +6,5 @@ mod constants;
 
 pub use wrap::*;
 
-pub use metadata::
+pub use metadata::get_tokens;
 
