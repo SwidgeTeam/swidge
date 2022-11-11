@@ -1,8 +1,3 @@
-export interface Metadata {
-  chains: Chains
-  tokens: Tokens
-}
-
 export type Chains = Chain[]
 
 export interface Chain {
