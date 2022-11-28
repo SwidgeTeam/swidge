@@ -1,15 +1,5 @@
-export interface MetadataResponse {
-  chains: Chain[]
-  tokens: {
-    [chainId: string]: Token[]
-  }
-}
-
-export interface Chain {
-  chain_type: string
-  chain_id: string
-  name: string
-  logo: string
+export interface TokensResponse {
+  [chainId: string]: Token[]
 }
 
 export interface Token {

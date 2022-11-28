@@ -1,23 +1,21 @@
 use std::collections::BTreeMap;
 use polywrap_wasm_rs::JSON;
 use crate::wrap::{
-    ProviderMetadata as Metadata,
-    ProviderChain as Chain,
-    ProviderChainInfo as ChainInfo,
+    module::ArgsGetTokens,
+    ProviderToken as Token,
 };
-use crate::wrap::module::ArgsGetMetadata;
 use crate::types::*;
 use crate::utils::{http_get};
 use crate::constants::get_chain_id;
 
-pub fn get_metadata(args: ArgsGetMetadata) -> Metadata {
+pub fn get_tokens(args: ArgsGetTokens) -> BTreeMap<String, Vec<Token>> {
     let response_body = http_get("/basic/meta", None);
 
     let content = JSON::from_str::<MetadataJson>(&response_body).unwrap();
 
     let mut accepted_chains: Vec<String> = Vec::new();
 
-    let chains: Vec<Chain> = content.blockchains
+    content.blockchains
         .into_iter()
         .filter(|b| {
             if let Some(t) = &b.chain_type {
@@ -25,19 +23,11 @@ pub fn get_metadata(args: ArgsGetMetadata) -> Metadata {
             }
             false
         })
-        .map(|b| {
+        .for_each(|b| {
             accepted_chains.push(b.name.clone());
-            Chain {
-                chain_type: b.chain_type.unwrap(),
-                chain_id: b.chain_id.unwrap(),
-                name: b.display_name,
-                logo: b.logo,
-                metamask: ChainInfo::build(b.info.unwrap()),
-            }
-        })
-        .collect();
+        });
 
-    let mut tokens: BTreeMap<String, Vec<String>> = BTreeMap::new();
+    let mut tokens: BTreeMap<String, Vec<Token>> = BTreeMap::new();
 
     content.tokens
         .into_iter()
@@ -54,11 +44,16 @@ pub fn get_metadata(args: ArgsGetMetadata) -> Metadata {
             tokens
                 .get_mut(chain_id)
                 .unwrap()
-                .push(t.address.unwrap_or("0x00".to_string()));
+                .push(Token {
+                    chain_id: chain_id.to_string(),
+                    address: t.address.unwrap_or("0x0000000000000000000000000000000000000000".to_string()),
+                    name: t.symbol.to_string(),
+                    symbol: t.symbol.to_string(),
+                    decimals: t.decimals,
+                    logo: t.image,
+                    price: t.usd_price,
+                });
         });
 
-    return Metadata {
-        chains,
-        tokens,
-    };
+    return tokens;
 }

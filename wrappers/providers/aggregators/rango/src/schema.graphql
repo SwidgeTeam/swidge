@@ -1,4 +1,4 @@
-#import { Module } into Provider from "wrap://ipfs/QmbaTvgNrDafcChhFZw83aSKMq57iyWwdvWzuMhWKmgj55"
+#import { Module } into Provider from "wrap://ipfs/QmTiD79pbKfyc58w2VA7ktsNbnhNw7o9dekca7SKyAjKiq"
 #import { Module } into Http from "wrap://ens/http.polywrap.eth"
 
 type Module implements Provider_Module {

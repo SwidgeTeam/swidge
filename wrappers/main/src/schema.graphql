@@ -1,20 +1,8 @@
-#import { Module } into Provider from "wrap://ipfs/QmbaTvgNrDafcChhFZw83aSKMq57iyWwdvWzuMhWKmgj55"
+#import { Module } into Provider from "wrap://ipfs/QmTiD79pbKfyc58w2VA7ktsNbnhNw7o9dekca7SKyAjKiq"
 #use { getImplementations } for Provider
 
 type Module {
-    getMetadata: Metadata!
-}
-
-type Metadata {
-    chains: [Chain!]!,
-    tokens: Map! @annotate(type: "Map<String!, [Token!]!>!"),
-}
-
-type Chain {
-    chain_type: String!,
-    chain_id: String!,
-    name: String!,
-    logo: String!,
+    getTokens: Map! @annotate(type: "Map<String!, [Token!]!>!")
 }
 
 type Token {

@@ -1,42 +1,24 @@
 use std::collections::BTreeMap;
 use crate::wrap::*;
-use crate::imported::provider_module::ArgsGetMetadata as ProviderArgsGetMetadata;
+use crate::imported::provider_module::ArgsGetTokens as ProviderArgsGetTokens;
 
-pub fn get_metadata(args: ArgsGetMetadata) -> Metadata {
+pub fn get_tokens(args: ArgsGetTokens) -> BTreeMap<String, Vec<Token>> {
     let implementations = Provider::get_implementations();
 
     if implementations.len() == 0 {
         panic!("No provider implementations");
     }
 
-    let mut all_chains: Vec<Chain> = Vec::new();
     let mut all_tokens: BTreeMap<String, Vec<Token>> = BTreeMap::new();
 
     for implementation in implementations.iter() {
         let provider = ProviderModule::new(implementation);
-        let metadata = provider
-            .get_metadata(&ProviderArgsGetMetadata {})
-            .expect("Provider should return valid metadata");
 
-        metadata.chains
-            .iter()
-            .for_each(|chain| {
-                let exists = all_chains
-                    .iter()
-                    .find(|c| c.chain_id == chain.chain_id)
-                    .is_some();
+        let tokens = provider
+            .get_tokens(&ProviderArgsGetTokens {})
+            .expect("Provider should return valid tokens list");
 
-                if !exists {
-                    all_chains.push(Chain {
-                        chain_type: chain.chain_type.to_string(),
-                        chain_id: chain.chain_id.to_string(),
-                        name: chain.name.to_string(),
-                        logo: chain.logo.to_string(),
-                    });
-                }
-            });
-
-        metadata.tokens
+        tokens
             .iter()
             .for_each(|(chain_id, tokens)| {
                 if !all_tokens.contains_key(chain_id) {
@@ -52,27 +34,24 @@ pub fn get_metadata(args: ArgsGetMetadata) -> Metadata {
                     .for_each(|token| {
                         let exists = all_tokens_chain
                             .iter()
-                            .find(|t| t.address.eq(token))
+                            .find(|t| t.address.eq(&token.address))
                             .is_some();
 
                         if !exists {
                             all_tokens_chain.push(Token {
-                                chain_id: "".to_string(),
-                                address: token.to_string(),
-                                name: "".to_string(),
-                                symbol: "".to_string(),
-                                decimals: 0,
-                                logo: None,
-                                price: None,
+                                chain_id: token.chain_id.to_string(),
+                                address: token.address.to_string(),
+                                name: token.name.to_string(),
+                                symbol: token.symbol.to_string(),
+                                decimals: token.decimals,
+                                logo: token.logo.clone(),
+                                price: token.price.clone(),
                             });
                         }
                     })
             })
     }
 
-    return Metadata {
-        chains: all_chains,
-        tokens: all_tokens,
-    };
+    return all_tokens;
 }
 

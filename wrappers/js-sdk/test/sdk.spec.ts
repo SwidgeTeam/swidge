@@ -9,6 +9,6 @@ describe('Swidge SDK', () => {
   })
 
   it('should fetch tokens', async () => {
-    await sdk.getTokens();
+    console.log(await sdk.getTokens());
   });
 });

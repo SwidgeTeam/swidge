@@ -7,10 +7,9 @@ export function clientConfig(): Partial<ClientConfig> {
   return {
     interfaces: [
       {
-        interface: "wrap://ipfs/QmbaTvgNrDafcChhFZw83aSKMq57iyWwdvWzuMhWKmgj55",
+        interface: "wrap://ipfs/QmTiD79pbKfyc58w2VA7ktsNbnhNw7o9dekca7SKyAjKiq",
         implementations: [
-          "wrap://ipfs/QmNfgGbY8s1TRr8mRahE6RxDzsBkj1o7a6VJs2ne6mGFgB",
-          "wrap://ipfs/QmVZptPRpj4KyER6Ry1wzm4HNKBxRPS4Gs6Xhoy2tmg4kp"
+          "wrap://ipfs/Qmeojn81JiJyMJJisRSsJDHF7JshjMtWAXPJocyfi3KtWK" // Rango
         ]
       },
     ],

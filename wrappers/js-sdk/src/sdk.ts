@@ -1,5 +1,5 @@
 import { PolywrapClient } from '@polywrap/client-js';
-import { MetadataResponse } from './types/wrapper/metadata';
+import { TokensResponse } from './types/wrapper/metadata';
 import { Chains, Tokens } from './types/metadata';
 import { WRAPPER_URI } from './types/wrapper/constants';
 import { clientConfig, NETWORKS } from './config';
@@ -16,9 +16,9 @@ export default class Swidge {
   }
 
   async getTokens(): Promise<Tokens> {
-    const result = await this.client.invoke<MetadataResponse>({
+    const result = await this.client.invoke<TokensResponse>({
       uri: WRAPPER_URI,
-      method: "getMetadata",
+      method: "getTokens",
       args: {}
     });
 
@@ -26,6 +26,6 @@ export default class Swidge {
       throw new Error("Error fetching tokens");
     }
 
-    return result.value.tokens;
+    return result.value;
   }
 }
