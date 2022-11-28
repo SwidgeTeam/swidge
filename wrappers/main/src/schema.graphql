@@ -3,6 +3,19 @@
 
 type Module {
     getTokens: Map! @annotate(type: "Map<String!, [Token!]!>!")
+
+    quote(
+        token_in: String!,
+        token_out: String!,
+        chain_from: String!,
+        chain_to: String!,
+        amount: BigNumber!
+    ): [Route!]!
+
+    execute(
+        chain_id: String!,
+        tx_data: String!
+    ): String!
 }
 
 type Token {
@@ -13,4 +26,10 @@ type Token {
     decimals: Int!,
     logo: String,
     price: BigNumber,
+}
+
+type Route {
+    amount_out: BigNumber!,
+    approval_tx: String,
+    main_tx: String!
 }
