@@ -53,14 +53,6 @@ resource "aws_security_group" "api_http_ssh" {
   }
 
   ingress {
-    description = "Metrics for Prometheus"
-    from_port   = 9209
-    to_port     = 9209
-    protocol    = "tcp"
-    cidr_blocks = [for ip in var.scrapper_ips : "${ip}/32"]
-  }
-
-  ingress {
     description = "SSH from anywhere"
     from_port   = 22
     to_port     = 22

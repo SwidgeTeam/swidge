@@ -111,25 +111,6 @@ module "api" {
   certificate_arn     = module.regional_cert.arn
   instance_type       = var.api_instance_type
   key_name            = local.instances_key_name
-  scrapper_ips        = module.grafana.public_ip
-}
-
-module "grafana" {
-  source = "./blocks/grafana"
-
-  ami_id              = var.ami_id
-  region              = var.region
-  environment         = var.environment
-  vpc_id              = module.my_vpc.vpc_id
-  public_subnets_cidr = local.grafana_public_subnets_cidr
-  availability_zones  = local.availability_zones
-  internet_gateway_id = aws_internet_gateway.igw.id
-  certificate_arn     = module.regional_cert.arn
-  instance_type       = var.grafana_instance_type
-  key_name            = local.instances_key_name
-  allowed_ips         = concat(
-    module.api.public_ip,
-  )
 }
 
 module "front" {
@@ -197,18 +178,6 @@ resource "aws_route53_record" "api_balancer" {
   }
 }
 
-resource "aws_route53_record" "grafana_balancer" {
-  zone_id = aws_route53_zone.dns_zone.id
-  name    = local.grafana_service_url
-  type    = "A"
-
-  alias {
-    name                   = module.grafana.balancer.dns_name
-    zone_id                = module.grafana.balancer.zone_id
-    evaluate_target_health = false
-  }
-}
-
 resource "aws_route53_record" "front_distribution" {
   zone_id = aws_route53_zone.dns_zone.id
   name    = local.front_service_url
@@ -243,6 +212,3 @@ output "api_public_ip" {
   value = module.api.public_ip
 }
 
-output "grafana_public_ip" {
-  value = module.grafana.public_ip
-}
