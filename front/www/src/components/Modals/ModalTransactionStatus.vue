@@ -333,7 +333,7 @@ const trimmedTxnHash = (txHash: string) => {
                 </div>
                 <div>
                     <a
-                        href="https://discord.swidge.xyz/"
+                        href="https://discord.swidge.app/"
                         target="_blank"
                         class="flex flex-row items-center gap-2">
                         <img src="../../assets/discord-grey.png" class="w-6 h-6 items-center align-center"/>

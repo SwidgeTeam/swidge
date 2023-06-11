@@ -31,5 +31,5 @@ $ yarn test
 
 ## Stay in touch
 
-- Website - [https://swidge.xyz](https://swidge.xyz/)
+- Website - [https://swidge.app](https://swidge.app/)
 - Twitter - [@therealswidge](https://twitter.com/therealswidge)

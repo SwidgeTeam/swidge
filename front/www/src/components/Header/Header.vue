@@ -24,7 +24,7 @@ const setWallet = (wallet: Wallet) => {
 
 <template>
     <nav class="flex items-center h-[var(--header-height)] justify-between w-full px-2 bg-transparent">
-        <a class="w-25 sm:w-40" href="https://www.swidge.xyz/">
+        <a class="w-25 sm:w-40" href="https://www.swidge.app/">
             <SwidgeLogo class="sm:hidden"/>
             <SwidgeLogoWithText class="hidden sm:inline-block"/>
         </a>

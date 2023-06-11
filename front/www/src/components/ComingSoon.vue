@@ -6,7 +6,7 @@
             <a href="https://twitter.com/therealswidge">
                 <img src="../assets/discord.svg" class="w-10 h-10 itmes-center align-center"/>
             </a>
-            <a href="https://discord.swidge.xyz/">
+            <a href="https://discord.swidge.app/">
                 <img src="../assets/twitter.svg" class="w-10 h-10 items-center align-center"/>
             </a>
         </div>
